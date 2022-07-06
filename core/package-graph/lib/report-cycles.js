@@ -1,7 +1,7 @@
 "use strict";
 
 const log = require("npmlog");
-const ValidationError = require("@lerna/validation-error");
+const { ValidationError } = require("@lerna/validation-error");
 
 module.exports.reportCycles = reportCycles;
 

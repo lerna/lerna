@@ -1,20 +1,27 @@
 "use strict";
 
 const log = require("npmlog");
-const figgyPudding = require("figgy-pudding");
 
-module.exports = figgyPudding(
-  {
-    "fetch-retries": {},
-    fetchRetries: "fetch-retries",
-    log: { default: log },
-    registry: {},
-    username: {},
-  },
-  {
-    other() {
-      // open it up for the sake of tests
-      return true;
-    },
-  }
-);
+module.exports.getFetchConfig = getFetchConfig;
+
+/**
+ * Create a merged options object suitable for npm-registry-fetch.
+ * @param {{ [key: string]: unknown }} options
+ * @param {Partial<FetchConfig>} [extra]
+ * @returns {FetchConfig}
+ */
+function getFetchConfig(options, extra) {
+  return {
+    log,
+    ...options,
+    ...extra,
+  };
+}
+
+/**
+ * @typedef {object} FetchConfig
+ * @property {number} [fetchRetries]
+ * @property {typeof log} log
+ * @property {string} [registry]
+ * @property {string} [username]
+ */

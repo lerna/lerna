@@ -27,7 +27,7 @@ If no `version` specifier is provided, it defaults to the `latest` dist-tag, jus
 
 Add the new package to `devDependencies` instead of `dependencies`.
 
-### --exact
+### `--exact`
 
 ```sh
 $ lerna add --exact

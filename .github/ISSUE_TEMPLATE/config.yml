@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Read the community guidelines
+    about: "Please make sure you have read the submission guidelines before posting an issue"
+    url: https://github.com/lerna/lerna/blob/main/CONTRIBUTING.md#-submitting-an-issue
+  - name: Want to start a discussion?
+    about: "Want to start a thread to discuss an idea? Use the discussions feature provided by GitHub."
+    url: https://github.com/lerna/lerna/discussions
+  - name: Have a question?
+    url: https://go.nrwl.io/join-slack
+    about: "The Community Slack is a great place for questions to be asked and answered. Please use the #lerna channel if you need help with your workspace!"

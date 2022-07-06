@@ -1,0 +1,49 @@
+name: Deploy Lerna website to lerna/website
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+defaults:
+  run:
+    shell: bash
+    working-directory: website
+
+jobs:
+  test-deploy:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --omit=optional
+      - name: Test build website
+        run: npm run build
+  deploy:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --omit=optional
+      - name: Deploy to lerna/website
+        env:
+          USE_SSH: true
+        run: |
+          git config --global user.email "3447705+bcabanes@users.noreply.github.com"
+          git config --global user.name "bcabanes"
+          npm run deploy

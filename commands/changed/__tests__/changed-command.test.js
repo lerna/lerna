@@ -1,13 +1,13 @@
 "use strict";
 
 // mocked modules
-const collectUpdates = require("@lerna/collect-updates");
-const output = require("@lerna/output");
+const { collectUpdates } = require("@lerna/collect-updates");
+const { output } = require("@lerna/output");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const loggingOutput = require("@lerna-test/logging-output");
-const updateLernaConfig = require("@lerna-test/update-lerna-config");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
 
 // file under test
 const lernaChanged = require("@lerna-test/command-runner")(require("../command"));

@@ -6,11 +6,16 @@ const minimatch = require("minimatch");
 const path = require("path");
 const slash = require("slash");
 
-module.exports = makeDiffPredicate;
+module.exports.makeDiffPredicate = makeDiffPredicate;
 
+/**
+ * @param {string} committish
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
+ * @param {string[]} ignorePatterns
+ */
 function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
   const ignoreFilters = new Set(
-    ignorePatterns.map(p =>
+    ignorePatterns.map((p) =>
       minimatch.filter(`!${p}`, {
         matchBase: true,
         // dotfiles inside ignored directories should also match
@@ -23,7 +28,9 @@ function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
     log.info("ignoring diff in paths matching", ignorePatterns);
   }
 
-  return function hasDiffSinceThatIsntIgnored(node) {
+  return function hasDiffSinceThatIsntIgnored(
+    /** @type {import("@lerna/package-graph").PackageGraphNode} */ node
+  ) {
     const diff = diffSinceIn(committish, node.location, execOpts);
 
     if (diff === "") {
@@ -50,6 +57,11 @@ function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
   };
 }
 
+/**
+ * @param {string} committish
+ * @param {string} location
+ * @param {import("@lerna/child-process").ExecOpts} opts
+ */
 function diffSinceIn(committish, location, opts) {
   const args = ["diff", "--name-only", committish];
   const formattedLocation = slash(path.relative(opts.cwd, location));

@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const semver = require("semver");
-const Package = require("@lerna/package");
+const { Package } = require("@lerna/package");
 
 exports.toDependOn = createDependencyMatcher("dependencies");
 exports.toDevDependOn = createDependencyMatcher("devDependencies");
@@ -118,8 +118,8 @@ function toHaveBinaryLinks(received, ...inputs) {
     throw err;
   }
 
-  const missing = links.filter(link => found.indexOf(link) === -1);
-  const superfluous = found.filter(link => links.indexOf(link) === -1);
+  const missing = links.filter((link) => found.indexOf(link) === -1);
+  const superfluous = found.filter((link) => links.indexOf(link) === -1);
 
   if (missing.length > 0 || superfluous.length > 0) {
     return {
@@ -151,7 +151,7 @@ function toHaveExecutables(received, ...files) {
 
   // eslint-disable-next-line prefer-destructuring
   const X_OK = (fs.constants || fs).X_OK;
-  const failed = files.filter(file => {
+  const failed = files.filter((file) => {
     try {
       return fs.accessSync(path.join(pkg.location, file), X_OK);
     } catch (_) {

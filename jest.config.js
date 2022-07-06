@@ -5,7 +5,7 @@ module.exports = {
   cacheDirectory: "./node_modules/.cache/jest",
   clearMocks: true,
   // windows ci is terribly slow, so let's not burden it with coverage
-  collectCoverage: process.env.CI && process.env.TRAVIS_OS_NAME !== "windows",
+  collectCoverage: process.env.CI && process.env.LERNA_OS_TYPE !== "windows",
   collectCoverageFrom: [
     "{commands,core,utils}/**/*.js",
     "!commands/create/lerna-module-data.js",
@@ -21,7 +21,7 @@ module.exports = {
 };
 
 // split tests into smaller chunks because windows is agonizingly slow
-if (process.env.CI && process.env.TRAVIS_OS_NAME === "windows") {
+if (process.env.LERNA_CI_TYPE) {
   module.exports.testMatch =
     process.env.LERNA_CI_TYPE === "publish"
       ? [
@@ -30,7 +30,8 @@ if (process.env.CI && process.env.TRAVIS_OS_NAME === "windows") {
           "<rootDir>/commands/version/**/*.test.js",
         ]
       : [
-          "<rootDir>/commands/!(publish|version)/**/*.test.js",
+          // NOTE: import is NOT TESTED in windows because pain and suffering
+          "<rootDir>/commands/!(publish|version|import)/**/*.test.js",
           "<rootDir>/core/**/*.test.js",
           "<rootDir>/utils/**/*.test.js",
         ];

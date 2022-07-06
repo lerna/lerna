@@ -5,8 +5,8 @@ const globby = require("globby");
 const path = require("path");
 const os = require("os");
 
-const cliRunner = require("@lerna-test/cli-runner");
-const commitChangeToPackage = require("@lerna-test/commit-change-to-package");
+const { cliRunner } = require("@lerna-test/cli-runner");
+const { commitChangeToPackage } = require("@lerna-test/commit-change-to-package");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
@@ -59,7 +59,7 @@ Successfully published:
   const changelogFilePaths = await globby(["**/CHANGELOG.md"], {
     cwd,
     absolute: true,
-    followSymlinkedDirectories: false,
+    followSymbolicLinks: false,
   });
   const [
     // no root changelog
@@ -68,7 +68,7 @@ Successfully published:
     pkg3Changelog,
     pkg4Changelog,
     pkg5Changelog,
-  ] = await Promise.all(changelogFilePaths.sort().map(fp => fs.readFile(fp, "utf8")));
+  ] = await Promise.all(changelogFilePaths.sort().map((fp) => fs.readFile(fp, "utf8")));
 
   /**
    * ./packages/package-1/CHANGELOG.md

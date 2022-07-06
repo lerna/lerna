@@ -51,12 +51,38 @@ the default is `**` (hoist everything). This option only affects the
 $ lerna bootstrap --hoist
 ```
 
-For background on `--hoist`, see the [hoist documentation](https://github.com/lerna/lerna/blob/master/doc/hoist.md).
+For background on `--hoist`, see the [hoist documentation](https://github.com/lerna/lerna/blob/main/doc/hoist.md).
 
 Note: If packages depend on different _versions_ of an external dependency,
 the most commonly used version will be hoisted, and a warning will be emitted.
 
 Note: `--hoist` is [incompatible with `file:` specifiers](https://github.com/lerna/lerna/issues/1679#issuecomment-461544321). Use one or the other.
+
+Note: `--hoist` [no longer accepts multiple string values](https://github.com/lerna/lerna/issues/2307) since [v3.18.0](https://github.com/lerna/lerna/releases/tag/v3.18.0). Use the following instead:
+
+a. Wrap string values by quotes:
+```
+$ lerna bootstrap --hoist "{rollup,postcss-cli,webpack-cli,babel-loader,npm-run-all}"
+```
+
+b. Specify the list of values in `lerna.json`:
+```json
+{
+  "command": {
+    "bootstrap": {
+      "hoist": [
+        "rollup",
+        "postcss-cli",
+        "webpack-cli",
+        "babel-loader",
+        "npm-run-all"
+      ]
+    }
+  },
+  ...
+}
+```
+
 
 ### --strict
 

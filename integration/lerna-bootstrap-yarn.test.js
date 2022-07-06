@@ -3,7 +3,7 @@
 const globby = require("globby");
 const normalizePath = require("normalize-path");
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 test("lerna bootstrap --npm-client yarn", async () => {
@@ -38,7 +38,7 @@ package-3 cli2 package-2 OK
     cwd,
   };
   const lockfiles = await globby(["package-*/yarn.lock"], config);
-  expect(lockfiles.sort().map(fp => normalizePath(fp))).toEqual([
+  expect(lockfiles.sort().map((fp) => normalizePath(fp))).toEqual([
     "package-1/yarn.lock",
     "package-2/yarn.lock",
     "package-3/yarn.lock",

@@ -1,14 +1,12 @@
 "use strict";
 
-jest.mock("@evocateur/npm-registry-fetch");
+jest.mock("npm-registry-fetch");
 
-const fetch = require("@evocateur/npm-registry-fetch");
-const loggingOutput = require("@lerna-test/logging-output");
-const getNpmUsername = require("../lib/get-npm-username");
+const fetch = require("npm-registry-fetch");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { getNpmUsername } = require("../lib/get-npm-username");
 
 fetch.json.mockImplementation(() => Promise.resolve({ username: "lerna-test" }));
-
-expect.extend(require("@lerna-test/figgy-pudding-matchers"));
 
 describe("getNpmUsername", () => {
   const origConsoleError = console.error;
@@ -29,13 +27,12 @@ describe("getNpmUsername", () => {
 
       return Promise.reject(err);
     });
-    const opts = new Map();
-    opts.set("registry", "such-config-wow");
+    const opts = { registry: "such-config-wow" };
 
     const username = await getNpmUsername(opts);
 
     expect(username).toBe("lerna-test");
-    expect(fetch.json).toHaveBeenLastCalledWith("/-/whoami", expect.figgyPudding({ "fetch-retries": 0 }));
+    expect(fetch.json).toHaveBeenLastCalledWith("/-/whoami", expect.objectContaining({ fetchRetries: 0 }));
   });
 
   test("throws an error when successful fetch yields empty username", async () => {
@@ -63,8 +60,7 @@ describe("getNpmUsername", () => {
       return Promise.reject(err);
     });
 
-    const opts = new Map();
-    opts.set("registry", "https://registry.npmjs.org/");
+    const opts = { registry: "https://registry.npmjs.org/" };
 
     await expect(getNpmUsername(opts)).rejects.toThrow(
       "Authentication error. Use `npm whoami` to troubleshoot."
@@ -81,8 +77,7 @@ describe("getNpmUsername", () => {
       return Promise.reject(err);
     });
 
-    const opts = new Map();
-    opts.set("registry", "http://my-own-private-idaho.com");
+    const opts = { registry: "http://my-own-private-idaho.com" };
 
     const username = await getNpmUsername(opts);
 

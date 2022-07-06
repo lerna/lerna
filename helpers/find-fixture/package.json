@@ -6,6 +6,6 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "find-up": "^3.0.0"
+    "find-up": "^5.0.0"
   }
 }

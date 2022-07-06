@@ -3,10 +3,10 @@
 const execa = require("execa");
 const childProcess = require("@lerna/child-process");
 const cloneFixture = require("@lerna-test/clone-fixture")(__dirname);
-const gitPush = require("../lib/git-push");
+const { gitPush } = require("../lib/git-push");
 
 async function listRemoteTags(cwd) {
-  return execa.stdout("git", ["ls-remote", "--tags", "--refs", "--quiet"], { cwd });
+  return execa("git", ["ls-remote", "--tags", "--refs", "--quiet"], { cwd }).then((result) => result.stdout);
 }
 
 beforeEach(() => {
@@ -26,11 +26,11 @@ test("gitPush", async () => {
   await execa("git", ["tag", "foo@2.3.1", "-m", "foo@2.3.1"], { cwd });
   await execa("git", ["tag", "bar@3.2.1", "-m", "bar@3.2.1"], { cwd });
 
-  await gitPush("origin", "master", { cwd });
+  await gitPush("origin", "main", { cwd });
 
   expect(childProcess.exec).toHaveBeenLastCalledWith(
     "git",
-    ["push", "--follow-tags", "--no-verify", "--atomic", "origin", "master"],
+    ["push", "--follow-tags", "--no-verify", "--atomic", "origin", "main"],
     { cwd }
   );
 
@@ -50,7 +50,7 @@ test("remote that does not support --atomic", async () => {
   childProcess.exec.mockImplementationOnce(async () => {
     const stderr = "fatal: the receiving end does not support --atomic push";
     const error = new Error(
-      ["Command failed: git push --follow-tags --atomic --no-verify origin master", stderr].join("\n")
+      ["Command failed: git push --follow-tags --atomic --no-verify origin main", stderr].join("\n")
     );
 
     error.stderr = stderr;
@@ -59,12 +59,12 @@ test("remote that does not support --atomic", async () => {
   });
 
   // this call should _not_ throw
-  await gitPush("origin", "master", { cwd });
+  await gitPush("origin", "main", { cwd });
 
   expect(childProcess.exec).toHaveBeenCalledTimes(2);
   expect(childProcess.exec).toHaveBeenLastCalledWith(
     "git",
-    ["push", "--follow-tags", "--no-verify", "origin", "master"],
+    ["push", "--follow-tags", "--no-verify", "origin", "main"],
     { cwd }
   );
 
@@ -72,7 +72,7 @@ test("remote that does not support --atomic", async () => {
   expect(list).toMatch("v4.5.6");
 });
 
-test("remote that does not support --atomic and git stderr redirected to stdout ", async () => {
+test("remote that does not support --atomic and git stderr redirected to stdout", async () => {
   const { cwd } = await cloneFixture("root-manifest-only");
 
   process.env.GIT_REDIRECT_STDERR = "2>&1";
@@ -84,7 +84,7 @@ test("remote that does not support --atomic and git stderr redirected to stdout 
   childProcess.exec.mockImplementationOnce(async () => {
     const stdout = "fatal: the receiving end does not support --atomic push";
     const error = new Error(
-      ["Command failed: git push --follow-tags --atomic --no-verify origin master", stdout].join("\n")
+      ["Command failed: git push --follow-tags --atomic --no-verify origin main", stdout].join("\n")
     );
 
     error.stdout = stdout;
@@ -93,12 +93,12 @@ test("remote that does not support --atomic and git stderr redirected to stdout 
   });
 
   // this call should _not_ throw
-  await gitPush("origin", "master", { cwd });
+  await gitPush("origin", "main", { cwd });
 
   expect(childProcess.exec).toHaveBeenCalledTimes(2);
   expect(childProcess.exec).toHaveBeenLastCalledWith(
     "git",
-    ["push", "--follow-tags", "--no-verify", "origin", "master"],
+    ["push", "--follow-tags", "--no-verify", "origin", "main"],
     { cwd }
   );
 
@@ -116,7 +116,7 @@ test("git cli that does not support --atomic", async () => {
   childProcess.exec.mockImplementationOnce(async () => {
     const stderr = "error: unknown option `atomic'";
     const error = new Error(
-      ["Command failed: git push --follow-tags --atomic --no-verify origin master", stderr].join("\n")
+      ["Command failed: git push --follow-tags --atomic --no-verify origin main", stderr].join("\n")
     );
 
     error.stderr = stderr;
@@ -124,7 +124,7 @@ test("git cli that does not support --atomic", async () => {
     throw error;
   });
 
-  await gitPush("origin", "master", { cwd });
+  await gitPush("origin", "main", { cwd });
 
   await expect(listRemoteTags(cwd)).resolves.toMatch("v7.8.9");
 });
@@ -135,7 +135,7 @@ test("unexpected git error", async () => {
   childProcess.exec.mockImplementationOnce(async () => {
     const stderr = "fatal: some unexpected error";
     const error = new Error(
-      ["Command failed: git push --follow-tags --atomic --no-verify origin master", stderr].join("\n")
+      ["Command failed: git push --follow-tags --atomic --no-verify origin main", stderr].join("\n")
     );
 
     error.stderr = stderr;
@@ -143,5 +143,5 @@ test("unexpected git error", async () => {
     throw error;
   });
 
-  await expect(gitPush("origin", "master", { cwd })).rejects.toThrowError(/some unexpected error/);
+  await expect(gitPush("origin", "main", { cwd })).rejects.toThrowError(/some unexpected error/);
 });

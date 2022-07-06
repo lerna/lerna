@@ -1,7 +1,11 @@
 "use strict";
 
-module.exports = shallowExtend;
+module.exports.shallowExtend = shallowExtend;
 
+/**
+ * @param {{ [key: string]: unknown }} json
+ * @param {{ [key: string]: unknown }} defaults
+ */
 function shallowExtend(json, defaults = {}) {
   return Object.keys(json).reduce((obj, key) => {
     const val = json[key];

@@ -1,6 +1,6 @@
 "use strict";
 
-const prereleaseIdFromVersion = require("../lib/prerelease-id-from-version");
+const { prereleaseIdFromVersion } = require("../lib/prerelease-id-from-version");
 
 test("prereleaseIdFromVersion() returns prerelease identifier", () => {
   expect(prereleaseIdFromVersion("1.0.0-alpha.0")).toBe("alpha");

@@ -8,27 +8,31 @@ const path = require("path");
 const pathExists = require("path-exists");
 
 // mocked or stubbed modules
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 
 // helpers
 const initNamedFixture = require("@lerna-test/init-named-fixture")(__dirname);
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitAdd = require("@lerna-test/git-add");
-const gitCommit = require("@lerna-test/git-commit");
-const updateLernaConfig = require("@lerna-test/update-lerna-config");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitCommit } = require("@lerna-test/git-commit");
+const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
 
 // file under test
 const lernaImport = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
+const lastCommitInDir = (cwd) =>
+  execa("git", ["log", "-1", "--format=%s"], { cwd }).then((result) => result.stdout);
 
 describe("ImportCommand", () => {
-  PromptUtilities.confirm.mockResolvedValue(true);
+  promptConfirmation.mockResolvedValue(true);
 
   describe("import", () => {
-    const initBasicFixtures = () =>
-      Promise.all([initFixture("basic"), initFixture("external", "Init external commit")]);
+    const initBasicFixtures = async () => {
+      const externalDir = await initFixture("external", "Init external commit");
+      const testDir = await initFixture("basic");
+      return [testDir, externalDir];
+    };
 
     it("creates a module in packages location with imported commit history", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
@@ -57,11 +61,11 @@ describe("ImportCommand", () => {
       await gitAdd(externalDir, conflictedFileName);
       await gitCommit(externalDir, "branch content written");
 
-      await execa("git", ["checkout", "master"], { cwd: externalDir });
+      await execa("git", ["checkout", "main"], { cwd: externalDir });
 
-      await fs.writeFile(conflictedFile, "master content");
+      await fs.writeFile(conflictedFile, "main content");
       await gitAdd(externalDir, conflictedFileName);
-      await gitCommit(externalDir, "master content written");
+      await gitCommit(externalDir, "main content written");
 
       try {
         await execa("git", ["merge", branchName], { cwd: externalDir });
@@ -80,10 +84,8 @@ describe("ImportCommand", () => {
     });
 
     it("imports a repo into the root directory when packages are located there", async () => {
-      const [testDir, externalDir] = await Promise.all([
-        initFixture("root-packages"),
-        initNamedFixture("myapp-foo", "external", "myapp-foo init commit"),
-      ]);
+      const externalDir = await initNamedFixture("myapp-foo", "external", "myapp-foo init commit");
+      const testDir = await initFixture("root-packages");
 
       await lernaImport(testDir)(externalDir);
 
@@ -108,11 +110,9 @@ describe("ImportCommand", () => {
     it("supports filepaths that have spaces within the external repo", async () =>
       Promise.all(
         // running the same test with and without --flatten
-        [true, false].map(async shouldFlatten => {
-          const [testDir, externalDir] = await Promise.all([
-            initFixture("basic"),
-            initFixture("files-with-spaces", "Init external commit"),
-          ]);
+        [true, false].map(async (shouldFlatten) => {
+          const externalDir = await initFixture("files-with-spaces", "Init external commit");
+          const testDir = await initFixture("basic");
           const newPackagePath = path.join(testDir, "packages", path.basename(externalDir));
           const newFilePath = path.join(newPackagePath, "file with spaces");
           const newDeepFilePath = path.resolve(newPackagePath, "subfolder b/file");
@@ -132,11 +132,9 @@ describe("ImportCommand", () => {
     it("supports filepaths that have non-ascii char within the external repo", async () =>
       Promise.all(
         // running the same test with and without --flatten
-        [true, false].map(async shouldFlatten => {
-          const [testDir, externalDir] = await Promise.all([
-            initFixture("basic"),
-            initFixture("files-with-non-ascii-char", "Init external commit"),
-          ]);
+        [true, false].map(async (shouldFlatten) => {
+          const externalDir = await initFixture("files-with-non-ascii-char", "Init external commit");
+          const testDir = await initFixture("basic");
           const newPackagePath = path.join(testDir, "packages", path.basename(externalDir));
 
           await fs.copy(path.join(externalDir, "檔案"), path.join(externalDir, "檔案-copy"));
@@ -180,7 +178,7 @@ describe("ImportCommand", () => {
     it("exits early when confirmation is rejected", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
 
-      PromptUtilities.confirm.mockResolvedValueOnce(false);
+      promptConfirmation.mockResolvedValueOnce(false);
 
       await lernaImport(testDir)(externalDir);
 
@@ -190,7 +188,7 @@ describe("ImportCommand", () => {
     it("preserves original committer and date with --preserve-commit", async () =>
       Promise.all(
         // running the same test with and without --preserve-commit
-        [true, false].map(async shouldPreserve => {
+        [true, false].map(async (shouldPreserve) => {
           const [testDir, externalDir] = await initBasicFixtures();
           const filePath = path.join(externalDir, "old-file");
           let expectedEmail;
@@ -224,7 +222,7 @@ describe("ImportCommand", () => {
       const [testDir, externalDir] = await initBasicFixtures();
       await lernaImport(testDir)(externalDir, "--yes");
 
-      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
+      expect(promptConfirmation).not.toHaveBeenCalled();
     });
 
     it("errors without an argument", async () => {
@@ -320,10 +318,8 @@ describe("ImportCommand", () => {
   describe("with non-root Lerna dir", () => {
     // #1197
     it("creates a module in packages location with imported commit history", async () => {
-      const [externalDir, rootDir] = await Promise.all([
-        initFixture("external", "Init external commit"),
-        initFixture("lerna-not-in-root"),
-      ]);
+      const externalDir = await initFixture("external", "Init external commit");
+      const rootDir = await initFixture("lerna-not-in-root");
       const testDir = path.join(rootDir, "subdir");
       const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
 
@@ -336,10 +332,8 @@ describe("ImportCommand", () => {
 
   describe("with multi-packages Lerna dir", () => {
     it("creates a module in specified package directory", async () => {
-      const [testDir, externalDir] = await Promise.all([
-        initFixture("multi-packages"),
-        initFixture("external", "Init external commit"),
-      ]);
+      const externalDir = await initFixture("external", "Init external commit");
+      const testDir = await initFixture("multi-packages");
 
       const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
 
@@ -350,10 +344,8 @@ describe("ImportCommand", () => {
     });
 
     it("throws error when the package directory does not match with config", async () => {
-      const [testDir, externalDir] = await Promise.all([
-        initFixture("multi-packages"),
-        initFixture("external", "Init external commit"),
-      ]);
+      const externalDir = await initFixture("external", "Init external commit");
+      const testDir = await initFixture("multi-packages");
 
       const command = lernaImport(testDir)(externalDir, "--dest=components");
       await expect(command).rejects.toThrow(

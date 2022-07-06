@@ -1,7 +1,11 @@
 "use strict";
 
-module.exports = getPackagesForOption;
+module.exports.getPackagesForOption = getPackagesForOption;
 
+/**
+ * @param {boolean|string|string[]} option
+ * @returns {Set<string>} A set of package names (or wildcard) derived from option value.
+ */
 function getPackagesForOption(option) {
   // new Set(null) is equivalent to new Set([])
   // i.e., an empty Set

@@ -6,7 +6,7 @@ jest.mock("@lerna/child-process");
 const childProcess = require("@lerna/child-process");
 
 // file under test
-const makeDiffPredicate = require("../lib/make-diff-predicate");
+const { makeDiffPredicate } = require("../lib/make-diff-predicate");
 
 function setup(changes) {
   childProcess.execSync.mockReturnValueOnce([].concat(changes).join("\n"));

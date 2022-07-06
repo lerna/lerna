@@ -3,6 +3,111 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.6](https://github.com/lerna/lerna/compare/v5.1.5...v5.1.6) (2022-06-24)
+
+**Note:** Version bump only for package @lerna/prompt
+
+
+
+
+
+## [5.1.5](https://github.com/lerna/lerna/compare/v5.1.4...v5.1.5) (2022-06-24)
+
+**Note:** Version bump only for package @lerna/prompt
+
+
+
+
+
+## [5.1.4](https://github.com/lerna/lerna/compare/v5.1.3...v5.1.4) (2022-06-15)
+
+**Note:** Version bump only for package @lerna/prompt
+
+
+
+
+
+## [5.1.3](https://github.com/lerna/lerna/compare/v5.1.2...v5.1.3) (2022-06-15)
+
+**Note:** Version bump only for package @lerna/prompt
+
+
+
+
+
+## [5.1.2](https://github.com/lerna/lerna/compare/v5.1.1...v5.1.2) (2022-06-13)
+
+
+### Bug Fixes
+
+* update all transitive inclusions of ansi-regex ([#3166](https://github.com/lerna/lerna/issues/3166)) ([56eaa15](https://github.com/lerna/lerna/commit/56eaa153283be3b1e7d7793d3266fc51801fad8e))
+
+
+
+
+
+## [5.1.1](https://github.com/lerna/lerna/compare/v5.1.0...v5.1.1) (2022-06-09)
+
+
+### Bug Fixes
+
+* allow maintenance LTS node 14 engines starting at 14.15.0 ([#3161](https://github.com/lerna/lerna/issues/3161)) ([72305e4](https://github.com/lerna/lerna/commit/72305e4dbab607a2d87ae4efa6ee577c93a9dda9))
+
+
+
+
+
+# [5.1.0](https://github.com/lerna/lerna/compare/v5.0.0...v5.1.0) (2022-06-07)
+
+**Note:** Version bump only for package @lerna/prompt
+
+
+
+
+
+# [5.1.0-alpha.0](https://github.com/lerna/lerna/compare/v4.0.0...v5.1.0-alpha.0) (2022-05-25)
+
+**Note:** Version bump only for package @lerna/prompt
+
+
+
+
+
+# [5.0.0](https://github.com/lerna/lerna/compare/v4.0.0...v5.0.0) (2022-05-24)
+
+**Note:** Version bump only for package @lerna/prompt
+
+
+
+
+
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Features
+
+* **deps:** inquirer@^7.3.3 ([0b37795](https://github.com/lerna/lerna/commit/0b377959d76ad354f384ff3addb42e3855eec379))
+* **prompt:** Add JSDoc types ([0406568](https://github.com/lerna/lerna/commit/0406568c51bef818b7894f6ade959caf550a378a))
+* **prompt:** Add unambiguous exports ([46fa111](https://github.com/lerna/lerna/commit/46fa11177c433482ba41e6d43765a0d9eaddc89a))
+* **prompt:** Remove ambiguous exports ([42ab453](https://github.com/lerna/lerna/commit/42ab4533d6643c5bb3ceca8eeff7358421235bf6))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* **prompt:** The ambiguous 'confirm', 'select', and 'input' exports have been removed. Please use the renamed exports 'promptConfirmation', 'promptSelectOne', and 'promptTextInput' (respectively).
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 ## [3.18.5](https://github.com/lerna/lerna/compare/v3.18.4...v3.18.5) (2019-11-20)
 
 

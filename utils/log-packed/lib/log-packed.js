@@ -5,9 +5,9 @@ const columnify = require("columnify");
 const hasUnicode = require("has-unicode")();
 const log = require("npmlog");
 
-module.exports = logContents;
+module.exports.logPacked = logPacked;
 
-function logContents(tarball) {
+function logPacked(tarball) {
   log.notice("");
   log.notice("", `${hasUnicode ? "📦 " : "package:"} ${tarball.name}@${tarball.version}`);
 
@@ -16,7 +16,7 @@ function logContents(tarball) {
     log.notice(
       "",
       columnify(
-        tarball.files.map(f => {
+        tarball.files.map((f) => {
           const bytes = byteSize(f.size);
           return {
             path: f.path,
@@ -33,7 +33,7 @@ function logContents(tarball) {
 
   if (tarball.bundled && tarball.bundled.length) {
     log.notice("=== Bundled Dependencies ===");
-    tarball.bundled.forEach(name => log.notice("", name));
+    tarball.bundled.forEach((name) => log.notice("", name));
   }
 
   log.notice("=== Tarball Details ===");
@@ -64,7 +64,7 @@ function logContents(tarball) {
             value: tarball.files.length,
           },
         tarball.entryCount && { name: "total files:", value: tarball.entryCount },
-      ].filter(x => x),
+      ].filter((x) => x),
       {
         include: ["name", "value"],
         showHeaders: false,

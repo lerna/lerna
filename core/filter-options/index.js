@@ -2,9 +2,9 @@
 
 const log = require("npmlog");
 const dedent = require("dedent");
-const getFilteredPackages = require("./lib/get-filtered-packages");
+const { getFilteredPackages } = require("./lib/get-filtered-packages");
 
-module.exports = filterOptions;
+module.exports.filterOptions = filterOptions;
 module.exports.getFilteredPackages = getFilteredPackages;
 
 function filterOptions(yargs) {
@@ -85,7 +85,7 @@ function filterOptions(yargs) {
       conflicts: "include-dependencies",
       type: "boolean",
     })
-    .check(argv => {
+    .check((argv) => {
       /* eslint-disable no-param-reassign */
       if (argv.includeFilteredDependents) {
         argv.includeDependents = true;

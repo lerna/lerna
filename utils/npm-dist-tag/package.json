@@ -1,12 +1,12 @@
 {
   "name": "@lerna/npm-dist-tag",
-  "version": "3.18.5",
+  "version": "5.1.6",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/npm-dist-tag#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -18,7 +18,7 @@
   ],
   "main": "npm-dist-tag.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -32,10 +32,9 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@evocateur/npm-registry-fetch": "^4.0.0",
     "@lerna/otplease": "file:../../core/otplease",
-    "figgy-pudding": "^3.5.1",
-    "npm-package-arg": "^6.1.0",
-    "npmlog": "^4.1.2"
+    "npm-package-arg": "^8.1.0",
+    "npm-registry-fetch": "^9.0.0",
+    "npmlog": "^6.0.2"
   }
 }

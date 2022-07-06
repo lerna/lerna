@@ -9,11 +9,11 @@ jest.mock("../lib/remote-branch-exists");
 const path = require("path");
 
 // mocked modules
-const PromptUtilities = require("@lerna/prompt");
+const { promptSelectOne } = require("@lerna/prompt");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const getCommitMessage = require("@lerna-test/get-commit-message");
+const { getCommitMessage } = require("@lerna-test/get-commit-message");
 
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
@@ -23,7 +23,7 @@ describe("version bump", () => {
     const testDir = await initFixture("normal");
     await lernaVersion(testDir)("1.0.1-beta.25");
 
-    expect(PromptUtilities.select).not.toHaveBeenCalled();
+    expect(promptSelectOne).not.toHaveBeenCalled();
 
     const message = await getCommitMessage(testDir);
     expect(message).toBe("v1.0.1-beta.25");
@@ -56,7 +56,7 @@ describe("version bump", () => {
     const testDir = await initFixture("normal");
     await lernaVersion(testDir)("minor");
 
-    expect(PromptUtilities.select).not.toHaveBeenCalled();
+    expect(promptSelectOne).not.toHaveBeenCalled();
 
     const message = await getCommitMessage(testDir);
     expect(message).toBe("v1.1.0");

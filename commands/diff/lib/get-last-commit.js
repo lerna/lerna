@@ -3,8 +3,11 @@
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = getLastCommit;
+module.exports.getLastCommit = getLastCommit;
 
+/**
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
+ */
 function getLastCommit(execOpts) {
   if (hasTags(execOpts)) {
     log.silly("getLastTagInBranch");
@@ -16,6 +19,9 @@ function getLastCommit(execOpts) {
   return childProcess.execSync("git", ["rev-list", "--max-parents=0", "HEAD"], execOpts);
 }
 
+/**
+ * @param {import("@lerna/child-process").ExecOpts} opts
+ */
 function hasTags(opts) {
   let result = false;
 

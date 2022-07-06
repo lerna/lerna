@@ -3,7 +3,7 @@
 exports[`version patch with previous prerelease also graduates prereleased 1`] = `
 v1.0.1
 
-HEAD -> master, tag: v1.0.1
+HEAD -> main, tag: v1.0.1
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
@@ -41,7 +41,7 @@ index SHA..SHA 100644
 exports[`version prerelease with immediate graduation 1`] = `
 v1.0.1-beta.4
 
-HEAD -> master, tag: v1.0.1-beta.4
+HEAD -> main, tag: v1.0.1-beta.4
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
@@ -69,7 +69,7 @@ index SHA..SHA 100644
 exports[`version prerelease with immediate graduation 2`] = `
 v1.0.1
 
-HEAD -> master, tag: v1.0.1
+HEAD -> main, tag: v1.0.1
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
@@ -130,7 +130,7 @@ index SHA..SHA 100644
 exports[`version prerelease with previous prerelease bumps changed only 1`] = `
 v1.0.1-beta.4
 
-HEAD -> master, tag: v1.0.1-beta.4
+HEAD -> main, tag: v1.0.1-beta.4
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
@@ -151,7 +151,7 @@ index SHA..SHA 100644
 exports[`version prerelease with previous prerelease supersedes --conventional-commits 1`] = `
 v1.0.1-beta.4
 
-HEAD -> master, tag: v1.0.1-beta.4
+HEAD -> main, tag: v1.0.1-beta.4
 
 diff --git a/CHANGELOG.md b/CHANGELOG.md
 new file mode 100644

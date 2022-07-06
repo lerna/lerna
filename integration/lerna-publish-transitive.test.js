@@ -2,10 +2,10 @@
 
 const path = require("path");
 
-const cliRunner = require("@lerna-test/cli-runner");
-const commitChangeToPackage = require("@lerna-test/commit-change-to-package");
-const gitTag = require("@lerna-test/git-tag");
-const showCommit = require("@lerna-test/show-commit");
+const { cliRunner } = require("@lerna-test/cli-runner");
+const { commitChangeToPackage } = require("@lerna-test/commit-change-to-package");
+const { gitTag } = require("@lerna-test/git-tag");
+const { showCommit } = require("@lerna-test/show-commit");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
@@ -33,7 +33,7 @@ test("lerna publish updates all transitive dependents", async () => {
   expect(patch).toMatchInlineSnapshot(`
 v2.0.0
 
-HEAD -> master, tag: v2.0.0, origin/master
+HEAD -> main, tag: v2.0.0, origin/main
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644

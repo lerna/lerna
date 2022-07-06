@@ -1,10 +1,10 @@
 "use strict";
 
-const describeRef = require("@lerna/describe-ref");
-const ValidationError = require("@lerna/validation-error");
-const collectUncommitted = require("@lerna/collect-uncommitted");
+const { describeRef } = require("@lerna/describe-ref");
+const { ValidationError } = require("@lerna/validation-error");
+const { collectUncommitted } = require("@lerna/collect-uncommitted");
 
-module.exports = checkWorkingTree;
+module.exports.checkWorkingTree = checkWorkingTree;
 module.exports.mkThrowIfUncommitted = mkThrowIfUncommitted;
 module.exports.throwIfReleased = throwIfReleased;
 module.exports.throwIfUncommitted = mkThrowIfUncommitted();
@@ -23,7 +23,7 @@ function checkWorkingTree({ cwd } = {}) {
   ];
 
   // passes through result of describeRef() to aid composability
-  return chain.then(result => Promise.all(tests).then(() => result));
+  return chain.then((result) => Promise.all(tests).then(() => result));
 }
 
 function throwIfReleased({ refCount }) {
@@ -41,7 +41,7 @@ const EUNCOMMIT_MSG =
 function mkThrowIfUncommitted(options = {}) {
   return function throwIfUncommitted({ isDirty }) {
     if (isDirty) {
-      return collectUncommitted(options).then(uncommitted => {
+      return collectUncommitted(options).then((uncommitted) => {
         throw new ValidationError("EUNCOMMIT", `${EUNCOMMIT_MSG}${uncommitted.join("\n")}`);
       });
     }

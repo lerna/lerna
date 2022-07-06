@@ -1,12 +1,12 @@
 {
   "name": "@lerna/init",
-  "version": "3.21.0",
+  "version": "5.1.6",
   "description": "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna",
   "keywords": [
     "lerna",
     "command"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/commands/init#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -34,8 +34,8 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/command": "file:../../core/command",
-    "fs-extra": "^8.1.0",
-    "p-map": "^2.1.0",
-    "write-json-file": "^3.2.0"
+    "fs-extra": "^9.1.0",
+    "p-map": "^4.0.0",
+    "write-json-file": "^4.3.0"
   }
 }

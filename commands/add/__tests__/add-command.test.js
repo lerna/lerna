@@ -1,11 +1,11 @@
 "use strict";
 
 jest.mock("@lerna/bootstrap");
-jest.mock("@evocateur/pacote/manifest");
+jest.mock("pacote");
 
 // mocked or stubbed modules
 const bootstrap = require("@lerna/bootstrap");
-const getManifest = require("@evocateur/pacote/manifest");
+const pacote = require("pacote");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -21,7 +21,7 @@ describe("AddCommand", () => {
   // we already have enough tests of BootstrapCommand
   bootstrap.mockResolvedValue();
   // we don't need network requests during unit tests
-  getManifest.mockResolvedValue({ version: "1.0.0" });
+  pacote.manifest.mockResolvedValue({ version: "1.0.0" });
 
   it("should throw without packages", async () => {
     const testDir = await initFixture("basic");
@@ -55,7 +55,7 @@ describe("AddCommand", () => {
     expect(pkg3).toDependOn("tiny-tarball");
     expect(pkg4).toDependOn("tiny-tarball");
 
-    expect(getManifest).toHaveBeenLastCalledWith(
+    expect(pacote.manifest).toHaveBeenLastCalledWith(
       expect.objectContaining({
         // an npm-package-arg Result
         name: "tiny-tarball",
@@ -235,7 +235,7 @@ describe("AddCommand", () => {
   it("accepts --registry option", async () => {
     const testDir = await initFixture("basic");
 
-    getManifest.mockImplementationOnce(() => {
+    pacote.manifest.mockImplementationOnce(() => {
       const err = new Error("ENOTFOUND");
       return Promise.reject(err);
     });
@@ -249,7 +249,7 @@ describe("AddCommand", () => {
     // obviously this registry doesn't exist, thus it will always error
     await expect(command).rejects.toThrow(/ENOTFOUND/);
 
-    expect(getManifest).toHaveBeenLastCalledWith(
+    expect(pacote.manifest).toHaveBeenLastCalledWith(
       expect.objectContaining({
         name: "@my-own/private-idaho",
       }),

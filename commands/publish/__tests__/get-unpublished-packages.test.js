@@ -1,19 +1,19 @@
 "use strict";
 
-jest.mock("@evocateur/pacote/packument");
+jest.mock("pacote");
 
 // mocked module(s)
-const getPackument = require("@evocateur/pacote/packument");
+const pacote = require("pacote");
 
 // helpers
-const PackageGraph = require("@lerna/package-graph");
+const { PackageGraph } = require("@lerna/package-graph");
 const { getPackages } = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
-const getUnpublishedPackages = require("../lib/get-unpublished-packages");
+const { getUnpublishedPackages } = require("../lib/get-unpublished-packages");
 
-getPackument.mockImplementation(async pkg => {
+pacote.packument.mockImplementation(async (pkg) => {
   if (pkg === "package-1") {
     return {
       versions: {},
@@ -36,9 +36,10 @@ test("getUnpublishedPackages", async () => {
   const packages = await getPackages(cwd);
   const packageGraph = new PackageGraph(packages);
 
-  const opts = new Map();
+  const opts = {};
   const pkgs = await getUnpublishedPackages(packageGraph, opts);
 
+  expect(pacote.packument).toHaveBeenCalledWith("package-1", opts);
   expect(pkgs).toMatchInlineSnapshot(`
 Array [
   PackageGraphNode {
@@ -74,9 +75,10 @@ test("getUnpublishedPackages with private package", async () => {
   const packages = await getPackages(cwd);
   const packageGraph = new PackageGraph(packages);
 
-  const opts = new Map();
+  const opts = {};
   const pkgs = await getUnpublishedPackages(packageGraph, opts);
 
+  expect(pacote.packument).toHaveBeenCalledWith("package-1", opts);
   expect(pkgs).toMatchInlineSnapshot(`
 Array [
   PackageGraphNode {

@@ -43,32 +43,46 @@ Running `lerna version --conventional-commits` without the above flags will rele
 
 ## Options
 
-- [`--allow-branch`](#--allow-branch-glob)
-- [`--amend`](#--amend)
-- [`--changelog-header`](#--changelog-header)
-- [`--changelog-preset`](#--changelog-preset)
-- [`--conventional-commits`](#--conventional-commits)
-- [`--conventional-graduate`](#--conventional-graduate)
-- [`--conventional-prerelease`](#--conventional-prerelease)
-- [`--create-release`](#--create-release-type)
-- [`--exact`](#--exact)
-- [`--force-publish`](#--force-publish)
-- [`--git-remote`](#--git-remote-name)
-- [`--ignore-changes`](#--ignore-changes)
-- [`--ignore-scripts`](#--ignore-scripts)
-- [`--include-merged-tags`](#--include-merged-tags)
-- [`--message`](#--message-msg)
-- [`--no-changelog`](#--no-changelog)
-- [`--no-commit-hooks`](#--no-commit-hooks)
-- [`--no-git-tag-version`](#--no-git-tag-version)
-- [`--no-private`](#--no-private)
-- [`--no-push`](#--no-push)
-- [`--preid`](#--preid)
-- [`--sign-git-commit`](#--sign-git-commit)
-- [`--sign-git-tag`](#--sign-git-tag)
-- [`--force-git-tag`](#--force-git-tag)
-- [`--tag-version-prefix`](#--tag-version-prefix)
-- [`--yes`](#--yes)
+- [`@lerna/version`](#lernaversion)
+  - [Usage](#usage)
+  - [Positionals](#positionals)
+    - [semver `bump`](#semver-bump)
+  - [Prerelease](#prerelease)
+  - [Options](#options)
+    - [`--allow-branch <glob>`](#--allow-branch-glob)
+    - [`--amend`](#--amend)
+    - [`--changelog-header`](#--changelog-header)
+    - [`--changelog-preset`](#--changelog-preset)
+    - [`--conventional-commits`](#--conventional-commits)
+    - [`--conventional-graduate`](#--conventional-graduate)
+    - [`--conventional-prerelease`](#--conventional-prerelease)
+    - [`--create-release <type>`](#--create-release-type)
+    - [`--exact`](#--exact)
+    - [`--force-publish`](#--force-publish)
+    - [`--git-remote <name>`](#--git-remote-name)
+    - [`--ignore-changes`](#--ignore-changes)
+    - [`--ignore-scripts`](#--ignore-scripts)
+    - [`--include-merged-tags`](#--include-merged-tags)
+    - [`--message <msg>`](#--message-msg)
+    - [`--no-changelog`](#--no-changelog)
+    - [`--no-commit-hooks`](#--no-commit-hooks)
+    - [`--no-git-tag-version`](#--no-git-tag-version)
+    - [`--no-granular-pathspec`](#--no-granular-pathspec)
+    - [`--no-private`](#--no-private)
+    - [`--no-push`](#--no-push)
+    - [`--preid`](#--preid)
+    - [`--sign-git-commit`](#--sign-git-commit)
+    - [`--sign-git-tag`](#--sign-git-tag)
+    - [`--force-git-tag`](#--force-git-tag)
+    - [`--tag-version-prefix`](#--tag-version-prefix)
+    - [`--yes`](#--yes)
+  - [Deprecated Options](#deprecated-options)
+    - [`--cd-version`](#--cd-version)
+    - [`--repo-version`](#--repo-version)
+    - [`--skip-git`](#--skip-git)
+  - [Tips](#tips)
+    - [Generating Initial Changelogs](#generating-initial-changelogs)
+  - [Lifecycle Scripts](#lifecycle-scripts)
 
 ### `--allow-branch <glob>`
 
@@ -79,20 +93,20 @@ It is easiest (and recommended) to configure in `lerna.json`, but it is possible
 {
   "command": {
     "version": {
-      "allowBranch": "master"
+      "allowBranch": "main"
     }
   }
 }
 ```
 
-With the configuration above, the `lerna version` will fail when run from any branch other than `master`.
+With the configuration above, the `lerna version` will fail when run from any branch other than `main`.
 It is considered a best-practice to limit `lerna version` to the primary branch alone.
 
 ```json
 {
   "command": {
     "version": {
-      "allowBranch": ["master", "feature/*"]
+      "allowBranch": ["main", "feature/*"]
     }
   }
 }
@@ -151,6 +165,25 @@ Presets are names of built-in or installable configuration for conventional chan
 Presets may be passed as the full name of the package, or the auto-expanded suffix
 (e.g., `angular` is expanded to `conventional-changelog-angular`).
 
+This option is can also be specified in `lerna.json` configuration:
+
+```json
+{
+  "changelogPreset": "angular"
+}
+```
+
+If the preset exports a builder function (e.g. `conventional-changelog-conventionalcommits`), you can specify the [preset configuration](https://github.com/conventional-changelog/conventional-changelog-config-spec) too:
+
+```json
+{
+  "changelogPreset": {
+    "name": "conventionalcommits",
+    "issueUrlFormat": "{{host}}/{{owner}}/{{repository}}/issues/{{id}}"
+  }
+}
+```
+
 ### `--conventional-commits`
 
 ```sh
@@ -208,25 +241,6 @@ To authenticate with GitLab, the following environment variables can be defined.
 - `GL_API_URL` - An absolute URL to the API, including the version. (Default: https://gitlab.com/api/v4)
 
 > NOTE: When using this option, you cannot pass [`--no-changelog`](#--no-changelog).
-
-This option is can also be specified in `lerna.json` configuration:
-
-```json
-{
-  "changelogPreset": "angular"
-}
-```
-
-If the preset exports a builder function (e.g. `conventional-changelog-conventionalcommits`), you can specify the [preset configuration](https://github.com/conventional-changelog/conventional-changelog-config-spec) too:
-
-```json
-{
-  "changelogPreset": {
-    "name": "conventionalcommits",
-    "issueUrlFormat": "{{host}}/{{owner}}/{{repository}}/issues/{{id}}"
-  }
-}
-```
 
 ### `--exact`
 
@@ -357,6 +371,23 @@ Pass `--no-git-tag-version` to disable the behavior.
 
 This option is analogous to the `npm version` option [`--git-tag-version`](https://docs.npmjs.com/misc/config#git-tag-version), just inverted.
 
+### `--no-granular-pathspec`
+
+By default, `lerna version` will `git add` _only_ the leaf package manifests (and possibly changelogs) that have changed during the versioning process. This yields the equivalent of `git add -- packages/*/package.json`, but tailored to _exactly_ what changed.
+
+If you **know** you need different behavior, you'll understand: Pass `--no-granular-pathspec` to make the git command _literally_ `git add -- .`. By opting into this [pathspec](https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec), you **MUST HAVE _ALL_ SECRETS AND BUILD OUTPUT PROPERLY IGNORED, _OR IT WILL BE COMMITTED AND PUSHED_**.
+
+This option makes the most sense configured in lerna.json, as you really don't want to mess it up:
+
+```json
+{
+  "version": "independent",
+  "granularPathspec": false
+}
+```
+
+The root-level configuration is intentional, as this also covers the [identically-named option in `lerna publish`](https://github.com/lerna/lerna/tree/main/commands/publish#--no-granular-pathspec).
+
 ### `--no-private`
 
 By default, `lerna version` will include private packages when choosing versions, making commits, and tagging releases.
@@ -439,7 +470,7 @@ Use [`--no-git-tag-version`](#--no-git-tag-version) and [`--no-push`](#--no-push
 
 ### Generating Initial Changelogs
 
-If you start using the [`--conventional-commits`](#--conventional-commits) option _after_ the monorepo has been active for awhile, you can still generate changelogs for previous releases using [`conventional-changelog-cli`](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli#readme) and [`lerna exec`](https://github.com/lerna/lerna/tree/master/commands/exec#readme):
+If you start using the [`--conventional-commits`](#--conventional-commits) option _after_ the monorepo has been active for awhile, you can still generate changelogs for previous releases using [`conventional-changelog-cli`](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli#readme) and [`lerna exec`](https://github.com/lerna/lerna/tree/main/commands/exec#readme):
 
 ```bash
 # Lerna does not actually use conventional-changelog-cli, so you need to install it temporarily

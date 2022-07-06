@@ -17,35 +17,31 @@ const path = require("path");
 
 // mocked or stubbed modules
 const writePkg = require("write-pkg");
-const npmPublish = require("@lerna/npm-publish");
-const PromptUtilities = require("@lerna/prompt");
-const output = require("@lerna/output");
-const checkWorkingTree = require("@lerna/check-working-tree");
-const getUnpublishedPackages = require("../lib/get-unpublished-packages");
+const { npmPublish } = require("@lerna/npm-publish");
+const { promptConfirmation } = require("@lerna/prompt");
+const { output } = require("@lerna/output");
+const { throwIfUncommitted } = require("@lerna/check-working-tree");
+const { getUnpublishedPackages } = require("../lib/get-unpublished-packages");
 
 // helpers
-const loggingOutput = require("@lerna-test/logging-output");
+const { loggingOutput } = require("@lerna-test/logging-output");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
 
-expect.extend(require("@lerna-test/figgy-pudding-matchers"));
-
 describe("publish from-package", () => {
   it("publishes unpublished packages", async () => {
     const cwd = await initFixture("normal");
 
-    getUnpublishedPackages.mockImplementationOnce(packageGraph => {
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => {
       const pkgs = packageGraph.rawPackageList.slice(1, 3);
-      return pkgs.map(pkg => packageGraph.get(pkg.name));
+      return pkgs.map((pkg) => packageGraph.get(pkg.name));
     });
 
     await lernaPublish(cwd)("from-package");
 
-    expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
-      "Are you sure you want to publish these packages?"
-    );
+    expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to publish these packages?");
     expect(output.logged()).toMatch("Found 2 packages to publish:");
     expect(npmPublish.order()).toEqual(["package-2", "package-3"]);
   });
@@ -53,7 +49,7 @@ describe("publish from-package", () => {
   it("publishes unpublished independent packages", async () => {
     const cwd = await initFixture("independent");
 
-    getUnpublishedPackages.mockImplementationOnce(packageGraph => Array.from(packageGraph.values()));
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => Array.from(packageGraph.values()));
 
     await lernaPublish(cwd)("from-package");
 
@@ -78,7 +74,7 @@ describe("publish from-package", () => {
   });
 
   it("throws an error when uncommitted changes are present", async () => {
-    checkWorkingTree.throwIfUncommitted.mockImplementationOnce(() => {
+    throwIfUncommitted.mockImplementationOnce(() => {
       throw new Error("uncommitted");
     });
 
@@ -90,7 +86,7 @@ describe("publish from-package", () => {
   });
 
   it("does not require a git repo", async () => {
-    getUnpublishedPackages.mockImplementationOnce(packageGraph => [packageGraph.get("package-1")]);
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => [packageGraph.get("package-1")]);
 
     const cwd = await initFixture("independent");
 
@@ -110,7 +106,7 @@ describe("publish from-package", () => {
   });
 
   it("accepts --git-head override", async () => {
-    getUnpublishedPackages.mockImplementationOnce(packageGraph => [packageGraph.get("package-1")]);
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => [packageGraph.get("package-1")]);
 
     const cwd = await initFixture("independent");
 

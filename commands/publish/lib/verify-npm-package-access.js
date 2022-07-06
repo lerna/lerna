@@ -1,16 +1,23 @@
 "use strict";
 
-const access = require("@evocateur/libnpmaccess");
-const pulseTillDone = require("@lerna/pulse-till-done");
-const ValidationError = require("@lerna/validation-error");
-const FetchConfig = require("./fetch-config");
+const access = require("libnpmaccess");
+const { pulseTillDone } = require("@lerna/pulse-till-done");
+const { ValidationError } = require("@lerna/validation-error");
+const { getFetchConfig } = require("./fetch-config");
 
-module.exports = verifyNpmPackageAccess;
+module.exports.verifyNpmPackageAccess = verifyNpmPackageAccess;
 
-function verifyNpmPackageAccess(packages, username, _opts) {
-  const opts = FetchConfig(_opts, {
+/**
+ * Throw an error if the logged-in user does not have read-write access to all packages.
+ * @param {{ name: string; }[]} packages
+ * @param {string} username
+ * @param {import("./fetch-config").FetchConfig} options
+ * @returns {Promise<void>}
+ */
+function verifyNpmPackageAccess(packages, username, options) {
+  const opts = getFetchConfig(options, {
     // don't wait forever for third-party failures to be dealt with
-    "fetch-retries": 0,
+    fetchRetries: 0,
   });
 
   opts.log.silly("verifyNpmPackageAccess");

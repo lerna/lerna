@@ -2,10 +2,16 @@
 
 const log = require("npmlog");
 const pMap = require("p-map");
-const getPackument = require("@evocateur/pacote/packument");
+const pacote = require("pacote");
 
-module.exports = getUnpublishedPackages;
+module.exports.getUnpublishedPackages = getUnpublishedPackages;
 
+/**
+ * Retrieve a list of graph nodes for packages that need to be published.
+ * @param {import("@lerna/package-graph").PackageGraph} packageGraph
+ * @param {import("./fetch-config").FetchConfig} opts
+ * @returns {Promise<import("@lerna/package-graph").PackageGraphNode[]>}
+ */
 function getUnpublishedPackages(packageGraph, opts) {
   log.silly("getUnpublishedPackages");
 
@@ -14,9 +20,9 @@ function getUnpublishedPackages(packageGraph, opts) {
   // don't bother attempting to get the packument for private packages
   const graphNodesToCheck = Array.from(packageGraph.values()).filter(({ pkg }) => !pkg.private);
 
-  const mapper = pkg =>
-    getPackument(pkg.name, opts).then(
-      packument => {
+  const mapper = (pkg) =>
+    pacote.packument(pkg.name, opts).then(
+      (packument) => {
         if (packument.versions === undefined || packument.versions[pkg.version] === undefined) {
           return pkg;
         }
@@ -29,5 +35,5 @@ function getUnpublishedPackages(packageGraph, opts) {
 
   chain = chain.then(() => pMap(graphNodesToCheck, mapper, { concurrency: 4 }));
 
-  return chain.then(results => results.filter(Boolean));
+  return chain.then((results) => results.filter(Boolean));
 }

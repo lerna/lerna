@@ -1,9 +1,9 @@
 "use strict";
 
-const Command = require("@lerna/command");
-const collectUpdates = require("@lerna/collect-updates");
+const { Command } = require("@lerna/command");
+const { collectUpdates } = require("@lerna/collect-updates");
 const listable = require("@lerna/listable");
-const output = require("@lerna/output");
+const { output } = require("@lerna/output");
 
 module.exports = factory;
 
@@ -35,7 +35,7 @@ class ChangedCommand extends Command {
     );
 
     this.result = listable.format(
-      updates.map(node => node.pkg),
+      updates.map((node) => node.pkg),
       this.options
     );
 

@@ -4,20 +4,19 @@ const util = require("util");
 const multimatch = require("multimatch");
 const log = require("npmlog");
 
-const ValidationError = require("@lerna/validation-error");
+const { ValidationError } = require("@lerna/validation-error");
 
-module.exports = filterPackages;
+module.exports.filterPackages = filterPackages;
 
 /**
- * Filters a given set of packages and returns all packages that match the scope glob
- * and do not match the ignore glob
+ * Filters a list of packages, returning all packages that match the `include` glob[s]
+ * and do not match the `exclude` glob[s].
  *
- * @param {!Array.<Package>} packagesToFilter The packages to filter
- * @param {Array.<String>} include A list of globs to match the package name against
- * @param {Array.<String>} exclude A list of globs to filter the package name against
- * @param {Boolean} showPrivate When false, filter out private packages
- * @param {Boolean} continueIfNoMatch When true, do not throw if no package is matched
- * @return {Array.<Package>} The packages with a name matching the glob
+ * @param {import("@lerna/package").Package[]} packagesToFilter The packages to filter
+ * @param {string[]} [include] A list of globs to match the package name against
+ * @param {string[]} [exclude] A list of globs to filter the package name against
+ * @param {boolean} [showPrivate] When false, filter out private packages
+ * @param {boolean} [continueIfNoMatch] When true, do not throw if no package is matched
  * @throws when a given glob would produce an empty list of packages and `continueIfNoMatch` is not set.
  */
 function filterPackages(packagesToFilter, include = [], exclude = [], showPrivate, continueIfNoMatch) {
@@ -41,7 +40,7 @@ function filterPackages(packagesToFilter, include = [], exclude = [], showPrivat
       patterns.unshift("**");
     }
 
-    const pnames = Array.from(filtered).map(pkg => pkg.name);
+    const pnames = Array.from(filtered).map((pkg) => pkg.name);
     const chosen = new Set(multimatch(pnames, patterns));
 
     for (const pkg of filtered) {
@@ -58,6 +57,9 @@ function filterPackages(packagesToFilter, include = [], exclude = [], showPrivat
   return Array.from(filtered);
 }
 
+/**
+ * @param {string[]|string|undefined} thing
+ */
 function arrify(thing) {
   if (!thing) {
     return [];
@@ -70,6 +72,9 @@ function arrify(thing) {
   return thing;
 }
 
+/**
+ * @param {string[]} patterns
+ */
 function negate(patterns) {
-  return arrify(patterns).map(pattern => `!${pattern}`);
+  return arrify(patterns).map((pattern) => `!${pattern}`);
 }

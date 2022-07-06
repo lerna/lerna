@@ -3,14 +3,19 @@
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = gitPush;
+module.exports.gitPush = gitPush;
 
+/**
+ * @param {string} remote
+ * @param {string} branch
+ * @param {import("@lerna/child-process").ExecOpts} opts
+ */
 function gitPush(remote, branch, opts) {
   log.silly("gitPush", remote, branch);
 
   return childProcess
     .exec("git", ["push", "--follow-tags", "--no-verify", "--atomic", remote, branch], opts)
-    .catch(error => {
+    .catch((error) => {
       // @see https://github.com/sindresorhus/execa/blob/v1.0.0/index.js#L159-L179
       // the error message _should_ be on stderr except when GIT_REDIRECT_STDERR has been configured to redirect
       // to stdout. More details in https://git-scm.com/docs/git#Documentation/git.txt-codeGITREDIRECTSTDERRcode

@@ -3,14 +3,14 @@
 jest.mock("@lerna/child-process");
 
 // mocked modules
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 
 // file under test
-const npmRunScript = require("..");
+const { npmRunScript, npmRunScriptStreaming } = require("..");
 
 describe("npm-run-script", () => {
-  ChildProcessUtilities.exec.mockResolvedValue();
-  ChildProcessUtilities.spawnStreaming.mockResolvedValue();
+  childProcess.exec.mockResolvedValue();
+  childProcess.spawnStreaming.mockResolvedValue();
 
   describe("npmRunScript()", () => {
     it("runs an npm script in a directory", async () => {
@@ -25,11 +25,12 @@ describe("npm-run-script", () => {
 
       await npmRunScript(script, config);
 
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["run", script, "--bar", "baz"], {
+      expect(childProcess.exec).toHaveBeenLastCalledWith("npm", ["run", script, "--bar", "baz"], {
         cwd: config.pkg.location,
         env: {},
         pkg: config.pkg,
         reject: true,
+        windowsHide: false,
       });
     });
 
@@ -46,11 +47,12 @@ describe("npm-run-script", () => {
 
       await npmRunScript(script, config);
 
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["run", script], {
+      expect(childProcess.exec).toHaveBeenLastCalledWith("npm", ["run", script], {
         cwd: config.pkg.location,
         env: {},
         pkg: config.pkg,
         reject: false,
+        windowsHide: false,
       });
     });
 
@@ -66,16 +68,17 @@ describe("npm-run-script", () => {
 
       await npmRunScript(script, config);
 
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("yarn", ["run", script, "--bar", "baz"], {
+      expect(childProcess.exec).toHaveBeenLastCalledWith("yarn", ["run", script, "--bar", "baz"], {
         cwd: config.pkg.location,
         env: {},
         pkg: config.pkg,
         reject: true,
+        windowsHide: false,
       });
     });
   });
 
-  describe("npmRunScript.stream()", () => {
+  describe("npmRunScriptStreaming()", () => {
     it("runs an npm script in a package with streaming", async () => {
       const script = "foo";
       const config = {
@@ -88,9 +91,9 @@ describe("npm-run-script", () => {
         npmClient: "npm",
       };
 
-      await npmRunScript.stream(script, config);
+      await npmRunScriptStreaming(script, config);
 
-      expect(ChildProcessUtilities.spawnStreaming).toHaveBeenLastCalledWith(
+      expect(childProcess.spawnStreaming).toHaveBeenLastCalledWith(
         "npm",
         ["run", script, "--bar", "baz"],
         {
@@ -98,6 +101,7 @@ describe("npm-run-script", () => {
           env: {},
           pkg: config.pkg,
           reject: true,
+          windowsHide: false,
         },
         config.pkg.name
       );
@@ -115,9 +119,9 @@ describe("npm-run-script", () => {
         reject: false,
       };
 
-      await npmRunScript.stream(script, config);
+      await npmRunScriptStreaming(script, config);
 
-      expect(ChildProcessUtilities.spawnStreaming).toHaveBeenLastCalledWith(
+      expect(childProcess.spawnStreaming).toHaveBeenLastCalledWith(
         "npm",
         ["run", script],
         {
@@ -125,6 +129,7 @@ describe("npm-run-script", () => {
           env: {},
           pkg: config.pkg,
           reject: false,
+          windowsHide: false,
         },
         undefined
       );

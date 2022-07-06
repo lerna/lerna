@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-const describe = require("@lerna/describe-ref");
+const { describe } = require("@lerna/describe-ref");
 
 (async () => {
   const { lastTagName, lastVersion, refCount, sha, isDirty } = await describe();

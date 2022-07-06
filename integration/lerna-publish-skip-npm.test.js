@@ -2,9 +2,9 @@
 
 const path = require("path");
 
-const cliRunner = require("@lerna-test/cli-runner");
-const commitChangeToPackage = require("@lerna-test/commit-change-to-package");
-const gitTag = require("@lerna-test/git-tag");
+const { cliRunner } = require("@lerna-test/cli-runner");
+const { commitChangeToPackage } = require("@lerna-test/commit-change-to-package");
+const { gitTag } = require("@lerna-test/git-tag");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );

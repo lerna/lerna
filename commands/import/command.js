@@ -7,7 +7,7 @@ exports.command = "import <dir>";
 
 exports.describe = "Import a package into the monorepo with commit history";
 
-exports.builder = yargs =>
+exports.builder = (yargs) =>
   yargs
     .positional("dir", { describe: "The path to an external git repository that contains an npm package" })
     .options({

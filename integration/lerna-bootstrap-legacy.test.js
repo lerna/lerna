@@ -3,7 +3,7 @@
 const fs = require("fs-extra");
 const globby = require("globby");
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 test("lerna bootstrap links all packages", async () => {
@@ -27,6 +27,7 @@ lerna success Bootstrapped 4 packages
 
   // windows requires a different format, don't care
   if (process.platform !== "win32") {
+    // eslint-disable-next-line jest/no-conditional-expect
     expect(scriptOutput).toMatch(/^>= 8\.9\.0$/m);
   }
 
@@ -45,7 +46,7 @@ package-3 cli2 package-2 OK
     absolute: true,
   };
   const lockfiles = await globby(["package-*/package-lock.json"], config);
-  const [lock1, lock2, lock3] = await Promise.all(lockfiles.sort().map(fp => fs.readJson(fp)));
+  const [lock1, lock2, lock3] = await Promise.all(lockfiles.sort().map((fp) => fs.readJson(fp)));
 
   expect(lock1).toMatchObject({
     name: "@integration/package-1",

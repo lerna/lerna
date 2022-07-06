@@ -1,12 +1,12 @@
 {
   "name": "@lerna/npm-install",
-  "version": "3.16.5",
+  "version": "5.1.6",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/npm-install#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -17,7 +17,7 @@
   ],
   "main": "npm-install.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -33,10 +33,10 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/get-npm-exec-opts": "file:../get-npm-exec-opts",
-    "fs-extra": "^8.1.0",
-    "npm-package-arg": "^6.1.0",
-    "npmlog": "^4.1.2",
-    "signal-exit": "^3.0.2",
-    "write-pkg": "^3.1.0"
+    "fs-extra": "^9.1.0",
+    "npm-package-arg": "^8.1.0",
+    "npmlog": "^6.0.2",
+    "signal-exit": "^3.0.3",
+    "write-pkg": "^4.0.0"
   }
 }

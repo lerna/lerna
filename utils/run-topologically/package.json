@@ -1,12 +1,12 @@
 {
   "name": "@lerna/run-topologically",
-  "version": "3.18.5",
+  "version": "5.1.6",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/run-topologically#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -17,7 +17,7 @@
   ],
   "main": "run-topologically.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "@lerna/query-graph": "file:../query-graph",
-    "figgy-pudding": "^3.5.1",
-    "p-queue": "^4.0.0"
+    "p-queue": "^6.6.2"
   }
 }

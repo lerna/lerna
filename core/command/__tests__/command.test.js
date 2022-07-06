@@ -8,7 +8,7 @@ const path = require("path");
 const tempy = require("tempy");
 
 // partially mocked
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 const os = require("os");
 
 // normalize concurrency across different environments (localhost, CI, etc)
@@ -16,11 +16,11 @@ jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const loggingOutput = require("@lerna-test/logging-output");
-const updateLernaConfig = require("@lerna-test/update-lerna-config");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
 
 // file under test
-const Command = require("..");
+const { Command } = require("..");
 
 describe("core-command", () => {
   let testDir;
@@ -37,7 +37,7 @@ describe("core-command", () => {
     }
   });
 
-  ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
+  childProcess.getChildProcessCount = jest.fn(() => 0);
 
   // swallow errors when passed in argv
   const onRejected = () => {};
@@ -143,7 +143,7 @@ describe("core-command", () => {
     });
 
     it("waits to resolve when 1 child process active", async () => {
-      ChildProcessUtilities.getChildProcessCount.mockReturnValueOnce(1);
+      childProcess.getChildProcessCount.mockReturnValueOnce(1);
 
       await testFactory();
 
@@ -152,7 +152,7 @@ describe("core-command", () => {
     });
 
     it("waits to resolve when 2 child processes active", async () => {
-      ChildProcessUtilities.getChildProcessCount.mockReturnValueOnce(2);
+      childProcess.getChildProcessCount.mockReturnValueOnce(2);
 
       await testFactory();
 
@@ -180,7 +180,7 @@ describe("core-command", () => {
         execute() {
           const err = new Error("message");
 
-          err.cmd = "test-pkg-err";
+          err.command = "test-pkg-err";
           err.stdout = "pkg-err-stdout";
           err.stderr = "pkg-err-stderr";
           err.pkg = {
@@ -195,7 +195,7 @@ describe("core-command", () => {
 
       await expect(command).rejects.toThrow(
         expect.objectContaining({
-          cmd: "test-pkg-err",
+          command: "test-pkg-err",
           stdout: "pkg-err-stdout",
           stderr: "pkg-err-stderr",
           pkg: expect.objectContaining({
@@ -218,7 +218,7 @@ describe("core-command", () => {
         execute() {
           const err = new Error("message");
 
-          err.cmd = "test-pkg-err";
+          err.command = "test-pkg-err";
           err.stdout = "pkg-err-stdout";
           err.stderr = "pkg-err-stderr";
           err.pkg = {
@@ -330,7 +330,7 @@ describe("core-command", () => {
   });
 
   describe("subclass implementation", () => {
-    ["initialize", "execute"].forEach(method => {
+    ["initialize", "execute"].forEach((method) => {
       it(`throws if ${method}() is not overridden`, () => {
         const command = new Command({ cwd: testDir, onRejected });
         expect(() => command[method]()).toThrow();

@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - next
+      - "test/*"
+  pull_request:
+    types: [assigned, opened, synchronize, reopened, labeled]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install primary node version (see volta config in package.json) and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+
+      - run: npm run format:check
+      - run: npm run ci:lint
+
+  e2e:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+
+      - name: Install primary node version (see volta config in package.json) and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+
+      - run: npm run e2e
+
+  test:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [14, "16.15.0", 18]
+        script: ["ci:test:unit", "ci:test:integration"]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+
+      - name: Install node version ${{ matrix.node }} and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+        with:
+          node-version: ${{ matrix.node }}
+
+      - run: npm run ${{ matrix.script }}
+
+  windows:
+    needs: [lint]
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        script: ["ci:test:unit", "ci:test:integration"]
+        subset: [publish, non-publish]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+
+      - name: Install primary node version (see volta config in package.json) and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+
+      - run: npm run ${{ matrix.script }}
+        env:
+          LERNA_CI_TYPE: ${{ matrix.subset }}
+          LERNA_OS_TYPE: windows

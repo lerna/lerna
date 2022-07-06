@@ -149,7 +149,7 @@ Object.defineProperty(exports, "defaults", {
       "save-prefix": "^",
       "save-prod": false,
       scope: "",
-      "script-shell": null,
+      "script-shell": undefined,
       "scripts-prepend-node-path": "warn-only",
       searchopts: "",
       searchexclude: null,

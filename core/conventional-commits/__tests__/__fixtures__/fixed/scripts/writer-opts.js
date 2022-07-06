@@ -6,7 +6,7 @@ module.exports = {
     let discard = true;
     const issues = [];
 
-    commit.notes.forEach(note => {
+    commit.notes.forEach((note) => {
       note.title = `BREAKING CHANGES`;
       discard = false;
     });
@@ -65,7 +65,7 @@ module.exports = {
     }
 
     // remove references that already appear in the subject
-    commit.references = commit.references.filter(reference => {
+    commit.references = commit.references.filter((reference) => {
       if (issues.indexOf(reference.issue) === -1) {
         return true;
       }

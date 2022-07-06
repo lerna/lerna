@@ -7,7 +7,7 @@ exports.command = "create <name> [loc]";
 
 exports.describe = "Create a new lerna-managed package";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   yargs
     .positional("name", {
       describe: "The package name (including scope), which must be locally unique _and_ publicly available",

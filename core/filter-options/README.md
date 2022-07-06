@@ -42,14 +42,14 @@ Only include packages that have been changed since the specified `ref`. If no re
 # List the contents of packages that have changed since the latest tag
 $ lerna exec --since -- ls -la
 
-# Run the tests for all packages that have changed since `master`
-$ lerna run test --since master
+# Run the tests for all packages that have changed since `main`
+$ lerna run test --since main
 
 # List all packages that have changed since `some-branch`
 $ lerna ls --since some-branch
 ```
 
-_This can be particularly useful when used in CI, if you can obtain the target branch a PR will be going into, because you can use that as the `ref` to the `--since` option. This works well for PRs going into master as well as feature branches._
+_This can be particularly useful when used in CI, if you can obtain the target branch a PR will be going into, because you can use that as the `ref` to the `--since` option. This works well for PRs going into the default branch as well as feature branches._
 
 ### `--exclude-dependents`
 

@@ -3,9 +3,9 @@
 const path = require("path");
 const pMap = require("p-map");
 const slash = require("slash");
-const Command = require("@lerna/command");
-const PackageGraph = require("@lerna/package-graph");
-const symlinkDependencies = require("@lerna/symlink-dependencies");
+const { Command } = require("@lerna/command");
+const { PackageGraph } = require("@lerna/package-graph");
+const { symlinkDependencies } = require("@lerna/symlink-dependencies");
 
 module.exports = factory;
 
@@ -74,7 +74,7 @@ class LinkCommand extends Command {
     rootPkg.set("dependencies", rootDependencies);
     rootPkg.set("devDependencies", Object.assign(rootPkg.get("devDependencies") || {}, hoisted));
 
-    return pMap(changed, node => node.pkg.serialize()).then(() => rootPkg.serialize());
+    return pMap(changed, (node) => node.pkg.serialize()).then(() => rootPkg.serialize());
   }
 }
 

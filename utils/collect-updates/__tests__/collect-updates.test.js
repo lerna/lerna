@@ -1,24 +1,22 @@
 "use strict";
 
-const dedent = require("dedent");
-
 jest.mock("@lerna/describe-ref");
 jest.mock("../lib/has-tags");
 jest.mock("../lib/make-diff-predicate");
 
 // mocked modules
-const describeRef = require("@lerna/describe-ref");
-const hasTags = require("../lib/has-tags");
-const makeDiffPredicate = require("../lib/make-diff-predicate");
+const { describeRefSync } = require("@lerna/describe-ref");
+const { hasTags } = require("../lib/has-tags");
+const { makeDiffPredicate } = require("../lib/make-diff-predicate");
 
 // helpers
 const buildGraph = require("../__helpers__/build-graph");
 
 // file under test
-const collectUpdates = require("..");
+const { collectUpdates } = require("..");
 
 // default mock implementations
-describeRef.sync.mockReturnValue({
+describeRefSync.mockReturnValue({
   lastTagName: "v1.0.0",
   lastVersion: "1.0.0",
   refCount: "1",
@@ -32,7 +30,7 @@ const changedPackages = new Set();
 const hasDiff = jest
   .fn()
   .mockName("hasDiff")
-  .mockImplementation(node => changedPackages.has(node.name));
+  .mockImplementation((node) => changedPackages.has(node.name));
 
 makeDiffPredicate.mockImplementation(() => hasDiff);
 
@@ -49,7 +47,7 @@ const ALL_NODES = Object.freeze([
   expect.objectContaining({ name: "package-standalone" }),
 ]);
 
-const toPrereleaseMapper = names => pkg => {
+const toPrereleaseMapper = (names) => (pkg) => {
   return !names || names.includes(pkg.name) ? Object.assign(pkg, { version: `${pkg.version}-alpha.0` }) : pkg;
 };
 
@@ -75,7 +73,7 @@ describe("collectUpdates()", () => {
       }),
     ]);
     expect(hasTags).toHaveBeenLastCalledWith(execOpts);
-    expect(describeRef.sync).toHaveBeenLastCalledWith(execOpts, undefined);
+    expect(describeRefSync).toHaveBeenLastCalledWith(execOpts, undefined);
     expect(makeDiffPredicate).toHaveBeenLastCalledWith("v1.0.0", execOpts, undefined);
   });
 
@@ -118,7 +116,7 @@ describe("collectUpdates()", () => {
     changedPackages.add("package-dag-3");
 
     const graph = buildGraph();
-    const pkgs = graph.rawPackageList.filter(pkg => pkg.name !== "package-dag-3");
+    const pkgs = graph.rawPackageList.filter((pkg) => pkg.name !== "package-dag-3");
     const execOpts = { cwd: "/test" };
 
     const updates = collectUpdates(pkgs, graph, execOpts, {});
@@ -133,7 +131,7 @@ describe("collectUpdates()", () => {
     changedPackages.add("package-dag-1");
 
     const graph = buildGraph();
-    const pkgs = graph.rawPackageList.filter(pkg => pkg.name !== "package-dag-2a");
+    const pkgs = graph.rawPackageList.filter((pkg) => pkg.name !== "package-dag-2a");
     const execOpts = { cwd: "/test" };
 
     const updates = collectUpdates(pkgs, graph, execOpts, {});
@@ -149,7 +147,7 @@ describe("collectUpdates()", () => {
   it("skips change detection when current revison is already released", () => {
     changedPackages.add("package-dag-1");
 
-    describeRef.sync.mockReturnValueOnce({
+    describeRefSync.mockReturnValueOnce({
       refCount: "0",
     });
 
@@ -313,28 +311,23 @@ describe("collectUpdates()", () => {
     ]);
   });
 
-  it(
-    dedent`
-    always includes prereleased nodes targeted by --conventional-graduate <pkg> --conventional-graduate <pkg>
-  `,
-    () => {
-      changedPackages.add("package-dag-3");
+  it("always includes prereleased nodes targeted by --conventional-graduate <pkg> --conventional-graduate <pkg>", () => {
+    changedPackages.add("package-dag-3");
 
-      const graph = buildGraph(toPrereleaseMapper(["package-dag-3", "package-standalone", "package-dag-2b"]));
-      const pkgs = graph.rawPackageList;
-      const execOpts = { cwd: "/test" };
+    const graph = buildGraph(toPrereleaseMapper(["package-dag-3", "package-standalone", "package-dag-2b"]));
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
 
-      const updates = collectUpdates(pkgs, graph, execOpts, {
-        forcePublish: ["package-standalone", "package-dag-2b"],
-      });
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      forcePublish: ["package-standalone", "package-dag-2b"],
+    });
 
-      expect(updates).toEqual([
-        expect.objectContaining({ name: "package-dag-2b" }),
-        expect.objectContaining({ name: "package-dag-3" }),
-        expect.objectContaining({ name: "package-standalone" }),
-      ]);
-    }
-  );
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-2b" }),
+      expect.objectContaining({ name: "package-dag-3" }),
+      expect.objectContaining({ name: "package-standalone" }),
+    ]);
+  });
 
   it("uses revision range with --canary", () => {
     changedPackages.add("package-dag-2a");
@@ -369,7 +362,7 @@ describe("collectUpdates()", () => {
   it("does not exit early on tagged release when --since <ref> is passed", () => {
     changedPackages.add("package-dag-1");
 
-    describeRef.sync.mockReturnValueOnce({
+    describeRefSync.mockReturnValueOnce({
       refCount: "0",
     });
 

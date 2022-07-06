@@ -1,12 +1,12 @@
 {
   "name": "@lerna/run-lifecycle",
-  "version": "3.16.2",
+  "version": "5.1.6",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/run-lifecycle#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -17,7 +17,7 @@
   ],
   "main": "run-lifecycle.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -32,8 +32,7 @@
   },
   "dependencies": {
     "@lerna/npm-conf": "file:../npm-conf",
-    "figgy-pudding": "^3.5.1",
-    "npm-lifecycle": "^3.1.2",
-    "npmlog": "^4.1.2"
+    "@npmcli/run-script": "^3.0.2",
+    "npmlog": "^6.0.2"
   }
 }

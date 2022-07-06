@@ -6,7 +6,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "execa": "^1.0.0",
-    "temp-write": "^3.4.0"
+    "@lerna/temp-write": "file:../../utils/temp-write",
+    "execa": "^5.0.0"
   }
 }

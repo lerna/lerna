@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-const collectUncommitted = require("@lerna/collect-uncommitted");
+const { collectUncommitted } = require("@lerna/collect-uncommitted");
 
 // values listed here are their defaults
 const options = {

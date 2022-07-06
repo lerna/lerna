@@ -3,10 +3,13 @@
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = currentBranch;
+module.exports.getCurrentBranch = getCurrentBranch;
 
-function currentBranch(opts) {
-  log.silly("currentBranch");
+/**
+ * @param {import("@lerna/child-process").ExecOpts} opts
+ */
+function getCurrentBranch(opts) {
+  log.silly("getCurrentBranch");
 
   const branch = childProcess.execSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], opts);
   log.verbose("currentBranch", branch);

@@ -20,7 +20,7 @@ const passedArgs = process.argv.slice(2).join(" ");
 // to focus on the files under test
 const files = fs
   .readdirSync(cwd)
-  .filter(file => file.indexOf("exec-test") === -1)
+  .filter((file) => file.indexOf("exec-test") === -1)
   .join("\n");
 
 console.log(`--> in "${parsedCwd}" with extra args "${passedArgs}"`);

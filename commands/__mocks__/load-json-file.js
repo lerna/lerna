@@ -3,7 +3,7 @@
 const path = require("path");
 const normalizePath = require("normalize-path");
 
-const loadJsonFile = require.requireActual("load-json-file");
+const loadJsonFile = jest.requireActual("load-json-file");
 const asyncRegistry = new Map();
 const syncRegistry = new Map();
 
@@ -17,13 +17,13 @@ function incrementCalled(registry, manifestLocation) {
 }
 
 // by default, act like a spy that counts number of times each location was loaded
-const mockLoadJsonFile = jest.fn(manifestLocation => {
+const mockLoadJsonFile = jest.fn((manifestLocation) => {
   incrementCalled(asyncRegistry, manifestLocation);
 
   return loadJsonFile(manifestLocation);
 });
 
-const mockLoadJsonFileSync = jest.fn(manifestLocation => {
+const mockLoadJsonFileSync = jest.fn((manifestLocation) => {
   incrementCalled(syncRegistry, manifestLocation);
 
   return loadJsonFile.sync(manifestLocation);

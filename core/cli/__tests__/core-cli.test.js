@@ -1,17 +1,13 @@
 "use strict";
 
-const ValidationError = require("@lerna/validation-error");
-const loggingOutput = require("@lerna-test/logging-output");
+const { ValidationError } = require("@lerna/validation-error");
+const { loggingOutput } = require("@lerna-test/logging-output");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const coreCLI = require("..");
 
 function prepare(cwd) {
   // DRY setup for yargs instance
-  return coreCLI([], cwd)
-    .exitProcess(false)
-    .detectLocale(false)
-    .showHelpOnFail(false)
-    .wrap(null);
+  return coreCLI([], cwd).exitProcess(false).detectLocale(false).showHelpOnFail(false).wrap(null);
 }
 
 async function parse(instance, args) {
@@ -120,7 +116,7 @@ describe("core-cli", () => {
     expect(loggingOutput("error")).toEqual([]);
   });
 
-  it("logs generic command errors", async () => {
+  it("logs generic command errors with fallback exit code", async () => {
     const cli = prepare(cwd);
     const spy = jest.spyOn(cli, "exit");
 
@@ -141,39 +137,18 @@ describe("core-cli", () => {
     );
   });
 
-  it("coerces string exit codes to 1", async () => {
+  it("preserves explicit exit codes", async () => {
     const cli = prepare(cwd);
     const spy = jest.spyOn(cli, "exit");
 
-    cli.command("errname", "a string code", {}, async () => {
-      const err = new Error("kersplode");
-      err.code = "E401";
-      throw err;
-    });
-
-    // paradoxically, this does NOT reject...
-    await parse(cli, ["errname"]);
-
-    expect(spy).toHaveBeenLastCalledWith(
-      1,
-      expect.objectContaining({
-        message: "kersplode",
-      })
-    );
-  });
-
-  it("preserves exotic exit codes", async () => {
-    const cli = prepare(cwd);
-    const spy = jest.spyOn(cli, "exit");
-
-    cli.command("exotic", "exit code", {}, async () => {
+    cli.command("explicit", "exit code", {}, async () => {
       const err = new Error("fancy fancy");
-      err.code = 127;
+      err.exitCode = 127;
       throw err;
     });
 
     // paradoxically, this does NOT reject...
-    await parse(cli, ["exotic"]);
+    await parse(cli, ["explicit"]);
 
     expect(spy).toHaveBeenLastCalledWith(
       127,

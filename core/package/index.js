@@ -8,6 +8,18 @@ const writePkg = require("write-pkg");
 // symbol used to "hide" internal state
 const PKG = Symbol("pkg");
 
+/* eslint-disable no-underscore-dangle */
+
+// private fields
+const _location = Symbol("location");
+const _resolved = Symbol("resolved");
+const _rootPath = Symbol("rootPath");
+const _scripts = Symbol("scripts");
+const _contents = Symbol("contents");
+
+/**
+ * @param {import("npm-package-arg").Result} result
+ */
 function binSafeName({ name, scope }) {
   return scope ? name.substring(scope.length + 1) : name;
 }
@@ -30,60 +42,116 @@ function shallowCopy(json) {
   }, {});
 }
 
+/**
+ * @typedef {object} RawManifest The subset of package.json properties that Lerna uses
+ * @property {string} name
+ * @property {string} version
+ * @property {boolean} [private]
+ * @property {Record<string, string>|string} [bin]
+ * @property {Record<string, string>} [scripts]
+ * @property {Record<string, string>} [dependencies]
+ * @property {Record<string, string>} [devDependencies]
+ * @property {Record<string, string>} [optionalDependencies]
+ * @property {Record<string, string>} [peerDependencies]
+ * @property {Record<'directory' | 'registry' | 'tag', string>} [publishConfig]
+ * @property {string[] | { packages: string[] }} [workspaces]
+ */
+
+/**
+ * Lerna's internal representation of a local package, with
+ * many values resolved directly from the original JSON.
+ */
 class Package {
+  /**
+   * Create a Package instance from parameters, possibly reusing existing instance.
+   * @param {string|Package|RawManifest} ref A path to a package.json file, Package instance, or JSON object
+   * @param {string} [dir] If `ref` is a JSON object, this is the location of the manifest
+   * @returns {Package}
+   */
+  static lazy(ref, dir = ".") {
+    if (typeof ref === "string") {
+      const location = path.resolve(path.basename(ref) === "package.json" ? path.dirname(ref) : ref);
+      const manifest = loadJsonFile.sync(path.join(location, "package.json"));
+
+      return new Package(manifest, location);
+    }
+
+    // don't use instanceof because it fails across nested module boundaries
+    if ("__isLernaPackage" in ref) {
+      return ref;
+    }
+
+    // assume ref is a json object
+    return new Package(ref, dir);
+  }
+
+  /**
+   * @param {RawManifest} pkg
+   * @param {string} location
+   * @param {string} [rootPath]
+   */
   constructor(pkg, location, rootPath = location) {
     // npa will throw an error if the name is invalid
     const resolved = npa.resolve(pkg.name, `file:${path.relative(rootPath, location)}`, rootPath);
 
-    Object.defineProperties(this, {
-      // read-only
-      name: {
-        enumerable: true,
-        value: pkg.name,
-      },
-      location: {
-        value: location,
-      },
-      private: {
-        value: Boolean(pkg.private),
-      },
-      resolved: {
-        value: resolved,
-      },
-      rootPath: {
-        value: rootPath,
-      },
-      // internal state is "private"
-      [PKG]: {
-        configurable: true,
-        value: pkg,
-      },
-      // safer than instanceof across module boundaries
-      __isLernaPackage: {
-        value: true,
-      },
-      // immutable
-      bin: {
-        value:
-          typeof pkg.bin === "string"
-            ? {
-                [binSafeName(resolved)]: pkg.bin,
-              }
-            : Object.assign({}, pkg.bin),
-      },
-      scripts: {
-        value: Object.assign({}, pkg.scripts),
-      },
-      manifestLocation: {
-        value: path.join(location, "package.json"),
-      },
-      nodeModulesLocation: {
-        value: path.join(location, "node_modules"),
-      },
-      binLocation: {
-        value: path.join(location, "node_modules", ".bin"),
-      },
-    });
+    this.name = pkg.name;
+    this[PKG] = pkg;
+
+    // omit raw pkg from default util.inspect() output, but preserve internal mutability
+    Object.defineProperty(this, PKG, { enumerable: false, writable: true });
+
+    this[_location] = location;
+    this[_resolved] = resolved;
+    this[_rootPath] = rootPath;
+    this[_scripts] = { ...pkg.scripts };
+  }
+
+  // readonly getters
+  get location() {
+    return this[_location];
+  }
+
+  get private() {
+    return Boolean(this[PKG].private);
+  }
+
+  get resolved() {
+    return this[_resolved];
+  }
+
+  get rootPath() {
+    return this[_rootPath];
+  }
+
+  get scripts() {
+    return this[_scripts];
+  }
+
+  get bin() {
+    const pkg = this[PKG];
+    return typeof pkg.bin === "string"
+      ? {
+          [binSafeName(this.resolved)]: pkg.bin,
+        }
+      : Object.assign({}, pkg.bin);
+  }
+
+  get binLocation() {
+    return path.join(this.location, "node_modules", ".bin");
+  }
+
+  get manifestLocation() {
+    return path.join(this.location, "package.json");
+  }
+
+  get nodeModulesLocation() {
+    return path.join(this.location, "node_modules");
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get __isLernaPackage() {
+    // safer than instanceof across module boundaries
+    return true;
   }
 
   // accessors
@@ -97,8 +165,8 @@ class Package {
 
   get contents() {
     // if modified with setter, use that value
-    if (this._contents) {
-      return this._contents;
+    if (this[_contents]) {
+      return this[_contents];
     }
 
     // if provided by pkg.publishConfig.directory value
@@ -111,9 +179,7 @@ class Package {
   }
 
   set contents(subDirectory) {
-    Object.defineProperty(this, "_contents", {
-      value: path.join(this.location, subDirectory),
-    });
+    this[_contents] = path.join(this.location, subDirectory);
   }
 
   // "live" collections
@@ -135,8 +201,9 @@ class Package {
 
   /**
    * Map-like retrieval of arbitrary values
-   * @param {String} key field name to retrieve value
-   * @returns {Any} value stored under key, if present
+   * @template {keyof RawManifest} K
+   * @param {K} key field name to retrieve value
+   * @returns {RawManifest[K]} value stored under key, if present
    */
   get(key) {
     return this[PKG][key];
@@ -144,8 +211,9 @@ class Package {
 
   /**
    * Map-like storage of arbitrary values
-   * @param {String} key field name to store value
-   * @param {Any} val value to store
+   * @template {keyof RawManifest} K
+   * @param {T} key field name to store value
+   * @param {RawManifest[K]} val value to store
    * @returns {Package} instance for chaining
    */
   set(key, val) {
@@ -166,11 +234,8 @@ class Package {
    * Refresh internal state from disk (e.g., changed by external lifecycles)
    */
   refresh() {
-    return loadJsonFile(this.manifestLocation).then(pkg => {
-      // overwrite configurable property
-      Object.defineProperty(this, PKG, {
-        value: pkg,
-      });
+    return loadJsonFile(this.manifestLocation).then((pkg) => {
+      this[PKG] = pkg;
 
       return this;
     });
@@ -230,22 +295,4 @@ class Package {
   }
 }
 
-function lazy(ref, dir = ".") {
-  if (typeof ref === "string") {
-    const location = path.resolve(path.basename(ref) === "package.json" ? path.dirname(ref) : ref);
-    const manifest = loadJsonFile.sync(path.join(location, "package.json"));
-
-    return new Package(manifest, location);
-  }
-
-  // don't use instanceof because it fails across nested module boundaries
-  if ("__isLernaPackage" in ref) {
-    return ref;
-  }
-
-  // assume ref is a json object
-  return new Package(ref, dir);
-}
-
-module.exports = Package;
-module.exports.lazy = lazy;
+module.exports.Package = Package;

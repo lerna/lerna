@@ -1,1 +1,2 @@
-*.log
+# simulate a "dynamic", intentionally unversioned package by gitignoring it
+packages/dynamic-*

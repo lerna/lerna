@@ -1,13 +1,13 @@
 {
   "name": "@lerna/listable",
-  "version": "3.18.5",
+  "version": "5.1.6",
   "description": "Shared logic for listing package information",
   "keywords": [
     "lerna",
     "utils"
   ],
   "author": "Daniel Stockman <daniel.stockman@gmail.com>",
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/listable#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "main": "index.js",
   "files": [
@@ -15,7 +15,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">= 6.9.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@lerna/query-graph": "file:../query-graph",
-    "chalk": "^2.3.1",
-    "columnify": "^1.5.4"
+    "chalk": "^4.1.0",
+    "columnify": "^1.6.0"
   }
 }

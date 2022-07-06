@@ -3,13 +3,13 @@
 jest.mock("@lerna/prompt");
 
 // mocked modules
-const prompt = require("@lerna/prompt");
+const { promptTextInput } = require("@lerna/prompt");
 
 // file under test
-const otplease = require("..");
+const { otplease, getOneTimePassword } = require("..");
 
 // global mock setup
-prompt.input.mockResolvedValue("123456");
+promptTextInput.mockResolvedValue("123456");
 
 describe("@lerna/otplease", () => {
   const stdinIsTTY = process.stdin.isTTY;
@@ -31,7 +31,7 @@ describe("@lerna/otplease", () => {
     const result = await otplease(fn, {});
 
     expect(fn).toHaveBeenCalled();
-    expect(prompt.input).not.toHaveBeenCalled();
+    expect(promptTextInput).not.toHaveBeenCalled();
     expect(result).toBe(obj);
   });
 
@@ -41,7 +41,7 @@ describe("@lerna/otplease", () => {
     const result = await otplease(fn, {});
 
     expect(fn).toHaveBeenCalledTimes(2);
-    expect(prompt.input).toHaveBeenCalled();
+    expect(promptTextInput).toHaveBeenCalled();
     expect(result).toBe(obj);
   });
 
@@ -52,7 +52,7 @@ describe("@lerna/otplease", () => {
 
     const result = await otplease(fn, {}, otpCache);
     expect(fn).toHaveBeenCalledTimes(2);
-    expect(prompt.input).toHaveBeenCalled();
+    expect(promptTextInput).toHaveBeenCalled();
     expect(result).toBe(obj);
     expect(otpCache.otp).toBe("123456");
   });
@@ -64,7 +64,7 @@ describe("@lerna/otplease", () => {
     const result = await otplease(fn, {}, otpCache);
 
     expect(fn).toHaveBeenCalledTimes(1);
-    expect(prompt.input).not.toHaveBeenCalled();
+    expect(promptTextInput).not.toHaveBeenCalled();
     expect(result).toBe(obj);
     expect(otpCache.otp).toBe("654321");
   });
@@ -76,7 +76,7 @@ describe("@lerna/otplease", () => {
     const result = await otplease(fn, { otp: "987654" }, otpCache);
 
     expect(fn).toHaveBeenCalledTimes(1);
-    expect(prompt.input).not.toHaveBeenCalled();
+    expect(promptTextInput).not.toHaveBeenCalled();
     expect(result).toBe(obj);
     // do not replace cache
     expect(otpCache.otp).toBe("654321");
@@ -95,7 +95,7 @@ describe("@lerna/otplease", () => {
     // start intial otplease call, 'catch' will happen in next turn *after* the cache is set.
     const result = await otplease(fn, {}, otpCache);
     expect(fn).toHaveBeenCalledTimes(2);
-    expect(prompt.input).not.toHaveBeenCalled();
+    expect(promptTextInput).not.toHaveBeenCalled();
     expect(result).toBe(obj);
   });
 
@@ -117,13 +117,13 @@ describe("@lerna/otplease", () => {
     expect(fn1).toHaveBeenCalledTimes(2);
     expect(fn2).toHaveBeenCalledTimes(2);
     // only prompt once for the two concurrent requests
-    expect(prompt.input).toHaveBeenCalledTimes(1);
+    expect(promptTextInput).toHaveBeenCalledTimes(1);
     expect(res1).toBe(obj1);
     expect(res2).toBe(obj2);
   });
 
   it("strips whitespace from OTP prompt value", async () => {
-    prompt.input.mockImplementationOnce((msg, opts) => Promise.resolve(opts.filter(" 121212 ")));
+    promptTextInput.mockImplementationOnce((msg, opts) => Promise.resolve(opts.filter(" 121212 ")));
 
     const obj = {};
     const fn = jest.fn(makeTestCallback("121212", obj));
@@ -133,7 +133,7 @@ describe("@lerna/otplease", () => {
   });
 
   it("validates OTP prompt response", async () => {
-    prompt.input.mockImplementationOnce((msg, opts) =>
+    promptTextInput.mockImplementationOnce((msg, opts) =>
       Promise.resolve(opts.validate("i am the very model of a modern major general"))
     );
 
@@ -144,7 +144,7 @@ describe("@lerna/otplease", () => {
   });
 
   it("rejects prompt errors", async () => {
-    prompt.input.mockImplementationOnce(() => Promise.reject(new Error("poopypants")));
+    promptTextInput.mockImplementationOnce(() => Promise.reject(new Error("poopypants")));
 
     const obj = {};
     const fn = jest.fn(makeTestCallback("343434", obj));
@@ -173,7 +173,7 @@ describe("@lerna/otplease", () => {
     await expect(otplease(fn, {})).rejects.toThrow("auth required");
   });
 
-  it.each([["stdin"], ["stdout"]])("re-throws EOTP error when %s is not a TTY", async pipe => {
+  it.each([["stdin"], ["stdout"]])("re-throws EOTP error when %s is not a TTY", async (pipe) => {
     const fn = jest.fn(() => {
       const err = new Error(`non-interactive ${pipe}`);
       err.code = "EOTP";
@@ -187,24 +187,24 @@ describe("@lerna/otplease", () => {
 
   describe("getOneTimePassword()", () => {
     it("defaults message argument", async () => {
-      await otplease.getOneTimePassword();
+      await getOneTimePassword();
 
-      expect(prompt.input).toHaveBeenCalledWith(
+      expect(promptTextInput).toHaveBeenCalledWith(
         "This operation requires a one-time password:",
         expect.any(Object)
       );
     });
 
     it("accepts custom message", async () => {
-      await otplease.getOneTimePassword("foo bar");
+      await getOneTimePassword("foo bar");
 
-      expect(prompt.input).toHaveBeenCalledWith("foo bar", expect.any(Object));
+      expect(promptTextInput).toHaveBeenCalledWith("foo bar", expect.any(Object));
     });
   });
 });
 
 function makeTestCallback(otp, result) {
-  return opts => {
+  return (opts) => {
     if (opts.otp !== otp) {
       const err = new Error(`oops, received otp ${opts.otp}`);
       err.code = "EOTP";

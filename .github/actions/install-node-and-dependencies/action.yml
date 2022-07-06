@@ -1,0 +1,33 @@
+name: "Install node and dependencies"
+description: Install node and dependencies
+inputs:
+  node-version:
+    description: "A specific version of node to install (rather than the value specified in the volta config in package.json)"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install node and npm based on the given values (or the volta config in package.json)
+      uses: volta-cli/action@v1
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Get npm cache directory and node version for cache key
+      id: npm-cache-dir
+      run: |
+        echo "::set-output name=node_version::$(node --version)"
+        echo "::set-output name=dir::$(npm config get cache)"
+      shell: bash
+
+    - uses: actions/cache@v3
+      with:
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        # We can't just pass through the node-version input because in the common case it won't be set (we resolve from volta config in package.json)
+        key: ${{ runner.os }}-node-${{ steps.npm-cache-dir.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install dependencies
+      run: npm ci
+      shell: bash

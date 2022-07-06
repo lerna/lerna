@@ -1,6 +1,6 @@
 "use strict";
 
-const cosmiconfig = require("cosmiconfig");
+const { cosmiconfigSync } = require("cosmiconfig");
 const dedent = require("dedent");
 const globby = require("globby");
 const globParent = require("glob-parent");
@@ -10,15 +10,45 @@ const pMap = require("p-map");
 const path = require("path");
 const writeJsonFile = require("write-json-file");
 
-const ValidationError = require("@lerna/validation-error");
-const Package = require("@lerna/package");
-const applyExtends = require("./lib/apply-extends");
-const deprecateConfig = require("./lib/deprecate-config");
+const { ValidationError } = require("@lerna/validation-error");
+const { Package } = require("@lerna/package");
+const { applyExtends } = require("./lib/apply-extends");
+const { deprecateConfig } = require("./lib/deprecate-config");
 const { makeFileFinder, makeSyncFileFinder } = require("./lib/make-file-finder");
 
+/**
+ * @typedef {object} ProjectConfig
+ * @property {string[]} packages
+ * @property {boolean} useWorkspaces
+ * @property {string} version
+ */
+
+/**
+ * A representation of the entire project managed by Lerna.
+ *
+ * Wherever the lerna.json file is located, that is the project root.
+ * All package globs are rooted from this location.
+ */
 class Project {
+  /**
+   * @param {string} [cwd] Defaults to process.cwd()
+   */
+  static getPackages(cwd) {
+    return new Project(cwd).getPackages();
+  }
+
+  /**
+   * @param {string} [cwd] Defaults to process.cwd()
+   */
+  static getPackagesSync(cwd) {
+    return new Project(cwd).getPackagesSync();
+  }
+
+  /**
+   * @param {string} [cwd] Defaults to process.cwd()
+   */
   constructor(cwd) {
-    const explorer = cosmiconfig("lerna", {
+    const explorer = cosmiconfigSync("lerna", {
       searchPlaces: ["lerna.json", "package.json"],
       transform(obj) {
         // cosmiconfig returns null when nothing is found
@@ -44,7 +74,7 @@ class Project {
     let loaded;
 
     try {
-      loaded = explorer.searchSync(cwd);
+      loaded = explorer.search(cwd);
     } catch (err) {
       // redecorate JSON syntax errors, avoid debug dump
       if (err.name === "JSONError") {
@@ -55,6 +85,7 @@ class Project {
       throw err;
     }
 
+    /** @type {ProjectConfig} */
     this.config = loaded.config;
     this.rootConfigLocation = loaded.filepath;
     this.rootPath = path.dirname(loaded.filepath);
@@ -91,7 +122,7 @@ class Project {
   }
 
   get packageParentDirs() {
-    return this.packageConfigs.map(globParent).map(parentDir => path.resolve(this.rootPath, parentDir));
+    return this.packageConfigs.map(globParent).map((parentDir) => path.resolve(this.rootPath, parentDir));
   }
 
   get manifest() {
@@ -132,16 +163,17 @@ class Project {
       const search = globby.sync(Project.LICENSE_GLOB, {
         cwd: this.rootPath,
         absolute: true,
-        case: false,
+        caseSensitiveMatch: false,
         // Project license is always a sibling of the root manifest
-        deep: false,
-        // POSIX results always need to be normalized
-        transform: fp => path.normalize(fp),
+        deep: 0,
       });
 
       licensePath = search.shift();
 
       if (licensePath) {
+        // POSIX results always need to be normalized
+        licensePath = path.normalize(licensePath);
+
         // redefine getter to lazy-loaded value
         Object.defineProperty(this, "licensePath", {
           value: licensePath,
@@ -166,17 +198,23 @@ class Project {
     return finder;
   }
 
+  /**
+   * @returns {Promise<Package[]>} A promise resolving to a list of Package instances
+   */
   getPackages() {
-    const mapper = packageConfigPath =>
+    const mapper = (packageConfigPath) =>
       loadJsonFile(packageConfigPath).then(
-        packageJson => new Package(packageJson, path.dirname(packageConfigPath), this.rootPath)
+        (packageJson) => new Package(packageJson, path.dirname(packageConfigPath), this.rootPath)
       );
 
-    return this.fileFinder("package.json", filePaths => pMap(filePaths, mapper, { concurrency: 50 }));
+    return this.fileFinder("package.json", (filePaths) => pMap(filePaths, mapper, { concurrency: 50 }));
   }
 
+  /**
+   * @returns {Package[]} A list of Package instances
+   */
   getPackagesSync() {
-    return makeSyncFileFinder(this.rootPath, this.packageConfigs)("package.json", packageConfigPath => {
+    return makeSyncFileFinder(this.rootPath, this.packageConfigs)("package.json", (packageConfigPath) => {
       return new Package(
         loadJsonFile.sync(packageConfigPath),
         path.dirname(packageConfigPath),
@@ -186,7 +224,7 @@ class Project {
   }
 
   getPackageLicensePaths() {
-    return this.fileFinder(Project.LICENSE_GLOB, null, { case: false });
+    return this.fileFinder(Project.LICENSE_GLOB, null, { caseSensitiveMatch: false });
   }
 
   isIndependent() {
@@ -204,6 +242,6 @@ class Project {
 Project.PACKAGE_GLOB = "packages/*";
 Project.LICENSE_GLOB = "LICEN{S,C}E{,.*}";
 
-module.exports = Project;
-module.exports.getPackages = cwd => new Project(cwd).getPackages();
-module.exports.getPackagesSync = cwd => new Project(cwd).getPackagesSync();
+module.exports.Project = Project;
+module.exports.getPackages = Project.getPackages;
+module.exports.getPackagesSync = Project.getPackagesSync;

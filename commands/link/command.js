@@ -7,7 +7,7 @@ exports.command = "link";
 
 exports.describe = "Symlink together all packages that are dependencies of each other";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   yargs.options({
     "force-local": {
       group: "Command Options:",

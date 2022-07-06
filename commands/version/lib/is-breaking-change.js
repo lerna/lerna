@@ -2,8 +2,12 @@
 
 const semver = require("semver");
 
-module.exports = isBreakingChange;
+module.exports.isBreakingChange = isBreakingChange;
 
+/**
+ * @param {string} currentVersion
+ * @param {string} nextVersion
+ */
 function isBreakingChange(currentVersion, nextVersion) {
   const releaseType = semver.diff(currentVersion, nextVersion);
   let breaking;

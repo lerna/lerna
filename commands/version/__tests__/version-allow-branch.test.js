@@ -26,7 +26,7 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("normal");
 
       await changeBranch(testDir, "unmatched");
-      const command = lernaVersion(testDir)("--allow-branch", "master");
+      const command = lernaVersion(testDir)("--allow-branch", "main");
 
       await expect(command).rejects.toThrow("Branch 'unmatched' is restricted from versioning");
     });
@@ -53,7 +53,7 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("normal");
 
       await changeBranch(testDir, "feature/awesome");
-      const result = await lernaVersion(testDir)("--allow-branch", "master", "feature/*");
+      const result = await lernaVersion(testDir)("--allow-branch", "main", "feature/*");
 
       expect(result.updates).toHaveLength(5);
     });

@@ -40,4 +40,4 @@ class GitLabClient {
   }
 }
 
-module.exports = GitLabClient;
+module.exports.GitLabClient = GitLabClient;

@@ -4,7 +4,7 @@ jest.mock("node-fetch");
 
 const fetch = require("node-fetch");
 
-const GitLabClient = require("../lib/GitLabClient");
+const { GitLabClient } = require("../lib/GitLabClient");
 
 describe("GitLabClient", () => {
   describe("constructor", () => {

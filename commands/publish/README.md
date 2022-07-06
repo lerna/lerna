@@ -14,7 +14,7 @@ lerna publish from-package # explicitly publish packages where the latest versio
 
 When run, this command does one of the following things:
 
-- Publish packages updated since the last release (calling [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#readme) behind the scenes).
+- Publish packages updated since the last release (calling [`lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#readme) behind the scenes).
   - This is the legacy behavior of lerna 2.x
 - Publish packages tagged in the current commit (`from-git`).
 - Publish packages in the latest commit where the version is not present in the registry (`from-package`).
@@ -26,11 +26,13 @@ During all publish operations, appropriate [lifecycle scripts](#lifecycle-script
 
 Check out [Per-Package Configuration](#per-package-configuration) for more details about publishing scoped packages, custom registries, and custom dist-tags.
 
+> If you're using [npm automation access token](https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-access-tokens) please remember to [disable lerna access verification feature](#--no-verify-access). Automation token doesn't grant permissions needed for the verification to be successful. [Click here to read more about this issue](https://github.com/lerna/lerna/issues/2788).
+
 ## Positionals
 
 ### bump `from-git`
 
-In addition to the semver keywords supported by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#positionals),
+In addition to the semver keywords supported by [`lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#positionals),
 `lerna publish` also supports the `from-git` keyword.
 This will identify packages tagged by `lerna version` and publish them to npm.
 This is useful in CI scenarios where you wish to manually increment versions,
@@ -45,7 +47,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 
 ## Options
 
-`lerna publish` supports all of the options provided by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options) in addition to the following:
+`lerna publish` supports all of the options provided by [`lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#options) in addition to the following:
 
 - [`--canary`](#--canary)
 - [`--contents <dir>`](#--contents-dir)
@@ -56,6 +58,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--ignore-prepublish`](#--ignore-prepublish)
 - [`--legacy-auth`](#--legacy-auth)
 - [`--no-git-reset`](#--no-git-reset)
+- [`--no-granular-pathspec`](#--no-granular-pathspec)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--otp`](#--otp)
 - [`--preid`](#--preid)
@@ -120,7 +123,7 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 
 ### `--git-head <sha>`
 
-Explicit SHA to set as [`gitHead`](https://git.io/fh7np) on manifests when packing tarballs, only allowed with [`from-package`](#bump-from-package) positional.
+Explicit SHA to set as [`gitHead`](https://github.com/npm/read-package-json/blob/67f2d8d501e2621441a8235b08d589fbeeb7dba6/read-json.js#L327) on manifests when packing tarballs, only allowed with [`from-package`](#bump-from-package) positional.
 
 For example, when publishing from AWS CodeBuild (where `git` is not available),
 you could use this option to pass the appropriate [environment variable](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-env-vars.html) to use for this package metadata:
@@ -179,6 +182,23 @@ To avoid this, pass `--no-git-reset`. This can be especially useful when used as
 lerna publish --no-git-reset
 ```
 
+### `--no-granular-pathspec`
+
+By default, `lerna publish` will attempt (if enabled) to `git checkout` _only_ the leaf package manifests that are temporarily modified during the publishing process. This yields the equivalent of `git checkout -- packages/*/package.json`, but tailored to _exactly_ what changed.
+
+If you **know** you need different behavior, you'll understand: Pass `--no-granular-pathspec` to make the git command _literally_ `git checkout -- .`. By opting into this [pathspec](https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec), you must have all intentionally unversioned content properly ignored.
+
+This option makes the most sense configured in lerna.json, as you really don't want to mess it up:
+
+```json
+{
+  "version": "independent",
+  "granularPathspec": false
+}
+```
+
+The root-level configuration is intentional, as this also covers the [identically-named option in `lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#--no-granular-pathspec).
+
 ### `--no-verify-access`
 
 By default, `lerna` will verify the logged-in npm user's access to the packages about to be published. Passing this flag will disable that check.
@@ -186,6 +206,8 @@ By default, `lerna` will verify the logged-in npm user's access to the packages 
 If you are using a third-party registry that does not support `npm access ls-packages`, you will need to pass this flag (or set `command.publish.verifyAccess` to `false` in lerna.json).
 
 > Please use with caution
+
+> For the time being, use this flag/option always when you're handling NPM authorization with the use of [automation access token](https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-access-tokens). [Click here to read more about this issue](https://github.com/lerna/lerna/issues/2788).
 
 ### `--otp`
 
@@ -277,7 +299,7 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 
 ### `--skip-npm`
 
-Call [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#readme) directly, instead.
+Call [`lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#readme) directly, instead.
 
 ## Per-Package Configuration
 
@@ -349,7 +371,7 @@ This _non-standard_ field allows you to customize the published subdirectory jus
 
 Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#description) during `lerna publish` in the following order:
 
-1. If versioning implicitly, run all [version lifecycle scripts](https://github.com/lerna/lerna/tree/master/commands/version#lifecycle-scripts)
+1. If versioning implicitly, run all [version lifecycle scripts](https://github.com/lerna/lerna/tree/main/commands/version#lifecycle-scripts)
 2. Run `prepublish` lifecycle in root, if [enabled](#--ignore-prepublish)
 3. Run `prepare` lifecycle in root
 4. Run `prepublishOnly` lifecycle in root
@@ -359,11 +381,11 @@ Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#descr
    2. Run `prepare` lifecycle
    3. Run `prepublishOnly` lifecycle
    4. Run `prepack` lifecycle
-   5. Create package tarball in temp directory via [JS API](https://github.com/lerna/lerna/tree/master/utils/pack-directory#readme)
+   5. Create package tarball in temp directory via [JS API](https://github.com/lerna/lerna/tree/main/utils/pack-directory#readme)
    6. Run `postpack` lifecycle
 7. Run `postpack` lifecycle in root
 8. For each changed package, in topological order (all dependencies before dependents):
-   1. Publish package to configured [registry](#--registry-url) via [JS API](https://github.com/lerna/lerna/tree/master/utils/npm-publish#readme)
+   1. Publish package to configured [registry](#--registry-url) via [JS API](https://github.com/lerna/lerna/tree/main/utils/npm-publish#readme)
    2. Run `publish` lifecycle
    3. Run `postpublish` lifecycle
 9. Run `publish` lifecycle in root

@@ -4,13 +4,13 @@ const loadJsonFile = require("load-json-file");
 const path = require("path");
 const tempy = require("tempy");
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 describe("lerna init", () => {
-  const parsePackageJson = cwd => loadJsonFile(path.join(cwd, "package.json"));
-  const parseLernaJson = cwd => loadJsonFile(path.join(cwd, "lerna.json"));
-  const loadMetaData = cwd => Promise.all([parsePackageJson(cwd), parseLernaJson(cwd)]);
+  const parsePackageJson = (cwd) => loadJsonFile(path.join(cwd, "package.json"));
+  const parseLernaJson = (cwd) => loadJsonFile(path.join(cwd, "lerna.json"));
+  const loadMetaData = (cwd) => Promise.all([parsePackageJson(cwd), parseLernaJson(cwd)]);
 
   test("initializes empty directory", async () => {
     const cwd = tempy.directory();
@@ -40,6 +40,7 @@ describe("lerna init", () => {
         "packages": Array [
           "packages/*",
         ],
+        "useNx": false,
         "version": "0.0.0",
       }
     `);
@@ -81,6 +82,7 @@ describe("lerna init", () => {
         "packages": Array [
           "packages/*",
         ],
+        "useNx": false,
         "version": "1.0.0",
       }
     `);

@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = timer;
+module.exports.timer = timer;
 
 function timer() {
   /* istanbul ignore if */

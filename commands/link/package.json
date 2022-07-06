@@ -1,12 +1,12 @@
 {
   "name": "@lerna/link",
-  "version": "3.21.0",
+  "version": "5.1.6",
   "description": "Symlink together all packages that are dependencies of each other",
   "keywords": [
     "lerna",
     "command"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/commands/link#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -35,7 +35,7 @@
     "@lerna/command": "file:../../core/command",
     "@lerna/package-graph": "file:../../core/package-graph",
     "@lerna/symlink-dependencies": "file:../../utils/symlink-dependencies",
-    "p-map": "^2.1.0",
-    "slash": "^2.0.0"
+    "p-map": "^4.0.0",
+    "slash": "^3.0.0"
   }
 }

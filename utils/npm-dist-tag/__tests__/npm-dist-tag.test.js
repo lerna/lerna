@@ -1,32 +1,32 @@
 "use strict";
 
-jest.mock("@evocateur/npm-registry-fetch");
-jest.mock("@lerna/otplease", () => (cb, opts) => Promise.resolve(cb(opts)));
+jest.mock("npm-registry-fetch");
+jest.mock("@lerna/otplease", () => ({
+  otplease: (cb, opts) => Promise.resolve(cb(opts)),
+}));
 
 // mocked modules
-const fetch = require("@evocateur/npm-registry-fetch");
+const fetch = require("npm-registry-fetch");
 
 // file under test
 const npmDistTag = require("..");
-
-expect.extend(require("@lerna-test/figgy-pudding-matchers"));
 
 const stubLog = {
   verbose: jest.fn(),
   info: jest.fn(),
   warn: jest.fn(),
 };
-const baseOptions = new Map([
-  ["log", stubLog],
-  ["tag", "latest"],
-]);
+const baseOptions = Object.freeze({
+  log: stubLog,
+  defaultTag: "latest",
+});
 
 fetch.mockImplementation(() => Promise.resolve());
 fetch.json.mockImplementation(() => Promise.resolve({}));
 
 describe("npmDistTag.add()", () => {
   it("adds a dist-tag for a given package@version", async () => {
-    const opts = new Map(baseOptions);
+    const opts = { ...baseOptions };
     const tags = await npmDistTag.add("@scope/some-pkg@1.0.1", "added-tag", opts);
 
     expect(tags).toEqual({
@@ -34,7 +34,7 @@ describe("npmDistTag.add()", () => {
     });
     expect(fetch).toHaveBeenLastCalledWith(
       "/-/package/@scope%2fsome-pkg/dist-tags/added-tag",
-      expect.figgyPudding({
+      expect.objectContaining({
         method: "PUT",
         body: JSON.stringify("1.0.1"),
         headers: {
@@ -52,7 +52,7 @@ describe("npmDistTag.add()", () => {
       })
     );
 
-    const opts = new Map(baseOptions);
+    const opts = { ...baseOptions };
     const tags = await npmDistTag.add("@scope/some-pkg@1.0.1", "dupe-tag", opts);
 
     expect(tags).toEqual({
@@ -66,18 +66,33 @@ describe("npmDistTag.add()", () => {
     );
   });
 
-  it("defaults tag argument to opts.tag", async () => {
+  it("defaults tag argument to opts.defaultTag", async () => {
     fetch.json.mockImplementationOnce(() =>
       Promise.resolve({
         latest: "1.0.0",
       })
     );
 
-    const opts = new Map(baseOptions);
+    const opts = { ...baseOptions };
     const tags = await npmDistTag.add("@scope/some-pkg@1.0.1", undefined, opts);
 
     expect(tags).toEqual({
       latest: "1.0.1",
+    });
+  });
+
+  it("supports npm v6 opts.tag fallback", async () => {
+    fetch.json.mockImplementationOnce(() =>
+      Promise.resolve({
+        legacy: "1.0.0",
+      })
+    );
+
+    const opts = { log: stubLog, tag: "legacy" };
+    const tags = await npmDistTag.add("@scope/some-pkg@1.0.1", undefined, opts);
+
+    expect(tags).toEqual({
+      legacy: "1.0.1",
     });
   });
 });
@@ -91,20 +106,20 @@ describe("npmDistTag.remove()", () => {
       })
     );
 
-    const opts = new Map(baseOptions);
+    const opts = { ...baseOptions };
     const tags = await npmDistTag.remove("@scope/some-pkg@1.0.1", "removed-tag", opts);
 
     expect(tags).not.toHaveProperty("removed-tag");
     expect(fetch).toHaveBeenLastCalledWith(
       "/-/package/@scope%2fsome-pkg/dist-tags/removed-tag",
-      expect.figgyPudding({
+      expect.objectContaining({
         method: "DELETE",
       })
     );
   });
 
   it("does not attempt removal of nonexistent tag", async () => {
-    const opts = new Map(baseOptions);
+    const opts = { ...baseOptions };
     const tags = await npmDistTag.remove("@scope/some-pkg@1.0.1", "missing-tag", opts);
 
     expect(tags).toEqual({});
@@ -126,7 +141,7 @@ describe("npmDistTag.list()", () => {
       })
     );
 
-    const opts = new Map(baseOptions);
+    const opts = { ...baseOptions };
     const tags = await npmDistTag.list("@scope/some-pkg", opts);
 
     expect(tags).toEqual({
@@ -135,8 +150,8 @@ describe("npmDistTag.list()", () => {
     });
     expect(fetch.json).toHaveBeenLastCalledWith(
       "/-/package/@scope%2fsome-pkg/dist-tags",
-      expect.figgyPudding({
-        "prefer-online": true,
+      expect.objectContaining({
+        preferOnline: true,
         spec: expect.objectContaining({
           name: "@scope/some-pkg",
         }),
@@ -150,7 +165,7 @@ describe("npmDistTag.list()", () => {
       Promise.resolve(null)
     );
 
-    const opts = new Map(baseOptions);
+    const opts = { ...baseOptions };
     const tags = await npmDistTag.list("@scope/some-pkg", opts);
 
     expect(tags).toEqual({});

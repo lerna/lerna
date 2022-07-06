@@ -1,3 +1,3 @@
 "use strict";
 
-module.exports = jest.fn(() => Promise.resolve([]));
+module.exports.getUnpublishedPackages = jest.fn(() => Promise.resolve([]));

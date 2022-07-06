@@ -3,7 +3,7 @@
 exports[`version --ignore-changes does not version packages with ignored changes 1`] = `
 "v1.0.1
 
-HEAD -> master, tag: v1.0.1
+HEAD -> main, tag: v1.0.1
 
 lerna.json
 packages/package-4/package.json"
@@ -12,7 +12,7 @@ packages/package-4/package.json"
 exports[`version --ignore-changes is mapped from deprecated --ignore 1`] = `
 "v1.0.1
 
-HEAD -> master, tag: v1.0.1
+HEAD -> main, tag: v1.0.1
 
 lerna.json
 packages/package-4/package.json"

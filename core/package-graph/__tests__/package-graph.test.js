@@ -1,9 +1,9 @@
 "use strict";
 
-const Package = require("@lerna/package");
+const { Package } = require("@lerna/package");
 
 // file under test
-const PackageGraph = require("..");
+const { PackageGraph } = require("..");
 
 describe("PackageGraph", () => {
   describe("constructor", () => {
@@ -249,13 +249,13 @@ describe("PackageGraph", () => {
         { name: "pkg-c", version: "1.0.0", dependencies: { "pkg-d": "1.0.0" } },
         { name: "pkg-d", version: "1.0.0", dependencies: { "pkg-c": "1.0.0" } },
         // cycle c <-> d catches nested search.add()
-      ].map(json => new Package(json, `/test/${json.name}`, "/test"));
+      ].map((json) => new Package(json, `/test/${json.name}`, "/test"));
       const graph = new PackageGraph(pkgs);
 
-      const search = filtered.map(name => graph.get(name).pkg);
+      const search = filtered.map((name) => graph.get(name).pkg);
       const result = graph[method](search);
 
-      expect(result.map(pkg => pkg.name)).toEqual(expected);
+      expect(result.map((pkg) => pkg.name)).toEqual(expected);
     });
   });
 
@@ -356,7 +356,7 @@ Array [
   "standalone",
 ]
 `);
-      expect(Array.from(nodes.keys()).map(node => node.name)).toMatchInlineSnapshot(`
+      expect(Array.from(nodes.keys()).map((node) => node.name)).toMatchInlineSnapshot(`
 Array [
   "cycle-1",
   "cycle-2",
@@ -449,5 +449,5 @@ function topoPackages() {
       name: "standalone",
       version: "1.0.0",
     },
-  ].map(json => new Package(json, `/test/${json.name}`, "/test"));
+  ].map((json) => new Package(json, `/test/${json.name}`, "/test"));
 }

@@ -6,29 +6,30 @@ let lastCollapsedNodeId = 0;
  * Represents a cyclic collection of nodes in a PackageGraph.
  * It is meant to be used as a black box, where the only exposed
  * information are the connections to the other nodes of the graph.
- * It can contains either `PackageGraphNode`s or other `CyclicPackageGraphNode`s.
+ * It can contain either `PackageGraphNode`s or other `CyclicPackageGraphNode`s.
+ *
+ * @extends {Map<string, import('..').PackageGraphNode | CyclicPackageGraphNode>}
  */
 class CyclicPackageGraphNode extends Map {
   constructor() {
     super();
 
-    this.localDependencies = new Map();
-    this.localDependents = new Map();
+    this.name = `(cycle) ${(lastCollapsedNodeId += 1)}`;
 
-    Object.defineProperties(this, {
-      // immutable properties
-      name: {
-        enumerable: true,
-        value: `(cycle) ${(lastCollapsedNodeId += 1)}`,
-      },
-      isCycle: {
-        value: true,
-      },
-    });
+    /** @type {Map<string, import('..').PackageGraphNode | CyclicPackageGraphNode>} */
+    this.localDependencies = new Map();
+
+    /** @type {Map<string, import('..').PackageGraphNode | CyclicPackageGraphNode>} */
+    this.localDependents = new Map();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get isCycle() {
+    return true;
   }
 
   /**
-   * @returns {String} Returns a representation of a cycle, like like `A -> B -> C -> A`.
+   * @returns {string} A representation of a cycle, like like `A -> B -> C -> A`.
    */
   toString() {
     const parts = Array.from(this, ([key, node]) =>
@@ -43,10 +44,9 @@ class CyclicPackageGraphNode extends Map {
 
   /**
    * Flattens a CyclicPackageGraphNode (which can have multiple level of cycles).
-   *
-   * @returns {PackageGraphNode[]}
    */
   flatten() {
+    /** @type {import('..').PackageGraphNode[]} */
     const result = [];
 
     for (const node of this.values()) {
@@ -63,8 +63,8 @@ class CyclicPackageGraphNode extends Map {
   /**
    * Checks if a given node is contained in this cycle (or in a nested one)
    *
-   * @param {String} name The name of the package to search in this cycle
-   * @returns {Boolean}
+   * @param {string} name The name of the package to search in this cycle
+   * @returns {boolean}
    */
   contains(name) {
     for (const [currentName, currentNode] of this) {
@@ -82,7 +82,7 @@ class CyclicPackageGraphNode extends Map {
   /**
    * Adds a graph node, or a nested cycle, to this group.
    *
-   * @param {PackageGraphNode|CyclicPackageGraphNode} node
+   * @param {import('..').PackageGraphNode | CyclicPackageGraphNode} node
    */
   insert(node) {
     this.set(node.name, node);
@@ -103,7 +103,7 @@ class CyclicPackageGraphNode extends Map {
 
   /**
    * Remove pointers to candidate node from internal collections.
-   * @param {PackageGraphNode|CyclicPackageGraphNode} candidateNode instance to unlink
+   * @param {import('..').PackageGraphNode | CyclicPackageGraphNode} candidateNode instance to unlink
    */
   unlink(candidateNode) {
     // remove incoming edges ("indegree")

@@ -1,51 +1,72 @@
+// @ts-check
+
 "use strict";
 
 const log = require("npmlog");
-const runScript = require("npm-lifecycle");
-const figgyPudding = require("figgy-pudding");
+const runScript = require("@npmcli/run-script");
 const npmConf = require("@lerna/npm-conf");
 
-module.exports = runLifecycle;
+module.exports.runLifecycle = runLifecycle;
 module.exports.createRunner = createRunner;
 
-const LifecycleConfig = figgyPudding(
-  {
-    log: { default: log },
-    // provide aliases for some dash-cased props
-    "ignore-prepublish": {},
-    ignorePrepublish: "ignore-prepublish",
-    "ignore-scripts": {},
-    ignoreScripts: "ignore-scripts",
-    "node-options": {},
-    nodeOptions: "node-options",
-    "script-shell": {},
-    scriptShell: "script-shell",
-    "scripts-prepend-node-path": {},
-    scriptsPrependNodePath: "scripts-prepend-node-path",
-    "unsafe-perm": {
-      // when running scripts explicitly, assume that they're trusted
-      default: true,
-    },
-    unsafePerm: "unsafe-perm",
-  },
-  {
-    other() {
-      // open up the pudding
-      return true;
-    },
-  }
-);
+/**
+ * @typedef {object} LifecycleConfig
+ * @property {typeof log} [log]
+ * @property {boolean} [ignorePrepublish]
+ * @property {boolean} [ignoreScripts]
+ * @property {string} [nodeOptions]
+ * @property {string} [scriptShell]
+ * @property {boolean} [scriptsPrependNodePath]
+ * @property {boolean} [unsafePerm=true]
+ */
 
-function runLifecycle(pkg, stage, _opts) {
+/**
+ * Alias dash-cased npmConf to camelCase
+ * @param {LifecycleConfig} obj
+ * @returns {LifecycleConfig}
+ */
+function flattenOptions(obj) {
+  return {
+    ignorePrepublish: obj["ignore-prepublish"],
+    ignoreScripts: obj["ignore-scripts"],
+    nodeOptions: obj["node-options"],
+    scriptShell: obj["script-shell"],
+    scriptsPrependNodePath: obj["scripts-prepend-node-path"],
+    unsafePerm: obj["unsafe-perm"],
+    ...obj,
+  };
+}
+
+/**
+ * Adapted from https://github.com/npm/run-script/blob/bb5156063ea3a7e167a6d5435847d9389146ec89/lib/run-script-pkg.js#L9
+ * Modified to add back "path" and make it behave more like "npm-lifecycle"
+ */
+function printCommandBanner(id, event, cmd, path) {
+  // eslint-disable-next-line no-console
+  return console.log(`\n> ${id ? `${id} ` : ""}${event} ${path}\n> ${cmd.trim().replace(/\n/g, "\n> ")}\n`);
+}
+
+/**
+ * Run a lifecycle script for a package.
+ * @param {import("@lerna/package").Package} pkg
+ * @param {string} stage
+ * @param {LifecycleConfig} options
+ */
+function runLifecycle(pkg, stage, options) {
   // back-compat for @lerna/npm-conf instances
   // https://github.com/isaacs/proto-list/blob/27764cd/proto-list.js#L14
-  if ("root" in _opts) {
+  if ("root" in options) {
     // eslint-disable-next-line no-param-reassign
-    _opts = _opts.snapshot;
+    options = options.snapshot;
   }
 
-  const opts = LifecycleConfig(_opts);
+  const opts = {
+    log,
+    unsafePerm: true,
+    ...flattenOptions(options),
+  };
   const dir = pkg.location;
+  const id = `${pkg.name}@${pkg.version}`;
   const config = {};
 
   if (opts.ignoreScripts) {
@@ -67,7 +88,7 @@ function runLifecycle(pkg, stage, _opts) {
   }
 
   // https://github.com/zkat/figgy-pudding/blob/7d68bd3/index.js#L42-L64
-  for (const [key, val] of opts) {
+  for (const [key, val] of Object.entries(opts)) {
     // omit falsy values and circular objects
     if (val != null && key !== "log" && key !== "logstream") {
       config[key] = val;
@@ -83,28 +104,46 @@ function runLifecycle(pkg, stage, _opts) {
     pkg = pkg.toJSON();
   }
 
-  // TODO: remove pkg._id when npm-lifecycle no longer relies on it
-  pkg._id = `${pkg.name}@${pkg.version}`; // eslint-disable-line
+  // _id is needed by @npmcli/run-script
+  // eslint-disable-next-line no-underscore-dangle
+  pkg._id = id;
 
   opts.log.silly("lifecycle", "%j starting in %j", stage, pkg.name);
 
-  return runScript(pkg, stage, dir, {
-    config,
-    dir,
-    failOk: false,
-    log: opts.log,
-    // bring along camelCased aliases
-    nodeOptions: opts.nodeOptions,
-    scriptShell: opts.scriptShell,
-    scriptsPrependNodePath: opts.scriptsPrependNodePath,
-    unsafePerm: opts.unsafePerm,
+  // info log here to reproduce previous behavior when this was powered by "npm-lifecycle"
+  opts.log.info("lifecycle", `${id}~${stage}: ${id}`);
+
+  /**
+   * In order to match the previous behavior of "npm-lifecycle", we have to disable the writing
+   * to the parent process and print the command banner ourself.
+   */
+  const stdio = "pipe";
+  if (log.level !== "silent") {
+    printCommandBanner(id, stage, pkg.scripts[stage], dir);
+  }
+
+  return runScript({
+    event: stage,
+    path: dir,
+    pkg,
+    args: [],
+    stdio,
+    banner: false,
+    scriptShell: config.scriptShell,
   }).then(
-    () => {
+    ({ stdout }) => {
+      /**
+       * This adjustment is based on trying to match the existing integration test outputs when migrating
+       * from "npm-lifecycle" to "@npmcli/run-script".
+       */
+      // eslint-disable-next-line no-console
+      console.log(stdout.toString().trimEnd());
+
       opts.log.silly("lifecycle", "%j finished in %j", stage, pkg.name);
     },
-    err => {
+    (err) => {
       // propagate the exit code
-      const exitCode = err.errno || 1;
+      const exitCode = err.code || 1;
 
       // error logging has already occurred on stderr, but we need to stop the chain
       log.error("lifecycle", "%j errored in %j, exiting %d", stage, pkg.name, exitCode);
@@ -112,8 +151,8 @@ function runLifecycle(pkg, stage, _opts) {
       // ensure clean logging, avoiding spurious log dump
       err.name = "ValidationError";
 
-      // our yargs.fail() handler expects a numeric .code, not .errno
-      err.code = exitCode;
+      // our yargs.fail() handler expects a numeric .exitCode, not .errno
+      err.exitCode = exitCode;
       process.exitCode = exitCode;
 
       // stop the chain

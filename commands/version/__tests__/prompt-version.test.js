@@ -3,9 +3,9 @@
 jest.mock("@lerna/prompt");
 
 const semver = require("semver");
-const prompt = require("@lerna/prompt");
-const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
-const makePromptVersion = require("../lib/prompt-version");
+const { promptSelectOne, promptTextInput } = require("@lerna/prompt");
+const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
+const { makePromptVersion } = require("../lib/prompt-version");
 
 const resolvePrereleaseId = jest.fn(() => "alpha");
 const versionPrompt = makePromptVersion(resolvePrereleaseId);
@@ -17,7 +17,7 @@ describe("select", () => {
         version: "1.2.3",
       });
 
-      expect(prompt.select).toHaveBeenLastCalledWith(
+      expect(promptSelectOne).toHaveBeenLastCalledWith(
         "Select a new version (currently 1.2.3)",
         expect.objectContaining({
           choices: expect.any(Array),
@@ -31,7 +31,7 @@ describe("select", () => {
         name: "my-package",
       });
 
-      expect(prompt.select).toHaveBeenLastCalledWith(
+      expect(promptSelectOne).toHaveBeenLastCalledWith(
         "Select a new version for my-package (currently 3.2.1)",
         expect.any(Object)
       );
@@ -47,7 +47,7 @@ describe("select", () => {
       ["preminor", "1.1.0-alpha.0"],
       ["premajor", "2.0.0-alpha.0"],
     ])("bump %s", async (bump, result) => {
-      prompt.mockChoices(bump);
+      promptSelectOne.chooseBump(bump);
 
       const choice = await versionPrompt({
         version: "1.0.0",
@@ -64,9 +64,9 @@ describe("custom version", () => {
   let inputValidate;
 
   beforeEach(() => {
-    prompt.mockChoices("CUSTOM");
+    promptSelectOne.chooseBump("CUSTOM");
 
-    prompt.input.mockImplementationOnce((msg, cfg) => {
+    promptTextInput.mockImplementationOnce((msg, cfg) => {
       inputFilter = cfg.filter;
       inputValidate = cfg.validate;
 
@@ -102,9 +102,9 @@ describe("custom prerelease", () => {
   let inputFilter;
 
   beforeEach(() => {
-    prompt.mockChoices("PRERELEASE");
+    promptSelectOne.chooseBump("PRERELEASE");
 
-    prompt.input.mockImplementationOnce((msg, cfg) => {
+    promptTextInput.mockImplementationOnce((msg, cfg) => {
       inputFilter = cfg.filter;
 
       return Promise.resolve(msg);
@@ -119,7 +119,7 @@ describe("custom prerelease", () => {
     ${"beta"}    | ${false}
   `("pre-bump: $isPrerelease, id: $preid", ({ preid, isPrerelease }) => {
     // FIXME: this is a copy+paste from the implementation :P
-    const scopedResolveId = existingPreid => preid || (isPrerelease && existingPreid) || "alpha";
+    const scopedResolveId = (existingPreid) => preid || (isPrerelease && existingPreid) || "alpha";
 
     beforeEach(() => {
       resolvePrereleaseId.mockImplementationOnce(scopedResolveId);

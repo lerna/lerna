@@ -1,40 +1,62 @@
 "use strict";
 
-const figgyPudding = require("figgy-pudding");
-const PackageGraph = require("@lerna/package-graph");
+const { PackageGraph } = require("@lerna/package-graph");
 
-const QueryGraphConfig = figgyPudding({
-  "graph-type": {},
-  graphType: "graph-type",
-  "reject-cycles": {},
-  rejectCycles: "reject-cycles",
-});
+/**
+ * @typedef {object} QueryGraphConfig
+ * @property {'allDependencies'|'dependencies'} [graphType] "dependencies" excludes devDependencies from graph
+ * @property {boolean} [rejectCycles] Whether or not to reject dependency cycles
+ */
 
+/**
+ * A mutable PackageGraph used to query for next available packages.
+ */
 class QueryGraph {
   /**
-   * A mutable PackageGraph used to query for next available packages.
+   * Sort a list of Packages topologically.
    *
-   * @param {Array<Package>} packages An array of Packages to build the graph out of
-   * @param {String} [opts.graphType="allDependencies"] "dependencies" excludes devDependencies from graph
-   * @param {Boolean} [opts.rejectCycles] Whether or not to reject cycles
-   * @constructor
+   * @param {import("@lerna/package").Package[]} packages An array of Packages to build the list out of
+   * @param {QueryGraphConfig} [options]
+   *
+   * @returns {import("@lerna/package").Package[]} A list of Package instances in topological order
    */
-  constructor(packages, opts) {
-    const options = QueryGraphConfig(opts);
+  static toposort(packages, options) {
+    const graph = new QueryGraph(packages, options);
+    const result = [];
 
+    let batch = graph.getAvailablePackages();
+
+    while (batch.length) {
+      for (const node of batch) {
+        // no need to take() in synchronous loop
+        result.push(node.pkg);
+        graph.markAsDone(node);
+      }
+
+      batch = graph.getAvailablePackages();
+    }
+
+    return result;
+  }
+
+  /**
+   * @param {import("@lerna/package").Package[]} packages An array of Packages to build the graph out of
+   * @param {QueryGraphConfig} [options]
+   */
+  constructor(packages, { graphType = "allDependencies", rejectCycles } = {}) {
     // Create dependency graph
-    this.graph = new PackageGraph(packages, options.graphType);
+    this.graph = new PackageGraph(packages, graphType);
 
     // Evaluate cycles
-    this.cycles = this.graph.collapseCycles(options.rejectCycles);
+    this.cycles = this.graph.collapseCycles(rejectCycles);
   }
 
   _getNextLeaf() {
-    return Array.from(this.graph.values()).filter(node => node.localDependencies.size === 0);
+    return Array.from(this.graph.values()).filter((node) => node.localDependencies.size === 0);
   }
 
   _getNextCycle() {
-    const cycle = Array.from(this.cycles).find(cycleNode => cycleNode.localDependencies.size === 0);
+    const cycle = Array.from(this.cycles).find((cycleNode) => cycleNode.localDependencies.size === 0);
 
     if (!cycle) {
       return [];
@@ -56,10 +78,16 @@ class QueryGraph {
     return this._getNextCycle();
   }
 
+  /**
+   * @param {string} name
+   */
   markAsTaken(name) {
     this.graph.delete(name);
   }
 
+  /**
+   * @param {import("@lerna/package-graph").PackageGraphNode} candidateNode
+   */
   markAsDone(candidateNode) {
     this.graph.remove(candidateNode);
 
@@ -69,34 +97,5 @@ class QueryGraph {
   }
 }
 
-module.exports = QueryGraph;
-module.exports.toposort = toposort;
-
-/**
- * Sort the input list topologically.
- *
- * @param {!Array.<Package>} packages An array of Packages to build the list out of
- * @param {Object} [options]
- * @param {Boolean} options.graphType "allDependencies" or "dependencies", which excludes devDependencies
- * @param {Boolean} options.rejectCycles Whether or not to reject cycles
- *
- * @returns {Array<Package>} a list of Package instances in topological order
- */
-function toposort(packages, opts) {
-  const graph = new QueryGraph(packages, opts);
-  const result = [];
-
-  let batch = graph.getAvailablePackages();
-
-  while (batch.length) {
-    for (const node of batch) {
-      // no need to take() in synchronous loop
-      result.push(node.pkg);
-      graph.markAsDone(node);
-    }
-
-    batch = graph.getAvailablePackages();
-  }
-
-  return result;
-}
+module.exports.QueryGraph = QueryGraph;
+module.exports.toposort = QueryGraph.toposort;

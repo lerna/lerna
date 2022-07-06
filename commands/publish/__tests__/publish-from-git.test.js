@@ -16,20 +16,18 @@ jest.mock("../../version/lib/is-behind-upstream");
 jest.mock("../../version/lib/remote-branch-exists");
 
 // mocked or stubbed modules
-const npmPublish = require("@lerna/npm-publish");
-const PromptUtilities = require("@lerna/prompt");
-const output = require("@lerna/output");
-const checkWorkingTree = require("@lerna/check-working-tree");
+const { npmPublish } = require("@lerna/npm-publish");
+const { promptConfirmation } = require("@lerna/prompt");
+const { output } = require("@lerna/output");
+const { throwIfUncommitted } = require("@lerna/check-working-tree");
 
 // helpers
-const loggingOutput = require("@lerna-test/logging-output");
-const gitTag = require("@lerna-test/git-tag");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { gitTag } = require("@lerna-test/git-tag");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
-
-expect.extend(require("@lerna-test/figgy-pudding-matchers"));
 
 describe("publish from-git", () => {
   it("publishes tagged packages", async () => {
@@ -39,11 +37,9 @@ describe("publish from-git", () => {
     await lernaPublish(cwd)("from-git");
 
     // called from chained describeRef()
-    expect(checkWorkingTree.throwIfUncommitted).toHaveBeenCalled();
+    expect(throwIfUncommitted).toHaveBeenCalled();
 
-    expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
-      "Are you sure you want to publish these packages?"
-    );
+    expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to publish these packages?");
     expect(output.logged()).toMatch("Found 4 packages to publish:");
     expect(npmPublish.order()).toEqual([
       "package-1",
@@ -112,7 +108,7 @@ describe("publish from-git", () => {
   });
 
   it("throws an error when uncommitted changes are present", async () => {
-    checkWorkingTree.throwIfUncommitted.mockImplementationOnce(() => {
+    throwIfUncommitted.mockImplementationOnce(() => {
       throw new Error("uncommitted");
     });
 

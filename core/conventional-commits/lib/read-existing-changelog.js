@@ -4,8 +4,13 @@ const fs = require("fs-extra");
 const path = require("path");
 const { BLANK_LINE, COMMIT_GUIDELINE } = require("./constants");
 
-module.exports = readExistingChangelog;
+module.exports.readExistingChangelog = readExistingChangelog;
 
+/**
+ * Read the existing changelog, if it exists.
+ * @param {import("@lerna/package").Package} pkg
+ * @returns {Promise<[string, string]>} A tuple of changelog location and contents
+ */
 function readExistingChangelog(pkg) {
   const changelogFileLoc = path.join(pkg.location, "CHANGELOG.md");
 
@@ -14,7 +19,7 @@ function readExistingChangelog(pkg) {
   // catch allows missing file to pass without breaking chain
   chain = chain.then(() => fs.readFile(changelogFileLoc, "utf8").catch(() => ""));
 
-  chain = chain.then(changelogContents => {
+  chain = chain.then((changelogContents) => {
     // Remove the header if it exists, thus starting at the first entry.
     const headerIndex = changelogContents.indexOf(COMMIT_GUIDELINE);
 
@@ -26,7 +31,7 @@ function readExistingChangelog(pkg) {
   });
 
   // consumer expects resolved tuple
-  chain = chain.then(changelogContents => [changelogFileLoc, changelogContents]);
+  chain = chain.then((changelogContents) => [changelogFileLoc, changelogContents]);
 
   return chain;
 }

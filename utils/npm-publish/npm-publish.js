@@ -3,47 +3,63 @@
 const fs = require("fs-extra");
 const path = require("path");
 const log = require("npmlog");
-const { publish } = require("@evocateur/libnpmpublish");
+const { publish } = require("libnpmpublish");
 const pify = require("pify");
 const readJSON = require("read-package-json");
-const figgyPudding = require("figgy-pudding");
-const runLifecycle = require("@lerna/run-lifecycle");
+const { runLifecycle } = require("@lerna/run-lifecycle");
 const npa = require("npm-package-arg");
-const otplease = require("@lerna/otplease");
+const { otplease } = require("@lerna/otplease");
 
-module.exports = npmPublish;
+module.exports.npmPublish = npmPublish;
 
 const readJSONAsync = pify(readJSON);
 
-const PublishConfig = figgyPudding(
-  {
-    "dry-run": { default: false },
-    dryRun: "dry-run",
-    log: { default: log },
-    "project-scope": {},
-    projectScope: "project-scope",
-    tag: { default: "latest" },
-  },
-  {
-    other() {
-      // open it up for the sake of tests
-      return true;
-    },
-  }
-);
+/**
+ * @typedef {object} NpmPublishOptions
+ * @property {boolean} [dryRun]
+ * @property {string} [tag] Passed to libnpmpublish as `opts.defaultTag` to preserve npm v6 back-compat
+ */
 
-function npmPublish(pkg, tarFilePath, _opts, otpCache) {
+/**
+ * Alias dash-cased npmConf to camelCase
+ * @param {NpmPublishOptions} obj
+ * @returns {NpmPublishOptions}
+ */
+function flattenOptions(obj) {
+  return {
+    // eslint-disable-next-line dot-notation -- (npm v7 compat)
+    defaultTag: obj["tag"] || "latest",
+    dryRun: obj["dry-run"],
+    ...obj,
+  };
+}
+
+/**
+ * @typedef {import('npm-registry-fetch').FetchOptions & { access?: 'public' | 'restricted'; defaultTag?: string; }} LibNpmPublishOptions https://github.com/npm/libnpmpublish#opts
+ */
+
+/**
+ * Publish a package to the configured registry.
+ * @param {import("@lerna/package").Package} pkg
+ * @param {string} tarFilePath
+ * @param {LibNpmPublishOptions & NpmPublishOptions} [options]
+ * @param {import("@lerna/otplease").OneTimePasswordCache} [otpCache]
+ */
+function npmPublish(pkg, tarFilePath, options = {}, otpCache) {
+  const { dryRun, ...remainingOptions } = flattenOptions(options);
   const { scope } = npa(pkg.name);
   // pass only the package scope to libnpmpublish
-  const opts = PublishConfig(_opts, {
+  const opts = {
+    log,
+    ...remainingOptions,
     projectScope: scope,
-  });
+  };
 
   opts.log.verbose("publish", pkg.name);
 
   let chain = Promise.resolve();
 
-  if (!opts.dryRun) {
+  if (!dryRun) {
     chain = chain.then(() => {
       let { manifestLocation } = pkg;
 
@@ -56,18 +72,23 @@ function npmPublish(pkg, tarFilePath, _opts, otpCache) {
     });
     chain = chain.then(([tarData, manifest]) => {
       // non-default tag needs to override publishConfig.tag,
-      // which is merged over opts.tag in libnpmpublish
+      // which is merged into opts below if necessary
       if (
-        opts.tag !== "latest" &&
+        opts.defaultTag !== "latest" &&
         manifest.publishConfig &&
         manifest.publishConfig.tag &&
-        manifest.publishConfig.tag !== opts.tag
+        manifest.publishConfig.tag !== opts.defaultTag
       ) {
         // eslint-disable-next-line no-param-reassign
-        manifest.publishConfig.tag = opts.tag;
+        manifest.publishConfig.tag = opts.defaultTag;
       }
 
-      return otplease(innerOpts => publish(manifest, tarData, innerOpts), opts, otpCache).catch(err => {
+      // publishConfig is no longer consumed in n-r-f, so merge here
+      if (manifest.publishConfig) {
+        Object.assign(opts, publishConfigToOpts(manifest.publishConfig));
+      }
+
+      return otplease((innerOpts) => publish(manifest, tarData, innerOpts), opts, otpCache).catch((err) => {
         opts.log.silly("", err);
         opts.log.error(err.code, (err.body && err.body.error) || err.message);
 
@@ -87,4 +108,28 @@ function npmPublish(pkg, tarFilePath, _opts, otpCache) {
   chain = chain.then(() => runLifecycle(pkg, "postpublish", opts));
 
   return chain;
+}
+
+/**
+ * @typedef {object} PackagePublishConfig
+ * @property {'public' | 'restricted'} [access]
+ * @property {string} [registry]
+ * @property {string} [tag]
+ */
+
+/**
+ * Obtain an object suitable for assignment onto existing options from `pkg.publishConfig`.
+ * @param {PackagePublishConfig} publishConfig
+ * @returns {Omit<PackagePublishConfig, 'tag'> & { defaultTag?: string }}
+ */
+function publishConfigToOpts(publishConfig) {
+  const opts = { ...publishConfig };
+
+  // npm v7 renamed tag internally
+  if (publishConfig.tag) {
+    opts.defaultTag = publishConfig.tag;
+    delete opts.tag;
+  }
+
+  return opts;
 }

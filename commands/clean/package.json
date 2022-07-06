@@ -1,12 +1,12 @@
 {
   "name": "@lerna/clean",
-  "version": "3.21.0",
+  "version": "5.1.6",
   "description": "Remove the node_modules directory from all packages",
   "keywords": [
     "lerna",
     "command"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/commands/clean#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -37,8 +37,8 @@
     "@lerna/prompt": "file:../../core/prompt",
     "@lerna/pulse-till-done": "file:../../utils/pulse-till-done",
     "@lerna/rimraf-dir": "file:../../utils/rimraf-dir",
-    "p-map": "^2.1.0",
-    "p-map-series": "^1.0.0",
-    "p-waterfall": "^1.0.0"
+    "p-map": "^4.0.0",
+    "p-map-series": "^2.1.0",
+    "p-waterfall": "^2.1.1"
   }
 }

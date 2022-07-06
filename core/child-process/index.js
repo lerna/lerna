@@ -6,6 +6,7 @@ const execa = require("execa");
 const logTransformer = require("strong-log-transformer");
 
 // bookkeeping for spawned processes
+/** @type {Set<import("execa").ExecaChildProcess<string>>} */
 const children = new Set();
 
 // when streaming processes are spawned, use this color for prefix
@@ -15,6 +16,12 @@ const NUM_COLORS = colorWheel.length;
 // ever-increasing index ensures colors are always sequential
 let currentColor = 0;
 
+/**
+ * Execute a command asynchronously, piping stdio by default.
+ * @param {string} command
+ * @param {string[]} args
+ * @param {import("execa").Options} [opts]
+ */
 function exec(command, args, opts) {
   const options = Object.assign({ stdio: "pipe" }, opts);
   const spawned = spawnProcess(command, args, options);
@@ -22,10 +29,22 @@ function exec(command, args, opts) {
   return wrapError(spawned);
 }
 
+/**
+ * Execute a command synchronously.
+ * @param {string} command
+ * @param {string[]} args
+ * @param {import("execa").SyncOptions} [opts]
+ */
 function execSync(command, args, opts) {
   return execa.sync(command, args, opts).stdout;
 }
 
+/**
+ * Spawn a command asynchronously, _always_ inheriting stdio.
+ * @param {string} command
+ * @param {string[]} args
+ * @param {import("execa").Options} [opts]
+ */
 function spawn(command, args, opts) {
   const options = Object.assign({}, opts, { stdio: "inherit" });
   const spawned = spawnProcess(command, args, options);
@@ -33,6 +52,13 @@ function spawn(command, args, opts) {
   return wrapError(spawned);
 }
 
+/**
+ * Spawn a command asynchronously, streaming stdio with optional prefix.
+ * @param {string} command
+ * @param {string[]} args
+ * @param {import("execa").Options} [opts]
+ * @param {string} [prefix]
+ */
 // istanbul ignore next
 function spawnStreaming(command, args, opts, prefix) {
   const options = Object.assign({}, opts);
@@ -69,30 +95,47 @@ function getChildProcessCount() {
   return children.size;
 }
 
+/**
+ * @param {import("execa").ExecaError<string>} result
+ * @returns {number}
+ */
 function getExitCode(result) {
+  if (result.exitCode) {
+    return result.exitCode;
+  }
+
   // https://nodejs.org/docs/latest-v6.x/api/child_process.html#child_process_event_close
   if (typeof result.code === "number") {
     return result.code;
   }
 
   // https://nodejs.org/docs/latest-v6.x/api/errors.html#errors_error_code
-  // istanbul ignore else
   if (typeof result.code === "string") {
     return os.constants.errno[result.code];
   }
 
-  // istanbul ignore next: extremely weird
-  throw new TypeError(`Received unexpected exit code value ${JSON.stringify(result.code)}`);
+  // we tried
+  return process.exitCode;
 }
 
+/**
+ * @param {string} command
+ * @param {string[]} args
+ * @param {import("execa").Options} opts
+ */
 function spawnProcess(command, args, opts) {
   const child = execa(command, args, opts);
-  const drain = (code, signal) => {
+  const drain = (exitCode, signal) => {
     children.delete(child);
 
     // don't run repeatedly if this is the error event
     if (signal === undefined) {
       child.removeListener("exit", drain);
+    }
+
+    // propagate exit code, if any
+    if (exitCode) {
+      process.exitCode = exitCode;
     }
   };
 
@@ -108,17 +151,17 @@ function spawnProcess(command, args, opts) {
   return child;
 }
 
+/**
+ * @param {import("execa").ExecaChildProcess<string> & { pkg?: import("@lerna/package").Package }} spawned
+ */
 function wrapError(spawned) {
   if (spawned.pkg) {
-    return spawned.catch(err => {
-      // istanbul ignore else
-      if (err.code) {
-        // ensure code is always a number
-        err.code = getExitCode(err);
+    return spawned.catch((err) => {
+      // ensure exit code is always a number
+      err.exitCode = getExitCode(err);
 
-        // log non-lerna error cleanly
-        err.pkg = spawned.pkg;
-      }
+      // log non-lerna error cleanly
+      err.pkg = spawned.pkg;
 
       throw err;
     });
@@ -133,3 +176,9 @@ exports.spawn = spawn;
 exports.spawnStreaming = spawnStreaming;
 exports.getChildProcessCount = getChildProcessCount;
 exports.getExitCode = getExitCode;
+
+/**
+ * @typedef {object} ExecOpts Provided to any execa-based call
+ * @property {string} cwd
+ * @property {number} [maxBuffer]
+ */

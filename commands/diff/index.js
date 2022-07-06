@@ -1,10 +1,10 @@
 "use strict";
 
-const ChildProcessUtilities = require("@lerna/child-process");
-const Command = require("@lerna/command");
-const ValidationError = require("@lerna/validation-error");
-const getLastCommit = require("./lib/get-last-commit");
-const hasCommit = require("./lib/has-commit");
+const childProcess = require("@lerna/child-process");
+const { Command } = require("@lerna/command");
+const { ValidationError } = require("@lerna/validation-error");
+const { getLastCommit } = require("./lib/get-last-commit");
+const { hasCommit } = require("./lib/has-commit");
 
 module.exports = factory;
 
@@ -39,7 +39,7 @@ class DiffCommand extends Command {
     }
 
     if (this.options.ignoreChanges) {
-      this.options.ignoreChanges.forEach(ignorePattern => {
+      this.options.ignoreChanges.forEach((ignorePattern) => {
         // https://stackoverflow.com/a/21079437
         args.push(`:(exclude,glob)${ignorePattern}`);
       });
@@ -49,8 +49,8 @@ class DiffCommand extends Command {
   }
 
   execute() {
-    return ChildProcessUtilities.spawn("git", this.args, this.execOpts).catch(err => {
-      if (err.code) {
+    return childProcess.spawn("git", this.args, this.execOpts).catch((err) => {
+      if (err.exitCode) {
         // quitting the diff viewer is not an error
         throw err;
       }

@@ -2,13 +2,17 @@
 
 const semver = require("semver");
 
-const createGitLabClient = require("@lerna/gitlab-client");
+const { createGitLabClient } = require("@lerna/gitlab-client");
 const { createGitHubClient, parseGitRepo } = require("@lerna/github-client");
-const ValidationError = require("@lerna/validation-error");
+const { ValidationError } = require("@lerna/validation-error");
 
-module.exports = createRelease;
+module.exports.createRelease = createRelease;
+module.exports.createReleaseClient = createReleaseClient;
 
-function createClient(type) {
+/**
+ * @param {'github' | 'gitlab'} type
+ */
+function createReleaseClient(type) {
   switch (type) {
     case "gitlab":
       return createGitLabClient();
@@ -20,13 +24,17 @@ function createClient(type) {
   }
 }
 
-function createRelease(type, { tags, releaseNotes }, { gitRemote, execOpts }) {
+/**
+ * @param {ReturnType<typeof createReleaseClient>} client
+ * @param {{ tags: string[]; releaseNotes: { name: string; notes: string; }[] }} commandProps
+ * @param {{ gitRemote: string; execOpts: import("@lerna/child-process").ExecOpts }} opts
+ */
+function createRelease(client, { tags, releaseNotes }, { gitRemote, execOpts }) {
   const repo = parseGitRepo(gitRemote, execOpts);
-  const client = createClient(type);
 
   return Promise.all(
     releaseNotes.map(({ notes, name }) => {
-      const tag = name === "fixed" ? tags[0] : tags.find(t => t.startsWith(`${name}@`));
+      const tag = name === "fixed" ? tags[0] : tags.find((t) => t.startsWith(`${name}@`));
 
       /* istanbul ignore if */
       if (!tag) {

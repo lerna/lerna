@@ -1,12 +1,12 @@
 {
   "name": "@lerna/npm-run-script",
-  "version": "3.16.5",
+  "version": "5.1.6",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/npm-run-script#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -17,7 +17,7 @@
   ],
   "main": "npm-run-script.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -33,6 +33,6 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/get-npm-exec-opts": "file:../get-npm-exec-opts",
-    "npmlog": "^4.1.2"
+    "npmlog": "^6.0.2"
   }
 }

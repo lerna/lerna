@@ -1,13 +1,23 @@
 "use strict";
 
+const releases = new Map();
+
+// keep test data isolated
+afterEach(() => {
+  releases.clear();
+});
+
 const client = {
   repos: {
-    createRelease: jest.fn(),
+    createRelease: jest.fn((opts) => {
+      releases.set(opts.name, opts);
+      return Promise.resolve();
+    }),
   },
 };
 
-module.exports.client = client;
-module.exports.createGitHubClient = () => client;
+module.exports.createGitHubClient = jest.fn(() => client);
+module.exports.createGitHubClient.releases = releases;
 module.exports.parseGitRepo = () => ({
   owner: "lerna",
   name: "lerna",

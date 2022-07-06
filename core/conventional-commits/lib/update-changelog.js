@@ -10,7 +10,7 @@ const makeBumpOnlyFilter = require("./make-bump-only-filter");
 const readExistingChangelog = require("./read-existing-changelog");
 const getChangeLogHeader = require("./get-custom-changelog-header");
 
-module.exports = updateChangelog;
+module.exports.updateChangelog = updateChangelog;
 
 function updateChangelog(
   pkg,
@@ -19,7 +19,7 @@ function updateChangelog(
 ) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
-  return getChangelogConfig(changelogPreset, rootPath).then(config => {
+  return getChangelogConfig(changelogPreset, rootPath).then((config) => {
     const options = {};
     const context = {}; // pass as positional because cc-core's merge-config is wack
     const changelogHeader = getChangeLogHeader(header);

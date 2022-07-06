@@ -3,8 +3,8 @@
 // windows sucks
 jest.mock("has-unicode", () => () => false);
 
-const loggingOutput = require("@lerna-test/logging-output");
-const logPacked = require("../lib/log-packed");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { logPacked } = require("../lib/log-packed");
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({

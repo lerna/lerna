@@ -1,6 +1,6 @@
 "use strict";
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 const env = {
@@ -32,7 +32,7 @@ describe("lerna run", () => {
     );
   });
 
-  test("test --stream", async () => {
+  test("--stream", async () => {
     const cwd = await initFixture("lerna-run");
     const args = [
       "run",
@@ -62,7 +62,7 @@ lerna success - package-4
 `);
   });
 
-  test("test --stream --no-prefix", async () => {
+  test("--stream --no-prefix", async () => {
     const cwd = await initFixture("lerna-run");
     const args = [
       "run",
@@ -93,7 +93,7 @@ lerna success - package-4
 `);
   });
 
-  test("test --parallel", async () => {
+  test("--parallel", async () => {
     const cwd = await initFixture("lerna-run");
     const args = [
       "run",
@@ -115,7 +115,7 @@ lerna success - package-3
 lerna success - package-4
 `);
 
-    // order is non-deterministic, so assert each item seperately
+    // order is non-deterministic, so assert each item separately
     expect(stdout).toMatch("package-1: package-1");
     expect(stdout).toMatch("package-2: package-2");
     expect(stdout).toMatch("package-3: package-3");

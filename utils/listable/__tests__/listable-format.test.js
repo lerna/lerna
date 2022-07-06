@@ -4,14 +4,14 @@ const chalk = require("chalk");
 const tempy = require("tempy");
 const Tacks = require("tacks");
 
-const Project = require("@lerna/project");
-const loggingOutput = require("@lerna-test/logging-output");
+const { Project } = require("@lerna/project");
+const { loggingOutput } = require("@lerna-test/logging-output");
 const listable = require("..");
 
 const { File, Dir } = Tacks;
 
 // keep snapshots stable cross-platform
-chalk.enabled = false;
+chalk.level = 0;
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({
@@ -31,7 +31,7 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
 describe("listable.format()", () => {
   let packages;
 
-  const formatWithOptions = opts => listable.format(packages, Object.assign({ _: ["ls"] }, opts));
+  const formatWithOptions = (opts) => listable.format(packages, Object.assign({ _: ["ls"] }, opts));
 
   const fixture = new Tacks(
     Dir({
