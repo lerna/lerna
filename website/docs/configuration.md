@@ -261,7 +261,7 @@ as `dependsOnFromProjectsPackageJson || dependsOnFromNxJson`. The same applies t
 ### inputs & namedInputs
 
 Defining `inputs` for a given target would replace the set of inputs for that target name defined in `nx.json`.
-Using pseudocode `inputs = packageJson.target.build.inputs || nxJson.targetDefaults.build.inputs`.
+Using pseudocode `inputs = packageJson.targets.build.inputs || nxJson.targetDefaults.build.inputs`.
 
 You can also define and redefine named inputs. This enables one key use case, where your `nx.json` can define things
 like this (which applies to every project):
@@ -301,12 +301,12 @@ In this case Nx will use the right `prod` input for each project.
 ### dependsOn
 
 Defining `dependsOn` for a given target would replace `dependsOn` for that target name defined in `nx.json`.
-Using pseudocode `dependsOn = packageJson.target.build.dependsOn || nxJson.targetDefaults.build.dependsOn`.
+Using pseudocode `dependsOn = packageJson.targets.build.dependsOn || nxJson.targetDefaults.build.dependsOn`.
 
 ### outputs
 
 Defining `outputs` for a given target would replace `outputs` for that target name defined in `nx.json`.
-Using pseudocode `outputs = packageJson.tsarget.build.outputs || nxJson.targetDefaults.build.outputs`.
+Using pseudocode `outputs = packageJson.targets.build.outputs || nxJson.targetDefaults.build.outputs`.
 
 ### implicitDependencies
 
