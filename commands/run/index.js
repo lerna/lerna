@@ -170,6 +170,15 @@ class RunCommand extends Command {
     return chain;
   }
 
+  addQuotesAroundScriptNameIfItHasAColon(scriptName) {
+    // Nx requires quotes around script names of the form script:name
+    if (scriptName.includes(":")) {
+      return `"${scriptName}"`;
+    } else {
+      return scriptName;
+    }
+  }
+
   runScriptsUsingNx() {
     if (this.options.ci) {
       process.env.CI = "true";
@@ -179,7 +188,10 @@ class RunCommand extends Command {
     const { targetDependencies, options } = this.prepNxOptions();
     if (this.packagesWithScript.length === 1) {
       const { runOne } = require("nx/src/command-line/run-one");
-      const fullQualifiedTarget = this.packagesWithScript.map((p) => p.name)[0] + ":" + this.script;
+      const fullQualifiedTarget =
+        this.packagesWithScript.map((p) => p.name)[0] +
+        ":" +
+        this.addQuotesAroundScriptNameIfItHasAColon(this.script);
       return runOne(
         process.cwd(),
         {
