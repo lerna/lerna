@@ -2,8 +2,6 @@ import { existsSync } from "fs-extra";
 import { Fixture } from "../../utils/fixture";
 import { normalizeCommandOutput, normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
-jest.setTimeout(60000);
-
 expect.addSnapshotSerializer({
   serialize(str: string) {
     return normalizeCommandOutput(normalizeEnvironment(str));
@@ -13,7 +11,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna run", () => {
+describe("lerna-run", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {

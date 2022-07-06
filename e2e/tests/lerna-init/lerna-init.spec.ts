@@ -1,6 +1,6 @@
 import { Fixture } from "../../utils/fixture";
 
-describe("lerna init", () => {
+describe("lerna-init", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {

@@ -58,11 +58,13 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // algolia: {
-      //   appId: "xxx",
-      //   apiKey: "xxxx",
-      //   indexName: "lerna",
-      // },
+      algolia: {
+        appId: "W7AFDUEIGE",
+        apiKey: "95785b7a78017aade2bc8b82ca965e24",
+        indexName: "lerna",
+        contextualSearch: false,
+        searchPagePath: false,
+      },
       colorMode: {
         defaultMode: "light",
         disableSwitch: false,
