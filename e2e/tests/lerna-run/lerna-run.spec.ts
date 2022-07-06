@@ -378,10 +378,9 @@ lerna notice cli v999.9.9-e2e.0
 `);
   });
 
-  describe('run one', () => {
+  describe("run one", () => {
     it("should run script on single child package using nx", async () => {
       const output = await fixture.lerna(`run print-name-run-one-only`);
-      
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
   
@@ -402,10 +401,10 @@ lerna notice cli v999.9.9-e2e.0
   
   `);
     });
-  
+
     it("should run script with colon on single child package using nx", async () => {
       const output = await fixture.lerna(`run print:name:run-one-only`);
-  
+
       expect(output.combinedOutput).toMatchInlineSnapshot(`
 
   > package-X:"print:name:run-one-only"
@@ -425,7 +424,7 @@ lerna notice cli v999.9.9-e2e.0
   
   `);
     });
-  })
+  });
 
   it("should run script with colon on all child package using nx", async () => {
     const output = await fixture.lerna(`run print:name`);
