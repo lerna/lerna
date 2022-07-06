@@ -317,6 +317,7 @@ describe("useNx", () => {
       packagePath: "packages/package-4",
       scripts: {
         "print:name": "echo test-package-4",
+        "print:name:run-one-only": "echo test-package-4-run-one-only",
       },
     });
     await fixture.lerna("create package-5 -y");
@@ -369,6 +370,35 @@ test-package-X
  
 
  >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+lerna notice cli v999.9.9-e2e.0
+
+`);
+  });
+
+  it("should run script with colon on single child package using nx", async () => {
+    const output = await fixture.lerna(`run print:name:run-one-only`);
+
+    expect(output.combinedOutput).toMatchInlineSnapshot(`
+
+ >  Lerna (powered by Nx)   Running target print:name:run-one-only for 1 project(s):
+
+    - package-X
+
+ 
+
+> package-X:"print:name:run-one-only"
+
+
+> package-X@0.0.0 print:name:run-one-only
+> echo test-package-X-run-one-only
+
+test-package-X-run-one-only
+
+ 
+
+ >  Lerna (powered by Nx)   Successfully ran target print:name for 1 projects
 
 
 lerna notice cli v999.9.9-e2e.0
