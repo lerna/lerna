@@ -224,6 +224,72 @@ describe("lerna version", () => {
       `);
     });
 
+    it("should correctly generate and promote prereleases when using --conventional-prerelease and --conventional-graduate", async () => {
+      await fixture.createInitialGitCommit();
+
+      await fixture.lerna("create package-a -y");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'feat: add package-a'");
+
+      await fixture.lerna("create package-b -y");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'feat: add package-b'");
+
+      await fixture.exec("git push origin test-main");
+
+      // Initial versioning with two packages created
+      await fixture.lerna("version --conventional-commits -y", { silenceError: true });
+
+      // Update and version just package-a
+      await fixture.exec("echo update_package_a > packages/package-a/new_file.txt");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'fix: update package-a'");
+
+      // Create a prerelease version
+      const output = await fixture.lerna("version --conventional-commits --conventional-prerelease -y", {
+        silenceError: true,
+      });
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+
+        Changes:
+         - package-a: 0.1.0 => 0.1.1-alpha.0
+
+        lerna notice cli v999.9.9-e2e.0
+        lerna info current version 0.1.0
+        lerna info Looking for changed packages since v0.1.0
+        lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
+        lerna info auto-confirmed 
+        lerna info execute Skipping releases
+        lerna info git Pushing tags...
+        lerna success version finished
+
+      `);
+
+      // Promote the prerelease version
+      const output2 = await fixture.lerna("version --conventional-commits --conventional-graduate -y", {
+        silenceError: true,
+      });
+
+      expect(output2.combinedOutput).toMatchInlineSnapshot(`
+
+        Changes:
+         - package-a: 0.1.1-alpha.0 => 0.1.1
+
+        lerna notice cli v999.9.9-e2e.0
+        lerna info current version 0.1.1-alpha.0
+        lerna WARN conventional-graduate all packages
+        lerna info Graduating all prereleased packages
+        lerna info Looking for changed packages since v0.1.1-alpha.0
+        lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
+        lerna info auto-confirmed 
+        lerna info execute Skipping releases
+        lerna info git Pushing tags...
+        lerna success version finished
+
+      `);
+    });
+
     describe("independent packages", () => {
       it("should correctly generate changelog and version information when releasing packages independently", async () => {
         await fixture.createInitialGitCommit();
