@@ -22,13 +22,25 @@ const sidebars = {
     "getting-started",
     {
       type: "category",
+      label: "How To...",
+      items: [
+        "how-to/bootstrap",
+        "how-to/run-tasks",
+        "how-to/version-and-publish",
+        "how-to/enable-dte",
+      ],
+      link: {
+        type: "generated-index",
+        title: "How To Guides",
+        description: "Get Started",
+        slug: "/how-to",
+      },
+    },
+    {
+      type: "category",
       label: "Core Concepts",
       items: [
-        "core-concepts/bootstrapping",
-        "core-concepts/running-tasks",
-        "core-concepts/versioning-and-publishing",
         "core-concepts/computation-caching",
-        "core-concepts/distributed-task-execution",
       ],
       link: {
         type: "generated-index",
@@ -38,16 +50,10 @@ const sidebars = {
         keywords: ["core", "caching", "dte", "versioning", "publishing"],
       },
     },
-    "configuration",
-    {
-      type: "category",
-      label: "Guides",
-      items: ["guides/hoisting"],
-    },
     {
       type: "category",
       label: "API Reference",
-      items: ["api-reference/commands", "api-reference/filter-options"],
+      items: ["api-reference/commands", "api-reference/filter-options", "api-reference/configuration"],
     },
     {
       type: "doc",

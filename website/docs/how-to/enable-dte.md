@@ -1,6 +1,6 @@
 ---
-id: distributed-task-execution
-title: Distributed Task Execution
+id: enable-dte
+title: Enable Distributed Task Execution
 ---
 
 # Distributed Task Execution (DTE)
@@ -14,19 +14,29 @@ binning) or use Nx Cloud.
 When using distributed task execution, Lerna (via Nx) is able to run any task graph on many agents instead of
 locally.
 
-For instance, `> npx lerna run build` won't run the builds locally (which can take hours for large workspaces). Instead,
+For instance, `npx lerna run build` won't run the builds locally (which can take hours for large workspaces). Instead,
 it will send the Task Graph to Nx Cloud. Nx Cloud Agents will then pick up the tasks they can run and execute them.
 
 Note that this happens transparently. If an agent builds `remixapp`, it will fetch the outputs for `header` and `footer`
 if it doesn't have them already.
 
-As agents complete tasks, the main job where you invoked `> npx lerna run build` will start receiving created files and
+As agents complete tasks, the main job where you invoked `npx lerna run build` will start receiving created files and
 terminal outputs.
 
-After `> npx lerna run build` completes, the original machine will have the build files and all the terminal outputs as if it ran
+After `npx lerna run build` completes, the original machine will have the build files and all the terminal outputs as if it ran
 it locally.
 
 ![DTE](../images/dte/dte.png)
+
+## Automatically Generate a Distributed CI Workflow
+
+To generate a base CI workflow that implements Distributed Task Execution, use the [`ci-workflow`](https://nx.dev/packages/workspace/generators/ci-workflow) generator:
+
+```bash
+nx generate @nrwl/workspace:ci-workflow --ci=github
+```
+
+The `--ci` flag can be `github`, `circleci` or `azure`.
 
 ## Example
 

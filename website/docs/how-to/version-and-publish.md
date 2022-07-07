@@ -1,9 +1,9 @@
 ---
-id: versioning-and-publishing
-title: Versioning and Publishing
+id: version-and-publish
+title: Version and Publish
 ---
 
-# Versioning and Publishing
+# Version and Publish
 
 Lerna can increment your package's versions as well as publish your packages to NPM, and it provides a variety of options to make sure any workflow can be accommodated.
 
@@ -27,7 +27,7 @@ We are going to publish the `header` and the `footer` packages.
 Lerna comes with a `version` that allows you to increment your package's version number, commit the changes and tag them accordingly.
 
 ```bash
-> lerna version --no-private
+lerna version --no-private
 ```
 
 you'll get the following output:
@@ -73,12 +73,12 @@ Lerna uses the `version` property in `lerna.json` to determine the currently use
 If we run
 
 ```bash
-> lerna publish --no-private
+lerna publish --no-private
 ```
 
 Lerna executes the version incrementing workflow (same as `lerna version`) and in addition also pushes the packages to NPM. You should get the following output:
 
-```bash
+```bash title="Terminal Output"
 lerna notice cli v5.1.2
 lerna info current version 1.0.0
 lerna info Assuming all packages changed

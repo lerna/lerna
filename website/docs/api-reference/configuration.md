@@ -13,7 +13,7 @@ Lerna's configuration is split into two files: `lerna.json` and `nx.json`.
 
 Since Lerna was created, all major package managers (npm, yarn, and pnpm) have added the ability to cross-link packages
 in the same repo and dedupe node modules. If you'd like Lerna to delegate this process to the package manager you use,
-the `useWorksapces: true` in `lerna.json`.
+set `useWorkspaces: true` in `lerna.json`.
 
 ```json title="lerna.json"
 {
@@ -68,7 +68,7 @@ Find the available options in [the API docs](/docs/api-reference/commands).
 
 # Nx.json
 
-This configuration is only relevant is you have `useNx: true` in your `lerna.json`.
+This configuration is only relevant if you have `useNx: true` in your `lerna.json`.
 
 ```json title="nx.json"
 {
