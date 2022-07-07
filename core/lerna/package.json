@@ -18,7 +18,8 @@
   },
   "files": [
     "index.js",
-    "cli.js"
+    "cli.js",
+    "schemas/lerna-schema.json"
   ],
   "engines": {
     "node": "^14.15.0 || >=16.0.0"

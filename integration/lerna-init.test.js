@@ -37,6 +37,7 @@ describe("lerna init", () => {
     `);
     expect(lernaJson).toMatchInlineSnapshot(`
       Object {
+        "$schema": "node_modules/lerna/schemas/lerna-schema.json",
         "packages": Array [
           "packages/*",
         ],
@@ -71,6 +72,7 @@ describe("lerna init", () => {
     `);
     expect(lernaJson).toMatchInlineSnapshot(`
       Object {
+        "$schema": "node_modules/lerna/schemas/lerna-schema.json",
         "command": Object {
           "bootstrap": Object {
             "hoist": true,

@@ -66,6 +66,7 @@ describe("InitCommand", () => {
         await lernaInit(testDir)("--exact");
 
         expect(await fs.readJSON(path.join(testDir, "lerna.json"))).toMatchObject({
+          $schema: "node_modules/lerna/schemas/lerna-schema.json",
           command: {
             init: {
               exact: true,
@@ -91,6 +92,7 @@ describe("InitCommand", () => {
       ]);
 
       expect(lernaJson).toMatchObject({
+        $schema: "node_modules/lerna/schemas/lerna-schema.json",
         packages: ["packages/*"],
         version: "0.0.0",
       });
@@ -190,6 +192,7 @@ describe("InitCommand", () => {
       await lernaInit(testDir)();
 
       expect(await fs.readJSON(lernaJsonPath)).toEqual({
+        $schema: "node_modules/lerna/schemas/lerna-schema.json",
         packages: ["packages/*"],
         useNx: false,
         version: "1.2.3",
@@ -223,6 +226,7 @@ describe("InitCommand", () => {
             hoist: true,
           },
         },
+        $schema: "node_modules/lerna/schemas/lerna-schema.json",
         version: "1.2.3",
       });
       await fs.outputJSON(pkgJsonPath, {
@@ -242,6 +246,7 @@ describe("InitCommand", () => {
             exact: true,
           },
         },
+        $schema: "node_modules/lerna/schemas/lerna-schema.json",
         packages: ["packages/*"],
         useNx: false,
         version: "1.2.3",
