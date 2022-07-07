@@ -23,12 +23,7 @@ const sidebars = {
     {
       type: "category",
       label: "How To...",
-      items: [
-        "how-to/bootstrap",
-        "how-to/run-tasks",
-        "how-to/version-and-publish",
-        "how-to/enable-dte",
-      ],
+      items: ["how-to/bootstrap", "how-to/run-tasks", "how-to/version-and-publish", "how-to/enable-dte"],
       link: {
         type: "generated-index",
         title: "How To Guides",
@@ -39,9 +34,7 @@ const sidebars = {
     {
       type: "category",
       label: "Core Concepts",
-      items: [
-        "core-concepts/computation-caching",
-      ],
+      items: ["core-concepts/computation-caching", "core-concepts/hoisting"],
       link: {
         type: "generated-index",
         title: "Core Concepts",

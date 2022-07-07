@@ -52,7 +52,7 @@ To make the `header` and `footer` available inside the `remixapp`, run:
 lerna bootstrap --use-workspaces
 ```
 
-This installs all the dependencies needed for the 3 projects and links the `header` and `footer` projects so that `remixapp` can reference them like npm packages.  `--use-workspaces` tells Lerna to delegate package linking process to your package manager.  (This feature is supported by npm, yarn and pnpm.)
+This installs all the dependencies needed for the 3 projects and links the `header` and `footer` projects so that `remixapp` can reference them like npm packages. `--use-workspaces` tells Lerna to delegate package linking process to your package manager. (This feature is supported by npm, yarn and pnpm.)
 
 You can also set `useWorkspaces` as the default behavior in the `lerna.json` file:
 
@@ -65,7 +65,7 @@ You can also set `useWorkspaces` as the default behavior in the `lerna.json` fil
 
 ## Other Bootstrapping Methods
 
-If you can't use your package manager's built in support for some reason, Lerna can handle the bootstrapping for you.  There are several ways Lerna can set up your monorepo such that `remixapp` can find `header` and `footer`, and one of them is to make it such that the `header` and `footer` end up in the `node_modules` folder of `remixapp` (or a different folder at the root)--that's what `lerna bootstrap` (without `--use-workspaces`) does.
+If you can't use your package manager's built in support for some reason, Lerna can handle the bootstrapping for you. There are several ways Lerna can set up your monorepo such that `remixapp` can find `header` and `footer`, and one of them is to make it such that the `header` and `footer` end up in the `node_modules` folder of `remixapp` (or a different folder at the root)--that's what `lerna bootstrap` (without `--use-workspaces`) does.
 
 Running `lerna bootstrap` will invoke `npm install` in each of the packages, and will link local package such that the resulting structure will look like this.
 

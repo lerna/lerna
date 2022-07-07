@@ -15,7 +15,7 @@ npx lerna init
 
 All Lerna functionality will work the same way regardless.
 
-This tutorial will give you an introduction to Lerna's features.  We will use [this repository](https://github.com/lerna/getting-started-example).
+This tutorial will give you an introduction to Lerna's features. We will use [this repository](https://github.com/lerna/getting-started-example).
 
 > To start the tutorial, clone the repo, check out the prelerna branch and follow along!
 

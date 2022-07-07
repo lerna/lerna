@@ -94,7 +94,6 @@ npx lerna run test --since=origin/main
 
 Learn more [here](../api-reference/filter-options.md).
 
-
 ## Allow Tasks to Run in Any Order
 
 To run the `test` script for each of the projects, run the following:
