@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "5.1.7",
+  "version": "5.1.8",
   "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",

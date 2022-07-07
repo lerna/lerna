@@ -1,6 +1,6 @@
 {
   "name": "@lerna/validation-error",
-  "version": "5.1.7",
+  "version": "5.1.8",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
