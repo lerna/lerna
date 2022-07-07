@@ -43,7 +43,7 @@
     "init-package-json": "^2.0.2",
     "npm-package-arg": "^8.1.0",
     "p-reduce": "^2.1.0",
-    "pacote": "^13.4.1",
+    "pacote": "^13.6.1",
     "pify": "^5.0.0",
     "semver": "^7.3.4",
     "slash": "^3.0.0",
