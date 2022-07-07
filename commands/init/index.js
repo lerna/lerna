@@ -128,6 +128,7 @@ class InitCommand extends Command {
     }
 
     Object.assign(config, {
+      $schema: "node_modules/lerna/schemas/lerna-schema.json",
       packages: this.project.packageConfigs,
       useNx: false,
       version,
