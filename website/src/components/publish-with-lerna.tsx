@@ -13,7 +13,7 @@ export default function PublishWithLerna(): JSX.Element {
               Lerna is the ultimate tool for publishing multiple packages to npm. Whether the packages have
               independent versions or not, Lerna's got you covered.
             </p>
-            <a className="button button--secondary" href="/docs/core-concepts/versioning-and-publishing">
+            <a className="button button--secondary" href="/docs/how-to/version-and-publish">
               Publishing Packages
             </a>
           </div>

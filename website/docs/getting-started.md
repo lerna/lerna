@@ -316,7 +316,7 @@ You will see all the files restored from cache and the command executing instant
 ```
 
 > Lerna also supports [distributed caching](./core-concepts/caching.md)
-> and [config-free distributed task execution](./core-concepts/dte.md).
+> and [config-free distributed task execution](./how-to/enable-dte.md).
 
 ## Target Dependencies (aka task pipelines)
 
@@ -378,4 +378,4 @@ This will
 - publish the packages to NPM
 
 Read more about the publishing and versioning
-process [in the corresponding docs page](./core-concepts/versioning-and-publishing.md).
+process [in the corresponding docs page](./how-to/version-and-publish.md).

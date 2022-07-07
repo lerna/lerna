@@ -160,7 +160,7 @@ const config = {
             items: [
               {
                 label: "Guides",
-                to: "/docs/guides/hoisting",
+                to: "/docs/core-concepts/hoisting",
               },
               {
                 label: "Troubleshooting",

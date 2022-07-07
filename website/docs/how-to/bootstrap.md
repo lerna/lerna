@@ -151,7 +151,7 @@ packages/
 package.json
 ```
 
-Read more about [hoisting in the corresponding guide](../guides/hoisting).
+Read more about [hoisting in the corresponding guide](../core-concepts/hoisting).
 
 ## Linking Different Folders
 

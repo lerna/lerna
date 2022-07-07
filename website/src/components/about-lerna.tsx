@@ -40,14 +40,14 @@ const callouts: Callout[] = [
   {
     title: "Target Dependencies",
     text: "Lerna lets you specify how different targets (npm scripts) depend on each other.",
-    link: "/docs/core-concepts/running-tasks#target-dependencies-aka-task-pipelines",
+    link: "/docs/how-to/run-tasks#target-dependencies-aka-task-pipelines",
     icon: CollectionIcon,
   },
   {
     title: "Efficient Execution",
     text:
       "Lerna runs any command in the most efficient way with the max degree of parallelization while respecting the execution order.",
-    link: "/docs/core-concepts/running-tasks",
+    link: "/docs/how-to/run-tasks",
     icon: ClockIcon,
   },
   {
