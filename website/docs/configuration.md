@@ -17,7 +17,7 @@ the `useWorksapces: true` in `lerna.json`.
 
 ```json title="lerna.json"
 {
-    "useWorkspaces": true
+  "useWorkspaces": true
 }
 ```
 
@@ -26,7 +26,7 @@ look for `package.json` files.
 
 ```json title="lerna.json"
 {
-    "packages": ["packages/*"]
+  "packages": ["packages/*"]
 }
 ```
 
@@ -37,7 +37,7 @@ be published using the same version. The last published version is recorded in `
 
 ```json title="lerna.json"
 {
-    "version": "1.2.0"
+  "version": "1.2.0"
 }
 ```
 
@@ -45,7 +45,7 @@ When using the independent mode, every package is versioned separately, and `ler
 
 ```json title="lerna.json"
 {
-    "version": "independent"
+  "version": "independent"
 }
 ```
 
@@ -76,41 +76,22 @@ This configuration is only relevant is you have `useNx: true` in your `lerna.jso
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "test"
-        ]
+        "cacheableOperations": ["build", "test"]
       }
     }
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*"
-    ],
-    "prod": [
-      "!{projectRoot}/**/*.spec.tsx"
-    ]
+    "default": ["{projectRoot}/**/*"],
+    "prod": ["!{projectRoot}/**/*.spec.tsx"]
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "prebuild",
-        "^build"
-      ],
-      "inputs": [
-        "prod",
-        "^prod"
-      ],
-      "outputs": [
-        "{projectRoot}/dist"
-      ]
+      "dependsOn": ["prebuild", "^build"],
+      "inputs": ["prod", "^prod"],
+      "outputs": ["{projectRoot}/dist"]
     },
     "test": {
-      "inputs": [
-        "default",
-        "^prod",
-        "{workspaceRoot}/jest.config.ts"
-      ]
+      "inputs": ["default", "^prod", "{workspaceRoot}/jest.config.ts"]
     }
   }
 }
@@ -146,37 +127,37 @@ project and the build script of all the dependencies to run first.
 The `inputs` array tells Nx what to consider to determine whether a particular invocation of a script should be a cache
 hit or not. There are three types of inputs:
 
-*Filesets*
+_Filesets_
 
 Examples:
 
-* `{projectRoot}/**.*.ts`
-* same as `{fileset: "{projectRoot}/**/*.ts"}`
-* `{workspaceRoot}/jest.config.ts`
-* same as `{fileset: "{workspaceRoot}/jest.config.ts}`
+- `{projectRoot}/**.*.ts`
+- same as `{fileset: "{projectRoot}/**/*.ts"}`
+- `{workspaceRoot}/jest.config.ts`
+- same as `{fileset: "{workspaceRoot}/jest.config.ts}`
 
-*Runtime Inputs*
+_Runtime Inputs_
 
 Examples:
 
-* `{runtime: "node -v"}`
+- `{runtime: "node -v"}`
 
 Node the result value is hashed, so it is never displayed.
 
-*Env Variables*
+_Env Variables_
 
 Examples:
 
-* `{env: "MY_ENV_VAR"}`
+- `{env: "MY_ENV_VAR"}`
 
 Node the result value is hashed, so it is never displayed.
 
-*Named Inputs*
+_Named Inputs_
 
 Examples:
 
-* `inputs: ["prod"]`
-* same as `inputs: [{input: "prod", projects: "self"}]`
+- `inputs: ["prod"]`
+- same as `inputs: [{input: "prod", projects: "self"}]`
 
 Often the same glob will appear in many places (e.g., prod fileset will exclude spec files for all projects).. Because
 keeping them in sync is error-prone, we recommend defining named inputs, which you can then reference in all of those
@@ -186,8 +167,8 @@ places.
 
 Examples:
 
-* `inputs: ["^prod"]`
-* same as `inputs: [{input: "prod", projects: "dependencies"}]`
+- `inputs: ["^prod"]`
+- same as `inputs: [{input: "prod", projects: "dependencies"}]`
 
 Similar to `dependsOn`, the "^" symbols means "dependencies". This is a very important idea, so let's illustrate it with
 an example.
@@ -254,8 +235,7 @@ useful to have a project-specific configuration, which is placed in the project'
 Note, the `namedInputs` and `targetDefaults` defined in `nx.json` are simply defaults. If you take that configuration
 and copy it into every project's `package.json` file, the results will be the same.
 
-In other words, every project has a set of named inputs, and it's defined as: `{...namedInputsFromNxJson,
-...namedInputsFromProjectsPackageJson}`. Every target/script's `dependsOn` is defined
+In other words, every project has a set of named inputs, and it's defined as: `{...namedInputsFromNxJson, ...namedInputsFromProjectsPackageJson}`. Every target/script's `dependsOn` is defined
 as `dependsOnFromProjectsPackageJson || dependsOnFromNxJson`. The same applies to `inputs` and `outputs`.
 
 ### inputs & namedInputs

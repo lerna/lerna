@@ -34,9 +34,9 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: "https://github.com/lerna/lerna/tree/main/website/",
+          sidebarCollapsed: false,
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.css"), require.resolve("./src/css/helpers.css")],
