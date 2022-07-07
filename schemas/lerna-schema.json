@@ -6,7 +6,7 @@
   "properties": {
     "version": {
       "type": "string",
-      "description": "The version of the repository, or \"independent\" for an repository with independently versioned packages.",
+      "description": "The version of the repository, or \"independent\" for a repository with independently versioned packages.",
       "default": "0.0.0"
     },
     "packages": {
@@ -20,7 +20,7 @@
     },
     "useNx": {
       "type": "boolean",
-      "description": "When true, Lerna will use the nx task runner.",
+      "description": "When true, Lerna will delegate the implementation details of `lerna run` to the Nx task runner, instead of p-map or p-queue.",
       "default": false
     },
     "command": {
