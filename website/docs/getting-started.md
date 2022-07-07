@@ -221,10 +221,7 @@ Second, let's mark `build` and `test` to be cacheable operations.
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "test"
-        ]
+        "cacheableOperations": ["build", "test"]
       }
     }
   }
@@ -268,10 +265,7 @@ building the Remix app we need to help it by adding the following section to `pa
   "nx": {
     "targets": {
       "build": {
-        "outputs": [
-          "{projectRoot}/build",
-          "{projectRoot}/public/build"
-        ]
+        "outputs": ["{projectRoot}/build", "{projectRoot}/public/build"]
       }
     }
   }

@@ -71,26 +71,15 @@ We can define a more precise configuration as follows:
 ```json title="nx.json"
 {
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*"
-    ],
-    "prod": [
-      "!{projectRoot}/**/*.spec.tsx"
-    ]
+    "default": ["{projectRoot}/**/*"],
+    "prod": ["!{projectRoot}/**/*.spec.tsx"]
   },
   "targetDefaults": {
     "build": {
-      "inputs": [
-        "prod",
-        "^prod"
-      ]
+      "inputs": ["prod", "^prod"]
     },
     "test": {
-      "inputs": [
-        "default",
-        "^prod",
-        "{workspaceRoot}/jest.config.ts"
-      ]
+      "inputs": ["default", "^prod", "{workspaceRoot}/jest.config.ts"]
     }
   }
 }
@@ -108,10 +97,7 @@ Your targets can also depend on runtime values.
 {
   "targetDefaults": {
     "build": {
-      "inputs": [
-        { "env": "MY_ENV_NAME" },
-        { "runtime": "node -v"}
-      ]
+      "inputs": [{ "env": "MY_ENV_NAME" }, { "runtime": "node -v" }]
     }
   }
 }
@@ -164,10 +150,7 @@ project's `package.json`:
   "nx": {
     "targets": {
       "build": {
-        "outputs": [
-          "{projectRoot}/build",
-          "{projectRoot}/public/build"
-        ]
+        "outputs": ["{projectRoot}/build", "{projectRoot}/public/build"]
       }
     }
   }
@@ -217,10 +200,7 @@ option for the task runner in `nx.json`:
   "tasksRunnerOptions": {
     "default": {
       "options": {
-        "cacheableOperations": [
-          "build",
-          "test"
-        ],
+        "cacheableOperations": ["build", "test"],
         "cacheDirectory": "/tmp/mycache"
       }
     }
