@@ -232,10 +232,11 @@ class PackageGraph extends Map {
       }
 
       // Otherwise the same node is checked multiple times which is very wasteful in a large repository
-      if (alreadyVisited.has(topLevelDependent)) {
+      const identifier = `${baseNode.name}:${topLevelDependent.name}`;
+      if (alreadyVisited.has(identifier)) {
         return;
       }
-      alreadyVisited.add(topLevelDependent);
+      alreadyVisited.add(identifier);
 
       if (
         topLevelDependent === baseNode ||
