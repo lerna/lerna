@@ -13,17 +13,19 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const { gitAdd } = require("@lerna-test/git-add");
-const { gitTag } = require("@lerna-test/git-tag");
-const { gitCommit } = require("@lerna-test/git-commit");
-const { showCommit } = require("@lerna-test/show-commit");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(
+  path.resolve(__dirname, "../../publish/__tests__")
+);
+const { gitAdd } = require("@lerna-test/helpers");
+const { gitTag } = require("@lerna-test/helpers");
+const { gitCommit } = require("@lerna-test/helpers");
+const { showCommit } = require("@lerna-test/helpers");
 
 // test command
-const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
+const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // stabilize commit SHA
-expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-git-sha"));
 
 describe("version --ignore-changes", () => {
   const setupChanges = async (cwd, tuples) => {

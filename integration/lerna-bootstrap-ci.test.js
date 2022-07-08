@@ -1,8 +1,8 @@
 "use strict";
 
 const path = require("path");
-const { cliRunner } = require("@lerna-test/cli-runner");
-const cloneFixture = require("@lerna-test/clone-fixture")(
+const { cliRunner } = require("@lerna-test/helpers");
+const cloneFixture = require("@lerna-test/helpers").cloneFixtureFactory(
   path.resolve(__dirname, "../commands/bootstrap/__tests__")
 );
 

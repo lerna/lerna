@@ -9,14 +9,16 @@ jest.mock("../lib/remote-branch-exists");
 const path = require("path");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const { getCommitMessage } = require("@lerna-test/get-commit-message");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(
+  path.resolve(__dirname, "../../publish/__tests__")
+);
+const { getCommitMessage } = require("@lerna-test/helpers");
 
 // test command
-const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
+const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // stabilize commit SHA
-expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-git-sha"));
 
 test("publish --message %s", async () => {
   const cwd = await initFixture("normal");

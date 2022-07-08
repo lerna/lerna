@@ -1,8 +1,8 @@
 "use strict";
 
-const { cliRunner } = require("@lerna-test/cli-runner");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { loadManifests } = require("@lerna-test/load-manifests");
+const { cliRunner } = require("@lerna-test/helpers");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { loadManifests } = require("@lerna-test/helpers");
 
 describe("lerna import", () => {
   test("works with argument provided", async () => {

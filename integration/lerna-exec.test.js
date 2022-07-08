@@ -3,8 +3,8 @@
 const path = require("path");
 const pathKey = require("path-key");
 
-const { cliRunner } = require("@lerna-test/cli-runner");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const { cliRunner } = require("@lerna-test/helpers");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
 const EXEC_TEST_COMMAND = process.platform === "win32" ? "exec-test.cmd" : "exec-test";
 

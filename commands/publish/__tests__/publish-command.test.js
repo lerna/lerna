@@ -28,14 +28,14 @@ const { getTwoFactorAuthRequired } = require("../lib/get-two-factor-auth-require
 const { gitCheckout } = require("../lib/git-checkout");
 
 // helpers
-const { commitChangeToPackage } = require("@lerna-test/commit-change-to-package");
-const { loggingOutput } = require("@lerna-test/logging-output");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const { commitChangeToPackage } = require("@lerna-test/helpers");
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 const path = require("path");
 const fs = require("fs-extra");
 
 // file under test
-const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
+const lernaPublish = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 gitCheckout.mockImplementation(() => Promise.resolve());
 

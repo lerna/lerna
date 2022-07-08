@@ -7,7 +7,9 @@ const yargs = require("yargs/yargs");
 const { collectUpdates } = require("@lerna/collect-updates");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../command"));
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(
+  path.resolve(__dirname, "../../command")
+);
 const { PackageGraph } = require("@lerna/package-graph");
 const { getPackages } = require("@lerna/project");
 

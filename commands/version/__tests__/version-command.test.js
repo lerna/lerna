@@ -22,16 +22,18 @@ const { isBehindUpstream } = require("../lib/is-behind-upstream");
 const { remoteBranchExists } = require("../lib/remote-branch-exists");
 
 // helpers
-const { loggingOutput } = require("@lerna-test/logging-output");
-const { gitAdd } = require("@lerna-test/git-add");
-const { gitTag } = require("@lerna-test/git-tag");
-const { gitCommit } = require("@lerna-test/git-commit");
-const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const { showCommit } = require("@lerna-test/show-commit");
-const { getCommitMessage } = require("@lerna-test/get-commit-message");
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+const { gitAdd } = require("@lerna-test/helpers");
+const { gitTag } = require("@lerna-test/helpers");
+const { gitCommit } = require("@lerna-test/helpers");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(
+  path.resolve(__dirname, "../../publish/__tests__")
+);
+const { showCommit } = require("@lerna-test/helpers");
+const { getCommitMessage } = require("@lerna-test/helpers");
 
 // file under test
-const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
+const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // certain tests need to use the real thing
 const collectUpdatesActual = jest.requireActual("@lerna/collect-updates").collectUpdates;
@@ -44,7 +46,7 @@ const listDirty = (cwd) =>
   );
 
 // stabilize commit SHA
-expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-git-sha"));
 
 describe("VersionCommand", () => {
   describe("normal mode", () => {

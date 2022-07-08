@@ -3,7 +3,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 const { Project } = require("@lerna/project");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 const { createTempLicenses } = require("../lib/create-temp-licenses");
 
 describe("createTempLicenses", () => {

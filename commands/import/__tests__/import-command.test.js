@@ -11,14 +11,14 @@ const pathExists = require("path-exists");
 const { promptConfirmation } = require("@lerna/prompt");
 
 // helpers
-const initNamedFixture = require("@lerna-test/init-named-fixture")(__dirname);
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { gitAdd } = require("@lerna-test/git-add");
-const { gitCommit } = require("@lerna-test/git-commit");
-const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
+const initNamedFixture = require("@lerna-test/helpers").initNamedFixtureFactory(__dirname);
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { gitAdd } = require("@lerna-test/helpers");
+const { gitCommit } = require("@lerna-test/helpers");
+const { updateLernaConfig } = require("@lerna-test/helpers");
 
 // file under test
-const lernaImport = require("@lerna-test/command-runner")(require("../command"));
+const lernaImport = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // assertion helpers
 const lastCommitInDir = (cwd) =>

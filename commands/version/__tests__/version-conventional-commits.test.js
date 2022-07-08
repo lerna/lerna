@@ -15,11 +15,13 @@ const { collectUpdates } = require("@lerna/collect-updates");
 const { recommendVersion, updateChangelog } = require("@lerna/conventional-commits");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const { showCommit } = require("@lerna-test/show-commit");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(
+  path.resolve(__dirname, "../../publish/__tests__")
+);
+const { showCommit } = require("@lerna-test/helpers");
 
 // test command
-const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
+const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 describe("--conventional-commits", () => {
   describe("independent", () => {
