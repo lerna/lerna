@@ -20,6 +20,7 @@ const sidebars = {
   main: [
     "introduction",
     "getting-started",
+    "lerna-and-nx",
     {
       type: "category",
       label: "Features",

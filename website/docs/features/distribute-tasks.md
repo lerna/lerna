@@ -33,7 +33,7 @@ The `--ci` flag can be `github`, `circleci` or `azure`.  For more details on set
 
 ![what's a task? project + target (i.e. shared-product-ui + test).  each run contains many tasks.  affected:test contains shared-product-ui:test, product-page:test, shared-e2e-util:test and shared-ui:test](../images/dte/whats-a-task.jpeg)
 
-A task, from Lerna's perspective, is a target running on a project.  i.e. The target `test` running on the project `shared-product-ui` is a task.  For more information about tasks, see the [Run Tasks article](../run-tasks).
+A task, from Lerna's perspective, is a target running on a project.  i.e. The target `test` running on the project `shared-product-ui` is a task.  For more information about tasks, see the [Run Tasks article](./run-tasks).
 
 ## Nx Cloud Schedules Your CI Tasks Automatically
 
@@ -53,7 +53,7 @@ When you set up DTE, you define (1) the tasks that you want to run and (2) the n
 
 ![but don't some tasks depend on others' results?  Yep! Nx knows about your dependency tree, so it will execute tasks in the right order and make sure the results are available where they're needed.](../images/dte/task-dependencies.jpeg)
 
-There are some tasks that need to be executed before other tasks, but Nx Cloud takes that into account when it assigns tasks to agents.  For a more detailed look at defining those dependencies, read the [Run Tasks article](../run-tasks).
+There are some tasks that need to be executed before other tasks, but Nx Cloud takes that into account when it assigns tasks to agents.  For a more detailed look at defining those dependencies, read the [Run Tasks article](./run-tasks).
 
 ## Why Distribute Tasks?
 

@@ -27,14 +27,14 @@ const callouts: Callout[] = [
     title: "Never Rebuilds Same Code Twice",
     text:
       "Lerna won't run the tasks it executed before, and instead will restore the files and the terminal output from its cache.",
-    link: "/docs/core-concepts/computation-caching",
+    link: "/docs/features/cache-tasks",
     icon: CogIcon,
   },
   {
     title: "Distributed Cache",
     text:
       "Computation cache can be shared between developers or CI/CD machines, drastically reducing average CI times.",
-    link: "/docs/core-concepts/computation-caching#distributed-computation-caching",
+    link: "/docs/features/cache-tasks#distributed-computation-caching",
     icon: ShareIcon,
   },
   {
@@ -53,7 +53,7 @@ const callouts: Callout[] = [
   {
     title: "Infinite Scaling with Distributed Execution",
     text: "Lerna can run any command across multiple machines without having to configure anything.",
-    link: "/docs/core-concepts/distributed-task-execution",
+    link: "/docs/features/distribute-tasks",
     icon: SparklesIcon,
   },
   {

@@ -316,7 +316,7 @@ You will see all the files restored from cache and the command executing instant
 ```
 
 > Lerna also supports [distributed caching](./features/cache-tasks.md)
-> and [config-free distributed task execution](./features/enable-dte.md).
+> and [config-free distributed task execution](./features/distribute-tasks.md).
 
 ## Target Dependencies (aka task pipelines)
 
