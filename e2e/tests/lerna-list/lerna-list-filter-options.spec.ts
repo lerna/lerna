@@ -1,8 +1,6 @@
 import { Fixture } from "../../utils/fixture";
 import { normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
-jest.setTimeout(60000);
-
 expect.addSnapshotSerializer({
   serialize(str: string) {
     return normalizeEnvironment(str);
@@ -12,7 +10,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna list", () => {
+describe("lerna-list-filter-options", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {

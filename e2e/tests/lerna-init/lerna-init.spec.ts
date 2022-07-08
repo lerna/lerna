@@ -1,6 +1,6 @@
 import { Fixture } from "../../utils/fixture";
 
-describe("lerna init", () => {
+describe("lerna-init", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {
@@ -29,6 +29,7 @@ describe("lerna init", () => {
 
     expect(await fixture.readWorkspaceFile("lerna.json")).toMatchInlineSnapshot(`
       "{
+        \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
         \\"packages\\": [
           \\"packages/*\\"
         ],
@@ -65,6 +66,7 @@ describe("lerna init", () => {
 
       expect(await fixture.readWorkspaceFile("lerna.json")).toMatchInlineSnapshot(`
         "{
+          \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
           \\"packages\\": [
             \\"packages/*\\"
           ],
@@ -107,6 +109,7 @@ describe("lerna init", () => {
               \\"exact\\": true
             }
           },
+          \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
           \\"packages\\": [
             \\"packages/*\\"
           ],
@@ -149,6 +152,7 @@ describe("lerna init", () => {
               \\"exact\\": true
             }
           },
+          \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
           \\"packages\\": [
             \\"packages/*\\"
           ],

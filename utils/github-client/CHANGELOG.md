@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.8](https://github.com/lerna/lerna/compare/v5.1.7...v5.1.8) (2022-07-07)
+
+
+### Bug Fixes
+
+* update git-url-parse to v12 ([#3231](https://github.com/lerna/lerna/issues/3231)) ([f954404](https://github.com/lerna/lerna/commit/f9544045b59714bacc1b5e0155682c7b1c4140d2))
+
+
+
+
+
+## [5.1.7](https://github.com/lerna/lerna/compare/v5.1.6...v5.1.7) (2022-07-06)
+
+**Note:** Version bump only for package @lerna/github-client
+
+
+
+
+
 ## [5.1.6](https://github.com/lerna/lerna/compare/v5.1.5...v5.1.6) (2022-06-24)
 
 **Note:** Version bump only for package @lerna/github-client

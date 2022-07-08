@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.8](https://github.com/lerna/lerna/compare/v5.1.7...v5.1.8) (2022-07-07)
+
+**Note:** Version bump only for package @lerna/run
+
+
+
+
+
+## [5.1.7](https://github.com/lerna/lerna/compare/v5.1.6...v5.1.7) (2022-07-06)
+
+
+### Bug Fixes
+
+* **run:** add double quotes around script target containing colon ([#3218](https://github.com/lerna/lerna/issues/3218)) ([ead461e](https://github.com/lerna/lerna/commit/ead461eba284d8d2efb0da3f18ce87fb5ae42bd2))
+
+
+
+
+
 ## [5.1.6](https://github.com/lerna/lerna/compare/v5.1.5...v5.1.6) (2022-06-24)
 
 

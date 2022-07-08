@@ -19,7 +19,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna info", () => {
+describe("lerna-info", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {

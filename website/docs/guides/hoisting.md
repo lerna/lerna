@@ -25,17 +25,17 @@ directory instead.
 that ideally does not require any other modifications to a project.
 When the `--hoist` flag is used:
 
-* Common dependencies will be installed _only_ to the top-level
+- Common dependencies will be installed _only_ to the top-level
   `node_modules`, and omitted from individual package `node_modules`.
-* Mostly-common dependencies are still hoisted, but outlier packages
+- Mostly-common dependencies are still hoisted, but outlier packages
   with different versions will get a normal, local `node_modules`
   installation of the necessary dependencies.
-  * In this instance, `lerna bootstrap` will always use `npm install`
+  - In this instance, `lerna bootstrap` will always use `npm install`
     with the `--global-style` flag, regardless of client configuration.
-* Binaries from those common packages are symlinked to individual
+- Binaries from those common packages are symlinked to individual
   package `node_modules/.bin` directories, so that `package.json`
   scripts continue to work unmodified.
-* Well-behaved Node-based software should continue to work unmodified.
+- Well-behaved Node-based software should continue to work unmodified.
 
 ## Disadvantages with hoisting
 

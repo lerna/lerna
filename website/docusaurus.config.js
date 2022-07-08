@@ -34,9 +34,9 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: "https://github.com/lerna/lerna/tree/main/website/",
+          sidebarCollapsed: false,
         },
         theme: {
           customCss: [require.resolve("./src/css/custom.css"), require.resolve("./src/css/helpers.css")],
@@ -58,11 +58,13 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // algolia: {
-      //   appId: "xxx",
-      //   apiKey: "xxxx",
-      //   indexName: "lerna",
-      // },
+      algolia: {
+        appId: "W7AFDUEIGE",
+        apiKey: "95785b7a78017aade2bc8b82ca965e24",
+        indexName: "lerna",
+        contextualSearch: false,
+        searchPagePath: false,
+      },
       colorMode: {
         defaultMode: "light",
         disableSwitch: false,

@@ -14,12 +14,17 @@ export function normalizeCommitSHAs(str: string): string {
 /**
  * As well as normalizing paths across environments, we need to strip a CI specific log from the
  * output to ensure that snapshots are consistent between local and CI runs.
+ *
+ * We also need to replace the unique namespacing of the fixtures based on package manager and a
+ * random number.
  */
 export function normalizeEnvironment(str: string): string {
   const normalized = str
     .replaceAll(/\/private\/tmp\//g, "/tmp/")
     .replaceAll(E2E_ROOT, "/tmp/lerna-e2e")
-    .replaceAll(/lerna info ci enabled\n/g, "");
+    .replaceAll(/lerna info ci enabled\n/g, "")
+    // Replace fixture namespacing
+    .replaceAll(/-npm-\d+/g, "");
 
   /**
    * In the case of generated CHANGELOGs we will currently end up with a variant of E2E_ROOT without

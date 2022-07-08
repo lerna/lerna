@@ -54,7 +54,11 @@ export class Fixture {
     initializeGit,
     installDependencies,
   }: FixtureCreateOptions): Promise<Fixture> {
-    const fixture = new Fixture(name, packageManager);
+    const fixture = new Fixture(
+      // Make the underlying name include the package manager and be globally unique
+      uniq(`${name}-${packageManager}`),
+      packageManager
+    );
 
     fixture.createFixtureRoot();
     await fixture.createGitOrigin();
@@ -226,10 +230,7 @@ export class Fixture {
     await this.exec('git commit -m "initial-commit"');
   }
 
-  private async updateJson(
-    path: string,
-    updateFn: (json: Record<string, unknown>) => Record<string, unknown>
-  ) {
+  async updateJson(path: string, updateFn: (json: Record<string, unknown>) => Record<string, unknown>) {
     const jsonPath = this.getWorkspacePath(path);
     const json = readJsonFile(jsonPath) as Record<string, unknown>;
 
@@ -316,4 +317,8 @@ function getPublishedVersion(): string {
     // fallback to latest if built package is missing
     "latest";
   return process.env.PUBLISHED_VERSION;
+}
+
+function uniq(prefix: string) {
+  return `${prefix}-${Math.floor(Math.random() * 10000000)}`;
 }

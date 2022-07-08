@@ -1,0 +1,1833 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://lerna.js.org/docs/getting-started#adding-lerna",
+  "title": "JSON schema for Lerna configuration",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "The version of the repository, or \"independent\" for a repository with independently versioned packages.",
+      "default": "0.0.0"
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "uniqueItems": true
+      },
+      "description": "An array of globs where packages can be located.",
+      "default": ["packages/*"]
+    },
+    "useNx": {
+      "type": "boolean",
+      "description": "When true, Lerna will delegate the implementation details of `lerna run` to the Nx task runner, instead of p-map or p-queue.",
+      "default": false
+    },
+    "command": {
+      "type": "object",
+      "description": "Options for individual Lerna commands.",
+      "properties": {
+        "add": {
+          "type": "object",
+          "description": "Options for the `add` command.",
+          "properties": {
+            "dev": {
+              "$ref": "#/$defs/commandOptions/add/dev"
+            },
+            "exact": {
+              "$ref": "#/$defs/commandOptions/shared/exact"
+            },
+            "peer": {
+              "$ref": "#/$defs/commandOptions/add/peer"
+            },
+            "registry": {
+              "$ref": "#/$defs/commandOptions/shared/registry"
+            },
+            "noBootstrap": {
+              "$ref": "#/$defs/commandOptions/add/noBootstrap"
+            },
+            "bootstrap": {
+              "$ref": "#/$defs/commandOptions/add/bootstrap"
+            },
+
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "bootstrap": {
+          "type": "object",
+          "description": "Options for the `bootstrap` command.",
+          "properties": {
+            "hoist": {
+              "$ref": "#/$defs/commandOptions/bootstrap/hoist"
+            },
+            "nohoist": {
+              "$ref": "#/$defs/commandOptions/bootstrap/nohoist"
+            },
+            "mutex": {
+              "$ref": "#/$defs/commandOptions/bootstrap/mutex"
+            },
+            "ignorePrepublish": {
+              "$ref": "#/$defs/commandOptions/shared/ignorePrepublish"
+            },
+            "ignoreScripts": {
+              "$ref": "#/$defs/commandOptions/shared/ignoreScripts"
+            },
+            "registry": {
+              "$ref": "#/$defs/commandOptions/shared/registry"
+            },
+            "strict": {
+              "$ref": "#/$defs/commandOptions/bootstrap/strict"
+            },
+            "useWorkspaces": {
+              "$ref": "#/$defs/commandOptions/bootstrap/useWorkspaces"
+            },
+            "forceLocal": {
+              "$ref": "#/$defs/commandOptions/shared/forceLocal"
+            },
+            "contents": {
+              "$ref": "#/$defs/commandOptions/shared/contents"
+            },
+
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "changed": {
+          "type": "object",
+          "description": "Options for the `changed` command.",
+          "properties": {
+            "conventionalCommits": {
+              "$ref": "#/$defs/commandOptions/shared/conventionalCommits"
+            },
+            "conventionalGraduate": {
+              "$ref": "#/$defs/commandOptions/shared/conventionalGraduate"
+            },
+            "forcePublish": {
+              "$ref": "#/$defs/commandOptions/shared/forcePublish"
+            },
+            "ignoreChanges": {
+              "$ref": "#/$defs/commandOptions/shared/ignoreChanges"
+            },
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "clean": {
+          "type": "object",
+          "description": "Options for the `clean` command.",
+          "properties": {
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "create": {
+          "type": "object",
+          "description": "Options for the `create` command.",
+          "properties": {
+            "access": {
+              "$ref": "#/$defs/commandOptions/create/access"
+            },
+            "bin": {
+              "$ref": "#/$defs/commandOptions/create/bin"
+            },
+            "description": {
+              "$ref": "#/$defs/commandOptions/create/description"
+            },
+            "dependencies": {
+              "$ref": "#/$defs/commandOptions/create/dependencies"
+            },
+            "esModule": {
+              "$ref": "#/$defs/commandOptions/create/esModule"
+            },
+            "homepage": {
+              "$ref": "#/$defs/commandOptions/create/homepage"
+            },
+            "keywords": {
+              "$ref": "#/$defs/commandOptions/create/keywords"
+            },
+            "license": {
+              "$ref": "#/$defs/commandOptions/create/license"
+            },
+            "registry": {
+              "$ref": "#/$defs/commandOptions/shared/registry"
+            },
+            "tag": {
+              "$ref": "#/$defs/commandOptions/create/tag"
+            },
+
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "diff": {
+          "type": "object",
+          "description": "Options for the `diff` command.",
+          "properties": {
+            "ignoreChanges": {
+              "$ref": "#/$defs/commandOptions/shared/ignoreChanges"
+            },
+
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "exec": {
+          "type": "object",
+          "description": "Options for the `exec` command.",
+          "properties": {
+            "stream": {
+              "$ref": "#/$defs/commandOptions/shared/stream"
+            },
+            "parallel": {
+              "$ref": "#/$defs/commandOptions/shared/parallel"
+            },
+            "noBail": {
+              "$ref": "#/$defs/commandOptions/shared/noBail"
+            },
+            "bail": {
+              "$ref": "#/$defs/commandOptions/shared/bail"
+            },
+            "noPrefix": {
+              "$ref": "#/$defs/commandOptions/shared/noPrefix"
+            },
+            "prefix": {
+              "$ref": "#/$defs/commandOptions/shared/prefix"
+            },
+            "profile": {
+              "$ref": "#/$defs/commandOptions/shared/profile"
+            },
+            "profileLocation": {
+              "$ref": "#/$defs/commandOptions/shared/profileLocation"
+            },
+
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "import": {
+          "type": "object",
+          "description": "Options for the `import` command.",
+          "properties": {
+            "flatten": {
+              "$ref": "#/$defs/commandOptions/import/flatten"
+            },
+            "dest": {
+              "$ref": "#/$defs/commandOptions/import/dest"
+            },
+            "preserveCommit": {
+              "$ref": "#/$defs/commandOptions/import/preserveCommit"
+            },
+
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "init": {
+          "type": "object",
+          "description": "Options for the `init` command.",
+          "properties": {
+            "exact": {
+              "$ref": "#/$defs/commandOptions/shared/exact"
+            },
+            "independent": {
+              "$ref": "#/$defs/commandOptions/init/independent"
+            }
+          }
+        },
+        "link": {
+          "type": "object",
+          "description": "Options for the `link` command.",
+          "properties": {
+            "forceLocal": {
+              "$ref": "#/$defs/commandOptions/shared/forceLocal"
+            },
+            "contents": {
+              "$ref": "#/$defs/commandOptions/shared/contents"
+            },
+
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "list": {
+          "type": "object",
+          "description": "Options for the `list` command.",
+          "properties": {
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "publish": {
+          "type": "object",
+          "description": "Options for the `publish` command.",
+          "properties": {
+            "canary": {
+              "$ref": "#/$defs/commandOptions/publish/canary"
+            },
+            "preid": {
+              "$ref": "#/$defs/commandOptions/shared/preid"
+            },
+            "contents": {
+              "$ref": "#/$defs/commandOptions/shared/contents"
+            },
+            "distTag": {
+              "$ref": "#/$defs/commandOptions/publish/distTag"
+            },
+            "legacyAuth": {
+              "$ref": "#/$defs/commandOptions/publish/legacyAuth"
+            },
+            "preDistTag": {
+              "$ref": "#/$defs/commandOptions/publish/preDistTag"
+            },
+            "gitHead": {
+              "$ref": "#/$defs/commandOptions/publish/gitHead"
+            },
+            "graphType": {
+              "$ref": "#/$defs/commandOptions/publish/graphType"
+            },
+            "ignorePrepublish": {
+              "$ref": "#/$defs/commandOptions/shared/ignorePrepublish"
+            },
+            "ignoreScripts": {
+              "$ref": "#/$defs/commandOptions/shared/ignoreScripts"
+            },
+            "noGranularPathspec": {
+              "$ref": "#/$defs/commandOptions/shared/noGranularPathspec"
+            },
+            "granularPathspec": {
+              "$ref": "#/$defs/commandOptions/shared/granularPathspec"
+            },
+            "otp": {
+              "$ref": "#/$defs/commandOptions/publish/otp"
+            },
+            "registry": {
+              "$ref": "#/$defs/commandOptions/shared/registry"
+            },
+            "requireScripts": {
+              "$ref": "#/$defs/commandOptions/publish/requireScripts"
+            },
+            "noGitReset": {
+              "$ref": "#/$defs/commandOptions/publish/noGitReset"
+            },
+            "gitReset": {
+              "$ref": "#/$defs/commandOptions/publish/gitReset"
+            },
+            "tempTag": {
+              "$ref": "#/$defs/commandOptions/publish/tempTag"
+            },
+            "noVerifyAccess": {
+              "$ref": "#/$defs/commandOptions/publish/noVerifyAccess"
+            },
+            "verifyAccess": {
+              "$ref": "#/$defs/commandOptions/publish/verifyAccess"
+            },
+
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "run": {
+          "type": "object",
+          "description": "Options for the `run` command.",
+          "properties": {
+            "stream": {
+              "$ref": "#/$defs/commandOptions/shared/stream"
+            },
+            "parallel": {
+              "$ref": "#/$defs/commandOptions/shared/parallel"
+            },
+            "noBail": {
+              "$ref": "#/$defs/commandOptions/shared/noBail"
+            },
+            "bail": {
+              "$ref": "#/$defs/commandOptions/shared/bail"
+            },
+            "noPrefix": {
+              "$ref": "#/$defs/commandOptions/shared/noPrefix"
+            },
+            "prefix": {
+              "$ref": "#/$defs/commandOptions/shared/prefix"
+            },
+            "profile": {
+              "$ref": "#/$defs/commandOptions/shared/profile"
+            },
+            "profileLocation": {
+              "$ref": "#/$defs/commandOptions/shared/profileLocation"
+            },
+            "skipNxCache": {
+              "$ref": "#/$defs/commandOptions/run/skipNxCache"
+            },
+
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        },
+        "version": {
+          "type": "object",
+          "description": "Options for the `version` command.",
+          "properties": {
+            "allowBranch": {
+              "$ref": "#/$defs/commandOptions/version/allowBranch"
+            },
+            "amend": {
+              "$ref": "#/$defs/commandOptions/version/amend"
+            },
+            "conventionalCommits": {
+              "$ref": "#/$defs/commandOptions/shared/conventionalCommits"
+            },
+            "conventionalGraduate": {
+              "$ref": "#/$defs/commandOptions/shared/conventionalGraduate"
+            },
+            "conventionalPrerelease": {
+              "$ref": "#/$defs/commandOptions/version/conventionalPrerelease"
+            },
+            "changelogPreset": {
+              "$ref": "#/$defs/commandOptions/version/changelogPreset"
+            },
+            "exact": {
+              "$ref": "#/$defs/commandOptions/shared/exact"
+            },
+            "forcePublish": {
+              "$ref": "#/$defs/commandOptions/shared/forcePublish"
+            },
+            "gitRemote": {
+              "$ref": "#/$defs/commandOptions/version/gitRemote"
+            },
+            "createRelease": {
+              "$ref": "#/$defs/commandOptions/version/createRelease"
+            },
+            "ignoreChanges": {
+              "$ref": "#/$defs/commandOptions/shared/ignoreChanges"
+            },
+            "ignoreScripts": {
+              "$ref": "#/$defs/commandOptions/shared/ignoreScripts"
+            },
+            "message": {
+              "$ref": "#/$defs/commandOptions/version/message"
+            },
+            "noChangelog": {
+              "$ref": "#/$defs/commandOptions/version/noChangelog"
+            },
+            "changelog": {
+              "$ref": "#/$defs/commandOptions/version/changelog"
+            },
+            "noCommitHooks": {
+              "$ref": "#/$defs/commandOptions/version/noCommitHooks"
+            },
+            "commitHooks": {
+              "$ref": "#/$defs/commandOptions/version/commitHooks"
+            },
+            "noGitTagVersion": {
+              "$ref": "#/$defs/commandOptions/version/noGitTagVersion"
+            },
+            "gitTagVersion": {
+              "$ref": "#/$defs/commandOptions/version/gitTagVersion"
+            },
+            "noGranularPathspec": {
+              "$ref": "#/$defs/commandOptions/shared/noGranularPathspec"
+            },
+            "granularPathspec": {
+              "$ref": "#/$defs/commandOptions/shared/granularPathspec"
+            },
+            "noPush": {
+              "$ref": "#/$defs/commandOptions/version/noPush"
+            },
+            "push": {
+              "$ref": "#/$defs/commandOptions/version/push"
+            },
+            "preid": {
+              "$ref": "#/$defs/commandOptions/shared/preid"
+            },
+            "signGitCommit": {
+              "$ref": "#/$defs/commandOptions/version/signGitCommit"
+            },
+            "signGitTag": {
+              "$ref": "#/$defs/commandOptions/version/signGitTag"
+            },
+            "forceGitTag": {
+              "$ref": "#/$defs/commandOptions/version/forceGitTag"
+            },
+            "tagVersionPrefix": {
+              "$ref": "#/$defs/commandOptions/version/tagVersionPrefix"
+            },
+
+            "npmClient": {
+              "$ref": "#/$defs/globals/npmClient"
+            },
+            "loglevel": {
+              "$ref": "#/$defs/globals/loglevel"
+            },
+            "concurrency": {
+              "$ref": "#/$defs/globals/concurrency"
+            },
+            "rejectCycles": {
+              "$ref": "#/$defs/globals/rejectCycles"
+            },
+            "progress": {
+              "$ref": "#/$defs/globals/progress"
+            },
+            "sort": {
+              "$ref": "#/$defs/globals/sort"
+            },
+            "maxBuffer": {
+              "$ref": "#/$defs/globals/maxBuffer"
+            },
+            "yes": {
+              "$ref": "#/$defs/globals/yes"
+            },
+
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            },
+            "includeMergedTags": {
+              "$ref": "#/$defs/filters/includeMergedTags"
+            },
+            "continueIfNoMatch": {
+              "$ref": "#/$defs/filters/continueIfNoMatch"
+            }
+          }
+        }
+      }
+    },
+    "npmClient": {
+      "$ref": "#/$defs/globals/npmClient"
+    },
+    "loglevel": {
+      "$ref": "#/$defs/globals/loglevel"
+    },
+    "concurrency": {
+      "$ref": "#/$defs/globals/concurrency"
+    },
+    "rejectCycles": {
+      "$ref": "#/$defs/globals/rejectCycles"
+    },
+    "progress": {
+      "$ref": "#/$defs/globals/progress"
+    },
+    "sort": {
+      "$ref": "#/$defs/globals/sort"
+    },
+    "maxBuffer": {
+      "$ref": "#/$defs/globals/maxBuffer"
+    },
+    "yes": {
+      "$ref": "#/$defs/globals/yes"
+    },
+
+    "scope": {
+      "$ref": "#/$defs/filters/scope"
+    },
+    "ignore": {
+      "$ref": "#/$defs/filters/ignore"
+    },
+    "private": {
+      "$ref": "#/$defs/filters/private"
+    },
+    "since": {
+      "$ref": "#/$defs/filters/since"
+    },
+    "excludeDependents": {
+      "$ref": "#/$defs/filters/excludeDependents"
+    },
+    "includeDependents": {
+      "$ref": "#/$defs/filters/includeDependents"
+    },
+    "includeDependencies": {
+      "$ref": "#/$defs/filters/includeDependencies"
+    },
+    "includeMergedTags": {
+      "$ref": "#/$defs/filters/includeMergedTags"
+    },
+    "continueIfNoMatch": {
+      "$ref": "#/$defs/filters/continueIfNoMatch"
+    },
+
+    "dev": {
+      "$ref": "#/$defs/commandOptions/add/dev"
+    },
+    "peer": {
+      "$ref": "#/$defs/commandOptions/add/peer"
+    },
+    "noBootstrap": {
+      "$ref": "#/$defs/commandOptions/add/noBootstrap"
+    },
+    "bootstrap": {
+      "$ref": "#/$defs/commandOptions/add/bootstrap"
+    },
+    "hoist": {
+      "$ref": "#/$defs/commandOptions/bootstrap/hoist"
+    },
+    "nohoist": {
+      "$ref": "#/$defs/commandOptions/bootstrap/nohoist"
+    },
+    "mutex": {
+      "$ref": "#/$defs/commandOptions/bootstrap/mutex"
+    },
+    "strict": {
+      "$ref": "#/$defs/commandOptions/bootstrap/strict"
+    },
+    "useWorkspaces": {
+      "$ref": "#/$defs/commandOptions/bootstrap/useWorkspaces"
+    },
+
+    "access": {
+      "$ref": "#/$defs/commandOptions/create/access"
+    },
+    "bin": {
+      "$ref": "#/$defs/commandOptions/create/bin"
+    },
+    "description": {
+      "$ref": "#/$defs/commandOptions/create/description"
+    },
+    "dependencies": {
+      "$ref": "#/$defs/commandOptions/create/dependencies"
+    },
+    "esModule": {
+      "$ref": "#/$defs/commandOptions/create/esModule"
+    },
+    "homepage": {
+      "$ref": "#/$defs/commandOptions/create/homepage"
+    },
+    "keywords": {
+      "$ref": "#/$defs/commandOptions/create/keywords"
+    },
+    "license": {
+      "$ref": "#/$defs/commandOptions/create/license"
+    },
+    "tag": {
+      "$ref": "#/$defs/commandOptions/create/tag"
+    },
+
+    "flatten": {
+      "$ref": "#/$defs/commandOptions/import/flatten"
+    },
+    "dest": {
+      "$ref": "#/$defs/commandOptions/import/dest"
+    },
+    "preserveCommit": {
+      "$ref": "#/$defs/commandOptions/import/preserveCommit"
+    },
+
+    "independent": {
+      "$ref": "#/$defs/commandOptions/init/independent"
+    },
+
+    "canary": {
+      "$ref": "#/$defs/commandOptions/publish/canary"
+    },
+    "distTag": {
+      "$ref": "#/$defs/commandOptions/publish/distTag"
+    },
+    "preDistTag": {
+      "$ref": "#/$defs/commandOptions/publish/preDistTag"
+    },
+    "legacyAuth": {
+      "$ref": "#/$defs/commandOptions/publish/legacyAuth"
+    },
+    "gitHead": {
+      "$ref": "#/$defs/commandOptions/publish/gitHead"
+    },
+    "graphType": {
+      "$ref": "#/$defs/commandOptions/publish/graphType"
+    },
+    "otp": {
+      "$ref": "#/$defs/commandOptions/publish/otp"
+    },
+    "requireScripts": {
+      "$ref": "#/$defs/commandOptions/publish/requireScripts"
+    },
+    "noGitReset": {
+      "$ref": "#/$defs/commandOptions/publish/noGitReset"
+    },
+    "gitReset": {
+      "$ref": "#/$defs/commandOptions/publish/gitReset"
+    },
+    "tempTag": {
+      "$ref": "#/$defs/commandOptions/publish/tempTag"
+    },
+    "noVerifyAccess": {
+      "$ref": "#/$defs/commandOptions/publish/noVerifyAccess"
+    },
+    "verifyAccess": {
+      "$ref": "#/$defs/commandOptions/publish/verifyAccess"
+    },
+
+    "skipNxCache": {
+      "$ref": "#/$defs/commandOptions/run/skipNxCache"
+    },
+
+    "allowBranch": {
+      "$ref": "#/$defs/commandOptions/version/allowBranch"
+    },
+    "amend": {
+      "$ref": "#/$defs/commandOptions/version/amend"
+    },
+    "conventionalPrerelease": {
+      "$ref": "#/$defs/commandOptions/version/conventionalPrerelease"
+    },
+    "changelogPreset": {
+      "$ref": "#/$defs/commandOptions/version/changelogPreset"
+    },
+    "gitRemote": {
+      "$ref": "#/$defs/commandOptions/version/gitRemote"
+    },
+    "createRelease": {
+      "$ref": "#/$defs/commandOptions/version/createRelease"
+    },
+    "message": {
+      "$ref": "#/$defs/commandOptions/version/message"
+    },
+    "noChangelog": {
+      "$ref": "#/$defs/commandOptions/version/noChangelog"
+    },
+    "changelog": {
+      "$ref": "#/$defs/commandOptions/version/changelog"
+    },
+    "noCommitHooks": {
+      "$ref": "#/$defs/commandOptions/version/noCommitHooks"
+    },
+    "commitHooks": {
+      "$ref": "#/$defs/commandOptions/version/commitHooks"
+    },
+    "noGitTagVersion": {
+      "$ref": "#/$defs/commandOptions/version/noGitTagVersion"
+    },
+    "gitTagVersion": {
+      "$ref": "#/$defs/commandOptions/version/gitTagVersion"
+    },
+    "noPush": {
+      "$ref": "#/$defs/commandOptions/version/noPush"
+    },
+    "push": {
+      "$ref": "#/$defs/commandOptions/version/push"
+    },
+    "signGitCommit": {
+      "$ref": "#/$defs/commandOptions/version/signGitCommit"
+    },
+    "signGitTag": {
+      "$ref": "#/$defs/commandOptions/version/signGitTag"
+    },
+    "forceGitTag": {
+      "$ref": "#/$defs/commandOptions/version/forceGitTag"
+    },
+    "tagVersionPrefix": {
+      "$ref": "#/$defs/commandOptions/version/tagVersionPrefix"
+    },
+
+    "registry": {
+      "$ref": "#/$defs/commandOptions/shared/registry"
+    },
+    "conventionalCommits": {
+      "$ref": "#/$defs/commandOptions/shared/conventionalCommits"
+    },
+    "conventionalGraduate": {
+      "$ref": "#/$defs/commandOptions/shared/conventionalGraduate"
+    },
+    "forceLocal": {
+      "$ref": "#/$defs/commandOptions/shared/forceLocal"
+    },
+    "contents": {
+      "$ref": "#/$defs/commandOptions/shared/contents"
+    },
+    "ignoreChanges": {
+      "$ref": "#/$defs/commandOptions/shared/ignoreChanges"
+    },
+    "stream": {
+      "$ref": "#/$defs/commandOptions/shared/stream"
+    },
+    "parallel": {
+      "$ref": "#/$defs/commandOptions/shared/parallel"
+    },
+    "noBail": {
+      "$ref": "#/$defs/commandOptions/shared/noBail"
+    },
+    "bail": {
+      "$ref": "#/$defs/commandOptions/shared/bail"
+    },
+    "noPrefix": {
+      "$ref": "#/$defs/commandOptions/shared/noPrefix"
+    },
+    "prefix": {
+      "$ref": "#/$defs/commandOptions/shared/prefix"
+    },
+    "profile": {
+      "$ref": "#/$defs/commandOptions/shared/profile"
+    },
+    "profileLocation": {
+      "$ref": "#/$defs/commandOptions/shared/profileLocation"
+    },
+    "preid": {
+      "$ref": "#/$defs/commandOptions/shared/preid"
+    },
+    "ignoreScripts": {
+      "$ref": "#/$defs/commandOptions/shared/ignoreScripts"
+    },
+    "noGranularPathspec": {
+      "$ref": "#/$defs/commandOptions/shared/noGranularPathspec"
+    },
+    "granularPathspec": {
+      "$ref": "#/$defs/commandOptions/shared/granularPathspec"
+    },
+    "forcePublish": {
+      "$ref": "#/$defs/commandOptions/shared/forcePublish"
+    },
+    "exact": {
+      "$ref": "#/$defs/commandOptions/shared/exact"
+    },
+    "ignorePrepublish": {
+      "$ref": "#/$defs/commandOptions/shared/ignorePrepublish"
+    }
+  },
+  "$defs": {
+    "globals": {
+      "npmClient": {
+        "type": "string",
+        "description": "The npm client to use when running commands (either npm or yarn). Defaults to npm if unspecified.",
+        "default": "npm",
+        "enum": ["npm", "yarn"]
+      },
+      "loglevel": {
+        "type": "string",
+        "description": "The level of logging to use when running commands. Defaults to info if unspecified.",
+        "default": "info",
+        "enum": ["error", "warn", "info", "verbose", "debug", "silly"]
+      },
+      "concurrency": {
+        "type": "integer",
+        "description": "The number of concurrent processes to use when running commands. Defaults to the number of CPUs if unspecified."
+      },
+      "rejectCycles": {
+        "type": "boolean",
+        "description": "When true, Lerna will fail if a cycle is detected among dependencies."
+      },
+      "progress": {
+        "type": "boolean",
+        "description": "When true, Lerna will display progress bars when running commands. Progress bars are always off in CI."
+      },
+      "sort": {
+        "type": "boolean",
+        "description": "When true, Lerna will sort the packages topologically (dependencies before dependents)."
+      },
+      "maxBuffer": {
+        "type": "integer",
+        "description": "The maximum number of bytes to allow a child process for subcommand execution."
+      },
+      "yes": {
+        "type": "boolean",
+        "description": "When true, Lerna will automatically answer yes to all confirmation prompts."
+      }
+    },
+    "filters": {
+      "scope": {
+        "type": "string",
+        "description": "Include only packages with names matching the given glob"
+      },
+      "ignore": {
+        "type": "string",
+        "description": "Exclude packages with names matching the given glob"
+      },
+      "private": {
+        "type": "boolean",
+        "description": "Include private packages in the command. During `lerna create`, specifies that the new package is private (never published to any external registry)."
+      },
+      "since": {
+        "type": "string",
+        "description": "Only include packages that have been changed since the specified [ref]."
+      },
+      "excludeDependents": {
+        "type": "boolean",
+        "description": "Exclude all transitive dependents when running a command with --since, overriding the default \"changed\" algorithm."
+      },
+      "includeDependents": {
+        "type": "boolean",
+        "description": "Include all transitive dependents when running a command regardless of --scope, --ignore, or --since."
+      },
+      "includeDependencies": {
+        "type": "boolean",
+        "description": "Include all transitive dependencies when running a command regardless of --scope, --ignore, or --since."
+      },
+      "includeMergedTags": {
+        "type": "boolean",
+        "description": "Include tags from merged branches when running a command with --since."
+      },
+      "continueIfNoMatch": {
+        "type": "boolean",
+        "description": "Don't fail if no package is matched."
+      }
+    },
+    "commandOptions": {
+      "add": {
+        "dev": {
+          "type": "boolean",
+          "description": "During `lerna add`, save the newly added package to devDependencies instead of dependencies."
+        },
+        "peer": {
+          "type": "boolean",
+          "description": "During `lerna add`, save the newly added package to peerDependencies instead of dependencies."
+        },
+        "noBootstrap": {
+          "type": "boolean",
+          "description": "Do not automatically chain `lerna bootstrap` after `lerna add`."
+        },
+        "bootstrap": {
+          "type": "boolean",
+          "description": "Automatically chain `lerna bootstrap` after `lerna add`."
+        }
+      },
+      "bootstrap": {
+        "hoist": {
+          "type": "string",
+          "description": "During `lerna bootstrap`, install external dependencies matching [glob] to the repo root."
+        },
+        "nohoist": {
+          "type": "string",
+          "description": "During `lerna bootstrap`, don't hoist external dependencies matching [glob] to the repo root."
+        },
+        "mutex": {},
+        "strict": {
+          "type": "boolean",
+          "description": "During `lerna bootstrap`, don't allow warnings when hoisting as it causes longer bootstrap times and other issues."
+        },
+        "useWorkspaces": {
+          "type": "boolean",
+          "description": "During `lerna bootstrap`, enable integration with Yarn workspaces."
+        }
+      },
+      "create": {
+        "access": {
+          "type": "string",
+          "enum": ["public", "restricted"],
+          "description": "During `lerna create` and when using a scope, set publishConfig.access value."
+        },
+        "bin": {
+          "type": "string",
+          "description": "During `lerna create`, specifies that the new package has an executable with the given name."
+        },
+        "description": {
+          "type": "string",
+          "description": "During `lerna create`, specifies the description of the new package."
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "During `lerna create`, specifies the list of dependencies of the new package."
+        },
+        "esModule": {
+          "type": "boolean",
+          "description": "During `lerna create`, when true, initializes a transpiled ES Module."
+        },
+        "homepage": {
+          "type": "string",
+          "description": "During `lerna create`, specifies the homepage of the new package. Defaults to a subpath of the root pkg.homepage."
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "During `lerna create`, specifies the list of keywords of the new package."
+        },
+        "license": {
+          "type": "string",
+          "description": "During `lerna create`, specifies the license of the new package (SPDX identifier). Defaults to ISC."
+        },
+        "tag": {
+          "type": "string",
+          "description": "During `lerna create`, specifies the publishConfig.tag for the new package."
+        }
+      },
+      "import": {
+        "flatten": {
+          "type": "boolean",
+          "description": "During `lerna import`, when true, import each merge commit as a single change the merge introduced."
+        },
+        "dest": {
+          "type": "string",
+          "description": "During `lerna import`, specifies the directory for the external git repository."
+        },
+        "preserveCommit": {
+          "type": "boolean",
+          "description": "During `lerna import`, when true, preserve the original committer in additional to original author."
+        }
+      },
+      "init": {
+        "independent": {
+          "type": "boolean",
+          "description": "During `lerna init`, when true, version packages independently."
+        }
+      },
+      "publish": {
+        "canary": {
+          "type": "boolean",
+          "description": "During `lerna publish`, when true, publish packages after every successful merge using the sha as part of the tag."
+        },
+        "distTag": {
+          "type": "string",
+          "description": "During `lerna publish`, publish packages with the specified npm dist-tag."
+        },
+        "preDistTag": {
+          "type": "string",
+          "description": "During `lerna publish`, publish prerelease packages with the specified npm dist-tag."
+        },
+        "legacyAuth": {
+          "type": "string",
+          "description": "For `lerna publish`, the Legacy Base64 Encoded username and password to use."
+        },
+        "gitHead": {
+          "type": "string",
+          "description": "For `lerna publish`, the explicit SHA to set as gitHead when packing tarballs, only allowed with 'from-package' positional."
+        },
+        "graphType": {
+          "type": "string",
+          "enum": ["all", "depencencies"],
+          "description": "For `lerna publish`, the type of dependency to use when determining package hierarchy."
+        },
+        "otp": {
+          "type": "string",
+          "description": "During `lerna publish`, supply a one-time password for publishing with two-factor authentication."
+        },
+        "requireScripts": {
+          "type": "boolean",
+          "description": "During `lerna publish`, when true, execute ./scripts/prepublish.js and ./scripts/postpublish.js, relative to package root."
+        },
+        "noGitReset": {
+          "type": "boolean",
+          "description": "During `lerna publish`, when true, do not reset changes to working tree after publishing is complete."
+        },
+        "gitReset": {
+          "type": "boolean",
+          "description": "During `lerna publish`, when true, reset changes to working tree after publishing is complete."
+        },
+        "tempTag": {
+          "type": "boolean",
+          "description": "During `lerna publish`, when true, create a temporary tag while publishing."
+        },
+        "noVerifyAccess": {
+          "type": "boolean",
+          "description": "During `lerna publish`, when true, do not verify package read-write access for current npm user."
+        },
+        "verifyAccess": {
+          "type": "boolean",
+          "description": "During `lerna publish`, when true, verify package read-write access for current npm user."
+        }
+      },
+      "run": {
+        "skipNxCache": {
+          "type": "boolean",
+          "description": "During `lerna run`, when true, skip the nx cache."
+        }
+      },
+      "version": {
+        "allowBranch": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "For `lerna version`, the branches to allow versioning from."
+        },
+        "amend": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, amend the existing commit instead of generating a new one."
+        },
+        "conventionalPrerelease": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "boolean" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
+          "description": "During `lerna version`, version changed packages as prereleases when using --conventional-commits."
+        },
+        "changelogPreset": {
+          "type": "string",
+          "description": "For `lerna version`, the custom conventional-changelog preset."
+        },
+        "gitRemote": {
+          "type": "string",
+          "description": "During `lerna version`, push git changes to the specified remote."
+        },
+        "createRelease": {
+          "type": "string",
+          "description": "During `lerna version`, an official GitHub or GitLab release for every version.",
+          "enum": ["github", "gitlab"]
+        },
+        "message": {
+          "type": "string",
+          "description": "For `lerna version`, the custom commit message to use when creating the version commit."
+        },
+        "noChangelog": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, do not generate CHANGELOG.md files when using --conventional-commits."
+        },
+        "changelog": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, generate CHANGELOG.md files when using --conventional-commits."
+        },
+        "noCommitHooks": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, do not run git commit hooks when committing version changes."
+        },
+        "commitHooks": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, run git commit hooks when committing version changes."
+        },
+        "noGitTagVersion": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, do not commit or tag version changes."
+        },
+        "gitTagVersion": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, commit and tag version changes."
+        },
+        "noPush": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, do not push tagged commit to git remote."
+        },
+        "push": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, push tagged commit to git remote."
+        },
+        "signGitCommit": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, pass the `--gpg-sign` flag to `git commit`."
+        },
+        "signGitTag": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, pass the `--sign` flag to `git tag`."
+        },
+        "forceGitTag": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, pass the `--force` flag to `git tag`."
+        },
+        "tagVersionPrefix": {
+          "type": "string",
+          "description": "During `lerna version`, customize the tag prefix. To remove entirely, pass an empty string."
+        }
+      },
+      "shared": {
+        "registry": {
+          "type": "string",
+          "description": "The npm registry to use for all npm client operations. During `lerna create`, specifies the new package's publishConfig.registry."
+        },
+        "conventionalCommits": {
+          "type": "boolean",
+          "description": "During `lerna version`, `lerna changed`, and `lerna publish`, when true, use conventional commits specification to determine the version bump and generate CHANGELOG.md files."
+        },
+        "conventionalGraduate": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "boolean" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
+          "description": "Detect currently prereleased packages that would change to a non-prerelease version. Relevant for `lerna changed` and `lerna version`."
+        },
+        "forceLocal": {
+          "type": "boolean",
+          "description": "During `lerna bootstrap` and `lerna link`, when true, force local sibling links regardless of version range match."
+        },
+        "contents": {
+          "type": "boolean",
+          "description": "For `lerna bootstrap`, `lerna link`, and `lerna publish`, the subdirectory to use as the source of any links. Must apply to ALL packages."
+        },
+        "ignoreChanges": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Ignore changes in files matched by glob(s) when detecting changed packages. Relevant for `lerna changed`, `lerna publish`, `lerna version`, and `lerna diff`."
+        },
+        "stream": {
+          "type": "boolean",
+          "description": "During `lerna exec` and `lerna run`, stream output with lines prefixed by originating package name."
+        },
+        "parallel": {
+          "type": "boolean",
+          "description": "During `lerna exec` and `lerna run`, run commands with unlimited concurrency, streaming prefixed output."
+        },
+        "noBail": {
+          "type": "boolean",
+          "description": "During `lerna exec` and `lerna run`, when true, do not exit with non-zero status if a command fails."
+        },
+        "bail": {
+          "type": "boolean",
+          "description": "During `lerna exec` and `lerna run`, exit with non-zero status if any command fails."
+        },
+        "noPrefix": {
+          "type": "boolean",
+          "description": "During `lerna exec` and `lerna run`, when true, do not prefix output with originating package name."
+        },
+        "prefix": {
+          "type": "boolean",
+          "description": "During `lerna exec` and `lerna run`, prefix output with originating package name."
+        },
+        "profile": {
+          "type": "boolean",
+          "description": "During `lerna exec` and `lerna run`, profile command execution and output performance profile to default location."
+        },
+        "profileLocation": {
+          "type": "string",
+          "description": "During `lerna exec` and `lerna run`, profile command execution and output performance profile to the specified location instead of default project root."
+        },
+        "preid": {
+          "type": "string",
+          "description": "For `lerna publish` and `lerna version`, the prerelease identifier when versioning a prerelease."
+        },
+        "ignoreScripts": {
+          "type": "boolean",
+          "description": "During `lerna bootstrap`, `lerna publish`, and `lerna version`, don't run ANY lifecycle scripts in bootstrapped packages."
+        },
+        "noGranularPathspec": {
+          "type": "boolean",
+          "description": "During `lerna publish` and `lerna version`, when true, do not reset changes file-by-file, but globally."
+        },
+        "granularPathspec": {
+          "type": "boolean",
+          "description": "During `lerna publish` and `lerna version`, when true, reset changes file-by-file, not globally."
+        },
+        "forcePublish": {
+          "description": "During `lerna changed` and `lerna version`, always include targeted packages when detecting changed packages, skipping default logic.",
+          "anyOf": [
+            { "type": "string" },
+            { "type": "boolean" },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        },
+        "exact": {
+          "type": "boolean",
+          "description": "During `lerna add`, save the exact version of the newly added package. During `lerna version`, specify cross-dependency version numbers exactly rather than with a caret (^)."
+        },
+        "ignorePrepublish": {
+          "type": "boolean",
+          "description": "During `lerna publish` and `lerna bootstrap`, when true, disable deprecated 'prepublish' lifecycle script."
+        }
+      }
+    }
+  }
+}

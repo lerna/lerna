@@ -1,6 +1,6 @@
 {
   "name": "@lerna/temp-write",
-  "version": "5.1.6",
+  "version": "5.1.8",
   "description": "Write string/buffer/stream to a random temp file",
   "homepage": "https://lerna.js.org",
   "license": "MIT",
