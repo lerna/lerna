@@ -1,9 +1,9 @@
 ---
-id: computation-caching
-title: Computation Caching
+id: cache-tasks
+title: Cache Task Results
 ---
 
-# Computation Caching
+# Cache Task Results
 
 > When it comes to running tasks, caching etc., Lerna and Nx can be used interchangeably. When we say "Lerna can cache
 > builds", we mean that Lerna uses Nx which can cache builds.

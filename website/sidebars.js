@@ -22,19 +22,19 @@ const sidebars = {
     "getting-started",
     {
       type: "category",
-      label: "How To...",
-      items: ["how-to/bootstrap", "how-to/run-tasks", "how-to/version-and-publish", "how-to/enable-dte"],
+      label: "Features",
+      items: ["features/bootstrap", "features/run-tasks", "features/version-and-publish", "features/cache-tasks", "features/distribute-tasks"],
       link: {
         type: "generated-index",
         title: "How To Guides",
         description: "Get Started",
-        slug: "/how-to",
+        slug: "/features",
       },
     },
     {
       type: "category",
       label: "Core Concepts",
-      items: ["core-concepts/computation-caching", "core-concepts/hoisting"],
+      items: ["core-concepts/hoisting"],
       link: {
         type: "generated-index",
         title: "Core Concepts",

@@ -1,9 +1,9 @@
 ---
-id: enable-dte
-title: Enable Distributed Task Execution
+id: distribute-tasks
+title: Distribute Task Execution
 ---
 
-# Distributed Task Execution (DTE)
+# Distribute Task Execution (DTE)
 
 Lerna (via Nx) supports running commands across multiple machines. You can either set it up by hand (by using batching
 or
