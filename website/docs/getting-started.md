@@ -315,8 +315,8 @@ You will see all the files restored from cache and the command executing instant
     Nx read the output from the cache instead of running the command for 3 out of 3 tasks.
 ```
 
-> Lerna also supports [distributed caching](./core-concepts/caching.md)
-> and [config-free distributed task execution](./how-to/enable-dte.md).
+> Lerna also supports [distributed caching](./features/cache-tasks.md)
+> and [config-free distributed task execution](./features/enable-dte.md).
 
 ## Target Dependencies (aka task pipelines)
 
@@ -378,4 +378,4 @@ This will
 - publish the packages to NPM
 
 Read more about the publishing and versioning
-process [in the corresponding docs page](./how-to/version-and-publish.md).
+process [in the corresponding docs page](./features/version-and-publish.md).

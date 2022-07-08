@@ -26,7 +26,7 @@ export default function PoweredByNx(): JSX.Element {
               order, in parallel, using advanced caching and with the possibility to distribute that on
               multiple machines.
             </p>
-            <a className="button button--secondary" href="/docs/how-to/run-tasks">
+            <a className="button button--secondary" href="/docs/features/run-tasks">
               Running Tasks
             </a>
           </div>
