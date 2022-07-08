@@ -4,7 +4,7 @@ module.exports = {
   modulePathIgnorePatterns: ["/__fixtures__/"],
   roots: ["<rootDir>/integration"],
   setupFiles: ["@lerna-test/helpers/npm/set-npm-userconfig"],
-  setupFilesAfterEnv: ["<rootDir>/setup-integration-timeout.js"],
+  setupFilesAfterEnv: ["@lerna-test/helpers/setup-integration-timeout.js"],
   snapshotSerializers: ["@lerna-test/helpers/serializers/serialize-placeholders"],
   testEnvironment: "node",
   testRunner: "jest-circus/runner",
