@@ -373,7 +373,7 @@ npx lerna publish --no-private
 This will
 
 - determine the current version of the packages
-- detect which packages has changed since the last publishing & then update its version in `package.json` accordingly
+- detect which packages have changed since the last publishing & then update its version in `package.json` accordingly
 - create a commit of the changed `package.json` files, tag the commit and push the tag & commit to the remote
 - publish the packages to NPM
 
