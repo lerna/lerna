@@ -33,14 +33,14 @@ const sidebars = {
     },
     {
       type: "category",
-      label: "Core Concepts",
-      items: ["core-concepts/hoisting"],
+      label: "Concepts",
+      items: ["concepts/hoisting"],
       link: {
         type: "generated-index",
-        title: "Core Concepts",
-        description: "Learn about the most important core concepts of Lerna!",
-        slug: "/core-concepts",
-        keywords: ["core", "caching", "dte", "versioning", "publishing"],
+        title: "Concepts",
+        description: "Get a higher level understanding of concepts used in Lerna",
+        slug: "/concepts",
+        keywords: ["caching", "dte", "versioning", "publishing"],
       },
     },
     {
