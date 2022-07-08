@@ -5,14 +5,14 @@ const globby = require("globby");
 const path = require("path");
 const os = require("os");
 
-const { cliRunner } = require("@lerna-test/cli-runner");
-const { commitChangeToPackage } = require("@lerna-test/commit-change-to-package");
-const cloneFixture = require("@lerna-test/clone-fixture")(
+const { cliRunner } = require("@lerna-test/helpers");
+const { commitChangeToPackage } = require("@lerna-test/helpers");
+const cloneFixture = require("@lerna-test/helpers").cloneFixtureFactory(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
 
 // stabilize changelog commit SHA and datestamp
-expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-changelog"));
 
 const env = {
   // never actually upload when calling `npm publish`

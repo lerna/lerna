@@ -5,10 +5,10 @@ const { output } = require("@lerna/output");
 const { collectUpdates } = require("@lerna/collect-updates");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
 // file under test
-const lernaLs = require("@lerna-test/command-runner")(require("../command"));
+const lernaLs = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({
@@ -22,8 +22,8 @@ expect.addSnapshotSerializer({
 });
 
 // normalize temp directory paths in snapshots
-expect.addSnapshotSerializer(require("@lerna-test/serialize-windows-paths"));
-expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-windows-paths"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-tempdir"));
 
 describe("lerna ls", () => {
   describe("in a basic repo", () => {

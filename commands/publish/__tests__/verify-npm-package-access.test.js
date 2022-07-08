@@ -4,8 +4,8 @@ jest.mock("libnpmaccess");
 
 const access = require("libnpmaccess");
 const { getPackages } = require("@lerna/project");
-const { loggingOutput } = require("@lerna-test/logging-output");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 const { verifyNpmPackageAccess } = require("../lib/verify-npm-package-access");
 
 access.lsPackages.mockImplementation(() =>

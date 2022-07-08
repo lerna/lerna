@@ -11,11 +11,11 @@ const { rimrafDir } = require("@lerna/rimraf-dir");
 const { promptConfirmation } = require("@lerna/prompt");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { normalizeRelativeDir } = require("@lerna-test/helpers");
 
 // file under test
-const lernaClean = require("@lerna-test/command-runner")(require("../command"));
+const lernaClean = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // assertion helpers
 const removedDirectories = (testDir) =>

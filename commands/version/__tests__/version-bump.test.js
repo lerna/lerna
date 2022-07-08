@@ -12,11 +12,13 @@ const path = require("path");
 const { promptSelectOne } = require("@lerna/prompt");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const { getCommitMessage } = require("@lerna-test/get-commit-message");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(
+  path.resolve(__dirname, "../../publish/__tests__")
+);
+const { getCommitMessage } = require("@lerna-test/helpers");
 
 // test command
-const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
+const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 describe("version bump", () => {
   it("accepts explicit versions", async () => {

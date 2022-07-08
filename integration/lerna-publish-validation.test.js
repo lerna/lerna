@@ -5,15 +5,15 @@ const fs = require("fs-extra");
 const path = require("path");
 const tempy = require("tempy");
 
-const { cliRunner } = require("@lerna-test/cli-runner");
-const { gitAdd } = require("@lerna-test/git-add");
-const { gitCommit } = require("@lerna-test/git-commit");
-const cloneFixture = require("@lerna-test/clone-fixture")(
+const { cliRunner } = require("@lerna-test/helpers");
+const { gitAdd } = require("@lerna-test/helpers");
+const { gitCommit } = require("@lerna-test/helpers");
+const cloneFixture = require("@lerna-test/helpers").cloneFixtureFactory(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
 
 // stabilize changelog commit SHA and datestamp
-expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-changelog"));
 
 const env = {
   // never actually upload when calling `npm publish`

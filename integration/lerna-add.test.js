@@ -5,9 +5,9 @@ const globby = require("globby");
 const loadJson = require("load-json-file");
 const pMap = require("p-map");
 
-const { cliRunner } = require("@lerna-test/cli-runner");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const pkgMatchers = require("@lerna-test/pkg-matchers");
+const { cliRunner } = require("@lerna-test/helpers");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const pkgMatchers = require("@lerna-test/helpers/pkg-matchers");
 
 expect.extend(pkgMatchers);
 

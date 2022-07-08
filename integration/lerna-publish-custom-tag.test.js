@@ -2,14 +2,14 @@
 
 const path = require("path");
 
-const { cliRunner } = require("@lerna-test/cli-runner");
-const { gitTag } = require("@lerna-test/git-tag");
-const cloneFixture = require("@lerna-test/clone-fixture")(
+const { cliRunner } = require("@lerna-test/helpers");
+const { gitTag } = require("@lerna-test/helpers");
+const cloneFixture = require("@lerna-test/helpers").cloneFixtureFactory(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
 
 // stabilize changelog commit SHA and datestamp
-expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-changelog"));
 
 const env = {
   // never actually upload when calling `npm publish`

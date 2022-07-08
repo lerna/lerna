@@ -33,6 +33,7 @@
         "classes": false
       }
     ],
+    "node/no-unsupported-features/es-syntax": "off",
     "prefer-destructuring": "off",
     "prefer-object-spread": "off",
     "strict": "off",
@@ -48,7 +49,7 @@
       }
     },
     {
-      "files": ["integration/**", "**/__tests__/**", "**/__mocks__/**", "**/__helpers__/**"],
+      "files": ["integration/**", "helpers/**", "**/__tests__/**", "**/__mocks__/**", "**/__helpers__/**"],
       "env": {
         "jest": true
       },

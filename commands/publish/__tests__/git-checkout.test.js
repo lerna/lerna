@@ -3,7 +3,7 @@
 const execa = require("execa");
 const fs = require("fs-extra");
 const path = require("path");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 const { gitCheckout } = require("../lib/git-checkout");
 
 test("gitCheckout files", async () => {

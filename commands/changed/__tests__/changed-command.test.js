@@ -5,12 +5,12 @@ const { collectUpdates } = require("@lerna/collect-updates");
 const { output } = require("@lerna/output");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { loggingOutput } = require("@lerna-test/logging-output");
-const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+const { updateLernaConfig } = require("@lerna-test/helpers");
 
 // file under test
-const lernaChanged = require("@lerna-test/command-runner")(require("../command"));
+const lernaChanged = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({
@@ -24,7 +24,7 @@ expect.addSnapshotSerializer({
 });
 
 // normalize temp directory paths in snapshots
-expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-tempdir"));
 
 describe("ChangedCommand", () => {
   let cwd;

@@ -11,7 +11,7 @@ envinfo.run.mockResolvedValue("MOCK_ENVINFO");
 const { output } = require("@lerna/output");
 
 // file under test
-const lernaInfo = require("@lerna-test/command-runner")(require("../command"));
+const lernaInfo = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 it("outputs result of envinfo()", async () => {
   // project fixture is irrelevant, no actual changes are made

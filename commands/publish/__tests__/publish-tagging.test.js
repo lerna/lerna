@@ -17,10 +17,10 @@ const npmDistTag = require("@lerna/npm-dist-tag");
 const { npmPublish } = require("@lerna/npm-publish");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
 // test command
-const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
+const lernaPublish = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 test("publish --dist-tag next", async () => {
   const cwd = await initFixture("normal");

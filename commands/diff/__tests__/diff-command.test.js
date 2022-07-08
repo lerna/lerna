@@ -9,17 +9,17 @@ const { getPackages } = require("@lerna/project");
 const childProcess = require("@lerna/child-process");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { gitAdd } = require("@lerna-test/git-add");
-const { gitCommit } = require("@lerna-test/git-commit");
-const { gitInit } = require("@lerna-test/git-init");
-const { gitTag } = require("@lerna-test/git-tag");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { gitAdd } = require("@lerna-test/helpers");
+const { gitCommit } = require("@lerna-test/helpers");
+const { gitInit } = require("@lerna-test/helpers");
+const { gitTag } = require("@lerna-test/helpers");
 
 // file under test
-const lernaDiff = require("@lerna-test/command-runner")(require("../command"));
+const lernaDiff = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // stabilize commit SHA
-expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-git-sha"));
 
 describe("DiffCommand", () => {
   // overwrite spawn so we get piped stdout, not inherited

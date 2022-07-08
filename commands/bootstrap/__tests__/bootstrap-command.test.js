@@ -16,12 +16,12 @@ const { createSymlink } = require("@lerna/create-symlink");
 const { hasNpmVersion } = require("@lerna/has-npm-version");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
-const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { normalizeRelativeDir } = require("@lerna-test/helpers");
+const { updateLernaConfig } = require("@lerna-test/helpers");
 
 // file under test
-const lernaBootstrap = require("@lerna-test/command-runner")(require("../command"));
+const lernaBootstrap = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // assertion helpers
 const installedPackagesInDirectories = (testDir) =>
