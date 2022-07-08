@@ -35,6 +35,11 @@ describe("lerna-diff", () => {
       dependencyName: "package-b",
       version: "0.0.0",
     });
+    await fixture.addDependencyToPackage({
+      packagePath: "packages/package-b",
+      dependencyName: "package-a",
+      version: "0.0.0",
+    });
 
     const output = await fixture.lerna("diff");
 
@@ -50,6 +55,19 @@ describe("lerna-diff", () => {
       +  },
       +  "dependencies": {
       +    "package-b": "0.0.0"
+         }
+       }
+      diff --git a/packages/package-b/package.json b/packages/package-b/package.json
+      index XXXXXXX..XXXXXXX XXXXXX
+      --- a/packages/package-b/package.json
+      +++ b/packages/package-b/package.json
+      @@ -19,5 +19,8 @@
+         },
+         "scripts": {
+           "test": "echo \\"Error: run tests from root\\" && exit 1"
+      +  },
+      +  "dependencies": {
+      +    "package-a": "0.0.0"
          }
        }
       lerna notice cli v999.9.9-e2e.0

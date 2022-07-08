@@ -1,9 +1,10 @@
+import { existsSync, readdir } from "fs-extra";
 import { Fixture } from "../../utils/fixture";
 import { normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
 expect.addSnapshotSerializer({
   serialize(str) {
-    return normalizeEnvironment(str.replaceAll(/index .{7}\.\..{7} \d{6}/g, "index XXXXXXX..XXXXXXX XXXXXX"));
+    return normalizeEnvironment(str);
   },
   test(val) {
     return val != null && typeof val === "string";
@@ -21,16 +22,41 @@ describe("lerna-clean", () => {
       runLernaInit: true,
       installDependencies: true,
     });
+
+    await fixture.lerna("create package-a -y");
+    await fixture.lerna("create package-b -y");
+
+    await fixture.addDependencyToPackage({
+      packagePath: "packages/package-a",
+      dependencyName: "lodash",
+      version: "*",
+    });
+    await fixture.addDependencyToPackage({
+      packagePath: "packages/package-b",
+      dependencyName: "lodash",
+      version: "*",
+    });
   });
   afterAll(() => fixture.destroy());
 
   it("should remove node_modules for all packages", async () => {
-    await fixture.lerna("create package-a -y");
-    await fixture.lerna("create package-b -y");
     await fixture.exec("npm install --prefix ./packages/package-a");
+
+    const packageAFiles = await readdir(fixture.getWorkspacePath("packages/package-a/node_modules"));
+    expect(packageAFiles.length).toBeGreaterThan(0);
+
     await fixture.exec("npm install --prefix ./packages/package-b");
 
+    const packageBFiles = await readdir(fixture.getWorkspacePath("packages/package-b/node_modules"));
+    expect(packageBFiles.length).toBeGreaterThan(0);
+
     const output = await fixture.lerna("clean -y");
+
+    const nodeModulesPackageAExists = existsSync(fixture.getWorkspacePath("packages/package-a/node_modules"));
+    expect(nodeModulesPackageAExists).toBe(false);
+
+    const nodeModulesPackageBExists = existsSync(fixture.getWorkspacePath("packages/package-b/node_modules"));
+    expect(nodeModulesPackageBExists).toBe(false);
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
@@ -42,12 +68,23 @@ describe("lerna-clean", () => {
   });
 
   it("should remove node_modules for only package-a", async () => {
-    await fixture.lerna("create package-a -y");
-    await fixture.lerna("create package-b -y");
     await fixture.exec("npm install --prefix ./packages/package-a");
+
+    const packageAFiles = await readdir(fixture.getWorkspacePath("packages/package-a/node_modules"));
+    expect(packageAFiles.length).toBeGreaterThan(0);
+
     await fixture.exec("npm install --prefix ./packages/package-b");
 
+    const packageBFiles = await readdir(fixture.getWorkspacePath("packages/package-b/node_modules"));
+    expect(packageBFiles.length).toBeGreaterThan(0);
+
     const output = await fixture.lerna("clean --scope=package-a -y");
+
+    const nodeModulesPackageAExists = existsSync(fixture.getWorkspacePath("packages/package-a/node_modules"));
+    expect(nodeModulesPackageAExists).toBe(false);
+
+    const nodeModulesPackageBExists = existsSync(fixture.getWorkspacePath("packages/package-b/node_modules"));
+    expect(nodeModulesPackageBExists).toBe(true);
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
