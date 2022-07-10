@@ -1,0 +1,26 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.main.category.Core Concepts": {
+    "message": "Core Concepts",
+    "description": "The label for category Core Concepts in sidebar main"
+  },
+  "sidebar.main.category.Core Concepts.link.generated-index.title": {
+    "message": "Core Concepts",
+    "description": "The generated-index page title for category Core Concepts in sidebar main"
+  },
+  "sidebar.main.category.Core Concepts.link.generated-index.description": {
+    "message": "Learn about the most important core concepts of Lerna!",
+    "description": "The generated-index page description for category Core Concepts in sidebar main"
+  },
+  "sidebar.main.category.Guides": {
+    "message": "Guides",
+    "description": "The label for category Guides in sidebar main"
+  },
+  "sidebar.main.category.API Reference": {
+    "message": "API Reference",
+    "description": "The label for category API Reference in sidebar main"
+  }
+}

@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import React from "react";
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import Translate from '@docusaurus/Translate';
 import styles from "./publish-with-lerna.module.css";
 
 export default function PublishWithLerna(): JSX.Element {
@@ -8,13 +10,13 @@ export default function PublishWithLerna(): JSX.Element {
       <div className={clsx("row row--no-gutters shadow--md", styles.item)}>
         <div className={clsx("col col--6", styles.item__inner)}>
           <div>
-            <h1 className="margin-bottom--md">Ultimate Tool for Publishing Packages</h1>
+            <h1 className="margin-bottom--md"><Translate>Ultimate Tool for Publishing Packages</Translate></h1>
             <p className="margin-bottom--md">
-              Lerna is the ultimate tool for publishing multiple packages to npm. Whether the packages have
-              independent versions or not, Lerna's got you covered.
+              <Translate>Lerna is the ultimate tool for publishing multiple packages to npm. Whether the packages have
+              independent versions or not, Lerna's got you covered.</Translate>
             </p>
-            <a className="button button--secondary" href="/docs/core-concepts/versioning-and-publishing">
-              Publishing Packages
+            <a className="button button--secondary" href={useBaseUrl("/docs/core-concepts/versioning-and-publishing")}>
+              <Translate>Publishing Packages</Translate>
             </a>
           </div>
         </div>

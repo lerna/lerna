@@ -1,6 +1,7 @@
 import { ChevronRightIcon, DuplicateIcon } from "@heroicons/react/outline";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import React, { useEffect, useState } from "react";
+import Translate from '@docusaurus/Translate';
 import clsx from "clsx";
 import styles from "./hero-lerna.module.css";
 import LernaIcon from "./lerna-icon";
@@ -33,21 +34,23 @@ export default function HeroLerna(): JSX.Element {
               className={styles.callout}
             >
               <span className="badge badge--primary callout__badge">NEW</span>
-              <span className={styles.callout__text}>Nrwl takes stewardship!</span>
+              <span className={styles.callout__text}>
+                <Translate>Nrwl takes stewardship!</Translate>
+              </span>
               <ChevronRightIcon className={styles.callout__icon} aria-hidden="true" />
             </a>
             <h1 className={styles.slogan}>
-              <span>The Original Tool for</span>
-              <span className={styles.slogan__highlight}>JavaScript Monorepos</span>
+              <Translate>The Original Tool for</Translate>
+              <span className={styles.slogan__highlight}>JavaScript <Translate>Monorepos</Translate></span>
             </h1>
             <p className={styles.description}>
-              Lerna is a fast modern build system for managing and publishing multiple JavaScript/TypeScript
-              packages from the same repository.
+              <Translate>Lerna is a fast modern build system for managing and publishing multiple JavaScript/TypeScript
+              packages from the same repository.</Translate>
             </p>
             <div className="padding-vert--md row">
               <div className="col col--5">
                 <a href="/docs/getting-started" className="button button--lg button--block button--primary">
-                  Get Started
+                  <Translate>Get Started</Translate>
                 </a>
               </div>
               <div className="col col--5">

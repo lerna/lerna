@@ -22,7 +22,7 @@ const config = {
   // to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: "en",
-    locales: ["en"],
+    locales: ["en", "zh-CN"],
   },
 
   plugins: [],
@@ -130,6 +130,10 @@ const config = {
           //   title: "Check Nrwl",
           //   label: "Nrwl",
           // },
+          {
+            type: 'localeDropdown',
+            position: 'right',
+          },
           {
             href: "https://github.com/lerna/lerna",
             className: "header-github-link",

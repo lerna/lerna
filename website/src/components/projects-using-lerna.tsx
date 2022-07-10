@@ -1,4 +1,5 @@
 import React from "react";
+import Translate from '@docusaurus/Translate';
 import styles from "./projects-using-lerna.module.css";
 
 interface ProjectItem {
@@ -128,7 +129,7 @@ export default function ProjectUsingLerna(): JSX.Element {
   return (
     <div className="padding-vert--xl container">
       <p className="margin-bottom--md" style={{ textAlign: "center" }}>
-        Thousands of teams worldwide are using Lerna
+        <Translate>Thousands of teams worldwide are using Lerna</Translate>
       </p>
       <div className="row">
         {projects.map((p) => (

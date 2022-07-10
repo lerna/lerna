@@ -1,0 +1,78 @@
+{
+  "link.title.Resources": {
+    "message": "资源",
+    "description": "The title of the footer links column with title=Resources in the footer"
+  },
+  "link.title.Help": {
+    "message": "帮助",
+    "description": "The title of the footer links column with title=Help in the footer"
+  },
+  "link.title.Community": {
+    "message": "社区",
+    "description": "The title of the footer links column with title=Community in the footer"
+  },
+  "link.title.Solutions": {
+    "message": "解决方案",
+    "description": "The title of the footer links column with title=Solutions in the footer"
+  },
+  "link.item.label.Blog": {
+    "message": "博客",
+    "description": "The label of footer link with label=Blog linking to https://blog.nrwl.io/?utm_source=lerna.js.org"
+  },
+  "link.item.label.Youtube Channel": {
+    "message": "Youtube 频道",
+    "description": "The label of footer link with label=Youtube Channel linking to https://youtube.com/nrwl_io?utm_source=lerna.js.org"
+  },
+  "link.item.label.Guides": {
+    "message": "指南",
+    "description": "The label of footer link with label=Guides linking to /docs/guides/hoisting"
+  },
+  "link.item.label.Troubleshooting": {
+    "message": "故障排查",
+    "description": "The label of footer link with label=Troubleshooting linking to /docs/troubleshooting"
+  },
+  "link.item.label.Stack Overflow": {
+    "message": "Stack Overflow",
+    "description": "The label of footer link with label=Stack Overflow linking to https://stackoverflow.com/questions/tagged/lerna"
+  },
+  "link.item.label.Report Issues": {
+    "message": "报告问题",
+    "description": "The label of footer link with label=Report Issues linking to https://github.com/lerna/lerna/issues?q=is%3Aopen+is%3Aissue"
+  },
+  "link.item.label.Twitter": {
+    "message": "Twitter",
+    "description": "The label of footer link with label=Twitter linking to https://twitter.com/lernajs"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "The label of footer link with label=GitHub linking to https://github.com/lerna/lerna"
+  },
+  "link.item.label.Newsletter": {
+    "message": "Newsletter",
+    "description": "The label of footer link with label=Newsletter linking to https://go.nrwl.io/nx-newsletter?utm_source=lerna.js.org"
+  },
+  "link.item.label.Slack": {
+    "message": "Slack",
+    "description": "The label of footer link with label=Slack linking to https://go.nrwl.io/join-slack?utm_source=lerna.js.org"
+  },
+  "link.item.label.Help Us": {
+    "message": "帮助我们",
+    "description": "The label of footer link with label=Help Us linking to https://github.com/lerna/lerna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Acommunity"
+  },
+  "link.item.label.Nx": {
+    "message": "Nx",
+    "description": "The label of footer link with label=Nx linking to https://nx.dev/?utm_source=lerna.js.org"
+  },
+  "link.item.label.NxCloud": {
+    "message": "NxCloud",
+    "description": "The label of footer link with label=NxCloud linking to https://nx.app/?utm_source=lerna.js.org"
+  },
+  "link.item.label.Nrwl": {
+    "message": "Nrwl",
+    "description": "The label of footer link with label=Nrwl linking to https://nrwl.io/?utm_source=lerna.js.org"
+  },
+  "copyright": {
+    "message": "使用 MIT 许可证发布。<br /> &copy; 2022 Copyright Nrwl.",
+    "description": "The footer copyright"
+  }
+}

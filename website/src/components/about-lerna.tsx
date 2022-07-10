@@ -13,53 +13,55 @@ import {
 } from "@heroicons/react/outline";
 import clsx from "clsx";
 import React from "react";
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import Translate from '@docusaurus/Translate';
 import styles from "./about-lerna.module.css";
 
 interface Callout {
-  title: string;
-  text: string;
+  title: React.ReactNode;
+  text: React.ReactNode;
   link: string;
   icon: (props: React.ComponentProps<"svg">) => JSX.Element;
 }
 
 const callouts: Callout[] = [
   {
-    title: "Never Rebuilds Same Code Twice",
+    title: <Translate>Never Rebuilds Same Code Twice</Translate>,
     text:
-      "Lerna won't run the tasks it executed before, and instead will restore the files and the terminal output from its cache.",
+    <Translate>Lerna won't run the tasks it executed before, and instead will restore the files and the terminal output from its cache.</Translate>,
     link: "/docs/core-concepts/computation-caching",
     icon: CogIcon,
   },
   {
-    title: "Distributed Cache",
+    title: <Translate>Distributed Cache</Translate>,
     text:
-      "Computation cache can be shared between developers or CI/CD machines, drastically reducing average CI times.",
+    <Translate>Computation cache can be shared between developers or CI/CD machines, drastically reducing average CI times.</Translate>,
     link: "/docs/core-concepts/computation-caching#distributed-computation-caching",
     icon: ShareIcon,
   },
   {
-    title: "Target Dependencies",
-    text: "Lerna lets you specify how different targets (npm scripts) depend on each other.",
+    title: <Translate>Target Dependencies</Translate>,
+    text: <Translate>Lerna lets you specify how different targets (npm scripts) depend on each other.</Translate>,
     link: "/docs/core-concepts/running-tasks#target-dependencies-aka-task-pipelines",
     icon: CollectionIcon,
   },
   {
-    title: "Efficient Execution",
+    title: <Translate>Efficient Execution</Translate>,
     text:
-      "Lerna runs any command in the most efficient way with the max degree of parallelization while respecting the execution order.",
+      <Translate>Lerna runs any command in the most efficient way with the max degree of parallelization while respecting the execution order.</Translate>,
     link: "/docs/core-concepts/running-tasks",
     icon: ClockIcon,
   },
   {
-    title: "Infinite Scaling with Distributed Execution",
-    text: "Lerna can run any command across multiple machines without having to configure anything.",
+    title: <Translate>Infinite Scaling with Distributed Execution</Translate>,
+    text: <Translate>Lerna can run any command across multiple machines without having to configure anything.</Translate>,
     link: "/docs/core-concepts/distributed-task-execution",
     icon: SparklesIcon,
   },
   {
-    title: "Powerful Graph Visualizer",
+    title: <Translate>Powerful Graph Visualizer</Translate>,
     text:
-      "Lerna comes with a powerful interactive workspace visualizer, helping you understand the architecture of your workspace.",
+      <Translate>Lerna comes with a powerful interactive workspace visualizer, helping you understand the architecture of your workspace.</Translate>,
     link: "/docs/getting-started#visualizing-workspace",
     icon: (props) => (
       <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="currentColor" viewBox="0 0 16 16">
@@ -74,23 +76,23 @@ const callouts: Callout[] = [
     ),
   },
   {
-    title: "Polished DX",
+    title: <Translate>Polished DX</Translate>,
     text:
-      "Lerna has a powerful dynamic CLI, making sure you only see what is relevant when you run commands against many projects.",
+      <Translate>Lerna has a powerful dynamic CLI, making sure you only see what is relevant when you run commands against many projects.</Translate>,
     link: "/docs/getting-started",
     icon: UsersIcon,
   },
   {
-    title: "Minimal",
+    title: <Translate>Minimal</Translate>,
     text:
-      "Lerna requires requires very little configuration, and doesn’t clutter your files. You still run your npm scripts, just faster.",
+      <Translate>Lerna requires requires very little configuration, and doesn’t clutter your files. You still run your npm scripts, just faster.</Translate>,
     link: "/docs/getting-started",
     icon: CubeTransparentIcon,
   },
   {
-    title: "Lerna Does it All",
+    title: <Translate>Lerna Does it All</Translate>,
     text:
-      "Why have separate tools for running tasks, linking packages and publishing them? Lerna does it--less config, less overhead.",
+      <Translate>Why have separate tools for running tasks, linking packages and publishing them? Lerna does it--less config, less overhead.</Translate>,
     link: "/docs/getting-started",
     icon: TemplateIcon,
   },
@@ -124,15 +126,12 @@ export default function AboutLerna(): JSX.Element {
       <div className={clsx("row margin-bottom--xl", styles.hero)}>
         <div className="col col--8">
           <div>
-            <h1 className={clsx("margin-bottom--lg", styles.hero__title)}>Why Lerna?</h1>
+            <h1 className={clsx("margin-bottom--lg", styles.hero__title)}><Translate>Why Lerna?</Translate></h1>
             <p className={clsx("margin-bottom--md", styles.hero__text)}>
-              Monorepos let you develop multiple packages in the same repository, which is fantastic for
-              productivity. You can share code, establish clear ownership, and have fast unified CI. That is
-              why more and more teams are switching to this way of development.
+              <Translate>Monorepos let you develop multiple packages in the same repository, which is fantastic for productivity. You can share code, establish clear ownership, and have fast unified CI. That is why more and more teams are switching to this way of development.</Translate>
             </p>
             <p className={clsx("margin-bottom--md", styles.hero__text)}>
-              To use monorepos well, you need a good monorepo tool, and Lerna is exactly that. Lerna is{" "}
-              <a href="https://github.com/vsavkin/large-monorepo">fast</a>, widely used, and battle tested.
+              <Translate>To use monorepos well, you need a good monorepo tool, and Lerna is exactly that. Lerna is</Translate>{" "}<a href="https://github.com/vsavkin/large-monorepo"><Translate>fast</Translate></a><Translate>, widely used, and battle tested.</Translate>
             </p>
           </div>
         </div>
@@ -140,7 +139,7 @@ export default function AboutLerna(): JSX.Element {
       <div className="row">
         {callouts.map((c) => (
           <div key={c.title} className="col col--4">
-            <Callout title={c.title} text={c.text} link={c.link} icon={c.icon} />
+            <Callout title={c.title} text={c.text} link={useBaseUrl(c.link)} icon={c.icon} />
           </div>
         ))}
       </div>

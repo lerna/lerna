@@ -1,0 +1,14 @@
+{
+  "title": {
+    "message": "Lerna",
+    "description": "The title in the navbar"
+  },
+  "item.label.Docs": {
+    "message": "文档",
+    "description": "Navbar item with label Docs"
+  },
+  "item.label.Get Started": {
+    "message": "快速开始",
+    "description": "Navbar item with label Get Started"
+  }
+}

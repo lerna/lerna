@@ -1,0 +1,380 @@
+{
+  "theme.ErrorPageContent.title": {
+    "message": "页面已崩溃。",
+    "description": "The title of the fallback page when the page crashed"
+  },
+  "theme.ErrorPageContent.tryAgain": {
+    "message": "重试",
+    "description": "The label of the button to try again when the page crashed"
+  },
+  "theme.NotFound.title": {
+    "message": "找不到页面",
+    "description": "The title of the 404 page"
+  },
+  "theme.NotFound.p1": {
+    "message": "我们找不到您要找的页面。",
+    "description": "The first paragraph of the 404 page"
+  },
+  "theme.NotFound.p2": {
+    "message": "请联系原始链接来源网站的所有者，并告知他们链接已损坏。",
+    "description": "The 2nd paragraph of the 404 page"
+  },
+  "theme.blog.archive.title": {
+    "message": "历史博文",
+    "description": "The page & hero title of the blog archive page"
+  },
+  "theme.blog.archive.description": {
+    "message": "历史博文",
+    "description": "The page & hero description of the blog archive page"
+  },
+  "theme.AnnouncementBar.closeButtonAriaLabel": {
+    "message": "关闭",
+    "description": "The ARIA label for close button of announcement bar"
+  },
+  "theme.BackToTopButton.buttonAriaLabel": {
+    "message": "回到顶部",
+    "description": "The ARIA label for the back to top button"
+  },
+  "theme.blog.paginator.navAriaLabel": {
+    "message": "博文列表分页导航",
+    "description": "The ARIA label for the blog pagination"
+  },
+  "theme.blog.paginator.newerEntries": {
+    "message": "较新的博文",
+    "description": "The label used to navigate to the newer blog posts page (previous page)"
+  },
+  "theme.blog.paginator.olderEntries": {
+    "message": "较旧的博文",
+    "description": "The label used to navigate to the older blog posts page (next page)"
+  },
+  "theme.blog.post.readingTime.plurals": {
+    "message": "{readingTime} 分钟阅读",
+    "description": "Pluralized label for \"{readingTime} min read\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.blog.post.readMoreLabel": {
+    "message": "阅读 {title} 的全文",
+    "description": "The ARIA label for the link to full blog posts from excerpts"
+  },
+  "theme.blog.post.readMore": {
+    "message": "阅读更多",
+    "description": "The label used in blog post item excerpts to link to full blog posts"
+  },
+  "theme.blog.post.paginator.navAriaLabel": {
+    "message": "博文分页导航",
+    "description": "The ARIA label for the blog posts pagination"
+  },
+  "theme.blog.post.paginator.newerPost": {
+    "message": "较新一篇",
+    "description": "The blog post button label to navigate to the newer/previous post"
+  },
+  "theme.blog.post.paginator.olderPost": {
+    "message": "较旧一篇",
+    "description": "The blog post button label to navigate to the older/next post"
+  },
+  "theme.blog.post.plurals": {
+    "message": "{count} 篇博文",
+    "description": "Pluralized label for \"{count} posts\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.blog.tagTitle": {
+    "message": "{nPosts} 含有标签「{tagName}」",
+    "description": "The title of the page for a blog tag"
+  },
+  "theme.tags.tagsPageLink": {
+    "message": "查看所有标签",
+    "description": "The label of the link targeting the tag list page"
+  },
+  "theme.colorToggle.ariaLabel": {
+    "message": "切换浅色/暗黑模式（当前为{mode}）",
+    "description": "The ARIA label for the navbar color mode toggle"
+  },
+  "theme.colorToggle.ariaLabel.mode.dark": {
+    "message": "暗黑模式",
+    "description": "The name for the dark color mode"
+  },
+  "theme.colorToggle.ariaLabel.mode.light": {
+    "message": "浅色模式",
+    "description": "The name for the light color mode"
+  },
+  "theme.docs.DocCard.categoryDescription": {
+    "message": "{count} 个项目",
+    "description": "The default description for a category card in the generated index about how many items this category includes"
+  },
+  "theme.docs.breadcrumbs.home": {
+    "message": "主页面",
+    "description": "The ARIA label for the home page in the breadcrumbs"
+  },
+  "theme.docs.breadcrumbs.navAriaLabel": {
+    "message": "页面路径",
+    "description": "The ARIA label for the breadcrumbs"
+  },
+  "theme.docs.paginator.navAriaLabel": {
+    "message": "文档分页导航",
+    "description": "The ARIA label for the docs pagination"
+  },
+  "theme.docs.paginator.previous": {
+    "message": "上一页",
+    "description": "The label used to navigate to the previous doc"
+  },
+  "theme.docs.paginator.next": {
+    "message": "下一页",
+    "description": "The label used to navigate to the next doc"
+  },
+  "theme.docs.tagDocListPageTitle.nDocsTagged": {
+    "message": "{count} 篇文档带有标签",
+    "description": "Pluralized label for \"{count} docs tagged\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.docs.tagDocListPageTitle": {
+    "message": "{nDocsTagged}「{tagName}」",
+    "description": "The title of the page for a docs tag"
+  },
+  "theme.docs.versionBadge.label": {
+    "message": "版本：{versionLabel}"
+  },
+  "theme.docs.versions.unreleasedVersionLabel": {
+    "message": "此为 {siteTitle} {versionLabel} 版尚未发行的文档。",
+    "description": "The label used to tell the user that he's browsing an unreleased doc version"
+  },
+  "theme.docs.versions.unmaintainedVersionLabel": {
+    "message": "此为 {siteTitle} {versionLabel} 版的文档，现已不再积极维护。",
+    "description": "The label used to tell the user that he's browsing an unmaintained doc version"
+  },
+  "theme.docs.versions.latestVersionSuggestionLabel": {
+    "message": "最新的文档请参阅 {latestVersionLink} ({versionLabel})。",
+    "description": "The label used to tell the user to check the latest version"
+  },
+  "theme.docs.versions.latestVersionLinkLabel": {
+    "message": "最新版本",
+    "description": "The label used for the latest version suggestion link label"
+  },
+  "theme.common.editThisPage": {
+    "message": "编辑此页",
+    "description": "The link label to edit the current page"
+  },
+  "theme.common.headingLinkTitle": {
+    "message": "标题的直接链接",
+    "description": "Title for link to heading"
+  },
+  "theme.lastUpdated.atDate": {
+    "message": "于 {date} ",
+    "description": "The words used to describe on which date a page has been last updated"
+  },
+  "theme.lastUpdated.byUser": {
+    "message": "由 {user} ",
+    "description": "The words used to describe by who the page has been last updated"
+  },
+  "theme.lastUpdated.lastUpdatedAtBy": {
+    "message": "最后{byUser}{atDate}更新",
+    "description": "The sentence used to display when a page has been last updated, and by who"
+  },
+  "theme.navbar.mobileVersionsDropdown.label": {
+    "message": "选择版本",
+    "description": "The label for the navbar versions dropdown on mobile view"
+  },
+  "theme.common.skipToMainContent": {
+    "message": "跳到主要内容",
+    "description": "The skip to content label used for accessibility, allowing to rapidly navigate to main content with keyboard tab/enter navigation"
+  },
+  "theme.tags.tagsListLabel": {
+    "message": "标签：",
+    "description": "The label alongside a tag list"
+  },
+  "theme.blog.sidebar.navAriaLabel": {
+    "message": "最近博文导航",
+    "description": "The ARIA label for recent posts in the blog sidebar"
+  },
+  "theme.CodeBlock.wordWrapToggle": {
+    "message": "切换自动换行",
+    "description": "The title attribute for toggle word wrapping button of code block lines"
+  },
+  "theme.CodeBlock.copied": {
+    "message": "复制成功",
+    "description": "The copied button label on code blocks"
+  },
+  "theme.CodeBlock.copyButtonAriaLabel": {
+    "message": "复制代码到剪贴板",
+    "description": "The ARIA label for copy code blocks button"
+  },
+  "theme.CodeBlock.copy": {
+    "message": "复制",
+    "description": "The copy button label on code blocks"
+  },
+  "theme.DocSidebarItem.toggleCollapsedCategoryAriaLabel": {
+    "message": "打开/收起侧边栏菜单「{label}」",
+    "description": "The ARIA label to toggle the collapsible sidebar category"
+  },
+  "theme.navbar.mobileLanguageDropdown.label": {
+    "message": "选择语言",
+    "description": "The label for the mobile language switcher dropdown"
+  },
+  "theme.TOCCollapsible.toggleButtonLabel": {
+    "message": "本页总览",
+    "description": "The label used by the button on the collapsible TOC component"
+  },
+  "theme.docs.sidebar.collapseButtonTitle": {
+    "message": "收起侧边栏",
+    "description": "The title attribute for collapse button of doc sidebar"
+  },
+  "theme.docs.sidebar.collapseButtonAriaLabel": {
+    "message": "收起侧边栏",
+    "description": "The title attribute for collapse button of doc sidebar"
+  },
+  "theme.navbar.mobileSidebarSecondaryMenu.backButtonLabel": {
+    "message": "← 回到主菜单",
+    "description": "The label of the back button to return to main menu, inside the mobile navbar sidebar secondary menu (notably used to display the docs sidebar)"
+  },
+  "theme.docs.sidebar.expandButtonTitle": {
+    "message": "展开侧边栏",
+    "description": "The ARIA label and title attribute for expand button of doc sidebar"
+  },
+  "theme.docs.sidebar.expandButtonAriaLabel": {
+    "message": "展开侧边栏",
+    "description": "The ARIA label and title attribute for expand button of doc sidebar"
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "查看全部 {count} 个结果"
+  },
+  "theme.SearchBar.label": {
+    "message": "搜索",
+    "description": "The ARIA label and placeholder for search button"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "找到 {count} 份文件",
+    "description": "Pluralized label for \"{count} documents found\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "「{query}」的搜索结果",
+    "description": "The search page title for non-empty query"
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "在文档中搜索",
+    "description": "The search page title for empty query"
+  },
+  "theme.SearchPage.inputPlaceholder": {
+    "message": "在此输入搜索字词",
+    "description": "The placeholder for search page input"
+  },
+  "theme.SearchPage.inputLabel": {
+    "message": "搜索",
+    "description": "The ARIA label for search page input"
+  },
+  "theme.SearchPage.algoliaLabel": {
+    "message": "通过 Algolia 搜索",
+    "description": "The ARIA label for Algolia mention"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "未找到任何结果",
+    "description": "The paragraph for empty search result"
+  },
+  "theme.SearchPage.fetchingNewResults": {
+    "message": "正在获取新的搜索结果...",
+    "description": "The paragraph for fetching new search results"
+  },
+  "Nrwl takes stewardship!": {
+    "message": "已经被 Nrwl 接管！"
+  },
+  "The Original Tool for": {
+    "message": "原始的工具用于"
+  },
+  "Monorepos": {
+    "message": "单体式仓库"
+  },
+  "Lerna is a fast modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository.": {
+    "message": "Lerna 是一个快速的现代构建系统，用于管理和发布同一仓库中的多个 JavaScript/TypeScript 包。"
+  },
+  "Get Started": {
+    "message": "快速开始"
+  },
+  "Thousands of teams worldwide are using Lerna": {
+    "message": "全球上千个团队正在使用 Lerna"
+  },
+  "Fastest Build System": {
+    "message": "最快的构建系统"
+  },
+  "Powered by Nx": {
+    "message": "由 Nx 提供技术支持"
+  },
+  "Lerna runs a command against any number of projects in the most efficient way, in the right order, in parallel, using advanced caching and with the possibility to distribute that on multiple machines.": {
+    "message": "Lerna 以最有效的方式、正确的顺序、使用高级缓存、并行地为任意数量的项目运行命令，并可以将其分发到多台机器上。"
+  },
+  "Running Tasks": {
+    "message": "运行任务"
+  },
+  "Ultimate Tool for Publishing Packages": {
+    "message": "发布包的终极工具"
+  },
+  "Lerna is the ultimate tool for publishing multiple packages to npm. Whether the packages have independent versions or not, Lerna's got you covered.": {
+    "message": "Lerna 是向 npm 发布多个包的终极工具。无论这些包是否有独立的版本，Lerna 都能为你提供服务。"
+  },
+  "Publishing Packages": {
+    "message": "发布包"
+  },
+  "Why Lerna?": {
+    "message": "为什么使用 Lerna？"
+  },
+  "Monorepos let you develop multiple packages in the same repository, which is fantastic for productivity. You can share code, establish clear ownership, and have fast unified CI. That is why more and more teams are switching to this way of development.": {
+    "message": "单体式仓库允许你在同一个库中开发多个包，这对于提高工作效率来说是非常棒的。你可以共享代码，建立清晰的所有权，并拥有快速统一的 CI。这就是越来越多的团队正在转向这种开发方式的原因。"
+  },
+  "To use monorepos well, you need a good monorepo tool, and Lerna is exactly that. Lerna is": {
+    "message": "为了用好单体式仓库，你需要一个好的管理工具，而 Lerna 就是。Lerna "
+  },
+  "fast": {
+    "message": "速度快"
+  },
+  ", widely used, and battle tested.": {
+    "message": "，应用广泛，而且经过了严格的测试。"
+  },
+  "Never Rebuilds Same Code Twice": {
+    "message": "从不重新构建两次相同的代码"
+  },
+  "Lerna won't run the tasks it executed before, and instead will restore the files and the terminal output from its cache.": {
+    "message": "Lerna 不会运行它之前执行的任务，而是从它的缓存中恢复文件和终端输出。d"
+  },
+  "Distributed Cache": {
+    "message": "分布式缓存"
+  },
+  "Computation cache can be shared between developers or CI/CD machines, drastically reducing average CI times.": {
+    "message": "计算缓存可以在开发人员或 CI/CD 机器之间共享，大大减少了平均 CI 时间。"
+  },
+  "Target Dependencies": {
+    "message": "目标依赖项"
+  },
+  "Lerna lets you specify how different targets (npm scripts) depend on each other.": {
+    "message": "Lerna 允许你指定不同的目标（npm 脚本）之间如何相互依赖。"
+  },
+  "Efficient Execution": {
+    "message": "高效执行"
+  },
+  "Lerna runs any command in the most efficient way with the max degree of parallelization while respecting the execution order.": {
+    "message": "Lerna 以最有效的方式运行所有命令，并进行最大程度的并行处理，同时尊重执行顺序。"
+  },
+  "Infinite Scaling with Distributed Execution": {
+    "message": "通过分布式执行实现无限扩展"
+  },
+  "Lerna can run any command across multiple machines without having to configure anything.": {
+    "message": "Lerna 可以在多台机器上运行任何命令，而无需配置任何内容。"
+  },
+  "Powerful Graph Visualizer": {
+    "message": "功能强大的图形可视化工具"
+  },
+  "Lerna comes with a powerful interactive workspace visualizer, helping you understand the architecture of your workspace.": {
+    "message": "Lerna 附带了一个强大的交互式 workspace 可视化工具，帮助您了解 workspace 的架构。"
+  },
+  "Polished DX": {
+    "message": "优雅的 DX"
+  },
+  "Lerna has a powerful dynamic CLI, making sure you only see what is relevant when you run commands against many projects.": {
+    "message": "Lerna 有一个强大的动态 CLI，确保你只在对多个项目运行命令时才能看到相关内容。"
+  },
+  "Minimal": {
+    "message": "极简的"
+  },
+  "Lerna requires requires very little configuration, and doesn’t clutter your files. You still run your npm scripts, just faster.": {
+    "message": "Lerna 只需要很少的配置，并且不会扰乱你的文件。你仍然可以运行你的 npm 脚本，只是速度更快。"
+  },
+  "Lerna Does it All": {
+    "message": "Lerna 什么都做"
+  },
+  "Why have separate tools for running tasks, linking packages and publishing them? Lerna does it--less config, less overhead.": {
+    "message": "为什么要有单独的工具来运行任务、链接包和发布它们？Lerna 做到了——配置更少，开销更少。"
+  }
+}

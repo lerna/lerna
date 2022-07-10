@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import React from "react";
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import Translate from '@docusaurus/Translate';
 import styles from "./powered-by-nx.module.css";
 
 export default function PoweredByNx(): JSX.Element {
@@ -19,15 +21,15 @@ export default function PoweredByNx(): JSX.Element {
         <div className={clsx("col col--6", styles.item__inner)}>
           <div>
             <h1 className={clsx("margin-bottom--md", styles.item__title)}>
-              Fastest Build System <span>Powered by Nx</span>
+              <Translate>Fastest Build System</Translate> <span><Translate>Powered by Nx</Translate></span>
             </h1>
             <p className="margin-bottom--md">
-              Lerna runs a command against any number of projects in the most efficient way, in the right
+              <Translate>Lerna runs a command against any number of projects in the most efficient way, in the right
               order, in parallel, using advanced caching and with the possibility to distribute that on
-              multiple machines.
+              multiple machines.</Translate>
             </p>
-            <a className="button button--secondary" href="/docs/core-concepts/running-tasks">
-              Running Tasks
+            <a className="button button--secondary" href={useBaseUrl("/docs/core-concepts/running-tasks")}>
+              <Translate>Running Tasks</Translate>
             </a>
           </div>
         </div>
