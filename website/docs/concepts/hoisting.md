@@ -1,19 +1,22 @@
 ---
 id: hoisting
-title: Lerna hoisting
+title: Hoisting
 ---
 
-# Lerna Hoisting
+# Hoisting
+
+```bash
+lerna bootstrap --hoist
+```
 
 > Use caution when enabling this feature, as certain configurations can cause problems.
-
-When an overall project is divided into more than one NPM package, this
-organizational improvement generally comes with a cost: the various
-packages often have many duplicate dependencies in their `package.json`
-files, and as a result hundreds or thousands of duplicated files in
-various `node_modules` directories. By making it easier to manage a
-project comprised of many NPM packages, Lerna can inadvertently
-exacerbate this problem.
+> When an overall project is divided into more than one NPM package, this
+> organizational improvement generally comes with a cost: the various
+> packages often have many duplicate dependencies in their `package.json`
+> files, and as a result hundreds or thousands of duplicated files in
+> various `node_modules` directories. By making it easier to manage a
+> project comprised of many NPM packages, Lerna can inadvertently
+> exacerbate this problem.
 
 Fortunately, Lerna also offers a feature to improve the situation -
 Lerna can reduce the time and space requirements for numerous copies of

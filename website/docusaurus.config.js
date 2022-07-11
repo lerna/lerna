@@ -159,10 +159,6 @@ const config = {
             title: "Help",
             items: [
               {
-                label: "Guides",
-                to: "/docs/guides/hoisting",
-              },
-              {
                 label: "Troubleshooting",
                 to: "/docs/troubleshooting",
               },
