@@ -3,6 +3,13 @@
   "extends": ["airbnb-base", "plugin:jest/recommended", "plugin:node/recommended", "prettier"],
   "plugins": ["jest", "node"],
   "ignorePatterns": ["website/**/*"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".ts"]
+      }
+    }
+  },
   "rules": {
     "class-methods-use-this": [
       "error",
