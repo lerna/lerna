@@ -54,6 +54,13 @@ function getNpmUsername(options) {
     opts.log.resume();
 
     if (opts.registry === "https://registry.npmjs.org/") {
+      if (err.code === "E403") {
+        throw new ValidationError(
+          "ENEEDAUTH",
+          "Cannot verify access when authenticating with a npm automation token. Set `command.publish.verifyAccess=false` in your lerna.json to skip this verification, or use a different type of npm access token (https://docs.npmjs.com/creating-and-viewing-access-tokens)."
+        );
+      }
+
       throw new ValidationError("EWHOAMI", "Authentication error. Use `npm whoami` to troubleshoot.");
     }
 
