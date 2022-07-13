@@ -57,7 +57,7 @@ function getNpmUsername(options) {
       if (err.code === "E403") {
         throw new ValidationError(
           "ENEEDAUTH",
-          "Cannot verify access when authenticating with a npm automation token. Set `command.publish.verifyAccess=false` in your lerna.json to skip this verification, or use a different type of npm access token (https://docs.npmjs.com/creating-and-viewing-access-tokens)."
+          "Access verification failed. If you are authenticating with a npm automation token, set `command.publish.verifyAccess=false` in your lerna.json to skip this verification, or use a different type of npm access token (https://docs.npmjs.com/creating-and-viewing-access-tokens)."
         );
       }
 

@@ -68,9 +68,9 @@ describe("getNpmUsername", () => {
     expect(console.error).toHaveBeenCalledWith("third-party whoami fail");
   });
 
-  test("logs failure message when npm automation token is suspected", async () => {
+  test("logs failure message when npm returns forbidden response", async () => {
     fetch.json.mockImplementationOnce(() => {
-      const err = new Error("npm profile fail due to automation token's insufficient permissions");
+      const err = new Error("npm profile fail due to insufficient permissions");
 
       err.code = "E403";
 
@@ -80,11 +80,9 @@ describe("getNpmUsername", () => {
     const opts = { registry: "https://registry.npmjs.org/" };
 
     await expect(getNpmUsername(opts)).rejects.toThrow(
-      "Cannot verify access when authenticating with a npm automation token. Set `command.publish.verifyAccess=false` in your lerna.json to skip this verification, or use a different type of npm access token (https://docs.npmjs.com/creating-and-viewing-access-tokens)."
+      "Access verification failed. If you are authenticating with a npm automation token, set `command.publish.verifyAccess=false` in your lerna.json to skip this verification, or use a different type of npm access token (https://docs.npmjs.com/creating-and-viewing-access-tokens)."
     );
-    expect(console.error).toHaveBeenCalledWith(
-      "npm profile fail due to automation token's insufficient permissions"
-    );
+    expect(console.error).toHaveBeenCalledWith("npm profile fail due to insufficient permissions");
   });
 
   test("allows third-party registries to fail with a stern warning", async () => {
