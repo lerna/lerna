@@ -1,6 +1,7 @@
 ---
 id: distribute-tasks
 title: Distribute Task Execution
+type: explanation
 ---
 
 # Distribute Task Execution (DTE)

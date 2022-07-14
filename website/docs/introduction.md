@@ -1,6 +1,7 @@
 ---
 id: introduction
 title: Introduction
+type: explanation
 ---
 
 # Introduction

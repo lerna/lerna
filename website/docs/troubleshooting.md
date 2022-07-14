@@ -1,3 +1,9 @@
+---
+id: troubleshooting
+title: Troubleshooting
+type: how-to
+---
+
 # Troubleshooting
 
 This document contains solutions for certain issues our users encountered

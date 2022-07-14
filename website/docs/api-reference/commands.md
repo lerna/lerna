@@ -1,3 +1,9 @@
+---
+id: commands
+title: Commands
+type: reference
+---
+
 # Commands
 
 - [`lerna publish`](https://github.com/lerna/lerna/tree/main/commands/publish#readme)
@@ -15,3 +21,7 @@
 - [`lerna link`](https://github.com/lerna/lerna/tree/main/commands/link#readme)
 - [`lerna create`](https://github.com/lerna/lerna/tree/main/commands/create#readme)
 - [`lerna info`](https://github.com/lerna/lerna/tree/main/commands/info#readme)
+
+## Filter Options
+
+Lerna commands can have filter options applied to control which packages they operate on.  Read more [here](https://github.com/lerna/lerna/tree/main/core/filter-options#readme)

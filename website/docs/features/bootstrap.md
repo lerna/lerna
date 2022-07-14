@@ -1,9 +1,10 @@
 ---
 id: bootstrap
 title: Bootstrap
+type: explanation
 ---
 
-# How To Bootstrap
+# Bootstrap
 
 Lerna links different projects within the repo so they can import each other without having to publish anything to NPM. To show how Lerna does it, we will take [this repository](https://github.com/lerna/getting-started-example) as an example.
 

@@ -53,13 +53,9 @@ const sidebars = {
     {
       type: "category",
       label: "API Reference",
-      items: ["api-reference/commands", "api-reference/filter-options", "api-reference/configuration"],
+      items: ["api-reference/commands", "api-reference/configuration"],
     },
-    {
-      type: "doc",
-      label: "FAQ",
-      id: "faq",
-    },
+    "faq",
     "troubleshooting",
   ],
 };

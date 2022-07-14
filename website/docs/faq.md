@@ -1,3 +1,9 @@
+---
+id: faq
+title: FAQ
+type: how-to
+---
+
 # Frequently asked questions
 
 _This document is a work in progress._

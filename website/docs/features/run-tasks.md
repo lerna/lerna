@@ -1,6 +1,7 @@
 ---
 id: run-tasks
 title: Run Tasks
+type: explanation
 ---
 
 # Run Tasks
@@ -92,7 +93,7 @@ You can also run a command for all the projects affected in your PR like this:
 npx lerna run test --since=origin/main
 ```
 
-Learn more [here](../api-reference/filter-options.md).
+Learn more [here](../api-reference/commands).
 
 ## Allow Tasks to Run in Any Order
 
@@ -193,61 +194,6 @@ project-specific rules by adding them the project's `package.json`.
 }
 ```
 
-## Cache Task Results
+## Run Tasks Faster
 
-Lerna via Nx has the most sophisticated and battle-tested computation caching system. It knows when the task you are
-about to run has been executed before, so it can use the cache to restore the results of running that task.
-
-We previously adjusted the `cacheableOperations` in `nx.json` to include the `build` and `test` tasks. If you don't have
-that yet, add them now:
-
-```json title="nx.json"
-{
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "test"]
-      }
-    }
-  }
-}
-```
-
-:::info
-
-Note, `cacheableOperations` need to be side effect free, meaning that given the same input they should always result in
-the same output. As an example, e2e test runs that hit the backend API cannot be cached as the backend might influence
-the result of the test run.
-
-:::
-
-Now, run the following command twice. The second time the operation will be instant:
-
-```bash
-lerna run test --scope=header
-```
-
-```bash title="Terminal Output"
-> lerna run test --scope=header
-
-> header:test  [existing outputs match the cache, left as is]
-
-> header@0.1.0 test
-> jest
-
-PASS  src/Header.spec.tsx
-✓ renders header (12 ms)
-
-Test Suites: 1 passed, 1 total
-Tests:       1 passed, 1 total
-Snapshots:   0 total
-Time:        0.439 s, estimated 1 s
-Ran all test suites.
-
-———————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
->  Lerna (powered by Nx)   Successfully ran target test for project header (4ms)
-
-   Nx read the output from the cache instead of running the command for 1 out of 1 tasks.
-```
+To speed up your task execution, learn how to [Cache Task Results](./cache-tasks) and [Distribute Task Execution](./distribute-tasks)
