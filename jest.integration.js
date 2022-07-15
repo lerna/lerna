@@ -7,7 +7,6 @@ module.exports = {
   setupFilesAfterEnv: ["@lerna-test/helpers/setup-integration-timeout.js"],
   snapshotSerializers: ["@lerna-test/helpers/serializers/serialize-placeholders"],
   testEnvironment: "node",
-  testRunner: "jest-circus/runner",
   verbose: true,
 };
 
