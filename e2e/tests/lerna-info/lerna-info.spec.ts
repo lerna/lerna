@@ -37,23 +37,23 @@ describe("lerna-info", () => {
     const output = await fixture.lerna("info");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
 
- Environment info:
+       Environment info:
 
-  System:
-    OS: {OS}
-    CPU: {CPU}
-  Binaries:
-    Node: XX.XX.XX - {Node}
-    Yarn: XX.XX.XX - {Yarn}
-    npm: XX.XX.XX - {npm}
-  Utilities:
-    Git: XX.XX.XX - {Git}
-  npmPackages:
-    lerna: ^999.9.9-e2e.0 => 999.9.9-e2e.0 
+        System:
+          OS: {OS}
+          CPU: {CPU}
+        Binaries:
+          Node: XX.XX.XX - {Node}
+          Yarn: XX.XX.XX - {Yarn}
+          npm: XX.XX.XX - {npm}
+        Utilities:
+          Git: XX.XX.XX - {Git}
+        npmPackages:
+          lerna: ^999.9.9-e2e.0 => 999.9.9-e2e.0 
 
-lerna notice cli v999.9.9-e2e.0
 
-`);
+    `);
   });
 });

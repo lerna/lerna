@@ -56,11 +56,11 @@ describe("lerna-changed", () => {
       const output = await fixture.lerna("changed");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna info Assuming all packages changed
         package-a
         package-e
         package-c
-        lerna notice cli v999.9.9-e2e.0
-        lerna info Assuming all packages changed
         lerna success found 3 packages ready to publish
 
       `);
@@ -121,10 +121,10 @@ describe("lerna-changed", () => {
       const output = await fixture.lerna("changed");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-        package-a
-        package-c
         lerna notice cli v999.9.9-e2e.0
         lerna info Looking for changed packages since 0.0.0
+        package-a
+        package-c
         lerna success found 2 packages ready to publish
 
       `);
@@ -135,6 +135,8 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed --json");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
+          lerna notice cli v999.9.9-e2e.0
+          lerna info Looking for changed packages since 0.0.0
           [
             {
               "name": "package-a",
@@ -149,8 +151,6 @@ describe("lerna-changed", () => {
               "location": "/tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/packages/package-c"
             }
           ]
-          lerna notice cli v999.9.9-e2e.0
-          lerna info Looking for changed packages since 0.0.0
           lerna success found 2 packages ready to publish
 
         `);
@@ -162,10 +162,10 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed --ndjson");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
-          {"name":"package-a","version":"0.0.0","private":false,"location":"/tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/modules/package-a"}
-          {"name":"package-c","version":"0.0.0-alpha.1","private":false,"location":"/tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/packages/package-c"}
           lerna notice cli v999.9.9-e2e.0
           lerna info Looking for changed packages since 0.0.0
+          {"name":"package-a","version":"0.0.0","private":false,"location":"/tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/modules/package-a"}
+          {"name":"package-c","version":"0.0.0-alpha.1","private":false,"location":"/tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/packages/package-c"}
           lerna success found 2 packages ready to publish
 
         `);
@@ -177,11 +177,11 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed --all");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
+          lerna notice cli v999.9.9-e2e.0
+          lerna info Looking for changed packages since 0.0.0
           package-a
           package-b (PRIVATE)
           package-c
-          lerna notice cli v999.9.9-e2e.0
-          lerna info Looking for changed packages since 0.0.0
           lerna success found 3 packages ready to publish
 
         `);
@@ -193,11 +193,11 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed -a");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
+          lerna notice cli v999.9.9-e2e.0
+          lerna info Looking for changed packages since 0.0.0
           package-a
           package-b (PRIVATE)
           package-c
-          lerna notice cli v999.9.9-e2e.0
-          lerna info Looking for changed packages since 0.0.0
           lerna success found 3 packages ready to publish
 
         `);
@@ -209,10 +209,10 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed --long");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
-          package-a         v0.0.0 modules/package-a
-          package-c v0.0.0-alpha.1 packages/package-c
           lerna notice cli v999.9.9-e2e.0
           lerna info Looking for changed packages since 0.0.0
+          package-a         v0.0.0 modules/package-a
+          package-c v0.0.0-alpha.1 packages/package-c
           lerna success found 2 packages ready to publish
 
         `);
@@ -224,10 +224,10 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed -l");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
-          package-a         v0.0.0 modules/package-a
-          package-c v0.0.0-alpha.1 packages/package-c
           lerna notice cli v999.9.9-e2e.0
           lerna info Looking for changed packages since 0.0.0
+          package-a         v0.0.0 modules/package-a
+          package-c v0.0.0-alpha.1 packages/package-c
           lerna success found 2 packages ready to publish
 
         `);
@@ -239,10 +239,10 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed --parseable");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
-          /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/modules/package-a
-          /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/packages/package-c
           lerna notice cli v999.9.9-e2e.0
           lerna info Looking for changed packages since 0.0.0
+          /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/modules/package-a
+          /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/packages/package-c
           lerna success found 2 packages ready to publish
 
         `);
@@ -254,10 +254,10 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed -p");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
-          /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/modules/package-a
-          /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/packages/package-c
           lerna notice cli v999.9.9-e2e.0
           lerna info Looking for changed packages since 0.0.0
+          /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/modules/package-a
+          /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/packages/package-c
           lerna success found 2 packages ready to publish
 
         `);
@@ -269,11 +269,11 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed -pla");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
+          lerna notice cli v999.9.9-e2e.0
+          lerna info Looking for changed packages since 0.0.0
           /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/modules/package-a:package-a:0.0.0
           /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/packages/package-b:package-b:0.0.0:PRIVATE
           /tmp/lerna-e2e/lerna-changed-with-a-change-to-package-c-since-last-release/lerna-workspace/packages/package-c:package-c:0.0.0-alpha.1
-          lerna notice cli v999.9.9-e2e.0
-          lerna info Looking for changed packages since 0.0.0
           lerna success found 3 packages ready to publish
 
         `);
@@ -285,10 +285,10 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed --toposort");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
-          package-c
-          package-a
           lerna notice cli v999.9.9-e2e.0
           lerna info Looking for changed packages since 0.0.0
+          package-c
+          package-a
           lerna success found 2 packages ready to publish
 
         `);
@@ -300,6 +300,8 @@ describe("lerna-changed", () => {
         const output = await fixture.lerna("changed --graph");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
+          lerna notice cli v999.9.9-e2e.0
+          lerna info Looking for changed packages since 0.0.0
           {
             "package-a": [
               "package-c",
@@ -309,8 +311,6 @@ describe("lerna-changed", () => {
               "package-d"
             ]
           }
-          lerna notice cli v999.9.9-e2e.0
-          lerna info Looking for changed packages since 0.0.0
           lerna success found 2 packages ready to publish
 
         `);
@@ -387,9 +387,9 @@ describe("lerna-changed", () => {
       const output = await fixture.lerna("changed --include-merged-tags");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-        package-e
         lerna notice cli v999.9.9-e2e.0
         lerna info Looking for changed packages since 2.0.0
+        package-e
         lerna success found 1 package ready to publish
 
       `);

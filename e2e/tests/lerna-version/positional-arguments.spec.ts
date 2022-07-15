@@ -30,17 +30,17 @@ describe("lerna-version-positional-arguments", () => {
   it("should support setting a specific version imperatively", async () => {
     const output = await fixture.lerna("version 3.3.3 -y");
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
 
-        Changes:
-         - package-a: 0.0.0 => 3.3.3
+      Changes:
+       - package-a: 0.0.0 => 3.3.3
 
-        lerna notice cli v999.9.9-e2e.0
-        lerna info current version 0.0.0
-        lerna info Assuming all packages changed
-        lerna info auto-confirmed 
-        lerna info execute Skipping releases
-        lerna info git Pushing tags...
-        lerna success version finished
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
 
     `);
 
@@ -60,17 +60,17 @@ describe("lerna-version-positional-arguments", () => {
   it("should support bumping the major version with the semver keyword", async () => {
     const output = await fixture.lerna("version major -y");
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
 
-        Changes:
-         - package-a: 0.0.0 => 1.0.0
+      Changes:
+       - package-a: 0.0.0 => 1.0.0
 
-        lerna notice cli v999.9.9-e2e.0
-        lerna info current version 0.0.0
-        lerna info Assuming all packages changed
-        lerna info auto-confirmed 
-        lerna info execute Skipping releases
-        lerna info git Pushing tags...
-        lerna success version finished
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
 
     `);
 
@@ -90,17 +90,17 @@ describe("lerna-version-positional-arguments", () => {
   it("should support bumping the minor version with the semver keyword", async () => {
     const output = await fixture.lerna("version minor -y");
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
 
-        Changes:
-         - package-a: 0.0.0 => 0.1.0
+      Changes:
+       - package-a: 0.0.0 => 0.1.0
 
-        lerna notice cli v999.9.9-e2e.0
-        lerna info current version 0.0.0
-        lerna info Assuming all packages changed
-        lerna info auto-confirmed 
-        lerna info execute Skipping releases
-        lerna info git Pushing tags...
-        lerna success version finished
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
 
     `);
 
@@ -120,17 +120,17 @@ describe("lerna-version-positional-arguments", () => {
   it("should support bumping the patch version with the semver keyword", async () => {
     const output = await fixture.lerna("version patch -y");
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
 
-        Changes:
-         - package-a: 0.0.0 => 0.0.1
+      Changes:
+       - package-a: 0.0.0 => 0.0.1
 
-        lerna notice cli v999.9.9-e2e.0
-        lerna info current version 0.0.0
-        lerna info Assuming all packages changed
-        lerna info auto-confirmed 
-        lerna info execute Skipping releases
-        lerna info git Pushing tags...
-        lerna success version finished
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
 
     `);
 
@@ -150,17 +150,17 @@ describe("lerna-version-positional-arguments", () => {
   it("should support bumping the premajor version with the semver keyword", async () => {
     const output = await fixture.lerna("version premajor -y");
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
 
-        Changes:
-         - package-a: 0.0.0 => 1.0.0-alpha.0
+      Changes:
+       - package-a: 0.0.0 => 1.0.0-alpha.0
 
-        lerna notice cli v999.9.9-e2e.0
-        lerna info current version 0.0.0
-        lerna info Assuming all packages changed
-        lerna info auto-confirmed 
-        lerna info execute Skipping releases
-        lerna info git Pushing tags...
-        lerna success version finished
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
 
     `);
 
@@ -177,17 +177,17 @@ describe("lerna-version-positional-arguments", () => {
   it("should support bumping the preminor version with the semver keyword", async () => {
     const output = await fixture.lerna("version preminor -y");
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
 
-        Changes:
-         - package-a: 0.0.0 => 0.1.0-alpha.0
+      Changes:
+       - package-a: 0.0.0 => 0.1.0-alpha.0
 
-        lerna notice cli v999.9.9-e2e.0
-        lerna info current version 0.0.0
-        lerna info Assuming all packages changed
-        lerna info auto-confirmed 
-        lerna info execute Skipping releases
-        lerna info git Pushing tags...
-        lerna success version finished
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
 
     `);
 
@@ -207,17 +207,17 @@ describe("lerna-version-positional-arguments", () => {
   it("should support bumping the prepatch version with the semver keyword", async () => {
     const output = await fixture.lerna("version prepatch -y");
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
 
-        Changes:
-         - package-a: 0.0.0 => 0.0.1-alpha.0
+      Changes:
+       - package-a: 0.0.0 => 0.0.1-alpha.0
 
-        lerna notice cli v999.9.9-e2e.0
-        lerna info current version 0.0.0
-        lerna info Assuming all packages changed
-        lerna info auto-confirmed 
-        lerna info execute Skipping releases
-        lerna info git Pushing tags...
-        lerna success version finished
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
 
     `);
 
@@ -237,17 +237,17 @@ describe("lerna-version-positional-arguments", () => {
   it("should support bumping the prerelease version with the semver keyword", async () => {
     const output = await fixture.lerna("version prerelease -y");
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
 
-        Changes:
-         - package-a: 0.0.0 => 0.0.1-alpha.0
+      Changes:
+       - package-a: 0.0.0 => 0.0.1-alpha.0
 
-        lerna notice cli v999.9.9-e2e.0
-        lerna info current version 0.0.0
-        lerna info Assuming all packages changed
-        lerna info auto-confirmed 
-        lerna info execute Skipping releases
-        lerna info git Pushing tags...
-        lerna success version finished
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
 
     `);
 
