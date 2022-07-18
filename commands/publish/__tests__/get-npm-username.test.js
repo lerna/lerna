@@ -80,7 +80,7 @@ describe("getNpmUsername", () => {
     const opts = { registry: "https://registry.npmjs.org/" };
 
     await expect(getNpmUsername(opts)).rejects.toThrow(
-      "Access verification failed. If you are authenticating with a npm automation token, set `command.publish.verifyAccess=false` in your lerna.json to skip this verification, or use a different type of npm access token (https://docs.npmjs.com/creating-and-viewing-access-tokens)."
+      "Access verification failed. Ensure that your npm access token has both read and write access, or remove the verifyAccess option to skip this verification. Note that npm automation tokens do NOT have read access (https://docs.npmjs.com/creating-and-viewing-access-tokens)."
     );
     expect(console.error).toHaveBeenCalledWith("npm profile fail due to insufficient permissions");
   });
