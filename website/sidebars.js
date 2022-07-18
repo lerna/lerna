@@ -27,9 +27,11 @@ const sidebars = {
       items: [
         "features/bootstrap",
         "features/run-tasks",
-        "features/version-and-publish",
         "features/cache-tasks",
+        "features/project-graph",
         "features/distribute-tasks",
+        "features/version-and-publish",
+        "features/editor-plugins",
       ],
       link: {
         type: "generated-index",
