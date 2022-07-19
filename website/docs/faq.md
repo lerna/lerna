@@ -1,7 +1,7 @@
 ---
 id: faq
 title: FAQ
-type: how-to
+type: recipe
 ---
 
 # Frequently asked questions

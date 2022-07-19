@@ -1,7 +1,7 @@
 ---
 id: troubleshooting
 title: Troubleshooting
-type: how-to
+type: recipe
 ---
 
 # Troubleshooting
