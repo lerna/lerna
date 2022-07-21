@@ -52,10 +52,10 @@ describe("lerna-list", () => {
     const output = await fixture.lerna("list");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
       package-a
       package-e
       package-c
-      lerna notice cli v999.9.9-e2e.0
       lerna success found 3 packages
 
     `);
@@ -66,6 +66,7 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list --json");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         [
           {
             "name": "package-a",
@@ -86,7 +87,6 @@ describe("lerna-list", () => {
             "location": "/tmp/lerna-e2e/lerna-list/lerna-workspace/packages/package-c"
           }
         ]
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 3 packages
 
       `);
@@ -98,10 +98,10 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list --ndjson");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         {"name":"package-a","version":"0.0.0","private":false,"location":"/tmp/lerna-e2e/lerna-list/lerna-workspace/modules/package-a"}
         {"name":"package-e","version":"0.0.0","private":false,"location":"/tmp/lerna-e2e/lerna-list/lerna-workspace/modules/package-e"}
         {"name":"package-c","version":"0.0.0","private":false,"location":"/tmp/lerna-e2e/lerna-list/lerna-workspace/packages/package-c"}
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 3 packages
 
       `);
@@ -113,12 +113,12 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list --all");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         package-a
         package-d (PRIVATE)
         package-e
         package-b (PRIVATE)
         package-c
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 5 packages
 
       `);
@@ -130,12 +130,12 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list -a");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         package-a
         package-d (PRIVATE)
         package-e
         package-b (PRIVATE)
         package-c
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 5 packages
 
       `);
@@ -147,10 +147,10 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list --long");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         package-a v0.0.0 modules/package-a
         package-e v0.0.0 modules/package-e
         package-c v0.0.0 packages/package-c
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 3 packages
 
       `);
@@ -162,10 +162,10 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list -l");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         package-a v0.0.0 modules/package-a
         package-e v0.0.0 modules/package-e
         package-c v0.0.0 packages/package-c
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 3 packages
 
       `);
@@ -177,10 +177,10 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list --parseable");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         /tmp/lerna-e2e/lerna-list/lerna-workspace/modules/package-a
         /tmp/lerna-e2e/lerna-list/lerna-workspace/modules/package-e
         /tmp/lerna-e2e/lerna-list/lerna-workspace/packages/package-c
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 3 packages
 
       `);
@@ -192,10 +192,10 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list -p");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         /tmp/lerna-e2e/lerna-list/lerna-workspace/modules/package-a
         /tmp/lerna-e2e/lerna-list/lerna-workspace/modules/package-e
         /tmp/lerna-e2e/lerna-list/lerna-workspace/packages/package-c
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 3 packages
 
       `);
@@ -207,12 +207,12 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list -pla");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         /tmp/lerna-e2e/lerna-list/lerna-workspace/modules/package-a:package-a:0.0.0
         /tmp/lerna-e2e/lerna-list/lerna-workspace/modules/package-d:package-d:0.0.0:PRIVATE
         /tmp/lerna-e2e/lerna-list/lerna-workspace/modules/package-e:package-e:0.0.0
         /tmp/lerna-e2e/lerna-list/lerna-workspace/packages/package-b:package-b:0.0.0:PRIVATE
         /tmp/lerna-e2e/lerna-list/lerna-workspace/packages/package-c:package-c:0.0.0
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 5 packages
 
       `);
@@ -224,10 +224,10 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list --toposort");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         package-e
         package-c
         package-a
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 3 packages
 
       `);
@@ -239,6 +239,7 @@ describe("lerna-list", () => {
       const output = await fixture.lerna("list --graph");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         {
           "package-a": [
             "package-c",
@@ -247,7 +248,6 @@ describe("lerna-list", () => {
           "package-e": [],
           "package-c": []
         }
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 3 packages
 
       `);
@@ -258,6 +258,7 @@ describe("lerna-list", () => {
         const output = await fixture.lerna("list --graph --all");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
+          lerna notice cli v999.9.9-e2e.0
           {
             "package-a": [
               "package-c",
@@ -270,7 +271,6 @@ describe("lerna-list", () => {
             ],
             "package-c": []
           }
-          lerna notice cli v999.9.9-e2e.0
           lerna success found 5 packages
 
         `);

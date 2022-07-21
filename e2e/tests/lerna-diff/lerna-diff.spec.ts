@@ -44,6 +44,7 @@ describe("lerna-diff", () => {
     const output = await fixture.lerna("diff");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
       diff --git a/packages/package-a/package.json b/packages/package-a/package.json
       index XXXXXXX..XXXXXXX XXXXXX
       --- a/packages/package-a/package.json
@@ -70,7 +71,6 @@ describe("lerna-diff", () => {
       +    "package-a": "0.0.0"
          }
        }
-      lerna notice cli v999.9.9-e2e.0
 
     `);
   });
@@ -90,6 +90,7 @@ describe("lerna-diff", () => {
     const output = await fixture.lerna("diff package-a");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
       diff --git a/packages/package-a/package.json b/packages/package-a/package.json
       index XXXXXXX..XXXXXXX XXXXXX
       --- a/packages/package-a/package.json
@@ -103,7 +104,6 @@ describe("lerna-diff", () => {
       +    "package-b": "0.0.0"
          }
        }
-      lerna notice cli v999.9.9-e2e.0
 
     `);
   });

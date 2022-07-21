@@ -1,5 +1,5 @@
 import { joinPathFragments, readJsonFile, writeJsonFile } from "@nrwl/devkit";
-import { exec } from "child_process";
+import { exec, spawn } from "child_process";
 import { ensureDir, ensureDirSync, readFile, remove, writeFile } from "fs-extra";
 import isCI from "is-ci";
 import { dirSync } from "tmp";
@@ -19,6 +19,7 @@ interface FixtureCreateOptions {
   runLernaInit: boolean;
   initializeGit: boolean;
   installDependencies: boolean;
+  forceDeterministicTerminalOutput?: boolean;
 }
 
 type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string };
@@ -45,7 +46,11 @@ export class Fixture {
   private readonly fixtureWorkspacePath = joinPathFragments(this.fixtureRootPath, "lerna-workspace");
   private readonly fixtureOriginPath = joinPathFragments(this.fixtureRootPath, ORIGIN_GIT);
 
-  constructor(private readonly name: string, private readonly packageManager: PackageManager = "npm") {}
+  constructor(
+    private readonly name: string,
+    private readonly packageManager: PackageManager = "npm",
+    private readonly forceDeterministicTerminalOutput: boolean
+  ) {}
 
   static async create({
     name,
@@ -53,11 +58,13 @@ export class Fixture {
     runLernaInit,
     initializeGit,
     installDependencies,
+    forceDeterministicTerminalOutput,
   }: FixtureCreateOptions): Promise<Fixture> {
     const fixture = new Fixture(
       // Make the underlying name include the package manager and be globally unique
       uniq(`${name}-${packageManager}`),
-      packageManager
+      packageManager,
+      forceDeterministicTerminalOutput || false
     );
 
     fixture.createFixtureRoot();
@@ -250,28 +257,86 @@ export class Fixture {
       cwd: undefined,
     }
   ): Promise<RunCommandResult> {
-    return new Promise((resolve, reject) => {
-      exec(
-        command,
-        {
-          cwd: opts.cwd || this.fixtureRootPath,
-          env: {
-            ...(opts.env || process.env),
-            FORCE_COLOR: "false",
+    /**
+     * For certain commands combining independent streams for stdout and stderr is not viable,
+     * because it produces too much non-determinism in the final output being asserted in the test.
+     *
+     * We therefore provide a way for a fixture to opt-in to an alternative command execution implementation
+     * in which we simply append the stderr contents to the stdout contents in a deterministic manner.
+     */
+    if (this.forceDeterministicTerminalOutput) {
+      return new Promise((resolve, reject) => {
+        exec(
+          command,
+          {
+            cwd: opts.cwd || this.fixtureRootPath,
+            env: {
+              ...(opts.env || process.env),
+              FORCE_COLOR: "false",
+            },
+            encoding: "utf-8",
           },
-          encoding: "utf-8",
-        },
-        (err, stdout, stderr) => {
-          if (!opts.silenceError && err) {
-            reject(err);
+          (err, stdout, stderr) => {
+            if (!opts.silenceError && err) {
+              reject(err);
+            }
+            resolve({
+              stdout: stripConsoleColors(stdout),
+              stderr: stripConsoleColors(stderr),
+              combinedOutput: stripConsoleColors(`${stdout}${stderr}`),
+            });
           }
-          resolve({
-            stdout: stripConsoleColors(stdout),
-            stderr: stripConsoleColors(stderr),
-            combinedOutput: stripConsoleColors(`${stdout}${stderr}`),
-          });
+        );
+      });
+    }
+    return new Promise((resolve, reject) => {
+      const [cmd, ...args] = command.split(" ");
+
+      let stdout = "";
+      let stderr = "";
+      let combinedOutput = "";
+      let error: Error | null = null;
+
+      const childProcess = spawn(cmd, args, {
+        shell: true,
+        cwd: opts.cwd || this.fixtureRootPath,
+        env: {
+          ...(opts.env || process.env),
+          FORCE_COLOR: "false",
+        },
+      });
+
+      childProcess.stdout.setEncoding("utf8");
+      childProcess.stdout.on("data", (chunk) => {
+        stdout += chunk;
+        combinedOutput += chunk;
+      });
+
+      childProcess.stderr.setEncoding("utf8");
+      childProcess.stderr.on("data", (chunk) => {
+        stderr += chunk;
+        combinedOutput += chunk;
+      });
+
+      childProcess.on("error", (err) => {
+        error = err;
+      });
+
+      childProcess.on("close", (code) => {
+        if (!opts.silenceError) {
+          if (error) {
+            reject(error);
+          } else if (code !== 0) {
+            reject(new Error(stderr));
+          }
         }
-      );
+
+        resolve({
+          stdout: stripConsoleColors(stdout),
+          stderr: stripConsoleColors(stderr),
+          combinedOutput: stripConsoleColors(combinedOutput),
+        });
+      });
     });
   }
 

@@ -21,6 +21,12 @@ describe("lerna-run", () => {
       initializeGit: true,
       runLernaInit: true,
       installDependencies: true,
+      /**
+       * Because lerna run involves spawning further child processes, the tests would be too flaky
+       * if we didn't force deterministic terminal output by appending stderr to stdout instead
+       * of interleaving them.
+       */
+      forceDeterministicTerminalOutput: true,
     });
 
     await fixture.lerna("create package-1 -y");
@@ -285,6 +291,12 @@ describe("useNx", () => {
       initializeGit: true,
       runLernaInit: true,
       installDependencies: true,
+      /**
+       * Because lerna run involves spawning further child processes, the tests would be too flaky
+       * if we didn't force deterministic terminal output by appending stderr to stdout instead
+       * of interleaving them.
+       */
+      forceDeterministicTerminalOutput: true,
     });
 
     await fixture.addNxToWorkspace();
@@ -473,6 +485,7 @@ describe("--no-bail", () => {
       initializeGit: true,
       runLernaInit: true,
       installDependencies: true,
+      forceDeterministicTerminalOutput: true,
     });
 
     await fixture.lerna("create package-1 -y");
