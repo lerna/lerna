@@ -1,6 +1,7 @@
 ---
 id: cache-tasks
 title: Cache Task Results
+type: explanation
 ---
 
 # Cache Task Results
@@ -9,7 +10,67 @@ title: Cache Task Results
 > builds", we mean that Lerna uses Nx which can cache builds.
 
 It's costly to rebuild and retest the same code over and over again. Lerna uses a computation cache to never rebuild the
-same code twice. This is how it does it.
+same code twice.
+
+## Setup
+
+Lerna via Nx has the most sophisticated and battle-tested computation caching system. It knows when the task you are
+about to run has been executed before, so it can use the cache to restore the results of running that task.
+
+To enable caching for `build` and `test`, edit the `cacheableOperations` property in `nx.json` to include the `build` and `test` tasks:
+
+```json title="nx.json"
+{
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "test"]
+      }
+    }
+  }
+}
+```
+
+:::info
+
+Note, `cacheableOperations` need to be side effect free, meaning that given the same input they should always result in
+the same output. As an example, e2e test runs that hit the backend API cannot be cached as the backend might influence
+the result of the test run.
+
+:::
+
+Now, run the following command twice. The second time the operation will be instant:
+
+```bash
+lerna run test --scope=header
+```
+
+```bash title="Terminal Output"
+> lerna run test --scope=header
+
+> header:test  [existing outputs match the cache, left as is]
+
+> header@0.1.0 test
+> jest
+
+PASS  src/Header.spec.tsx
+✓ renders header (12 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.439 s, estimated 1 s
+Ran all test suites.
+
+———————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+>  Lerna (powered by Nx)   Successfully ran target test for project header (4ms)
+
+   Nx read the output from the cache instead of running the command for 1 out of 1 tasks.
+```
+
+## How Does Caching Work?
 
 Before running any task, Lerna computes its computation hash. As long as the computation hash is the same, the output of
 running the task is the same.

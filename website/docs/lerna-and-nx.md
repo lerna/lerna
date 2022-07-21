@@ -1,6 +1,7 @@
 ---
 id: lerna-and-nx
 title: Lerna and Nx
+type: explanation
 ---
 
 # Lerna and Nx
@@ -35,8 +36,8 @@ Free and open source
 1. [Run only tasks affected by a code change](./features/run-tasks)
 2. [Run prerequisite tasks first](./features/run-tasks)
 3. [Cache task results locally](./features/cache-tasks)
-4. [Visualize the project graph](./getting-started#visualizing-workspace)
-5. Nx Console - Visual Studio Code plugin
+4. [Visualize the project graph](./features/project-graph)
+5. [Nx Console](./features/project-graph) - Visual Studio Code plugin
 
 ### Cost
 

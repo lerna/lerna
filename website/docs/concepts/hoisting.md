@@ -1,6 +1,7 @@
 ---
 id: hoisting
 title: Hoisting
+type: explanation
 ---
 
 # Hoisting

@@ -1,6 +1,7 @@
 ---
 id: configuration
 title: Configuration
+type: reference
 ---
 
 # Configuration
