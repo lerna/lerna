@@ -54,7 +54,6 @@ function shallowCopy(json) {
  * @property {Record<string, string>} [optionalDependencies]
  * @property {Record<string, string>} [peerDependencies]
  * @property {Record<'directory' | 'registry' | 'tag', string>} [publishConfig]
- * @property {string[] | { packages: string[] }} [workspaces]
  */
 
 /**

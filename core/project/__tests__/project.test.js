@@ -2,6 +2,7 @@
 
 const fs = require("fs-extra");
 const path = require("path");
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
 
 // helpers
 const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
@@ -141,29 +142,29 @@ describe("Project", () => {
       const project = new Project(cwd);
 
       expect(project.config).toMatchInlineSnapshot(`
-Object {
-  "command": Object {
-    "bootstrap": Object {
-      "hoist": true,
-    },
-    "publish": Object {
-      "bump": "prerelease",
-      "distTag": "next",
-      "ignoreChanges": Array [
-        "ignored-file",
-      ],
-      "loglevel": "success",
-    },
-    "version": Object {
-      "createRelease": "github",
-    },
-  },
-  "packages": Array [
-    "recursive-pkgs/*",
-  ],
-  "version": "1.0.0",
-}
-`);
+        Object {
+          "command": Object {
+            "bootstrap": Object {
+              "hoist": true,
+            },
+            "publish": Object {
+              "bump": "prerelease",
+              "distTag": "next",
+              "ignoreChanges": Array [
+                "ignored-file",
+              ],
+              "loglevel": "success",
+            },
+            "version": Object {
+              "createRelease": "github",
+            },
+          },
+          "packages": Array [
+            "recursive-pkgs/*",
+          ],
+          "version": "1.0.0",
+        }
+      `);
     });
 
     it("updates command.publish.githubRelease to command.version.createRelease", async () => {
@@ -220,16 +221,26 @@ Object {
   });
 
   describe("get .packageConfigs", () => {
-    it("returns the default packageConfigs", () => {
+    it("returns the default packageConfigs and warns when neither workspaces nor packages are explicitly configured", () => {
       const project = new Project(testDir);
       expect(project.packageConfigs).toEqual(["packages/*"]);
+
+      const warningLogs = loggingOutput("warn");
+      expect(warningLogs).toMatchInlineSnapshot(`
+        Array [
+          "No packages defined in lerna.json. Defaulting to packages in packages/*",
+        ]
+      `);
     });
 
-    it("returns custom packageConfigs", () => {
+    it("returns custom packageConfigs and does not warn that the default will be used", () => {
       const project = new Project(testDir);
       const customPackages = [".", "my-packages/*"];
       project.config.packages = customPackages;
       expect(project.packageConfigs).toBe(customPackages);
+
+      const warningLogs = loggingOutput("warn");
+      expect(warningLogs).toEqual([]);
     });
 
     it("returns workspace packageConfigs", async () => {
@@ -241,7 +252,22 @@ Object {
     it("throws with friendly error if workspaces are not configured", () => {
       const project = new Project(testDir);
       project.config.useWorkspaces = true;
-      expect(() => project.packageConfigs).toThrow(/workspaces need to be defined/);
+      expect(() => project.packageConfigs).toThrow(/Workspaces need to be defined/);
+    });
+
+    it("warns when workspaces are defined but lerna is not configured to use them", () => {
+      const project = new Project(testDir);
+      project.config.useWorkspaces = false;
+      project.config.packages = ["packages/*"];
+      project.manifest.set("workspaces", ["modules/*"]);
+
+      expect(project.packageConfigs).toEqual(["packages/*"]);
+
+      const warningLogs = loggingOutput("warn");
+      expect(warningLogs[0]).toMatchInlineSnapshot(`
+        "Workspaces exist in the root package.json, but Lerna is not configured to use them.
+        To fix this and have Lerna use workspaces to resolve packages, set \`useWorkspaces: true\` in lerna.json."
+      `);
     });
   });
 

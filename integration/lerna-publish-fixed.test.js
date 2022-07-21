@@ -50,8 +50,8 @@ index SHA..SHA 100644
 --- a/lerna.json
 +++ b/lerna.json
 @@ -2 +2 @@
--  "version": "1.0.0"
-+  "version": "1.0.1"
+-  "version": "1.0.0",
++  "version": "1.0.1",
 diff --git a/packages/package-1/package.json b/packages/package-1/package.json
 index SHA..SHA 100644
 --- a/packages/package-1/package.json

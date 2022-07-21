@@ -19,6 +19,7 @@ const { makeFileFinder, makeSyncFileFinder } = require("./lib/make-file-finder")
 /**
  * @typedef {object} ProjectConfig
  * @property {string[]} packages
+ * @property {boolean} useNx
  * @property {boolean} useWorkspaces
  * @property {string} version
  */
@@ -109,7 +110,7 @@ class Project {
         throw new ValidationError(
           "EWORKSPACES",
           dedent`
-            Yarn workspaces need to be defined in the root package.json.
+            Workspaces need to be defined in the root package.json.
             See: https://github.com/lerna/lerna/blob/master/commands/bootstrap/README.md#--use-workspaces
           `
         );
@@ -118,7 +119,25 @@ class Project {
       return workspaces.packages || workspaces;
     }
 
-    return this.config.packages || [Project.PACKAGE_GLOB];
+    if (this.manifest.get("workspaces")) {
+      log.warn(
+        "EWORKSPACES",
+        dedent`
+          Workspaces exist in the root package.json, but Lerna is not configured to use them.
+          To fix this and have Lerna use workspaces to resolve packages, set \`useWorkspaces: true\` in lerna.json.
+        `
+      );
+    }
+
+    if (this.config.packages) {
+      return this.config.packages;
+    }
+
+    log.warn(
+      "EPACKAGES",
+      `No packages defined in lerna.json. Defaulting to packages in ${Project.PACKAGE_GLOB}`
+    );
+    return [Project.PACKAGE_GLOB];
   }
 
   get packageParentDirs() {

@@ -26,15 +26,26 @@ describe("InitCommand", () => {
         fs.exists(path.join(testDir, ".git")),
       ]);
 
-      expect(lernaJson).toMatchObject({
-        packages: ["packages/*"],
-        version: "0.0.0",
-      });
-      expect(pkgJson).toMatchObject({
-        devDependencies: {
-          lerna: `^${lernaVersion}`,
-        },
-      });
+      expect(lernaJson).toMatchInlineSnapshot(`
+        Object {
+          "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+          "useNx": true,
+          "useWorkspaces": true,
+          "version": "0.0.0",
+        }
+      `);
+      expect(pkgJson).toMatchInlineSnapshot(`
+        Object {
+          "devDependencies": Object {
+            "lerna": "^__TEST_VERSION__",
+          },
+          "name": "root",
+          "private": true,
+          "workspaces": Array [
+            "packages/*",
+          ],
+        }
+      `);
       expect(packagesDirExists).toBe(true);
       expect(gitDirExists).toBe(true);
     });
@@ -75,6 +86,14 @@ describe("InitCommand", () => {
         });
       });
     });
+
+    it("creates packages directory", async () => {
+      const testDir = tempy.directory();
+
+      await lernaInit(testDir)();
+
+      expect(fs.existsSync(path.join(testDir, "packages"))).toBe(true);
+    });
   });
 
   describe("in a subdirectory of a git repo", () => {
@@ -91,16 +110,26 @@ describe("InitCommand", () => {
         fs.exists(path.join(testDir, "packages")),
       ]);
 
-      expect(lernaJson).toMatchObject({
-        $schema: "node_modules/lerna/schemas/lerna-schema.json",
-        packages: ["packages/*"],
-        version: "0.0.0",
-      });
-      expect(pkgJson).toMatchObject({
-        devDependencies: {
-          lerna: `^${lernaVersion}`,
-        },
-      });
+      expect(lernaJson).toMatchInlineSnapshot(`
+        Object {
+          "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+          "useNx": true,
+          "useWorkspaces": true,
+          "version": "0.0.0",
+        }
+      `);
+      expect(pkgJson).toMatchInlineSnapshot(`
+        Object {
+          "devDependencies": Object {
+            "lerna": "^__TEST_VERSION__",
+          },
+          "name": "root",
+          "private": true,
+          "workspaces": Array [
+            "packages/*",
+          ],
+        }
+      `);
       expect(packagesDirExists).toBe(true);
     });
   });
@@ -177,12 +206,69 @@ describe("InitCommand", () => {
         },
       });
     });
+
+    describe("when workspaces are already configured", () => {
+      it("does not overwrite existing workspaces", async () => {
+        const testDir = await initFixture("has-package");
+        const pkgJsonPath = path.join(testDir, "package.json");
+
+        await fs.outputJSON(pkgJsonPath, {
+          workspaces: ["modules/*", "others/*"],
+        });
+
+        await lernaInit(testDir)();
+
+        expect(await fs.readJSON(pkgJsonPath)).toMatchObject({
+          workspaces: ["modules/*", "others/*"],
+        });
+      });
+    });
+
+    describe("when workspaces are not yet configured", () => {
+      it("sets workspaces to include default packages location", async () => {
+        const testDir = await initFixture("has-package");
+        const pkgJsonPath = path.join(testDir, "package.json");
+
+        await lernaInit(testDir)();
+
+        expect(await fs.readJSON(pkgJsonPath)).toMatchObject({
+          workspaces: ["packages/*"],
+        });
+      });
+    });
   });
 
   describe("when lerna.json exists", () => {
-    it("deletes lerna property if found", async () => {
+    describe("when useWorkspaces is false or missing", () => {
+      it("updates to explicitly set useNx, $schema, and packages", async () => {
+        const testDir = await initFixture("has-lerna");
+        const lernaJsonPath = path.join(testDir, "lerna.json");
+
+        await fs.outputJSON(lernaJsonPath, {
+          lerna: "0.1.100",
+          version: "1.2.3",
+        });
+
+        await lernaInit(testDir)();
+
+        expect(await fs.readJSON(lernaJsonPath)).toMatchInlineSnapshot(`
+          Object {
+            "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+            "packages": Array [
+              "packages/*",
+            ],
+            "useNx": false,
+            "useWorkspaces": false,
+            "version": "1.2.3",
+          }
+        `);
+      });
+    });
+
+    it("creates package.json without workspaces configured", async () => {
       const testDir = await initFixture("has-lerna");
       const lernaJsonPath = path.join(testDir, "lerna.json");
+      const packageJsonPath = path.join(testDir, "package.json");
 
       await fs.outputJSON(lernaJsonPath, {
         lerna: "0.1.100",
@@ -191,12 +277,15 @@ describe("InitCommand", () => {
 
       await lernaInit(testDir)();
 
-      expect(await fs.readJSON(lernaJsonPath)).toEqual({
-        $schema: "node_modules/lerna/schemas/lerna-schema.json",
-        packages: ["packages/*"],
-        useNx: false,
-        version: "1.2.3",
-      });
+      expect(await fs.readJSON(packageJsonPath)).toMatchInlineSnapshot(`
+        Object {
+          "devDependencies": Object {
+            "lerna": "^__TEST_VERSION__",
+          },
+          "name": "root",
+          "private": true,
+        }
+      `);
     });
 
     it("creates package directories when glob is configured", async () => {
@@ -204,6 +293,7 @@ describe("InitCommand", () => {
       const lernaJsonPath = path.join(testDir, "lerna.json");
 
       await fs.outputJSON(lernaJsonPath, {
+        version: "1.2.3",
         packages: ["modules/*"],
       });
 
@@ -214,7 +304,7 @@ describe("InitCommand", () => {
   });
 
   describe("when re-initializing with --exact", () => {
-    it("sets lerna.json command.init.exact to true", async () => {
+    it("sets lerna.json command.init.exact to true and explicitly sets useNx, useWorkspaces, $schema, and packages", async () => {
       const testDir = await initFixture("updates");
       const lernaJsonPath = path.join(testDir, "lerna.json");
       const pkgJsonPath = path.join(testDir, "package.json");
@@ -237,20 +327,25 @@ describe("InitCommand", () => {
 
       await lernaInit(testDir)("--exact");
 
-      expect(await fs.readJSON(lernaJsonPath)).toEqual({
-        command: {
-          bootstrap: {
-            hoist: true,
+      expect(await fs.readJSON(lernaJsonPath)).toMatchInlineSnapshot(`
+        Object {
+          "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+          "command": Object {
+            "bootstrap": Object {
+              "hoist": true,
+            },
+            "init": Object {
+              "exact": true,
+            },
           },
-          init: {
-            exact: true,
-          },
-        },
-        $schema: "node_modules/lerna/schemas/lerna-schema.json",
-        packages: ["packages/*"],
-        useNx: false,
-        version: "1.2.3",
-      });
+          "packages": Array [
+            "packages/*",
+          ],
+          "useNx": false,
+          "useWorkspaces": false,
+          "version": "1.2.3",
+        }
+      `);
     });
   });
 });

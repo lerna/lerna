@@ -7,6 +7,7 @@ const writeJsonFile = require("write-json-file");
 
 const { Command } = require("@lerna/command");
 const childProcess = require("@lerna/child-process");
+const { Project } = require("@lerna/project");
 
 module.exports = factory;
 
@@ -50,6 +51,10 @@ class InitCommand extends Command {
     });
   }
 
+  get hasExistingLernaConfig() {
+    return !!this.project.version;
+  }
+
   ensurePackageJSON() {
     let chain = Promise.resolve();
 
@@ -57,18 +62,28 @@ class InitCommand extends Command {
       this.logger.info("", "Creating package.json");
 
       // initialize with default indentation so write-pkg doesn't screw it up with tabs
-      chain = chain.then(() =>
-        writeJsonFile(
-          path.join(this.project.rootPath, "package.json"),
-          {
-            name: "root",
-            private: true,
-          },
-          { indent: 2 }
-        )
-      );
+      chain = chain.then(() => {
+        const pkg = {
+          name: "root",
+          private: true,
+        };
+
+        if (!this.hasExistingLernaConfig) {
+          pkg.workspaces = [Project.PACKAGE_GLOB];
+        }
+
+        return writeJsonFile(path.join(this.project.rootPath, "package.json"), pkg, { indent: 2 });
+      });
     } else {
       this.logger.info("", "Updating package.json");
+
+      chain = chain.then(() => {
+        if (!this.hasExistingLernaConfig && !this.project.manifest.get("workspaces")) {
+          this.project.manifest.set("workspaces", [Project.PACKAGE_GLOB]);
+
+          return this.project.manifest.serialize();
+        }
+      });
     }
 
     chain = chain.then(() => {
@@ -111,10 +126,20 @@ class InitCommand extends Command {
       version = "0.0.0";
     }
 
-    if (!projectVersion) {
+    let useNx = config.useNx ?? false;
+    let useWorkspaces = config.useWorkspaces ?? false;
+
+    if (!this.hasExistingLernaConfig) {
       this.logger.info("", "Creating lerna.json");
+      useNx = true;
+      useWorkspaces = true;
     } else {
       this.logger.info("", "Updating lerna.json");
+      if (!useWorkspaces && !config.packages) {
+        Object.assign(config, {
+          packages: [Project.PACKAGE_GLOB],
+        });
+      }
     }
 
     delete config.lerna; // no longer relevant
@@ -129,8 +154,8 @@ class InitCommand extends Command {
 
     Object.assign(config, {
       $schema: "node_modules/lerna/schemas/lerna-schema.json",
-      packages: this.project.packageConfigs,
-      useNx: false,
+      useNx,
+      useWorkspaces,
       version,
     });
 

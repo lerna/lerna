@@ -33,15 +33,16 @@ describe("lerna init", () => {
         },
         "name": "root",
         "private": true,
+        "workspaces": Array [
+          "packages/*",
+        ],
       }
     `);
     expect(lernaJson).toMatchInlineSnapshot(`
       Object {
         "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-        "packages": Array [
-          "packages/*",
-        ],
-        "useNx": false,
+        "useNx": true,
+        "useWorkspaces": true,
         "version": "0.0.0",
       }
     `);
@@ -85,6 +86,7 @@ describe("lerna init", () => {
           "packages/*",
         ],
         "useNx": false,
+        "useWorkspaces": false,
         "version": "1.0.0",
       }
     `);
