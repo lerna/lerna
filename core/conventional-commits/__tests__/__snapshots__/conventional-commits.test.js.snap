@@ -11,7 +11,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* I should be placed in the CHANGELOG ([SHA](https://github.com/lerna/changelog-missing/commit/GIT_HEAD))
+* I should be placed in the CHANGELOG ([SHA](COMMIT_URL))
 
 `;
 
@@ -26,7 +26,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* I should be placed in the CHANGELOG ([SHA](https://github.com/lerna/changelog-missing/commit/GIT_HEAD))
+* I should be placed in the CHANGELOG ([SHA](COMMIT_URL))
 
 `;
 
@@ -41,7 +41,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+* A second commit for our CHANGELOG ([SHA](COMMIT_URL))
 
 
 
@@ -68,7 +68,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+* A second commit for our CHANGELOG ([SHA](COMMIT_URL))
 
 
 
