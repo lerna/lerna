@@ -15,7 +15,7 @@ describe("lerna-init", () => {
   afterEach(() => fixture.destroy());
 
   it("should initialize a lerna workspace", async () => {
-    const output = await fixture.lernaInit();
+    const output = await fixture.lernaInit("", { keepDefaultOptions: true });
 
     expect(output.stderr).toMatchInlineSnapshot(`
       "lerna notice cli v999.9.9-e2e.0
@@ -55,7 +55,7 @@ describe("lerna-init", () => {
 
   describe("--independent", () => {
     it("should initialize a lerna workspace in independent versioning mode", async () => {
-      const output = await fixture.lernaInit("--independent");
+      const output = await fixture.lernaInit("--independent", { keepDefaultOptions: true });
 
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
@@ -96,7 +96,7 @@ describe("lerna-init", () => {
 
   describe("--exact", () => {
     it("should initialize a lerna workspace with exact package version enforcement", async () => {
-      const output = await fixture.lernaInit("--exact");
+      const output = await fixture.lernaInit("--exact", { keepDefaultOptions: true });
 
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
@@ -142,7 +142,7 @@ describe("lerna-init", () => {
 
   describe("--independent --exact", () => {
     it("should initialize a lerna workspace in independent versioning mode with exact package version enforcement", async () => {
-      const output = await fixture.lernaInit("--independent --exact");
+      const output = await fixture.lernaInit("--independent --exact", { keepDefaultOptions: true });
 
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
