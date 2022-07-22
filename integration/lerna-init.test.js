@@ -30,6 +30,7 @@ describe("lerna init", () => {
       Object {
         "devDependencies": Object {
           "lerna": "^__TEST_VERSION__",
+          "nx": "^14.4.3",
         },
         "name": "root",
         "private": true,

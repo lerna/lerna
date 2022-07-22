@@ -89,22 +89,27 @@ class InitCommand extends Command {
     chain = chain.then(() => {
       const rootPkg = this.project.manifest;
 
-      let targetDependencies;
+      const setDependency = ({ name, version }) => {
+        let targetDependencies;
 
-      if (rootPkg.dependencies && rootPkg.dependencies.lerna) {
-        // lerna is a dependency in the current project
-        targetDependencies = rootPkg.dependencies;
-      } else {
-        // lerna is a devDependency or no dependency, yet
-        if (!rootPkg.devDependencies) {
-          // mutate raw JSON object
-          rootPkg.set("devDependencies", {});
+        if (rootPkg.dependencies && rootPkg.dependencies[name]) {
+          targetDependencies = rootPkg.dependencies;
+        } else {
+          if (!rootPkg.devDependencies) {
+            rootPkg.set("devDependencies", {});
+          }
+
+          targetDependencies = rootPkg.devDependencies;
         }
 
-        targetDependencies = rootPkg.devDependencies;
-      }
+        targetDependencies[name] = this.exact ? version : `^${version}`;
+      };
 
-      targetDependencies.lerna = this.exact ? this.lernaVersion : `^${this.lernaVersion}`;
+      setDependency({ name: "lerna", version: this.lernaVersion });
+
+      if (!this.hasExistingLernaConfig || this.project.config.useNx) {
+        setDependency({ name: "nx", version: "14.4.3" });
+      }
 
       return rootPkg.serialize();
     });

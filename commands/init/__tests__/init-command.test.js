@@ -38,6 +38,7 @@ describe("InitCommand", () => {
         Object {
           "devDependencies": Object {
             "lerna": "^__TEST_VERSION__",
+            "nx": "^14.4.3",
           },
           "name": "root",
           "private": true,
@@ -122,6 +123,7 @@ describe("InitCommand", () => {
         Object {
           "devDependencies": Object {
             "lerna": "^__TEST_VERSION__",
+            "nx": "^14.4.3",
           },
           "name": "root",
           "private": true,
@@ -300,6 +302,81 @@ describe("InitCommand", () => {
       await lernaInit(testDir)();
 
       expect(await fs.exists(path.join(testDir, "modules"))).toBe(true);
+    });
+
+    describe("when useNx is false", () => {
+      it("preserves useNx false and does not add nx as dependency", async () => {
+        const testDir = await initFixture("has-lerna");
+        const lernaJsonPath = path.join(testDir, "lerna.json");
+
+        await fs.outputJSON(lernaJsonPath, {
+          lerna: "0.1.100",
+          version: "1.2.3",
+          useNx: false,
+        });
+
+        await lernaInit(testDir)();
+
+        expect(await fs.readJSON(lernaJsonPath)).toMatchInlineSnapshot(`
+          Object {
+            "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+            "packages": Array [
+              "packages/*",
+            ],
+            "useNx": false,
+            "useWorkspaces": false,
+            "version": "1.2.3",
+          }
+        `);
+
+        expect(await fs.readJSON(path.join(testDir, "package.json"))).toMatchInlineSnapshot(`
+          Object {
+            "devDependencies": Object {
+              "lerna": "^__TEST_VERSION__",
+            },
+            "name": "root",
+            "private": true,
+          }
+        `);
+      });
+    });
+
+    describe("when useNx is true", () => {
+      it("preserves useNx true and adds nx as dependency", async () => {
+        const testDir = await initFixture("has-lerna");
+        const lernaJsonPath = path.join(testDir, "lerna.json");
+
+        await fs.outputJSON(lernaJsonPath, {
+          lerna: "0.1.100",
+          version: "1.2.3",
+          useNx: true,
+        });
+
+        await lernaInit(testDir)();
+
+        expect(await fs.readJSON(lernaJsonPath)).toMatchInlineSnapshot(`
+          Object {
+            "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+            "packages": Array [
+              "packages/*",
+            ],
+            "useNx": true,
+            "useWorkspaces": false,
+            "version": "1.2.3",
+          }
+        `);
+
+        expect(await fs.readJSON(path.join(testDir, "package.json"))).toMatchInlineSnapshot(`
+          Object {
+            "devDependencies": Object {
+              "lerna": "^__TEST_VERSION__",
+              "nx": "^14.4.3",
+            },
+            "name": "root",
+            "private": true,
+          }
+        `);
+      });
     });
   });
 
