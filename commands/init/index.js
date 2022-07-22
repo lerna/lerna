@@ -110,10 +110,6 @@ class InitCommand extends Command {
 
       setDependency({ name: "lerna", version: this.lernaVersion });
 
-      if (useNx) {
-        setDependency({ name: "nx", version: "14.4.3" });
-      }
-
       return rootPkg.serialize();
     });
 

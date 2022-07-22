@@ -45,8 +45,7 @@ describe("lerna-init", () => {
           \\"packages/*\\"
         ],
         \\"devDependencies\\": {
-          \\"lerna\\": \\"^999.9.9-e2e.0\\",
-          \\"nx\\": \\"^14.4.3\\"
+          \\"lerna\\": \\"^999.9.9-e2e.0\\"
         }
       }
       "
@@ -85,8 +84,7 @@ describe("lerna-init", () => {
             \\"packages/*\\"
           ],
           \\"devDependencies\\": {
-            \\"lerna\\": \\"^999.9.9-e2e.0\\",
-            \\"nx\\": \\"^14.4.3\\"
+            \\"lerna\\": \\"^999.9.9-e2e.0\\"
           }
         }
         "
@@ -131,8 +129,7 @@ describe("lerna-init", () => {
             \\"packages/*\\"
           ],
           \\"devDependencies\\": {
-            \\"lerna\\": \\"999.9.9-e2e.0\\",
-            \\"nx\\": \\"14.4.3\\"
+            \\"lerna\\": \\"999.9.9-e2e.0\\"
           }
         }
         "
@@ -177,8 +174,7 @@ describe("lerna-init", () => {
             \\"packages/*\\"
           ],
           \\"devDependencies\\": {
-            \\"lerna\\": \\"999.9.9-e2e.0\\",
-            \\"nx\\": \\"14.4.3\\"
+            \\"lerna\\": \\"999.9.9-e2e.0\\"
           }
         }
         "

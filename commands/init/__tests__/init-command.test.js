@@ -51,7 +51,6 @@ describe("InitCommand", () => {
         Object {
           "devDependencies": Object {
             "lerna": "^__TEST_VERSION__",
-            "nx": "^14.4.3",
           },
           "name": "root",
           "private": true,
@@ -136,7 +135,6 @@ describe("InitCommand", () => {
         Object {
           "devDependencies": Object {
             "lerna": "^__TEST_VERSION__",
-            "nx": "^14.4.3",
           },
           "name": "root",
           "private": true,
@@ -355,7 +353,7 @@ describe("InitCommand", () => {
     });
 
     describe("when useNx is true", () => {
-      it("preserves useNx true and adds nx as dependency", async () => {
+      it("preserves useNx true", async () => {
         const testDir = await initFixture("has-lerna");
         const lernaJsonPath = path.join(testDir, "lerna.json");
 
@@ -376,17 +374,6 @@ describe("InitCommand", () => {
             "useNx": true,
             "useWorkspaces": false,
             "version": "1.2.3",
-          }
-        `);
-
-        expect(await fs.readJSON(path.join(testDir, "package.json"))).toMatchInlineSnapshot(`
-          Object {
-            "devDependencies": Object {
-              "lerna": "^__TEST_VERSION__",
-              "nx": "^14.4.3",
-            },
-            "name": "root",
-            "private": true,
           }
         `);
       });

@@ -67,7 +67,7 @@ To add Lerna run the following command:
 npx lerna@latest init
 ```
 
-This will generate `lerna.json` and will add `lerna` and `nx` to the root `package.json`.
+This will generate `lerna.json` and will add `lerna` to the root `package.json`.
 
 ```json title="package.json"
 {
@@ -77,8 +77,7 @@ This will generate `lerna.json` and will add `lerna` and `nx` to the root `packa
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "5.1.6",
-    "nx": "14.4.0"
+    "lerna": "5.1.6"
   }
 }
 ```
