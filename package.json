@@ -147,6 +147,6 @@
     "ts-jest": "^28.0.5",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.3",
-    "verdaccio": "^5.10.2"
+    "verdaccio": "^5.13.3"
   }
 }
