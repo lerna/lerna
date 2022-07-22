@@ -102,19 +102,14 @@ exports.builder = (yargs) => {
       type: "boolean",
     },
     "no-verify-access": {
+      // proxy for --verify-access
       describe: "Do not verify package read-write access for current npm user.",
       type: "boolean",
     },
     "verify-access": {
-      // proxy for --no-verify-access
-      hidden: true,
+      describe: "Verify package read-write access for current npm user.",
       type: "boolean",
     },
-    // y: {
-    //   describe: "Skip all confirmation prompts.",
-    //   alias: "yes",
-    //   type: "boolean",
-    // },
   };
 
   composeVersionOptions(yargs);

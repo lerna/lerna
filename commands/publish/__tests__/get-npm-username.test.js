@@ -68,6 +68,23 @@ describe("getNpmUsername", () => {
     expect(console.error).toHaveBeenCalledWith("third-party whoami fail");
   });
 
+  test("logs failure message when npm returns forbidden response", async () => {
+    fetch.json.mockImplementationOnce(() => {
+      const err = new Error("npm profile fail due to insufficient permissions");
+
+      err.code = "E403";
+
+      return Promise.reject(err);
+    });
+
+    const opts = { registry: "https://registry.npmjs.org/" };
+
+    await expect(getNpmUsername(opts)).rejects.toThrow(
+      "Access verification failed. Ensure that your npm access token has both read and write access, or remove the verifyAccess option to skip this verification. Note that npm automation tokens do NOT have read access (https://docs.npmjs.com/creating-and-viewing-access-tokens)."
+    );
+    expect(console.error).toHaveBeenCalledWith("npm profile fail due to insufficient permissions");
+  });
+
   test("allows third-party registries to fail with a stern warning", async () => {
     fetch.json.mockImplementationOnce(() => {
       const err = new Error("many third-party registries do not support npm whoami");
