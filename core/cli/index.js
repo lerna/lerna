@@ -44,6 +44,6 @@ function lernaCLI(argv, cwd) {
     .wrap(cli.terminalWidth()).epilogue(dedent`
       When a command fails, all logs are written to lerna-debug.log in the current working directory.
 
-      For more information, find our manual at https://github.com/lerna/lerna
+      For more information, check out the docs at https://lerna.js.org/docs/introduction
     `);
 }
