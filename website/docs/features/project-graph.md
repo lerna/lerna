@@ -1,7 +1,7 @@
 ---
 id: project-graph
 title: Explore the Project Graph
-type: explanation
+type: recipe
 ---
 
 # Explore the Project Graph

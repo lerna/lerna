@@ -1,7 +1,7 @@
 ---
 id: lerna-and-nx
 title: Lerna and Nx
-type: explanation
+type: explainer
 ---
 
 # Lerna and Nx

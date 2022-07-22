@@ -1,7 +1,7 @@
 ---
 id: editor-plugins
 title: Editor Plugins
-type: explanation
+type: recipe
 ---
 
 # Editor Plugins
