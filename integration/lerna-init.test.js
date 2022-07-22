@@ -23,6 +23,7 @@ describe("lerna init", () => {
       lerna info Creating lerna.json
       lerna info Creating packages directory
       lerna success Initialized Lerna files
+      lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
     `);
 
     const [packageJson, lernaJson] = await loadMetaData(cwd);
@@ -33,15 +34,16 @@ describe("lerna init", () => {
         },
         "name": "root",
         "private": true,
+        "workspaces": Array [
+          "packages/*",
+        ],
       }
     `);
     expect(lernaJson).toMatchInlineSnapshot(`
       Object {
         "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-        "packages": Array [
-          "packages/*",
-        ],
-        "useNx": false,
+        "useNx": true,
+        "useWorkspaces": true,
         "version": "0.0.0",
       }
     `);
@@ -59,6 +61,7 @@ describe("lerna init", () => {
       lerna info Updating lerna.json
       lerna info Creating packages directory
       lerna success Initialized Lerna files
+      lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
     `);
 
     const [packageJson, lernaJson] = await loadMetaData(cwd);
@@ -85,6 +88,7 @@ describe("lerna init", () => {
           "packages/*",
         ],
         "useNx": false,
+        "useWorkspaces": false,
         "version": "1.0.0",
       }
     `);

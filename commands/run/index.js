@@ -12,7 +12,6 @@ const { runTopologically } = require("@lerna/run-topologically");
 const { ValidationError } = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
 const { performance } = require("perf_hooks");
-const { readFileSync } = require("fs");
 
 module.exports = factory;
 

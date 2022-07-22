@@ -124,12 +124,28 @@ export class Fixture {
 
   /**
    * Resolve the locally published version of lerna and run the `init` command, with an optionally
-   * provided arguments.
+   * provided arguments. Reverts useNx and useWorkspaces to false when options.keepDefaultOptions is not provided, since those options are off for most users.
    */
-  async lernaInit(args?: string): Promise<RunCommandResult> {
+  async lernaInit(args?: string, options?: { keepDefaultOptions: true }): Promise<RunCommandResult> {
     return this.exec(
       `npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()} init ${args || ""}`
+    ).then((initResult) =>
+      options?.keepDefaultOptions ? initResult : this.revertDefaultInitOptions().then(() => initResult)
     );
+  }
+
+  private async revertDefaultInitOptions(): Promise<void> {
+    await this.updateJson("lerna.json", (json) => ({
+      ...json,
+      useNx: false,
+      useWorkspaces: false,
+      packages: ["packages/*"],
+    }));
+    await this.updateJson("package.json", (json) => {
+      const newJson = { ...json };
+      delete newJson.workspaces;
+      return newJson;
+    });
   }
 
   /**
