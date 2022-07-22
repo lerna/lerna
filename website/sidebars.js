@@ -31,7 +31,7 @@ const sidebars = {
         "features/project-graph",
         "features/distribute-tasks",
         "features/version-and-publish",
-        "features/editor-plugins",
+        "features/editor-integrations",
       ],
       link: {
         type: "generated-index",
