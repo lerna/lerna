@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/lerna/lerna/compare/v5.1.8...v5.2.0) (2022-07-22)
+
+
+### Bug Fixes
+
+* **prompt:** update inquirer to v8.2.4 ([80c17d8](https://github.com/lerna/lerna/commit/80c17d8200851bfd89f8b7f8da897015774f1241))
+
+
+### Features
+
+* add json schema for lerna.json ([#3229](https://github.com/lerna/lerna/issues/3229)) ([5075eae](https://github.com/lerna/lerna/commit/5075eae0d0aa8db52f619b9a6d8fdc9934ba24f7))
+* **init:** default useNx and useWorkspaces to true for new lerna workspaces ([#3255](https://github.com/lerna/lerna/issues/3255)) ([a0e83e5](https://github.com/lerna/lerna/commit/a0e83e5220f6e3d30b96b60bbaf14c5392653c2e))
+* **publish:** disable legacy `verifyAccess` behavior by default ([#3249](https://github.com/lerna/lerna/issues/3249)) ([94174c1](https://github.com/lerna/lerna/commit/94174c1ff2ce20b9fef33a68bc62ba0d17207942))
+
+
+
+
+
 ## [5.1.8](https://github.com/lerna/lerna/compare/v5.1.7...v5.1.8) (2022-07-07)
 
 

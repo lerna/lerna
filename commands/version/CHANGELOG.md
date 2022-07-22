@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/lerna/lerna/compare/v5.1.8...v5.2.0) (2022-07-22)
+
+
+### Features
+
+* **init:** default useNx and useWorkspaces to true for new lerna workspaces ([#3255](https://github.com/lerna/lerna/issues/3255)) ([a0e83e5](https://github.com/lerna/lerna/commit/a0e83e5220f6e3d30b96b60bbaf14c5392653c2e))
+
+
+
+
+
 ## [5.1.8](https://github.com/lerna/lerna/compare/v5.1.7...v5.1.8) (2022-07-07)
 
 **Note:** Version bump only for package @lerna/version

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/lerna/lerna/compare/v5.1.8...v5.2.0) (2022-07-22)
+
+
+### Features
+
+* **publish:** disable legacy `verifyAccess` behavior by default ([#3249](https://github.com/lerna/lerna/issues/3249)) ([94174c1](https://github.com/lerna/lerna/commit/94174c1ff2ce20b9fef33a68bc62ba0d17207942))
+
+
+
+
+
 ## [5.1.8](https://github.com/lerna/lerna/compare/v5.1.7...v5.1.8) (2022-07-07)
 
 **Note:** Version bump only for package @lerna/publish
