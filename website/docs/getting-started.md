@@ -67,31 +67,15 @@ To add Lerna run the following command:
 npx lerna@latest init
 ```
 
-This will generate `lerna.json` and will add `lerna` to the root `package.json`.
+This will generate `lerna.json` and will add `lerna` and `nx` to the root `package.json`.
 
 ```json title="package.json"
 {
   "name": "root",
   "private": true,
-  "devDependencies": {
-    "lerna": "5.1.6"
-  }
-}
-```
-
-What makes Lerna 5.1+ so powerful is the task delegation and other features that come with its integration
-with [Nx](https://nx.dev). To opt in, install the `nx` package:
-
-```bash
-npm i nx --save-dev
-```
-
-You should get a `package.json` as follows:
-
-```json title="package.json"
-{
-  "name": "root",
-  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "lerna": "5.1.6",
     "nx": "14.4.0"
@@ -99,15 +83,8 @@ You should get a `package.json` as follows:
 }
 ```
 
-Finally, set `useNx` to `true` in `lerna.json`:
-
-```json title="lerna.json"
-{
-  "packages": ["packages/*"],
-  "useNx": true,
-  "version": "0.0.0"
-}
-```
+What makes Lerna 5.1+ so powerful is the task delegation and other features that come with its integration
+with [Nx](https://nx.dev).
 
 ## Visualizing Workspace
 
