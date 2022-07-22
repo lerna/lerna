@@ -131,8 +131,8 @@ class InitCommand extends Command {
       version = "0.0.0";
     }
 
-    let useNx = config.useNx ?? false;
-    let useWorkspaces = config.useWorkspaces ?? false;
+    let useNx = config.useNx === true;
+    let useWorkspaces = config.useWorkspaces === true;
 
     if (!this.hasExistingLernaConfig) {
       this.logger.info("", "Creating lerna.json");
