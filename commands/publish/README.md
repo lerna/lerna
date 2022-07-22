@@ -26,8 +26,6 @@ During all publish operations, appropriate [lifecycle scripts](#lifecycle-script
 
 Check out [Per-Package Configuration](#per-package-configuration) for more details about publishing scoped packages, custom registries, and custom dist-tags.
 
-> If you're using [npm automation access token](https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-access-tokens) please remember to [disable lerna access verification feature](#--no-verify-access). Automation token doesn't grant permissions needed for the verification to be successful. [Click here to read more about this issue](https://github.com/lerna/lerna/issues/2788).
-
 ## Positionals
 
 ### bump `from-git`
@@ -59,7 +57,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--legacy-auth`](#--legacy-auth)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-granular-pathspec`](#--no-granular-pathspec)
-- [`--no-verify-access`](#--no-verify-access)
+- [`--verify-access`](#--verify-access)
 - [`--otp`](#--otp)
 - [`--preid`](#--preid)
 - [`--pre-dist-tag <tag>`](#--pre-dist-tag-tag)
@@ -199,15 +197,16 @@ This option makes the most sense configured in lerna.json, as you really don't w
 
 The root-level configuration is intentional, as this also covers the [identically-named option in `lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#--no-granular-pathspec).
 
-### `--no-verify-access`
+### `--verify-access`
 
-By default, `lerna` will verify the logged-in npm user's access to the packages about to be published. Passing this flag will disable that check.
+Historically, `lerna` attempted to fast-fail on authorization/authentication issues by performing some preemptive npm API requests using the given token. These days, however, there are multiple types of tokens that npm supports and they have varying levels of access rights, so there is no one-size fits all solution for this preemptive check and it is more appropriate to allow requests to npm to simply fail with appropriate errors for the given token. For this reason, the legacy `--verify-access` behavior is disabled by default and will likely be removed in a future major version.
 
-If you are using a third-party registry that does not support `npm access ls-packages`, you will need to pass this flag (or set `command.publish.verifyAccess` to `false` in lerna.json).
+For now, though, if you pass this flag you can opt into the legacy behavior and `lerna` will preemptively perform this verification before it attempts to publish any packages.
 
-> Please use with caution
+You should NOT use this option if:
 
-> For the time being, use this flag/option always when you're handling NPM authorization with the use of [automation access token](https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-access-tokens). [Click here to read more about this issue](https://github.com/lerna/lerna/issues/2788).
+1.  You are using a third-party registry that does not support `npm access ls-packages`
+2.  You are using an authentication token without read access, such as a [npm automation access token](https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-access-tokens)
 
 ### `--otp`
 
@@ -296,6 +295,10 @@ When run with this flag, `lerna publish` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
 
 ## Deprecated Options
+
+### `--no-verify-access`
+
+The legacy preemptive access verification is now off by default, so `--no-verify-access` is not needed. Requests will fail with appropriate errors when not authorized correctly. To opt-in to the legacy access verification, use [`--verify-access`](#--verify-access).
 
 ### `--skip-npm`
 

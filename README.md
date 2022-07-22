@@ -46,7 +46,7 @@ A few links to help you get started:
 
 - [lerna.js.org: Documentation, Guides, Interactive Tutorials](https://lerna.js.org)
 - [Getting Started](https://lerna.js.org/docs/getting-started)
-- [Core Concepts](https://lerna.js.org/docs/core-concepts)
+- [Features](https://lerna.js.org/docs/features)
 - [Official Nrwl YouTube Channel](https://www.youtube.com/c/Nrwl_io)
 - [Blog Posts About Lerna and Nx](https://blog.nrwl.io/nx/home)
 

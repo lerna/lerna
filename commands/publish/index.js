@@ -82,10 +82,11 @@ class PublishCommand extends Command {
 
     // inverted boolean options are only respected if prefixed with `--no-`, e.g. `--no-verify-access`
     this.gitReset = gitReset !== false;
-    this.verifyAccess = verifyAccess !== false;
 
     // consumed by npm-registry-fetch (via libnpmpublish)
     this.npmSession = crypto.randomBytes(8).toString("hex");
+
+    this.verifyAccess = verifyAccess;
   }
 
   get userAgent() {
@@ -94,6 +95,13 @@ class PublishCommand extends Command {
   }
 
   initialize() {
+    if (this.options.verifyAccess === false) {
+      this.logger.warn(
+        "verify-access",
+        "--verify-access=false and --no-verify-access are no longer needed, because the legacy preemptive access verification is now disabled by default. Requests will fail with appropriate errors when not authorized correctly."
+      );
+    }
+
     if (this.options.skipNpm) {
       // TODO: remove in next major release
       this.logger.warn("deprecated", "Instead of --skip-npm, call `lerna version` directly");

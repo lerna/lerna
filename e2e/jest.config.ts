@@ -7,4 +7,5 @@ export default {
   globals: { "ts-jest": { tsconfig: "<rootDir>/tsconfig.spec.json" } },
   displayName: "e2e",
   testTimeout: 60000,
+  setupFiles: ["<rootDir>/utils/setup.ts"],
 };

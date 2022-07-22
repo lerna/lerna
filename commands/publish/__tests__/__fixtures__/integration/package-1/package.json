@@ -4,5 +4,6 @@
   "publishConfig": {
     "access": "public",
     "tag": "CUSTOM"
-  }
+  },
+  "repository": "lerna/publish-integration"
 }

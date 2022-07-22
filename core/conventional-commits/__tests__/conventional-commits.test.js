@@ -384,7 +384,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+        * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
       `);
       expect(rootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
         ## [1.0.1](/compare/dragons-are-awesome1.0.0...dragons-are-awesome1.0.1) (YYYY-MM-DD)
@@ -392,7 +392,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+        * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
       `);
 
       await gitAdd(cwd, pkg1.manifestLocation);
@@ -416,7 +416,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * A third commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+        * A third commit for our CHANGELOG ([SHA](COMMIT_URL))
       `);
     });
 
@@ -573,7 +573,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * **stuff:** changed ([SHA](https://github.com/lerna/conventional-commits-independent/commit/GIT_HEAD))
+        * **stuff:** changed ([SHA](COMMIT_URL))
       `);
       expect(changelogTwo.newEntry.trimRight()).toMatchInlineSnapshot(`
         # [1.1.0](/compare/package-2@1.0.0...package-2@1.1.0) (YYYY-MM-DD)
@@ -581,7 +581,7 @@ describe("conventional-commits", () => {
 
         ### Features
 
-        * **thing:** added ([SHA](https://github.com/lerna/conventional-commits-independent/commit/GIT_HEAD))
+        * **thing:** added ([SHA](COMMIT_URL))
       `);
     });
   });

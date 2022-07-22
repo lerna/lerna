@@ -7,5 +7,8 @@
     "package-3": "^1.0.0"
   },
   "private": true,
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/lerna/normal-package-5"
+  }
 }

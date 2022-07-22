@@ -53,11 +53,11 @@ describe("lerna-list-filter-options", () => {
       const output = await fixture.lerna("list --scope package-[ae]");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-        package-a
-        package-e
         lerna notice cli v999.9.9-e2e.0
         lerna notice filter including "package-[ae]"
         lerna info filter [ 'package-[ae]' ]
+        package-a
+        package-e
         lerna success found 2 packages
 
       `);
@@ -69,10 +69,10 @@ describe("lerna-list-filter-options", () => {
       const output = await fixture.lerna("list --ignore package-[ae]");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-        package-c
         lerna notice cli v999.9.9-e2e.0
         lerna notice filter excluding "package-[ae]"
         lerna info filter [ '!package-[ae]' ]
+        package-c
         lerna success found 1 package
 
       `);
@@ -84,10 +84,10 @@ describe("lerna-list-filter-options", () => {
       const output = await fixture.lerna("list --all --no-private");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
         package-a
         package-e
         package-c
-        lerna notice cli v999.9.9-e2e.0
         lerna success found 3 packages
 
       `);
@@ -99,12 +99,12 @@ describe("lerna-list-filter-options", () => {
       const output = await fixture.lerna("list --scope package-a --include-dependencies");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-        package-a
-        package-c
         lerna notice cli v999.9.9-e2e.0
         lerna notice filter including "package-a"
         lerna notice filter including dependencies
         lerna info filter [ 'package-a' ]
+        package-a
+        package-c
         lerna success found 2 packages
 
       `);
@@ -173,10 +173,10 @@ describe("lerna list --since", () => {
     const output = await fixture.lerna("list --since 1.0.0");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
-      package-e
       lerna notice cli v999.9.9-e2e.0
       lerna notice filter changed since "1.0.0"
       lerna info Looking for changed packages since 1.0.0
+      package-e
       lerna success found 1 package
 
     `);
@@ -195,10 +195,10 @@ describe("lerna list --since", () => {
     const output = await fixture.lerna("list --since test-main");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
-      package-a
       lerna notice cli v999.9.9-e2e.0
       lerna notice filter changed since "test-main"
       lerna info Looking for changed packages since test-main
+      package-a
       lerna success found 1 package
 
     `);
@@ -217,11 +217,11 @@ describe("lerna list --since", () => {
     const output = await fixture.lerna("list --since test-main");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
-      package-a
-      package-c
       lerna notice cli v999.9.9-e2e.0
       lerna notice filter changed since "test-main"
       lerna info Looking for changed packages since test-main
+      package-a
+      package-c
       lerna success found 2 packages
 
     `);
@@ -241,11 +241,11 @@ describe("lerna list --since", () => {
       const output = await fixture.lerna("list --since test-main --exclude-dependents");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-        package-c
         lerna notice cli v999.9.9-e2e.0
         lerna notice filter changed since "test-main"
         lerna notice filter excluding dependents
         lerna info Looking for changed packages since test-main
+        package-c
         lerna success found 1 package
 
       `);

@@ -1,9 +1,10 @@
 ---
-id: running-tasks
-title: Running Tasks
+id: run-tasks
+title: Run Tasks
+type: explanation
 ---
 
-# Running Tasks
+# Run Tasks
 
 Monorepos can have hundreds or even thousands of projects, so being able to run npm scripts against all (or some) of
 them is a key feature of a tool like Lerna.
@@ -14,66 +15,24 @@ them is a key feature of a tool like Lerna.
 - **Target -** the name of an npm script (e.g., `build`)
 - **Task -** an invocation of an npm script (e.g., `header:build`).
 
-## Capabilities of a Modern Monorepo Tool
-
-- Filtering tasks.
-- Defining dependencies between tasks.
-- Running tasks in the right order, and whenever possible, in parallel.
-- Caching tasks such that re-running the exact same task is instant.
-- Distributing tasks across multiple machines.
-
-**Starting with version 5**, Lerna can do all of these really well because it now integrates with Nx. This integration
-is opt-in, so make sure you have `useNx` set to `true` in `lerna.json`.
-
-> Note, when it comes to running tasks, Lerna and Nx can be used mostly interchangeably. When we say "Lerna can cache
-> builds", we mean that Lerna uses Nx which can cache builds.
-
-## Examples
+## Example Repository
 
 > Examples are based on [this repository](https://github.com/lerna/getting-started-example), so feel free to clone it
 > and follow along.
-
-The repo contains three packages or projects:
-
-- `header` (a library of React components)
-- `footer` (a library of React components)
-- `remixapp` (an app written using the Remix framework which depends on both `header` and `footer`)
-
-```
-packages/
-    header/
-        src/
-            ...
-        package.json
-        rollup.config.json
-        jest.config.js
-
-    footer/
-        src/
-            ...
-        package.json
-        rollup.config.json
-        jest.config.js
-
-    remixapp/
-        app/
-            ...
-        public/
-        package.json
-        remix.config.js
-
-lerna.json
-nx.json
-package.json
-```
 
 ## Run Everything
 
 Each project has the `test` and `build` scripts defined.
 
-Running `npx lerna run build` will build the projects in the right order: `footer` and `header` and then `remixapp`.
+Run:
 
+```bash
+npx lerna run build
 ```
+
+This will build the projects in the right order: `footer` and `header` and then `remixapp`.
+
+```bash title="Terminal Output"
     ✔  header:build (501ms)
     ✔  footer:build (503ms)
     ✔  remixapp:build (670ms)
@@ -100,7 +59,7 @@ If you want to increase the number of processes running the scripts to, say, 5 (
 following:
 
 ```bash
-> npx lerna run build --concurrency=5
+npx lerna run build --concurrency=5
 ```
 
 Note, you can also change the default in `nx.json`, like this:
@@ -119,15 +78,34 @@ Note, you can also change the default in `nx.json`, like this:
 }
 ```
 
+## Run Specific Tasks
+
+While developing you rarely run all the builds or all the tests. Instead, you often run things only against the projects
+you are changing. For instance, you can run the `header` tests like this:
+
+```bash
+npx lerna run test --scope=header
+```
+
+You can also run a command for all the projects affected in your PR like this:
+
+```bash
+npx lerna run test --since=origin/main
+```
+
+Learn more [here](../api-reference/commands).
+
+## Allow Tasks to Run in Any Order
+
 To run the `test` script for each of the projects, run the following:
 
 ```bash
-> npx lerna run test --no-sort
+npx lerna run test --no-sort
 ```
 
 You should see the following output:
 
-```
+```bash title="Terminal Output"
     ✔  footer:test (1s)
     ✔  header:test (1s)
     ✔  remixapp:test (236ms)
@@ -139,7 +117,7 @@ You should see the following output:
 
 Note that we are passing `--no-sort` to tell Lerna that tasks can run in any order.
 
-## Target Dependencies (aka task pipelines)
+## Define Task Dependencies (aka Task Pipelines)
 
 Without our help Lerna cannot know what targets (scripts) require order and which don't. That's why you can
 pass `--sort` and `--no-sort`, but this isn't the best way to go about it.
@@ -216,74 +194,6 @@ project-specific rules by adding them the project's `package.json`.
 }
 ```
 
-## Filtering
+## Run Tasks Faster
 
-While developing you rarely run all the builds or all the tests. Instead, you often run things only against the projects
-you are changing. For instance, you can run the `header` tests like this:
-
-```bash
-> npx lerna run test --scope=header
-```
-
-You can also run a command for all the projects affected in your PR like this:
-
-```bash
-> npx lerna run test --since=origin/main
-```
-
-Learn more [here](../api-reference/filter-options.md).
-
-## Caching
-
-Lerna via Nx has the most sophisticated and battle-tested computation caching system. It knows when the task you are
-about to run has been executed before, so it can restore the results of running that task from cache.
-
-We previously adjusted the `cacheableOperations` in `nx.json` to include the `build` and `test` tasks. If you don't have
-that yet, add them now:
-
-```json title="nx.json"
-{
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "test"]
-      }
-    }
-  }
-}
-```
-
-:::info
-
-Note, `cacheableOperations` need to be side effect free, meaning that given the same input they should always result in
-the same output. As an example, e2e test runs that hit the backend API cannot be cached as the backend might influence
-the result of the test run.
-
-:::
-
-Now, run `> lerna run test --scope=header` twice. The second time the operation will be instant:
-
-```
-> lerna run test --scope=header
-
-> header:test  [existing outputs match the cache, left as is]
-
-> header@0.1.0 test
-> jest
-
-PASS  src/Header.spec.tsx
-✓ renders header (12 ms)
-
-Test Suites: 1 passed, 1 total
-Tests:       1 passed, 1 total
-Snapshots:   0 total
-Time:        0.439 s, estimated 1 s
-Ran all test suites.
-
-———————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
->  Lerna (powered by Nx)   Successfully ran target test for project header (4ms)
-
-   Nx read the output from the cache instead of running the command for 1 out of 1 tasks.
-```
+To speed up your task execution, learn how to [Cache Task Results](./cache-tasks) and [Distribute Task Execution](./distribute-tasks)
