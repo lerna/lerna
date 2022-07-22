@@ -42,8 +42,7 @@ class InitCommand extends Command {
   execute() {
     let chain = Promise.resolve();
 
-    chain = chain.then(() => this.ensurePackageJSON());
-    chain = chain.then(() => this.ensureLernaConfig());
+    chain = chain.then(() => this.ensureConfig());
     chain = chain.then(() => this.ensurePackagesDir());
 
     return chain.then(() => {
@@ -52,14 +51,16 @@ class InitCommand extends Command {
     });
   }
 
-  get hasExistingLernaConfig() {
-    return !!this.project.version;
-  }
+  ensureConfig() {
+    const hasExistingLernaConfig = !!this.project.version;
+    const hasExistingPackageJson = !!this.project.manifest;
 
-  ensurePackageJSON() {
+    const useNx = !hasExistingLernaConfig || this.project.config.useNx === true;
+    const useWorkspaces = !hasExistingLernaConfig || this.project.config.useWorkspaces === true;
+
     let chain = Promise.resolve();
 
-    if (!this.project.manifest) {
+    if (!hasExistingPackageJson) {
       this.logger.info("", "Creating package.json");
 
       // initialize with default indentation so write-pkg doesn't screw it up with tabs
@@ -69,7 +70,7 @@ class InitCommand extends Command {
           private: true,
         };
 
-        if (!this.hasExistingLernaConfig) {
+        if (useWorkspaces) {
           pkg.workspaces = [Project.PACKAGE_GLOB];
         }
 
@@ -79,7 +80,7 @@ class InitCommand extends Command {
       this.logger.info("", "Updating package.json");
 
       chain = chain.then(() => {
-        if (!this.hasExistingLernaConfig && !this.project.manifest.get("workspaces")) {
+        if (useWorkspaces && !this.project.manifest.get("workspaces")) {
           this.project.manifest.set("workspaces", [Project.PACKAGE_GLOB]);
 
           return this.project.manifest.serialize();
@@ -87,6 +88,7 @@ class InitCommand extends Command {
       });
     }
 
+    // add dependencies to package.json
     chain = chain.then(() => {
       const rootPkg = this.project.manifest;
 
@@ -108,64 +110,57 @@ class InitCommand extends Command {
 
       setDependency({ name: "lerna", version: this.lernaVersion });
 
-      if (!this.hasExistingLernaConfig || this.project.config.useNx) {
+      if (useNx) {
         setDependency({ name: "nx", version: "14.4.3" });
       }
 
       return rootPkg.serialize();
     });
 
-    return chain;
-  }
+    chain = chain.then(() => {
+      let version;
 
-  ensureLernaConfig() {
-    // config already defaulted to empty object in Project constructor
-    const { config, version: projectVersion } = this.project;
-
-    let version;
-
-    if (this.options.independent) {
-      version = "independent";
-    } else if (projectVersion) {
-      version = projectVersion;
-    } else {
-      version = "0.0.0";
-    }
-
-    let useNx = config.useNx === true;
-    let useWorkspaces = config.useWorkspaces === true;
-
-    if (!this.hasExistingLernaConfig) {
-      this.logger.info("", "Creating lerna.json");
-      useNx = true;
-      useWorkspaces = true;
-    } else {
-      this.logger.info("", "Updating lerna.json");
-      if (!useWorkspaces && !config.packages) {
-        Object.assign(config, {
-          packages: [Project.PACKAGE_GLOB],
-        });
+      if (this.options.independent) {
+        version = "independent";
+      } else if (this.project.version) {
+        version = this.project.version;
+      } else {
+        version = "0.0.0";
       }
-    }
 
-    delete config.lerna; // no longer relevant
+      if (!hasExistingLernaConfig) {
+        this.logger.info("", "Creating lerna.json");
+      } else {
+        this.logger.info("", "Updating lerna.json");
 
-    if (this.exact) {
-      // ensure --exact is preserved for future init commands
-      const commandConfig = config.command || (config.command = {});
-      const initConfig = commandConfig.init || (commandConfig.init = {});
+        if (!useWorkspaces && !this.project.config.packages) {
+          Object.assign(this.project.config, {
+            packages: [Project.PACKAGE_GLOB],
+          });
+        }
+      }
 
-      initConfig.exact = true;
-    }
+      delete this.project.config.lerna; // no longer relevant
 
-    Object.assign(config, {
-      $schema: "node_modules/lerna/schemas/lerna-schema.json",
-      useNx,
-      useWorkspaces,
-      version,
+      if (this.exact) {
+        // ensure --exact is preserved for future init commands
+        const commandConfig = this.project.config.command || (this.project.config.command = {});
+        const initConfig = commandConfig.init || (commandConfig.init = {});
+
+        initConfig.exact = true;
+      }
+
+      Object.assign(this.project.config, {
+        $schema: "node_modules/lerna/schemas/lerna-schema.json",
+        useNx,
+        useWorkspaces,
+        version,
+      });
+
+      return this.project.serializeConfig();
     });
 
-    return this.project.serializeConfig();
+    return chain;
   }
 
   ensurePackagesDir() {
