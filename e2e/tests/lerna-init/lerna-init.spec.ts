@@ -30,10 +30,8 @@ describe("lerna-init", () => {
     expect(await fixture.readWorkspaceFile("lerna.json")).toMatchInlineSnapshot(`
       "{
         \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
-        \\"packages\\": [
-          \\"packages/*\\"
-        ],
-        \\"useNx\\": false,
+        \\"useNx\\": true,
+        \\"useWorkspaces\\": true,
         \\"version\\": \\"0.0.0\\"
       }
       "
@@ -42,8 +40,12 @@ describe("lerna-init", () => {
       "{
         \\"name\\": \\"root\\",
         \\"private\\": true,
+        \\"workspaces\\": [
+          \\"packages/*\\"
+        ],
         \\"devDependencies\\": {
-          \\"lerna\\": \\"^999.9.9-e2e.0\\"
+          \\"lerna\\": \\"^999.9.9-e2e.0\\",
+          \\"nx\\": \\"^14.4.3\\"
         }
       }
       "
@@ -67,10 +69,8 @@ describe("lerna-init", () => {
       expect(await fixture.readWorkspaceFile("lerna.json")).toMatchInlineSnapshot(`
         "{
           \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
-          \\"packages\\": [
-            \\"packages/*\\"
-          ],
-          \\"useNx\\": false,
+          \\"useNx\\": true,
+          \\"useWorkspaces\\": true,
           \\"version\\": \\"independent\\"
         }
         "
@@ -79,8 +79,12 @@ describe("lerna-init", () => {
         "{
           \\"name\\": \\"root\\",
           \\"private\\": true,
+          \\"workspaces\\": [
+            \\"packages/*\\"
+          ],
           \\"devDependencies\\": {
-            \\"lerna\\": \\"^999.9.9-e2e.0\\"
+            \\"lerna\\": \\"^999.9.9-e2e.0\\",
+            \\"nx\\": \\"^14.4.3\\"
           }
         }
         "
@@ -110,10 +114,8 @@ describe("lerna-init", () => {
             }
           },
           \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
-          \\"packages\\": [
-            \\"packages/*\\"
-          ],
-          \\"useNx\\": false,
+          \\"useNx\\": true,
+          \\"useWorkspaces\\": true,
           \\"version\\": \\"0.0.0\\"
         }
         "
@@ -122,8 +124,12 @@ describe("lerna-init", () => {
         "{
           \\"name\\": \\"root\\",
           \\"private\\": true,
+          \\"workspaces\\": [
+            \\"packages/*\\"
+          ],
           \\"devDependencies\\": {
-            \\"lerna\\": \\"999.9.9-e2e.0\\"
+            \\"lerna\\": \\"999.9.9-e2e.0\\",
+            \\"nx\\": \\"14.4.3\\"
           }
         }
         "
@@ -153,10 +159,8 @@ describe("lerna-init", () => {
             }
           },
           \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
-          \\"packages\\": [
-            \\"packages/*\\"
-          ],
-          \\"useNx\\": false,
+          \\"useNx\\": true,
+          \\"useWorkspaces\\": true,
           \\"version\\": \\"independent\\"
         }
         "
@@ -165,8 +169,12 @@ describe("lerna-init", () => {
         "{
           \\"name\\": \\"root\\",
           \\"private\\": true,
+          \\"workspaces\\": [
+            \\"packages/*\\"
+          ],
           \\"devDependencies\\": {
-            \\"lerna\\": \\"999.9.9-e2e.0\\"
+            \\"lerna\\": \\"999.9.9-e2e.0\\",
+            \\"nx\\": \\"14.4.3\\"
           }
         }
         "
