@@ -296,7 +296,7 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 
 ### `--no-verify-access`
 
-Access verification is now off by default, so `--no-verify-access` is not needed. To opt-in to access verification, use [`--verify-access`](#--verify-access).
+The legacy preemptive access verification is now off by default, so `--no-verify-access` is not needed. Requests will fail with appropriate errors when not authorized correctly. To opt-in to the legacy access verification, use [`--verify-access`](#--verify-access).
 
 ### `--skip-npm`
 
