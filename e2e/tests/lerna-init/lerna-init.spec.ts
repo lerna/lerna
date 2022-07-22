@@ -24,6 +24,7 @@ describe("lerna-init", () => {
       lerna info Creating lerna.json
       lerna info Creating packages directory
       lerna success Initialized Lerna files
+      lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
       "
     `);
 
@@ -63,6 +64,7 @@ describe("lerna-init", () => {
         lerna info Creating lerna.json
         lerna info Creating packages directory
         lerna success Initialized Lerna files
+        lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
         "
       `);
 
@@ -103,6 +105,7 @@ describe("lerna-init", () => {
         lerna info Creating lerna.json
         lerna info Creating packages directory
         lerna success Initialized Lerna files
+        lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
         "
       `);
 
@@ -148,6 +151,7 @@ describe("lerna-init", () => {
         lerna info Creating lerna.json
         lerna info Creating packages directory
         lerna success Initialized Lerna files
+        lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
         "
       `);
 

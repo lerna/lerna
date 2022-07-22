@@ -4,6 +4,8 @@ const fs = require("fs-extra");
 const path = require("path");
 const tempy = require("tempy");
 
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+
 // helpers
 const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
@@ -12,6 +14,17 @@ const lernaInit = require("@lerna-test/helpers").commandRunner(require("../comma
 
 describe("InitCommand", () => {
   const lernaVersion = "__TEST_VERSION__";
+
+  it("should link to docs site after success", async () => {
+    const testDir = tempy.directory();
+
+    await lernaInit(testDir)();
+
+    const logMessages = loggingOutput("info");
+    expect(logMessages).toContain(
+      "New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started"
+    );
+  });
 
   describe("in an empty directory", () => {
     it("initializes git repo with lerna files", async () => {

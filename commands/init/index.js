@@ -48,6 +48,7 @@ class InitCommand extends Command {
 
     return chain.then(() => {
       this.logger.success("", "Initialized Lerna files");
+      this.logger.info("", "New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started");
     });
   }
 
