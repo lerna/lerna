@@ -199,7 +199,9 @@ The root-level configuration is intentional, as this also covers the [identicall
 
 ### `--verify-access`
 
-By default, `lerna` will not verify the logged-in npm user's access to the packages about to be published. Passing this flag will cause `lerna` to proactively perform this verification before it attempts to publish any packages.
+Historically, `lerna` attempted to fast-fail on authorization/authentication issues by performing some preemptive npm API requests using the given token. These days, however, there are multiple types of tokens that npm supports and they have varying levels of access rights, so there is no one-size fits all solution for this preemptive check and it is more appropriate to allow requests to npm to simply fail with appropriate errors for the given token. For this reason, the legacy `--verify-access` behavior is disabled by default and will likely be removed in a future major version.
+
+For now, though, if you pass this flag you can opt into the legacy behavior and `lerna` will preemptively perform this verification before it attempts to publish any packages.
 
 You should NOT use this option if:
 
