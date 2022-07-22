@@ -371,7 +371,7 @@ Map {
 
       const logMessages = loggingOutput("warn");
       expect(logMessages).toContain(
-        "--verify-access=false and --no-verify-access are no longer needed, since skipping access verification is now the default behavior."
+        "--verify-access=false and --no-verify-access are no longer needed, because the legacy preemptive access verification is now disabled by default. Requests will fail with appropriate errors when not authorized correctly."
       );
     });
 
