@@ -55,9 +55,25 @@ describe("publish from-package", () => {
 
     expect(npmPublish.order()).toEqual([
       "package-1",
-      "package-3",
       "package-4",
       "package-2",
+      "package-3",
+      // package-5 is private
+    ]);
+  });
+
+  it("publishes unpublished independent packages, lexically sorted when --no-sort is present", async () => {
+    const cwd = await initFixture("independent");
+
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => Array.from(packageGraph.values()));
+
+    await lernaPublish(cwd)("from-package", "--no-sort");
+
+    expect(npmPublish.order()).toEqual([
+      "package-1",
+      "package-2",
+      "package-3",
+      "package-4",
       // package-5 is private
     ]);
   });
