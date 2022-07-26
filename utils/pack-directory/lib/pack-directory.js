@@ -42,6 +42,7 @@ function packDirectory(_pkg, dir, options) {
   chain = chain.then(() => runLifecycle(pkg, "prepare", opts));
 
   if (opts.lernaCommand === "publish") {
+    opts.stdio = "inherit";
     chain = chain.then(() => pkg.refresh());
     chain = chain.then(() => runLifecycle(pkg, "prepublishOnly", opts));
     chain = chain.then(() => pkg.refresh());
