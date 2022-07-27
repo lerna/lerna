@@ -1,6 +1,6 @@
 {
   "name": "@lerna/otplease",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "description": "Prompt for OTP when wrapped Promise fails",
   "keywords": [
     "lerna",

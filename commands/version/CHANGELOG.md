@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.3.0](https://github.com/lerna/lerna/compare/v5.2.0...v5.3.0) (2022-07-27)
+
+
+### Bug Fixes
+
+* **version:** inherit stdio for lerna version lifecycle scripts ([#3264](https://github.com/lerna/lerna/issues/3264)) ([9083a23](https://github.com/lerna/lerna/commit/9083a239893d3edae5e16f057c515c741a10c312))
+
+
+
+
+
 # [5.2.0](https://github.com/lerna/lerna/compare/v5.1.8...v5.2.0) (2022-07-22)
 
 

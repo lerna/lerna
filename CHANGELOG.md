@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.3.0](https://github.com/lerna/lerna/compare/v5.2.0...v5.3.0) (2022-07-27)
+
+
+### Bug Fixes
+
+* **run-lifecycle:** lifecycle events should run to completion in series ([#3262](https://github.com/lerna/lerna/issues/3262)) ([2f51588](https://github.com/lerna/lerna/commit/2f51588f3686ab9bb015a12294f3eca11cb41fad))
+* **version:** inherit stdio for lerna version lifecycle scripts ([#3264](https://github.com/lerna/lerna/issues/3264)) ([9083a23](https://github.com/lerna/lerna/commit/9083a239893d3edae5e16f057c515c741a10c312))
+
+
+### Features
+
+* **publish:** include all dependencies in package graph by default, allow no-sort ([#3263](https://github.com/lerna/lerna/issues/3263)) ([3b0c79c](https://github.com/lerna/lerna/commit/3b0c79cd9ea2abb9399b22cb05348b9b2c31fdce))
+
+
+
+
+
 # [5.2.0](https://github.com/lerna/lerna/compare/v5.1.8...v5.2.0) (2022-07-22)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.3.0](https://github.com/lerna/lerna/compare/v5.2.0...v5.3.0) (2022-07-27)
+
+
+### Bug Fixes
+
+* **run-lifecycle:** lifecycle events should run to completion in series ([#3262](https://github.com/lerna/lerna/issues/3262)) ([2f51588](https://github.com/lerna/lerna/commit/2f51588f3686ab9bb015a12294f3eca11cb41fad))
+
+
+
+
+
 # [5.2.0](https://github.com/lerna/lerna/compare/v5.1.8...v5.2.0) (2022-07-22)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.3.0](https://github.com/lerna/lerna/compare/v5.2.0...v5.3.0) (2022-07-27)
+
+
+### Features
+
+* **publish:** include all dependencies in package graph by default, allow no-sort ([#3263](https://github.com/lerna/lerna/issues/3263)) ([3b0c79c](https://github.com/lerna/lerna/commit/3b0c79cd9ea2abb9399b22cb05348b9b2c31fdce))
+
+
+
+
+
 # [5.2.0](https://github.com/lerna/lerna/compare/v5.1.8...v5.2.0) (2022-07-22)
 
 
