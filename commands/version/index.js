@@ -232,7 +232,7 @@ class VersionCommand extends Command {
       this.logger.info("version", "rooted leaf detected, skipping synthetic root lifecycles");
     }
 
-    this.runPackageLifecycle = createRunner(this.options);
+    this.runPackageLifecycle = createRunner({ ...this.options, stdio: "inherit" });
 
     // don't execute recursively if run from a poorly-named script
     this.runRootLifecycle = /^(pre|post)?version$/.test(process.env.npm_lifecycle_event)
