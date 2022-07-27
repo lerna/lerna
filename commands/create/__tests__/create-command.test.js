@@ -356,4 +356,20 @@ describe("CreateCommand", () => {
 
     expect(await manifestCreated(cwd)).not.toHaveProperty("repository");
   });
+
+  it("adds type field when using esModule", async () => {
+    const cwd = await initFixture("basic");
+
+    await lernaCreate(cwd)("a-pkg", "--es-module");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("type", "module");
+  });
+
+  it("skips type field when not using esModule", async () => {
+    const cwd = await initFixture("basic");
+
+    await lernaCreate(cwd)("a-pkg");
+
+    expect(await manifestCreated(cwd)).not.toHaveProperty("type");
+  });
 });
