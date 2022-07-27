@@ -1600,8 +1600,10 @@
         },
         "graphType": {
           "type": "string",
-          "enum": ["all", "depencencies"],
-          "description": "For `lerna publish`, the type of dependency to use when determining package hierarchy."
+          "enum": ["all", "dependencies"],
+          "description": "DEPRECATED: For `lerna publish`, if you want to ignore devDependencies when considering the package graph you can set this property equal to 'dependencies'. This will be removed in v6 of lerna.",
+          "default": "all",
+          "deprecated": true
         },
         "otp": {
           "type": "string",

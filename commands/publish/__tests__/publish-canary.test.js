@@ -79,9 +79,9 @@ test("publish --canary", async () => {
   expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
   "package-1" => "canary",
-  "package-3" => "canary",
   "package-4" => "canary",
   "package-2" => "canary",
+  "package-3" => "canary",
 }
 `);
   expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`

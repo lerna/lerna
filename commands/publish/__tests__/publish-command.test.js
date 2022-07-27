@@ -101,24 +101,24 @@ describe("PublishCommand", () => {
       expect(packDirectory.registry).toMatchInlineSnapshot(`
 Set {
   "package-1",
-  "package-3",
   "package-4",
   "package-2",
+  "package-3",
 }
 `);
       expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
   "package-1" => "latest",
-  "package-3" => "latest",
   "package-4" => "latest",
   "package-2" => "latest",
+  "package-3" => "latest",
 }
 `);
       expect(npmPublish.order()).toEqual([
         "package-1",
-        "package-3",
         "package-4",
         "package-2",
+        "package-3",
         // package-5 is private
       ]);
       expect(npmDistTag.remove).not.toHaveBeenCalled();
@@ -142,9 +142,9 @@ Map {
 
       expect(npmPublish.order()).toEqual([
         "package-1",
-        "package-3",
         "package-4",
         "package-2",
+        "package-3",
         // package-5 is private
       ]);
     });
@@ -169,6 +169,21 @@ Map {
   });
 
   describe("--graph-type", () => {
+    it("produces a topological ordering that _includes_ devDependencies when value is not set", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)();
+
+      expect(npmPublish.order()).toEqual([
+        "package-1",
+        "package-4",
+        "package-2",
+        // package-3 has a peer/devDependency on package-2
+        "package-3",
+        // package-5 is private
+      ]);
+    });
+
     it("produces a topological ordering that _includes_ devDependencies when value is 'all'", async () => {
       const cwd = await initFixture("normal");
 
@@ -184,11 +199,49 @@ Map {
       ]);
     });
 
+    it("produces a topological ordering that _excludes_ devDependencies when value is 'dependencies' (DEPRECATED)", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--graph-type", "dependencies");
+
+      expect(npmPublish.order()).toEqual([
+        "package-1",
+        // package-3 has a peer/devDependency on package-2
+        "package-3",
+        "package-4",
+        "package-2",
+        // package-5 is private
+      ]);
+
+      const logMessages = loggingOutput("warn");
+      expect(logMessages).toMatchInlineSnapshot(`
+        Array [
+          "--graph-type=dependencies is deprecated and will be removed in lerna v6. If you have a use-case you feel requires it please open an issue to discuss: https://github.com/lerna/lerna/issues/new/choose",
+        ]
+      `);
+    });
+
     it("throws an error when value is _not_ 'all' or 'dependencies'", async () => {
       const testDir = await initFixture("normal");
       const command = lernaPublish(testDir)("--graph-type", "poopy-pants");
 
       await expect(command).rejects.toThrow("poopy-pants");
+    });
+  });
+
+  describe("--no-sort", () => {
+    it("produces a lexical ordering when --no-sort is set", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--no-sort");
+
+      expect(npmPublish.order()).toEqual([
+        "package-1",
+        "package-2",
+        "package-3",
+        "package-4",
+        // package-5 is private
+      ]);
     });
   });
 
@@ -317,24 +370,24 @@ Map {
       expect(packDirectory.registry).toMatchInlineSnapshot(`
 Set {
   "package-1",
-  "package-3",
   "package-4",
   "package-2",
+  "package-3",
 }
 `);
       expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
   "package-1" => "latest",
-  "package-3" => "latest",
   "package-4" => "latest",
   "package-2" => "latest",
+  "package-3" => "latest",
 }
 `);
       expect(npmPublish.order()).toEqual([
         "package-1",
-        "package-3",
         "package-4",
         "package-2",
+        "package-3",
         // package-5 is private
       ]);
       expect(npmDistTag.remove).not.toHaveBeenCalled();
