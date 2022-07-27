@@ -43,7 +43,7 @@ index SHA..SHA
 +'use strict';
 +
 +const myCli = require('..');
-+const assert = require('node:assert').strict;
++const assert = require('assert').strict;
 +
 +assert.strictEqual(myCli(), 'Hello from myCli');
 +console.info("myCli tests passed");
@@ -185,7 +185,7 @@ index SHA..SHA
 +++ b/packages/my-es-cli/__tests__/my-es-cli.test.js
 @@ -0,0 +1,5 @@
 +import myEsCli from '../src/my-es-cli.js';
-+import { strict as assert } from 'node:assert';
++import { strict as assert } from 'assert';
 +
 +assert.strictEqual(myEsCli(), 'Hello from myEsCli');
 +console.info("myEsCli tests passed");
@@ -311,7 +311,7 @@ index SHA..SHA
 +'use strict';
 +
 +const myPkg = require('..');
-+const assert = require('node:assert').strict;
++const assert = require('assert').strict;
 +
 +assert.strictEqual(myPkg(), 'Hello from myPkg');
 +console.info("myPkg tests passed");
@@ -388,7 +388,7 @@ index SHA..SHA
 +++ b/packages/my-pkg/__tests__/my-pkg.test.js
 @@ -0,0 +1,5 @@
 +import myPkg from '../src/my-pkg.js';
-+import { strict as assert } from 'node:assert';
++import { strict as assert } from 'assert';
 +
 +assert.strictEqual(myPkg(), 'Hello from myPkg');
 +console.info("myPkg tests passed");

@@ -419,7 +419,7 @@ class CreateCommand extends Command {
     const testContent = this.options.esModule
       ? dedent`
         import ${this.camelName} from '../src/${this.dirName}.js';
-        import { strict as assert } from 'node:assert';
+        import { strict as assert } from 'assert';
 
         assert.strictEqual(${this.camelName}(), 'Hello from ${this.camelName}');
         console.info("${this.camelName} tests passed");
@@ -428,7 +428,7 @@ class CreateCommand extends Command {
         'use strict';
 
         const ${this.camelName} = require('..');
-        const assert = require('node:assert').strict;
+        const assert = require('assert').strict;
 
         assert.strictEqual(${this.camelName}(), 'Hello from ${this.camelName}');
         console.info("${this.camelName} tests passed");
