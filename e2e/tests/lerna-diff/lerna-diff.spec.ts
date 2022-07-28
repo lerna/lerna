@@ -52,7 +52,7 @@ describe("lerna-diff", () => {
       @@ -19,5 +19,8 @@
          },
          "scripts": {
-           "test": "node \\"./__tests__/package-a.test.js\\""
+           "test": "node ./__tests__/package-a.test.js"
       +  },
       +  "dependencies": {
       +    "package-b": "0.0.0"
@@ -65,7 +65,7 @@ describe("lerna-diff", () => {
       @@ -19,5 +19,8 @@
          },
          "scripts": {
-           "test": "node \\"./__tests__/package-b.test.js\\""
+           "test": "node ./__tests__/package-b.test.js"
       +  },
       +  "dependencies": {
       +    "package-a": "0.0.0"
@@ -98,7 +98,7 @@ describe("lerna-diff", () => {
       @@ -19,5 +19,8 @@
          },
          "scripts": {
-           "test": "node \\"./__tests__/package-a.test.js\\""
+           "test": "node ./__tests__/package-a.test.js"
       +  },
       +  "dependencies": {
       +    "package-b": "0.0.0"
