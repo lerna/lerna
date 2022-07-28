@@ -43,10 +43,10 @@ index SHA..SHA
 +'use strict';
 +
 +const myCli = require('..');
++const assert = require('assert').strict;
 +
-+describe('my-cli', () => {
-+    it('needs tests');
-+});
++assert.strictEqual(myCli(), 'Hello from myCli');
++console.info("myCli tests passed");
 diff --git a/packages/my-cli/bin/my-cli b/packages/my-cli/bin/my-cli
 new file mode 100755
 index SHA..SHA
@@ -102,7 +102,7 @@ index SHA..SHA
 +module.exports = myCli;
 +
 +function myCli() {
-+    // TODO
++    return "Hello from myCli";
 +}
 diff --git a/packages/my-cli/package.json b/packages/my-cli/package.json
 new file mode 100644
@@ -134,7 +134,7 @@ index SHA..SHA
 +    "url": "git+https://github.com/test/test.git"
 +  },
 +  "scripts": {
-+    "test": "echo \\"Error: run tests from root\\" && exit 1"
++    "test": "node ./__tests__/my-cli.test.js"
 +  },
 +  "dependencies": {
 +    "yargs": "^1.0.0-mocked"
@@ -184,11 +184,11 @@ index SHA..SHA
 --- /dev/null
 +++ b/packages/my-es-cli/__tests__/my-es-cli.test.js
 @@ -0,0 +1,5 @@
-+import myEsCli from '../src/my-es-cli';
++import myEsCli from '../src/my-es-cli.js';
++import { strict as assert } from 'assert';
 +
-+describe('my-es-cli', () => {
-+    it('needs tests');
-+});
++assert.strictEqual(myEsCli(), 'Hello from myEsCli');
++console.info("myEsCli tests passed");
 diff --git a/packages/my-es-cli/bin/my-es-cli b/packages/my-es-cli/bin/my-es-cli
 new file mode 100755
 index SHA..SHA
@@ -206,7 +206,7 @@ new file mode 100644
 index SHA..SHA
 --- /dev/null
 +++ b/packages/my-es-cli/package.json
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,36 @@
 +{
 +  "name": "my-es-cli",
 +  "version": "1.2.3",
@@ -232,11 +232,12 @@ index SHA..SHA
 +    "url": "git+https://github.com/test/test.git"
 +  },
 +  "scripts": {
-+    "test": "echo \\"Error: run tests from root\\" && exit 1"
++    "test": "node ./__tests__/my-es-cli.test.js"
 +  },
 +  "dependencies": {
 +    "yargs": "^1.0.0-mocked"
 +  },
++  "type": "module",
 +  "bugs": {
 +    "url": "https://github.com/test/test/issues"
 +  },
@@ -279,7 +280,7 @@ index SHA..SHA
 +++ b/packages/my-es-cli/src/my-es-cli.js
 @@ -0,0 +1,3 @@
 +export default function myEsCli() {
-+    // TODO
++    return "Hello from myEsCli";
 +}
 `;
 
@@ -310,10 +311,10 @@ index SHA..SHA
 +'use strict';
 +
 +const myPkg = require('..');
++const assert = require('assert').strict;
 +
-+describe('my-pkg', () => {
-+    it('needs tests');
-+});
++assert.strictEqual(myPkg(), 'Hello from myPkg');
++console.info("myPkg tests passed");
 diff --git a/packages/my-pkg/lib/my-pkg.js b/packages/my-pkg/lib/my-pkg.js
 new file mode 100644
 index SHA..SHA
@@ -325,7 +326,7 @@ index SHA..SHA
 +module.exports = myPkg;
 +
 +function myPkg() {
-+    // TODO
++    return "Hello from myPkg";
 +}
 diff --git a/packages/my-pkg/package.json b/packages/my-pkg/package.json
 new file mode 100644
@@ -353,7 +354,7 @@ index SHA..SHA
 +    "url": "git+https://github.com/test/test.git"
 +  },
 +  "scripts": {
-+    "test": "echo \\"Error: run tests from root\\" && exit 1"
++    "test": "node ./__tests__/my-pkg.test.js"
 +  },
 +  "bugs": {
 +    "url": "https://github.com/test/test/issues"
@@ -386,17 +387,17 @@ index SHA..SHA
 --- /dev/null
 +++ b/packages/my-pkg/__tests__/my-pkg.test.js
 @@ -0,0 +1,5 @@
-+import myPkg from '../src/my-pkg';
++import myPkg from '../src/my-pkg.js';
++import { strict as assert } from 'assert';
 +
-+describe('my-pkg', () => {
-+    it('needs tests');
-+});
++assert.strictEqual(myPkg(), 'Hello from myPkg');
++console.info("myPkg tests passed");
 diff --git a/packages/my-pkg/package.json b/packages/my-pkg/package.json
 new file mode 100644
 index SHA..SHA
 --- /dev/null
 +++ b/packages/my-pkg/package.json
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,29 @@
 +{
 +  "name": "my-pkg",
 +  "version": "1.2.3",
@@ -418,8 +419,9 @@ index SHA..SHA
 +    "url": "git+https://github.com/test/test.git"
 +  },
 +  "scripts": {
-+    "test": "echo \\"Error: run tests from root\\" && exit 1"
++    "test": "node ./__tests__/my-pkg.test.js"
 +  },
++  "type": "module",
 +  "bugs": {
 +    "url": "https://github.com/test/test/issues"
 +  },
@@ -432,6 +434,6 @@ index SHA..SHA
 +++ b/packages/my-pkg/src/my-pkg.js
 @@ -0,0 +1,3 @@
 +export default function myPkg() {
-+    // TODO
++    return "Hello from myPkg";
 +}
 `;
