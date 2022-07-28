@@ -3,7 +3,7 @@
     "default": {
       "runner": "@nrwl/nx-cloud",
       "options": {
-        "accessToken": "NGMzYjZhY2ItODJiYS00NTgwLWI5YjEtMWY3ODg2NWU2YjAxfHJlYWQtd3JpdGU="
+        "accessToken": "MGQ4ZjkyMWYtYTVhNi00ZWQ4LWE0OTctNTkxM2U0ZDUzYWQ1fHJlYWQ="
       }
     }
   }
