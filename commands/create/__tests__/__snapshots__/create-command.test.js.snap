@@ -134,7 +134,7 @@ index SHA..SHA
 +    "url": "git+https://github.com/test/test.git"
 +  },
 +  "scripts": {
-+    "test": "node \\"./__tests__/my-cli.test.js\\""
++    "test": "node ./__tests__/my-cli.test.js"
 +  },
 +  "dependencies": {
 +    "yargs": "^1.0.0-mocked"
@@ -232,7 +232,7 @@ index SHA..SHA
 +    "url": "git+https://github.com/test/test.git"
 +  },
 +  "scripts": {
-+    "test": "node \\"./__tests__/my-es-cli.test.js\\""
++    "test": "node ./__tests__/my-es-cli.test.js"
 +  },
 +  "dependencies": {
 +    "yargs": "^1.0.0-mocked"
@@ -354,7 +354,7 @@ index SHA..SHA
 +    "url": "git+https://github.com/test/test.git"
 +  },
 +  "scripts": {
-+    "test": "node \\"./__tests__/my-pkg.test.js\\""
++    "test": "node ./__tests__/my-pkg.test.js"
 +  },
 +  "bugs": {
 +    "url": "https://github.com/test/test/issues"
@@ -419,7 +419,7 @@ index SHA..SHA
 +    "url": "git+https://github.com/test/test.git"
 +  },
 +  "scripts": {
-+    "test": "node \\"./__tests__/my-pkg.test.js\\""
++    "test": "node ./__tests__/my-pkg.test.js"
 +  },
 +  "type": "module",
 +  "bugs": {

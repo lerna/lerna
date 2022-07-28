@@ -193,7 +193,7 @@ if (!this.package.repository) {
 
 if (!this.package.scripts) {
   exports.scripts = {
-    test: `node "./__tests__/${name}.test.js"`,
+    test: `node ./__tests__/${name}.test.js`,
   };
 }
 
