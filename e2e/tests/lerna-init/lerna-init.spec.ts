@@ -20,6 +20,7 @@ describe("lerna-init", () => {
     expect(output.stderr).toMatchInlineSnapshot(`
       "lerna notice cli v999.9.9-e2e.0
       lerna info Initializing Git repository
+      lerna info Creating .gitignore
       lerna info Creating package.json
       lerna info Creating lerna.json
       lerna info Creating packages directory
@@ -50,6 +51,7 @@ describe("lerna-init", () => {
       }
       "
     `);
+    expect(await fixture.readWorkspaceFile(".gitignore")).toMatchInlineSnapshot(`"node_modules/"`);
   });
 
   describe("--independent", () => {
@@ -59,6 +61,7 @@ describe("lerna-init", () => {
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
         lerna info Initializing Git repository
+        lerna info Creating .gitignore
         lerna info Creating package.json
         lerna info Creating lerna.json
         lerna info Creating packages directory
@@ -89,6 +92,7 @@ describe("lerna-init", () => {
         }
         "
       `);
+      expect(await fixture.readWorkspaceFile(".gitignore")).toMatchInlineSnapshot(`"node_modules/"`);
     });
   });
 
@@ -99,6 +103,7 @@ describe("lerna-init", () => {
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
         lerna info Initializing Git repository
+        lerna info Creating .gitignore
         lerna info Creating package.json
         lerna info Creating lerna.json
         lerna info Creating packages directory
@@ -134,6 +139,7 @@ describe("lerna-init", () => {
         }
         "
       `);
+      expect(await fixture.readWorkspaceFile(".gitignore")).toMatchInlineSnapshot(`"node_modules/"`);
     });
   });
 
@@ -144,6 +150,7 @@ describe("lerna-init", () => {
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
         lerna info Initializing Git repository
+        lerna info Creating .gitignore
         lerna info Creating package.json
         lerna info Creating lerna.json
         lerna info Creating packages directory
@@ -179,6 +186,7 @@ describe("lerna-init", () => {
         }
         "
       `);
+      expect(await fixture.readWorkspaceFile(".gitignore")).toMatchInlineSnapshot(`"node_modules/"`);
     });
   });
 });

@@ -63,6 +63,17 @@ describe("InitCommand", () => {
       expect(gitDirExists).toBe(true);
     });
 
+    it("initializes .gitignore", async () => {
+      const testDir = tempy.directory();
+
+      await lernaInit(testDir)();
+
+      const gitIgnorePath = path.join(testDir, ".gitignore");
+      const gitIgnoreContent = await fs.readFile(gitIgnorePath, "utf8");
+
+      expect(gitIgnoreContent).toMatchInlineSnapshot(`"node_modules/"`);
+    });
+
     it("initializes git repo with lerna files in independent mode", async () => {
       const testDir = tempy.directory();
 
@@ -144,6 +155,21 @@ describe("InitCommand", () => {
         }
       `);
       expect(packagesDirExists).toBe(true);
+    });
+  });
+
+  describe("when .gitignore exists", () => {
+    it("does not change existing .gitignore", async () => {
+      const testDir = await tempy.directory();
+
+      const gitIgnorePath = path.join(testDir, ".gitignore");
+      await fs.writeFile(gitIgnorePath, "dist/");
+
+      await lernaInit(testDir)();
+
+      const gitIgnoreContent = await fs.readFile(gitIgnorePath, "utf8");
+
+      expect(gitIgnoreContent).toMatchInlineSnapshot(`"dist/"`);
     });
   });
 
