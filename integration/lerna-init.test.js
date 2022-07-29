@@ -19,6 +19,7 @@ describe("lerna init", () => {
     expect(stderr).toMatchInlineSnapshot(`
       lerna notice cli __TEST_VERSION__
       lerna info Initializing Git repository
+      lerna info Creating .gitignore
       lerna info Creating package.json
       lerna info Creating lerna.json
       lerna info Creating packages directory

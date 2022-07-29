@@ -42,6 +42,7 @@ class InitCommand extends Command {
   execute() {
     let chain = Promise.resolve();
 
+    chain = chain.then(() => this.ensureGitIgnore());
     chain = chain.then(() => this.ensureConfig());
     chain = chain.then(() => this.ensurePackagesDir());
 
@@ -49,6 +50,19 @@ class InitCommand extends Command {
       this.logger.success("", "Initialized Lerna files");
       this.logger.info("", "New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started");
     });
+  }
+
+  ensureGitIgnore() {
+    const gitIgnorePath = path.join(this.project.rootPath, ".gitignore");
+
+    let chain = Promise.resolve();
+
+    if (!fs.existsSync(gitIgnorePath)) {
+      this.logger.info("", "Creating .gitignore");
+      chain = chain.then(() => fs.writeFile(gitIgnorePath, "node_modules/"));
+    }
+
+    return chain;
   }
 
   ensureConfig() {
