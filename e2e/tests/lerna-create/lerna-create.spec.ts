@@ -75,7 +75,7 @@ describe("lerna-create", () => {
             "url": "<url>/lerna-create/origin.git"
           },
           "scripts": {
-            "test": "node \\"./__tests__/no-options.test.js\\""
+            "test": "node ./__tests__/no-options.test.js"
           }
         }
 
@@ -102,7 +102,7 @@ describe("lerna-create", () => {
         'use strict';
 
         const noOptions = require('..');
-        const assert = require('node:assert').strict;
+        const assert = require('assert').strict;
 
         assert.strictEqual(noOptions(), 'Hello from noOptions');
         console.info("noOptions tests passed");
@@ -165,7 +165,7 @@ describe("lerna-create", () => {
             "url": "<url>/lerna-create/origin.git"
           },
           "scripts": {
-            "test": "node \\"./__tests__/option-bin.test.js\\""
+            "test": "node ./__tests__/option-bin.test.js"
           },
           "dependencies": {
             "yargs": "^XX.XX.XX"
@@ -197,7 +197,7 @@ describe("lerna-create", () => {
         'use strict';
 
         const optionBin = require('..');
-        const assert = require('node:assert').strict;
+        const assert = require('assert').strict;
 
         assert.strictEqual(optionBin(), 'Hello from optionBin');
         console.info("optionBin tests passed");
@@ -254,7 +254,7 @@ describe("lerna-create", () => {
             "url": "<url>/lerna-create/origin.git"
           },
           "scripts": {
-            "test": "node \\"./__tests__/option-description.test.js\\""
+            "test": "node ./__tests__/option-description.test.js"
           }
         }
 
@@ -283,7 +283,7 @@ describe("lerna-create", () => {
         'use strict';
 
         const optionDescription = require('..');
-        const assert = require('node:assert').strict;
+        const assert = require('assert').strict;
 
         assert.strictEqual(optionDescription(), 'Hello from optionDescription');
         console.info("optionDescription tests passed");
@@ -342,7 +342,7 @@ describe("lerna-create", () => {
             "url": "<url>/lerna-create/origin.git"
           },
           "scripts": {
-            "test": "node \\"./__tests__/option-dependencies.test.js\\""
+            "test": "node ./__tests__/option-dependencies.test.js"
           },
           "dependencies": {
             "lerna": "^XX.XX.XX",
@@ -376,7 +376,7 @@ describe("lerna-create", () => {
         'use strict';
 
         const optionDependencies = require('..');
-        const assert = require('node:assert').strict;
+        const assert = require('assert').strict;
 
         assert.strictEqual(optionDependencies(), 'Hello from optionDependencies');
         console.info("optionDependencies tests passed");
@@ -434,7 +434,7 @@ describe("lerna-create", () => {
             "url": "<url>/lerna-create/origin.git"
           },
           "scripts": {
-            "test": "node \\"./__tests__/option-es-module.test.js\\""
+            "test": "node ./__tests__/option-es-module.test.js"
           },
           "type": "module"
         }
@@ -458,7 +458,7 @@ describe("lerna-create", () => {
       );
       expect(file).toMatchInlineSnapshot(`
         import optionEsModule from '../src/option-es-module.js';
-        import { strict as assert } from 'node:assert';
+        import { strict as assert } from 'assert';
 
         assert.strictEqual(optionEsModule(), 'Hello from optionEsModule');
         console.info("optionEsModule tests passed");
@@ -516,7 +516,7 @@ describe("lerna-create", () => {
             "url": "<url>/lerna-create/origin.git"
           },
           "scripts": {
-            "test": "node \\"./__tests__/option-homepage.test.js\\""
+            "test": "node ./__tests__/option-homepage.test.js"
           }
         }
 
@@ -545,7 +545,7 @@ describe("lerna-create", () => {
         'use strict';
 
         const optionHomepage = require('..');
-        const assert = require('node:assert').strict;
+        const assert = require('assert').strict;
 
         assert.strictEqual(optionHomepage(), 'Hello from optionHomepage');
         console.info("optionHomepage tests passed");
@@ -606,7 +606,7 @@ describe("lerna-create", () => {
             "url": "<url>/lerna-create/origin.git"
           },
           "scripts": {
-            "test": "node \\"./__tests__/option-keywords.test.js\\""
+            "test": "node ./__tests__/option-keywords.test.js"
           }
         }
 
@@ -635,7 +635,7 @@ describe("lerna-create", () => {
         'use strict';
 
         const optionKeywords = require('..');
-        const assert = require('node:assert').strict;
+        const assert = require('assert').strict;
 
         assert.strictEqual(optionKeywords(), 'Hello from optionKeywords');
         console.info("optionKeywords tests passed");
@@ -692,7 +692,7 @@ describe("lerna-create", () => {
             "url": "<url>/lerna-create/origin.git"
           },
           "scripts": {
-            "test": "node \\"./__tests__/option-license.test.js\\""
+            "test": "node ./__tests__/option-license.test.js"
           }
         }
 
@@ -721,7 +721,7 @@ describe("lerna-create", () => {
         'use strict';
 
         const optionLicense = require('..');
-        const assert = require('node:assert').strict;
+        const assert = require('assert').strict;
 
         assert.strictEqual(optionLicense(), 'Hello from optionLicense');
         console.info("optionLicense tests passed");
@@ -779,7 +779,7 @@ describe("lerna-create", () => {
             "url": "<url>/lerna-create/origin.git"
           },
           "scripts": {
-            "test": "node \\"./__tests__/option-private.test.js\\""
+            "test": "node ./__tests__/option-private.test.js"
           }
         }
 
@@ -808,7 +808,7 @@ describe("lerna-create", () => {
         'use strict';
 
         const optionPrivate = require('..');
-        const assert = require('node:assert').strict;
+        const assert = require('assert').strict;
 
         assert.strictEqual(optionPrivate(), 'Hello from optionPrivate');
         console.info("optionPrivate tests passed");
@@ -869,7 +869,7 @@ describe("lerna-create", () => {
               "url": "<url>/lerna-create/origin.git"
             },
             "scripts": {
-              "test": "node \\"./__tests__/@scope/with-scope.test.js\\""
+              "test": "node ./__tests__/@scope/with-scope.test.js"
             }
           }
 
@@ -898,7 +898,7 @@ describe("lerna-create", () => {
           'use strict';
 
           const withScope = require('..');
-          const assert = require('node:assert').strict;
+          const assert = require('assert').strict;
 
           assert.strictEqual(withScope(), 'Hello from withScope');
           console.info("withScope tests passed");
@@ -958,7 +958,7 @@ describe("lerna-create", () => {
               "url": "<url>/lerna-create/origin.git"
             },
             "scripts": {
-              "test": "node \\"./__tests__/@scope/with-scope-and-access.test.js\\""
+              "test": "node ./__tests__/@scope/with-scope-and-access.test.js"
             }
           }
 
@@ -987,7 +987,7 @@ describe("lerna-create", () => {
           'use strict';
 
           const withScopeAndAccess = require('..');
-          const assert = require('node:assert').strict;
+          const assert = require('assert').strict;
 
           assert.strictEqual(withScopeAndAccess(), 'Hello from withScopeAndAccess');
           console.info("withScopeAndAccess tests passed");
@@ -1047,7 +1047,7 @@ describe("lerna-create", () => {
               "url": "<url>/lerna-create/origin.git"
             },
             "scripts": {
-              "test": "node \\"./__tests__/@scope/with-scope-and-registry.test.js\\""
+              "test": "node ./__tests__/@scope/with-scope-and-registry.test.js"
             }
           }
 
@@ -1076,7 +1076,7 @@ describe("lerna-create", () => {
           'use strict';
 
           const withScopeAndRegistry = require('..');
-          const assert = require('node:assert').strict;
+          const assert = require('assert').strict;
 
           assert.strictEqual(withScopeAndRegistry(), 'Hello from withScopeAndRegistry');
           console.info("withScopeAndRegistry tests passed");
@@ -1137,7 +1137,7 @@ describe("lerna-create", () => {
               "url": "<url>/lerna-create/origin.git"
             },
             "scripts": {
-              "test": "node \\"./__tests__/@scope/with-scope-and-tag.test.js\\""
+              "test": "node ./__tests__/@scope/with-scope-and-tag.test.js"
             }
           }
 
@@ -1166,7 +1166,7 @@ describe("lerna-create", () => {
           'use strict';
 
           const withScopeAndTag = require('..');
-          const assert = require('node:assert').strict;
+          const assert = require('assert').strict;
 
           assert.strictEqual(withScopeAndTag(), 'Hello from withScopeAndTag');
           console.info("withScopeAndTag tests passed");
