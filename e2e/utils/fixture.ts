@@ -167,10 +167,11 @@ export class Fixture {
    */
   async lerna(
     args: string,
-    opts: { silenceError: boolean } = { silenceError: false }
+    opts: { silenceError?: true; allowNetworkRequests?: true } = {}
   ): Promise<RunCommandResult> {
+    const offlineFlag = opts.allowNetworkRequests ? "" : "--offline ";
     // Ensure we reference the locally installed copy of lerna
-    return this.exec(`npx --offline --no lerna ${args}`, { silenceError: opts.silenceError });
+    return this.exec(`npx ${offlineFlag}--no lerna ${args}`, { silenceError: opts.silenceError });
   }
 
   async addNxToWorkspace(): Promise<void> {
