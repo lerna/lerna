@@ -8,7 +8,8 @@ expect.addSnapshotSerializer({
       .replaceAll(/"url": ".*\/lerna-create\/origin\.git"/g, '"url": "<url>/lerna-create/origin.git"')
       .replaceAll(/"yarn": "\^\d?\d.\d?\d.\d?\d"/g, '"yarn": "^XX.XX.XX"')
       .replaceAll(/"lerna": "\^\d?\d.\d?\d.\d?\d"/g, '"lerna": "^XX.XX.XX"')
-      .replaceAll(/"yargs": "\^\d?\d.\d?\d.\d?\d"/g, '"yargs": "^XX.XX.XX"');
+      .replaceAll(/"yargs": "\^\d?\d.\d?\d.\d?\d"/g, '"yargs": "^XX.XX.XX"')
+      .replaceAll(/in \d*\.\d*s/g, "in X.Xs");
   },
   test(val) {
     return val != null && typeof val === "string";
@@ -1186,13 +1187,13 @@ describe("lerna-create", () => {
         lerna notice filter including "test-script"
         lerna info filter [ 'test-script' ]
         lerna info Executing command in 1 package: "npm run test"
-        lerna info run Ran npm script 'test' in 'test-script' in 0.2s:
+        lerna info run Ran npm script 'test' in 'test-script' in X.Xs:
 
         > test-script@0.0.0 test
         > node ./__tests__/test-script.test.js
 
         testScript tests passed
-        lerna success run Ran npm script 'test' in 1 package in 0.2s:
+        lerna success run Ran npm script 'test' in 1 package in X.Xs:
         lerna success - test-script
 
       `);
