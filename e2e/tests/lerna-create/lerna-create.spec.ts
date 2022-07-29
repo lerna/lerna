@@ -1175,4 +1175,27 @@ describe("lerna-create", () => {
       });
     });
   });
+
+  describe("created test script", () => {
+    it("should run and succeed", async () => {
+      await fixture.lerna("create test-script -y");
+      const result = await fixture.lerna("run test --scope=test-script");
+
+      expect(result.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna notice filter including "test-script"
+        lerna info filter [ 'test-script' ]
+        lerna info Executing command in 1 package: "npm run test"
+        lerna info run Ran npm script 'test' in 'test-script' in 0.2s:
+
+        > test-script@0.0.0 test
+        > node ./__tests__/test-script.test.js
+
+        testScript tests passed
+        lerna success run Ran npm script 'test' in 1 package in 0.2s:
+        lerna success - test-script
+
+      `);
+    });
+  });
 });
