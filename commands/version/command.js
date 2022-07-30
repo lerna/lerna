@@ -165,6 +165,14 @@ exports.builder = (yargs, composed) => {
       alias: "yes",
       type: "boolean",
     },
+    "use-neo": {
+      type: "boolean",
+      default: false,
+    },
+    "dry-run": {
+      type: "boolean",
+      default: false,
+    },
   };
 
   if (composed) {
@@ -266,11 +274,19 @@ exports.builder = (yargs, composed) => {
         log.warn("EDOUBLEDASH", "This will cause an error in a future major version.");
       }
 
+      if (argv.dryRun && !argv.useNeo) {
+        log.error("invalid", "--dry-run is only available with --use-neo");
+        process.exit(1);
+      }
+
       return argv;
     });
 };
 
 exports.handler = function handler(argv) {
+  if (argv.useNeo) {
+    return require("./neo")(argv);
+  }
   return require(".")(argv);
 };
 
