@@ -30,6 +30,8 @@ test("updateLockfileVersion with lockfile v2", async () => {
   const [pkg] = await getPackages(cwd);
 
   pkg.version = "2.0.0";
+  pkg.dependencies["package-1"] = "^2.0.0";
+  pkg.devDependencies["package-2"] = "3.0.0";
 
   const returnedLockfilePath = await updateLockfileVersion(pkg);
 
@@ -37,7 +39,9 @@ test("updateLockfileVersion with lockfile v2", async () => {
   expect(Array.from(loadJsonFile.registry.keys())).toStrictEqual(["/packages/package-1"]);
   const updatedLockfile = fs.readJSONSync(returnedLockfilePath);
   expect(updatedLockfile).toHaveProperty("version", "2.0.0");
-  expect(updatedLockfile).toHaveProperty(["packages", "", "version"], "2.0.0");
+  expect(updatedLockfile).toHaveProperty(["packages", "", "dependencies", "package-1"], "^2.0.0");
+  expect(updatedLockfile).toHaveProperty(["packages", "", "dependencies", "tiny-tarball"], "^1.0.0");
+  expect(updatedLockfile).toHaveProperty(["packages", "", "devDependencies", "package-2"], "3.0.0");
 });
 
 test("updateLockfileVersion without sibling lockfile", async () => {

@@ -2,6 +2,10 @@
   "name": "package-1",
   "version": "1.0.0",
   "dependencies": {
-    "tiny-tarball": "^1.0.0"
+    "tiny-tarball": "^1.0.0",
+    "package-2": "^1.0.0"
+  },
+  "devDependencies": {
+    "package-3": "2.0.0"
   }
 }
