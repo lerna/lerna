@@ -1,20 +1,14 @@
 ---
 id: distribute-tasks
 title: Distribute Task Execution
-type: explanation
+type: recipe
 ---
 
 # Distribute Task Execution (DTE)
 
-Lerna (via Nx) supports running commands across multiple machines. You can either set it up by hand (by using batching
-or
-binning) or use Nx Cloud.
+Lerna (via Nx) supports running commands across multiple machines. You can either set it up by hand (by using batching or binning) or use Nx Cloud.
 
 [Read the comparison of the two approaches.](https://blog.nrwl.io/distributing-ci-binning-and-distributed-task-execution-632fe31a8953?source=friends_link&sk=5120b7ff982730854ed22becfe7a640a)
-
-We'll use some illustrations from Nrwlian Nicole Oliver to help explain Distributed Task Execution.
-
-![how does distributed task execution work in Nx Cloud?](../images/dte/how-does-dte-work.jpeg)
 
 ## Set up
 
@@ -30,58 +24,36 @@ nx generate @nrwl/workspace:ci-workflow --ci=github
 
 The `--ci` flag can be `github`, `circleci` or `azure`.  For more details on setting up DTE, read [this guide](https://nx.dev/nx-cloud/set-up/set-up-dte).
 
-## What's a Task?
+## CI Execution Flow
 
-![what's a task? project + target (i.e. shared-product-ui + test).  each run contains many tasks.  affected:test contains shared-product-ui:test, product-page:test, shared-e2e-util:test and shared-ui:test](../images/dte/whats-a-task.jpeg)
+There are two main parts to the CI set up:
 
-A task, from Lerna's perspective, is a target running on a project.  i.e. The target `test` running on the project `shared-product-ui` is a task.  For more information about tasks, see the [Run Tasks article](./run-tasks).
+1. The main job that controls what is going to be executed
+2. The agent jobs that actually execute the tasks
 
-## Nx Cloud Schedules Your CI Tasks Automatically
+The main job execution flow looks like this:
 
-![when you turn on DTE, Nx will schedule your commands' tasks in CI.  for example, say you want to run these 3 commands to verify your code: nx affected --target=lint, nx affected --target=test and nx affected --target=build](../images/dte/schedule-tasks.jpeg)
+```yml
+    # Coordinate the agents to run the tasks
+    - npx nx-cloud start-ci-run
+    # Run any commands you want here
+    - nx affected --target=lint
+    - nx affected --target=test
+    - nx affected --target=build
+    # Stop any run away agents
+    - npx nx-cloud stop-all-agents
+```
 
-Let's imagine for every PR in CI, you want to lint, test and build all affected projects.  When you write your CI workflow, you have no way of knowing how many projects will be affected by each PR or how long each task will take.  No matter how carefully you set things up, there will be wasted time if you manually assign a static number of agent machines for linting, testing and building.  This approach is called binning.
+The agent job execution flow is very simple:
 
-Luckily, with distributed task execution, Nx Cloud can dynamically assign tasks to agents as they become available.
+```yml
+    # Wait for tasks to execute
+    - npx nx-cloud start-agent
+```
 
-## Nx Cloud Efficiently Orchestrates Agents
+## Illustrated Guide
 
-![Nx will automatically schedule tasks w/agents you assign in CI.](../images/dte/use-agents.jpeg)
+For more details about how distributed task execution works, check out the [illustrated guide](../concepts/dte-guide) by Nrwlian [Nicole Oliver](https://twitter.com/nixcodes).
 
-When you set up DTE, you define (1) the tasks that you want to run and (2) the number of agents that are available for Nx Cloud to use.  Then the Nx Cloud orchestrator distributes tasks to agents efficiently - so that all the agents are being fully utilized and your CI process finishes as soon as possible.
-
-## Task Execution Order Matters
-
-![but don't some tasks depend on others' results?  Yep! Nx knows about your dependency tree, so it will execute tasks in the right order and make sure the results are available where they're needed.](../images/dte/task-dependencies.jpeg)
-
-There are some tasks that need to be executed before other tasks, but Nx Cloud takes that into account when it assigns tasks to agents.  For a more detailed look at defining those dependencies, read the [Run Tasks article](./run-tasks).
-
-## Why Distribute Tasks?
-
-![Result: Faster Builds!](../images/dte/faster-builds.jpeg)
-
-Efficiently parallelizing your CI process across many agents can dramatically speed up your CI, which helps developers identify problems faster and get more work done.
-
-## What Does It Cost?
-
-Nx Cloud is FREE for open source projects.  Contact cloud-support@nrwl.io to get set up.
-
-For closed source projects, the first 500 computation hours per month are free.  Most workspaces don't exceed this amount.  No credit card is required.  After 500 hours, the cost is $1 per computation hour.
-
-For more details, see the [Nx Cloud pricing page](https://nx.app/pricing).
-
-## Security
-
-Your actual code is not stored in the cloud, but the hashed inputs and cached results of your tasks are.  It is possible to enable end to end encryption of that data so that no one can view that information without your key.  Also, if you want to host Nx Cloud on your own servers, you can sign up for Nx Private Cloud.
-
-## Example
-
-[This is an example repo](https://github.com/vsavkin/lerna-dte) showing how easy it is to set up distributed task
-execution, showing the performance gains, and comparing to sharding/binning.
-
-## Illustration
-
-Here is the full illustrated explanation page that [Nicole Oliver](https://twitter.com/nixcodes) made:
-
-![How Does DTE Work Explainer](../images/dte/nx-cloud-how-does-dte-work.png)
+[![how does distributed task execution work in Nx Cloud?](../images/dte/how-does-dte-work.jpeg)](../concepts/dte-guide)
 

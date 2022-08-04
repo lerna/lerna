@@ -31,7 +31,7 @@ const sidebars = {
         "features/project-graph",
         "features/distribute-tasks",
         "features/version-and-publish",
-        "features/editor-plugins",
+        "features/editor-integrations",
       ],
       link: {
         type: "generated-index",
@@ -43,7 +43,13 @@ const sidebars = {
     {
       type: "category",
       label: "Concepts",
-      items: ["concepts/hoisting"],
+      items: [
+        "concepts/alternate-bootstrapping-methods",
+        "concepts/hoisting",
+        "concepts/task-pipeline-configuration",
+        "concepts/how-caching-works",
+        "concepts/dte-guide",
+      ],
       link: {
         type: "generated-index",
         title: "Concepts",
