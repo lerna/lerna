@@ -11,7 +11,7 @@ interface RunCommandOptions {
   silent?: boolean;
 }
 
-type PackageManager = "npm";
+type PackageManager = "npm" | "yarn";
 
 interface FixtureCreateOptions {
   name: string;
@@ -80,6 +80,10 @@ export class Fixture {
       await fixture.lernaInit();
     }
 
+    if (packageManager !== "npm") {
+      await fixture.overrideLernaConfig({ npmClient: packageManager });
+    }
+
     if (installDependencies) {
       await fixture.install();
     }
@@ -134,13 +138,19 @@ export class Fixture {
     );
   }
 
-  private async revertDefaultInitOptions(): Promise<void> {
-    await this.updateJson("lerna.json", (json) => ({
+  async overrideLernaConfig(lernaConfig: Record<string, any>): Promise<void> {
+    return this.updateJson("lerna.json", (json) => ({
       ...json,
+      ...lernaConfig,
+    }));
+  }
+
+  private async revertDefaultInitOptions(): Promise<void> {
+    await this.overrideLernaConfig({
       useNx: false,
       useWorkspaces: false,
       packages: ["packages/*"],
-    }));
+    });
     await this.updateJson("package.json", (json) => {
       const newJson = { ...json };
       delete newJson.workspaces;
@@ -156,6 +166,8 @@ export class Fixture {
     switch (this.packageManager) {
       case "npm":
         return this.exec(`npm --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
+      case "yarn":
+        return this.exec(`yarn --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
