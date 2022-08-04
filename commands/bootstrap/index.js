@@ -38,6 +38,13 @@ class BootstrapCommand extends Command {
   initialize() {
     const { registry, npmClient = "npm", npmClientArgs = [], mutex, hoist, nohoist } = this.options;
 
+    if (npmClient === "pnpm") {
+      throw new ValidationError(
+        "EWORKSPACES",
+        "Bootstraping with pnpm is not supported. Use pnpm directly to manage dependencies (https://pnpm.io/cli/install)."
+      );
+    }
+
     if (npmClient === "yarn" && hoist) {
       throw new ValidationError(
         "EWORKSPACES",
