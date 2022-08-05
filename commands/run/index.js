@@ -219,7 +219,7 @@ class RunCommand extends Command {
     const targetDependenciesAreDefined =
       Object.keys(nxJson.targetDependencies || nxJson.targetDefaults || {}).length > 0;
     const targetDependencies =
-      this.toposort && !targetDependenciesAreDefined
+      this.toposort && !this.options.parallel && !targetDependenciesAreDefined
         ? {
             [this.script]: [
               {
@@ -231,7 +231,7 @@ class RunCommand extends Command {
         : {};
 
     const outputStyle = this.options.stream
-      ? this.options.prefix !== false
+      ? this.prefix
         ? "stream"
         : "stream-without-prefixes"
       : "dynamic";

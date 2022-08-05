@@ -1,7 +1,7 @@
 ---
 id: version-and-publish
 title: Version and Publish
-type: explanation
+type: explainer
 ---
 
 # Version and Publish
