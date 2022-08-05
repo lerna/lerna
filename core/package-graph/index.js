@@ -62,8 +62,36 @@ class PackageGraph extends Map {
         // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
         // As they apparently have no intention of being compatible, we have to do it for them.
         // @see https://github.com/yarnpkg/yarn/issues/4212
-        const spec = graphDependencies[depName].replace(/^link:/, "file:");
+        let spec = graphDependencies[depName].replace(/^link:/, "file:");
+
+        // Support workspace: protocol for pnpm and yarn 2+ (https://pnpm.io/workspaces#workspace-protocol-workspace)
+        const isWorkspaceSpec = /^workspace:/.test(spec);
+
+        let fullWorkspaceSpec;
+        let workspaceAlias;
+        if (isWorkspaceSpec) {
+          fullWorkspaceSpec = spec;
+          spec = spec.replace(/^workspace:/, "");
+
+          if (!depNode) {
+            throw new ValidationError(
+              "EWORKSPACE",
+              `Package specification "${depName}@${spec}" could not be resolved within the workspace. To use the 'workspace:' protocol, ensure that a package with name "${depName}" exists in the current workspace.`
+            );
+          }
+
+          // replace aliases (https://pnpm.io/workspaces#referencing-workspace-packages-through-aliases)
+          if (spec === "*" || spec === "^" || spec === "~") {
+            workspaceAlias = spec;
+            const prefix = spec === "*" ? "" : spec;
+            const version = depNode.version;
+            spec = `${prefix}${version}`;
+          }
+        }
+
         const resolved = npa.resolve(depName, spec, currentNode.location);
+        resolved.workspaceSpec = fullWorkspaceSpec;
+        resolved.workspaceAlias = workspaceAlias;
 
         if (!depNode) {
           // it's an external dependency, store the resolution and bail
@@ -75,6 +103,14 @@ class PackageGraph extends Map {
           currentNode.localDependencies.set(depName, resolved);
           depNode.localDependents.set(currentName, currentNode);
         } else {
+          if (isWorkspaceSpec) {
+            // pnpm refuses to resolve remote dependencies when using the workspace: protocol, so lerna does too. See: https://pnpm.io/workspaces#workspace-protocol-workspace.
+            throw new ValidationError(
+              "EWORKSPACE",
+              `Package specification "${depName}@${spec}" could not be resolved within the workspace. To reference a non-matching, remote version of a local dependency, remove the 'workspace:' prefix.`
+            );
+          }
+
           // non-matching semver of a local dependency
           currentNode.externalDependencies.set(depName, resolved);
         }

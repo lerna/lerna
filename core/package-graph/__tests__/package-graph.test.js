@@ -15,10 +15,10 @@ describe("PackageGraph", () => {
       ];
 
       expect(() => new PackageGraph(pkgs)).toThrowErrorMatchingInlineSnapshot(`
-"Package name \\"pkg-2\\" used in multiple packages:
-	/test/pkg-2
-	/test/pkg-3"
-`);
+        "Package name \\"pkg-2\\" used in multiple packages:
+        	/test/pkg-2
+        	/test/pkg-3"
+      `);
     });
 
     it("externalizes non-satisfied semver of local sibling", () => {
@@ -91,6 +91,240 @@ describe("PackageGraph", () => {
 
       expect(pkg1.localDependents.has("pkg-2")).toBe(true);
       expect(pkg2.localDependencies.has("pkg-1")).toBe(true);
+    });
+
+    describe("with spec containing workspace: prefix", () => {
+      describe("localizes sibling when semver is satisfied", () => {
+        it("with exact match", () => {
+          const packages = [
+            new Package(
+              {
+                name: "test-1",
+                version: "1.0.2",
+              },
+              "/test/test-1"
+            ),
+            new Package(
+              {
+                name: "test-2",
+                version: "1.0.0",
+                dependencies: {
+                  "test-1": "workspace:1.0.2",
+                },
+              },
+              "/test/test-2"
+            ),
+          ];
+          const graph = new PackageGraph(packages, "allDependencies");
+          const package1 = graph.get("test-1");
+          const package2 = graph.get("test-2");
+
+          expect(package1.localDependents.has("test-2")).toBe(true);
+          expect(package2.localDependencies.has("test-1")).toBe(true);
+          expect(package2.localDependencies.get("test-1").workspaceSpec).toBe("workspace:1.0.2");
+          expect(package2.localDependencies.get("test-1").workspaceAlias).toBeUndefined();
+        });
+
+        it("with ^", () => {
+          const packages = [
+            new Package(
+              {
+                name: "test-1",
+                version: "1.1.2",
+              },
+              "/test/test-1"
+            ),
+            new Package(
+              {
+                name: "test-2",
+                version: "1.0.0",
+                dependencies: {
+                  "test-1": "workspace:^1.0.0",
+                },
+              },
+              "/test/test-2"
+            ),
+          ];
+          const graph = new PackageGraph(packages, "allDependencies");
+          const package1 = graph.get("test-1");
+          const package2 = graph.get("test-2");
+
+          expect(package1.localDependents.has("test-2")).toBe(true);
+          expect(package2.localDependencies.has("test-1")).toBe(true);
+          expect(package2.localDependencies.get("test-1").workspaceSpec).toBe("workspace:^1.0.0");
+          expect(package2.localDependencies.get("test-1").workspaceAlias).toBeUndefined();
+        });
+
+        it("with ~", () => {
+          const packages = [
+            new Package(
+              {
+                name: "test-1",
+                version: "1.1.2",
+              },
+              "/test/test-1"
+            ),
+            new Package(
+              {
+                name: "test-2",
+                version: "1.0.0",
+                dependencies: {
+                  "test-1": "workspace:~1.1.0",
+                },
+              },
+              "/test/test-2"
+            ),
+          ];
+          const graph = new PackageGraph(packages, "allDependencies");
+          const package1 = graph.get("test-1");
+          const package2 = graph.get("test-2");
+
+          expect(package1.localDependents.has("test-2")).toBe(true);
+          expect(package2.localDependencies.has("test-1")).toBe(true);
+          expect(package2.localDependencies.get("test-1").workspaceSpec).toBe("workspace:~1.1.0");
+          expect(package2.localDependencies.get("test-1").workspaceAlias).toBeUndefined();
+        });
+      });
+
+      it("localizes sibling when using * alias", () => {
+        const packages = [
+          new Package(
+            {
+              name: "test-1",
+              version: "1.0.0",
+            },
+            "/test/test-1"
+          ),
+          new Package(
+            {
+              name: "test-2",
+              version: "1.0.0",
+              dependencies: {
+                "test-1": "workspace:*",
+              },
+            },
+            "/test/test-2"
+          ),
+        ];
+        const graph = new PackageGraph(packages, "allDependencies");
+        const package1 = graph.get("test-1");
+        const package2 = graph.get("test-2");
+
+        expect(package1.localDependents.has("test-2")).toBe(true);
+        expect(package2.localDependencies.has("test-1")).toBe(true);
+        expect(package2.localDependencies.get("test-1").workspaceSpec).toBe("workspace:*");
+        expect(package2.localDependencies.get("test-1").workspaceAlias).toBe("*");
+      });
+
+      it("localizes sibling when using ~ alias", () => {
+        const packages = [
+          new Package(
+            {
+              name: "test-1",
+              version: "1.0.0",
+            },
+            "/test/test-1"
+          ),
+          new Package(
+            {
+              name: "test-2",
+              version: "1.0.0",
+              dependencies: {
+                "test-1": "workspace:~",
+              },
+            },
+            "/test/test-2"
+          ),
+        ];
+        const graph = new PackageGraph(packages, "allDependencies");
+        const package1 = graph.get("test-1");
+        const package2 = graph.get("test-2");
+
+        expect(package1.localDependents.has("test-2")).toBe(true);
+        expect(package2.localDependencies.has("test-1")).toBe(true);
+        expect(package2.localDependencies.get("test-1").workspaceSpec).toBe("workspace:~");
+        expect(package2.localDependencies.get("test-1").workspaceAlias).toBe("~");
+      });
+
+      it("localizes sibling when using ^ alias", () => {
+        const packages = [
+          new Package(
+            {
+              name: "test-1",
+              version: "1.0.0",
+            },
+            "/test/test-1"
+          ),
+          new Package(
+            {
+              name: "test-2",
+              version: "1.0.0",
+              dependencies: {
+                "test-1": "workspace:^",
+              },
+            },
+            "/test/test-2"
+          ),
+        ];
+        const graph = new PackageGraph(packages, "allDependencies");
+        const package1 = graph.get("test-1");
+        const package2 = graph.get("test-2");
+
+        expect(package1.localDependents.has("test-2")).toBe(true);
+        expect(package2.localDependencies.has("test-1")).toBe(true);
+        expect(package2.localDependencies.get("test-1").workspaceSpec).toBe("workspace:^");
+        expect(package2.localDependencies.get("test-1").workspaceAlias).toBe("^");
+      });
+
+      it("throws an error when sibling package exists in the workspace, but with a version that does not match the specification", () => {
+        const packages = [
+          new Package(
+            {
+              name: "test-1",
+              version: "1.0.9",
+            },
+            "/test/test-1"
+          ),
+          new Package(
+            {
+              name: "test-2",
+              version: "1.0.0",
+              dependencies: {
+                "test-1": "workspace:^1.1.0",
+              },
+            },
+            "/test/test-2"
+          ),
+        ];
+        expect(() => new PackageGraph(packages)).toThrowErrorMatchingInlineSnapshot(
+          `"Package specification \\"test-1@^1.1.0\\" could not be resolved within the workspace. To reference a non-matching, remote version of a local dependency, remove the 'workspace:' prefix."`
+        );
+      });
+
+      it("throws an error when sibling package does not exist in the workspace, regardless of version specification", () => {
+        const packages = [
+          new Package(
+            {
+              name: "test-1",
+              version: "1.0.0",
+            },
+            "/test/test-1"
+          ),
+          new Package(
+            {
+              name: "test-2",
+              version: "1.0.0",
+              dependencies: {
+                "test-3": "workspace:^1.0.0",
+              },
+            },
+            "/test/test-2"
+          ),
+        ];
+        expect(() => new PackageGraph(packages)).toThrowErrorMatchingInlineSnapshot(
+          `"Package specification \\"test-3@^1.0.0\\" could not be resolved within the workspace. To use the 'workspace:' protocol, ensure that a package with name \\"test-3\\" exists in the current workspace."`
+        );
+      });
     });
   });
 
