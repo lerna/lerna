@@ -298,6 +298,25 @@ describe("RunCommand", () => {
     });
   });
 
+  describe("in a pnpm repo with workspaces", () => {
+    it("runs a script on all packages", async () => {
+      const testDir = await initFixture("pnpm");
+      await lernaRun(testDir)("my-script");
+
+      expect(output.logged()).toMatchInlineSnapshot(`
+        "package-1
+        package-2"
+      `);
+    });
+
+    it("runs a script only in scoped packages", async () => {
+      const testDir = await initFixture("pnpm");
+      await lernaRun(testDir)("my-script", "--scope", "package-1");
+
+      expect(output.logged()).toMatchInlineSnapshot(`"package-1"`);
+    });
+  });
+
   // this is a temporary set of tests, which will be replaced by verdacio-driven tests
   // once the required setup is fully set up
   describe("in a repo powered by Nx", () => {
