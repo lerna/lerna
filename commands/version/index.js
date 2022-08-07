@@ -9,6 +9,7 @@ const pPipe = require("p-pipe");
 const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
+const path = require("path");
 
 const { Command } = require("@lerna/command");
 const { recommendVersion, updateChangelog } = require("@lerna/conventional-commits");
@@ -20,6 +21,7 @@ const { createRunner } = require("@lerna/run-lifecycle");
 const { runTopologically } = require("@lerna/run-topologically");
 const { ValidationError } = require("@lerna/validation-error");
 const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
+const childProcess = require("@lerna/child-process");
 
 const { getCurrentBranch } = require("./lib/get-current-branch");
 const { gitAdd } = require("./lib/git-add");
@@ -581,6 +583,15 @@ class VersionCommand extends Command {
 
     if (!independentVersions) {
       this.project.version = this.globalVersion;
+
+      if (this.options.npmClient === "pnpm") {
+        chain = chain.then(() =>
+          childProcess.exec("pnpm", ["install", "--lockfile-only"], this.execOpts).then(() => {
+            const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
+            changedFiles.add(lockfilePath);
+          })
+        );
+      }
 
       if (conventionalCommits && changelog) {
         chain = chain.then(() =>
