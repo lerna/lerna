@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.4.0](https://github.com/lerna/lerna/compare/v5.3.0...v5.4.0) (2022-08-08)
+
+
+### Bug Fixes
+
+* **create:** default test script no longer errors ([#3266](https://github.com/lerna/lerna/issues/3266)) ([dfd30fa](https://github.com/lerna/lerna/commit/dfd30fa1b141512c66998ce95777246c38eb1019))
+
+
+
+
+
 # [5.3.0](https://github.com/lerna/lerna/compare/v5.2.0...v5.3.0) (2022-07-27)
 
 **Note:** Version bump only for package @lerna/create
