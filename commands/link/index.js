@@ -6,6 +6,7 @@ const slash = require("slash");
 const { Command } = require("@lerna/command");
 const { PackageGraph } = require("@lerna/package-graph");
 const { symlinkDependencies } = require("@lerna/symlink-dependencies");
+const { ValidationError } = require("@lerna/validation-error");
 
 module.exports = factory;
 
@@ -19,6 +20,13 @@ class LinkCommand extends Command {
   }
 
   initialize() {
+    if (this.options.npmClient === "pnpm") {
+      throw new ValidationError(
+        "EWORKSPACES",
+        "Link is not supported with pnpm workspaces, since pnpm will automatically link dependencies during `pnpm install`. See the pnpm docs for details: https://pnpm.io/workspaces."
+      );
+    }
+
     this.allPackages = this.packageGraph.rawPackageList;
 
     if (this.options.contents) {

@@ -41,7 +41,7 @@ class BootstrapCommand extends Command {
     if (npmClient === "pnpm") {
       throw new ValidationError(
         "EWORKSPACES",
-        "Bootstraping with pnpm is not supported. Use pnpm directly to manage dependencies (https://pnpm.io/cli/install)."
+        "Bootstrapping with pnpm is not supported. Use pnpm directly to manage dependencies (https://pnpm.io/cli/install)."
       );
     }
 

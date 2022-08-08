@@ -46,44 +46,44 @@ describe("LinkCommand", () => {
       await lernaLink(testDir)();
 
       expect(symlinkedDirectories(testDir)).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "_src": "packages/package-1",
-    "dest": "packages/package-2/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-1",
-    "dest": "packages/package-3/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-2",
-    "dest": "packages/package-3/node_modules/@test/package-2",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-2/cli.js",
-    "dest": "packages/package-3/node_modules/.bin/package-2",
-    "type": "exec",
-  },
-  Object {
-    "_src": "packages/package-3",
-    "dest": "packages/package-4/node_modules/package-3",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-3/cli1.js",
-    "dest": "packages/package-4/node_modules/.bin/package3cli1",
-    "type": "exec",
-  },
-  Object {
-    "_src": "packages/package-3/cli2.js",
-    "dest": "packages/package-4/node_modules/.bin/package3cli2",
-    "type": "exec",
-  },
-]
-`);
+        Array [
+          Object {
+            "_src": "packages/package-1",
+            "dest": "packages/package-2/node_modules/@test/package-1",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-1",
+            "dest": "packages/package-3/node_modules/@test/package-1",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-2",
+            "dest": "packages/package-3/node_modules/@test/package-2",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-2/cli.js",
+            "dest": "packages/package-3/node_modules/.bin/package-2",
+            "type": "exec",
+          },
+          Object {
+            "_src": "packages/package-3",
+            "dest": "packages/package-4/node_modules/package-3",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-3/cli1.js",
+            "dest": "packages/package-4/node_modules/.bin/package3cli1",
+            "type": "exec",
+          },
+          Object {
+            "_src": "packages/package-3/cli2.js",
+            "dest": "packages/package-4/node_modules/.bin/package3cli2",
+            "type": "exec",
+          },
+        ]
+        `);
     });
   });
 
@@ -93,44 +93,44 @@ Array [
       await lernaLink(testDir)();
 
       expect(symlinkedDirectories(testDir)).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "_src": "packages/package-1/dist",
-    "dest": "packages/package-2/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-1/dist",
-    "dest": "packages/package-3/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-2/dist",
-    "dest": "packages/package-3/node_modules/@test/package-2",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-2/dist/cli.js",
-    "dest": "packages/package-3/node_modules/.bin/package-2",
-    "type": "exec",
-  },
-  Object {
-    "_src": "packages/package-3/dist",
-    "dest": "packages/package-4/node_modules/package-3",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-3/dist/cli1.js",
-    "dest": "packages/package-4/node_modules/.bin/package3cli1",
-    "type": "exec",
-  },
-  Object {
-    "_src": "packages/package-3/dist/cli2.js",
-    "dest": "packages/package-4/node_modules/.bin/package3cli2",
-    "type": "exec",
-  },
-]
-`);
+        Array [
+          Object {
+            "_src": "packages/package-1/dist",
+            "dest": "packages/package-2/node_modules/@test/package-1",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-1/dist",
+            "dest": "packages/package-3/node_modules/@test/package-1",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-2/dist",
+            "dest": "packages/package-3/node_modules/@test/package-2",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-2/dist/cli.js",
+            "dest": "packages/package-3/node_modules/.bin/package-2",
+            "type": "exec",
+          },
+          Object {
+            "_src": "packages/package-3/dist",
+            "dest": "packages/package-4/node_modules/package-3",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-3/dist/cli1.js",
+            "dest": "packages/package-4/node_modules/.bin/package3cli1",
+            "type": "exec",
+          },
+          Object {
+            "_src": "packages/package-3/dist/cli2.js",
+            "dest": "packages/package-4/node_modules/.bin/package3cli2",
+            "type": "exec",
+          },
+        ]
+        `);
     });
   });
 
@@ -140,49 +140,49 @@ Array [
       await lernaLink(testDir)();
 
       expect(symlinkedDirectories(testDir)).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "_src": "packages/package-1",
-    "dest": "packages/package-2/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-1",
-    "dest": "packages/package-3/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-1",
-    "dest": "packages/package-4/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-2",
-    "dest": "packages/package-3/node_modules/@test/package-2",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-2/cli.js",
-    "dest": "packages/package-3/node_modules/.bin/package-2",
-    "type": "exec",
-  },
-  Object {
-    "_src": "packages/package-3",
-    "dest": "packages/package-4/node_modules/package-3",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-3/cli1.js",
-    "dest": "packages/package-4/node_modules/.bin/package3cli1",
-    "type": "exec",
-  },
-  Object {
-    "_src": "packages/package-3/cli2.js",
-    "dest": "packages/package-4/node_modules/.bin/package3cli2",
-    "type": "exec",
-  },
-]
-`);
+        Array [
+          Object {
+            "_src": "packages/package-1",
+            "dest": "packages/package-2/node_modules/@test/package-1",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-1",
+            "dest": "packages/package-3/node_modules/@test/package-1",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-1",
+            "dest": "packages/package-4/node_modules/@test/package-1",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-2",
+            "dest": "packages/package-3/node_modules/@test/package-2",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-2/cli.js",
+            "dest": "packages/package-3/node_modules/.bin/package-2",
+            "type": "exec",
+          },
+          Object {
+            "_src": "packages/package-3",
+            "dest": "packages/package-4/node_modules/package-3",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-3/cli1.js",
+            "dest": "packages/package-4/node_modules/.bin/package3cli1",
+            "type": "exec",
+          },
+          Object {
+            "_src": "packages/package-3/cli2.js",
+            "dest": "packages/package-4/node_modules/.bin/package3cli2",
+            "type": "exec",
+          },
+        ]
+        `);
     });
   });
 
@@ -192,44 +192,55 @@ Array [
       await lernaLink(testDir)("--contents", "build");
 
       expect(symlinkedDirectories(testDir)).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "_src": "packages/package-1/build",
-    "dest": "packages/package-2/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-1/build",
-    "dest": "packages/package-3/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-2/build",
-    "dest": "packages/package-3/node_modules/@test/package-2",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-2/build/cli.js",
-    "dest": "packages/package-3/node_modules/.bin/package-2",
-    "type": "exec",
-  },
-  Object {
-    "_src": "packages/package-3/build",
-    "dest": "packages/package-4/node_modules/package-3",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-3/build/cli1.js",
-    "dest": "packages/package-4/node_modules/.bin/package3cli1",
-    "type": "exec",
-  },
-  Object {
-    "_src": "packages/package-3/build/cli2.js",
-    "dest": "packages/package-4/node_modules/.bin/package3cli2",
-    "type": "exec",
-  },
-]
-`);
+        Array [
+          Object {
+            "_src": "packages/package-1/build",
+            "dest": "packages/package-2/node_modules/@test/package-1",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-1/build",
+            "dest": "packages/package-3/node_modules/@test/package-1",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-2/build",
+            "dest": "packages/package-3/node_modules/@test/package-2",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-2/build/cli.js",
+            "dest": "packages/package-3/node_modules/.bin/package-2",
+            "type": "exec",
+          },
+          Object {
+            "_src": "packages/package-3/build",
+            "dest": "packages/package-4/node_modules/package-3",
+            "type": "junction",
+          },
+          Object {
+            "_src": "packages/package-3/build/cli1.js",
+            "dest": "packages/package-4/node_modules/.bin/package3cli1",
+            "type": "exec",
+          },
+          Object {
+            "_src": "packages/package-3/build/cli2.js",
+            "dest": "packages/package-4/node_modules/.bin/package3cli2",
+            "type": "exec",
+          },
+        ]
+        `);
+    });
+  });
+
+  describe("with pnpm", () => {
+    it("should throw validation error", async () => {
+      const testDir = await initFixture("pnpm");
+      const command = lernaLink(testDir)();
+
+      await expect(command).rejects.toThrow(
+        "Link is not supported with pnpm workspaces, since pnpm will automatically link dependencies during `pnpm install`. See the pnpm docs for details: https://pnpm.io/workspaces."
+      );
     });
   });
 });
