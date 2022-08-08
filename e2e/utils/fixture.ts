@@ -2,6 +2,7 @@ import { joinPathFragments, readJsonFile, writeJsonFile } from "@nrwl/devkit";
 import { exec, spawn } from "child_process";
 import { ensureDir, ensureDirSync, readFile, remove, writeFile } from "fs-extra";
 import isCI from "is-ci";
+import { dump } from "js-yaml";
 import { dirSync } from "tmp";
 
 interface RunCommandOptions {
@@ -11,7 +12,7 @@ interface RunCommandOptions {
   silent?: boolean;
 }
 
-type PackageManager = "npm" | "yarn";
+type PackageManager = "npm" | "yarn" | "pnpm";
 
 interface FixtureCreateOptions {
   name: string;
@@ -80,15 +81,29 @@ export class Fixture {
       await fixture.lernaInit();
     }
 
+    await fixture.initializeNpmEnvironment(packageManager, installDependencies);
+
+    return fixture;
+  }
+
+  private async initializeNpmEnvironment(
+    packageManager: PackageManager,
+    installDependencies: boolean
+  ): Promise<void> {
     if (packageManager !== "npm") {
-      await fixture.overrideLernaConfig({ npmClient: packageManager });
+      await this.overrideLernaConfig({ npmClient: packageManager });
+    }
+
+    if (packageManager === "pnpm") {
+      const pnpmWorkspaceContent = dump({
+        packages: ["packages/*", "!**/__test__/**"],
+      });
+      writeFile(this.getWorkspacePath("pnpm-workspace.yaml"), pnpmWorkspaceContent, "utf-8");
     }
 
     if (installDependencies) {
-      await fixture.install();
+      await this.install();
     }
-
-    return fixture;
   }
 
   /**
@@ -168,6 +183,8 @@ export class Fixture {
         return this.exec(`npm --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
       case "yarn":
         return this.exec(`yarn --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
+      case "pnpm":
+        return this.exec(`pnpm --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
