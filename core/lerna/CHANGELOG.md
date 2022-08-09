@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.4.0](https://github.com/lerna/lerna/compare/v5.3.0...v5.4.0) (2022-08-08)
+
+
+### Bug Fixes
+
+* **core:** update nx version range base to latest ([#3283](https://github.com/lerna/lerna/issues/3283)) ([241cdde](https://github.com/lerna/lerna/commit/241cdded18cbec4161e0bde675adbcf60e5ea5a8))
+
+
+
+
+
 # [5.3.0](https://github.com/lerna/lerna/compare/v5.2.0...v5.3.0) (2022-07-27)
 
 
