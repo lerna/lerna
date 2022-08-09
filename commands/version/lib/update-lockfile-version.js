@@ -18,6 +18,12 @@ function updateLockfileVersion(pkg) {
 
       if (obj.packages && obj.packages[""]) {
         obj.packages[""].version = pkg.version;
+        if (obj.packages[""].dependencies) {
+          obj.packages[""].dependencies = pkg.dependencies;
+        }
+        if (obj.packages[""].devDependencies) {
+          obj.packages[""].devDependencies = pkg.devDependencies;
+        }
       }
 
       return writeJsonFile(lockfilePath, obj, {
