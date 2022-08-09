@@ -81,15 +81,16 @@ export class Fixture {
       await fixture.lernaInit();
     }
 
-    await fixture.initializeNpmEnvironment(packageManager, installDependencies);
+    await fixture.initializeNpmEnvironment(packageManager);
+
+    if (installDependencies) {
+      await fixture.install();
+    }
 
     return fixture;
   }
 
-  private async initializeNpmEnvironment(
-    packageManager: PackageManager,
-    installDependencies: boolean
-  ): Promise<void> {
+  private async initializeNpmEnvironment(packageManager: PackageManager): Promise<void> {
     if (packageManager !== "npm") {
       await this.overrideLernaConfig({ npmClient: packageManager });
     }
@@ -99,10 +100,6 @@ export class Fixture {
         packages: ["packages/*", "!**/__test__/**"],
       });
       writeFile(this.getWorkspacePath("pnpm-workspace.yaml"), pnpmWorkspaceContent, "utf-8");
-    }
-
-    if (installDependencies) {
-      await this.install();
     }
   }
 
