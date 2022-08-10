@@ -1,11 +1,11 @@
 import { joinPathFragments, readJsonFile, writeJsonFile } from "@nrwl/devkit";
 import { exec, spawn } from "child_process";
-import { ensureDir, ensureDirSync, readFile, remove, writeFile } from "fs-extra";
+import { ensureDir, ensureDirSync, existsSync, readFile, remove, writeFile } from "fs-extra";
 import isCI from "is-ci";
 import { dump } from "js-yaml";
 import { dirSync } from "tmp";
 
-interface RunCommandOptions {
+export interface RunCommandOptions {
   silenceError?: boolean;
   env?: Record<string, string>;
   cwd?: string;
@@ -23,7 +23,7 @@ interface FixtureCreateOptions {
   forceDeterministicTerminalOutput?: boolean;
 }
 
-type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string };
+export type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string };
 
 const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4872/";
@@ -77,8 +77,11 @@ export class Fixture {
       await fixture.createEmptyDirectoryForWorkspace();
     }
 
+    await fixture.setNpmRegistry(packageManager);
+
     if (runLernaInit) {
-      await fixture.lernaInit();
+      const initOptions = packageManager === "pnpm" ? ({ keepDefaultOptions: true } as const) : {};
+      await fixture.lernaInit("", initOptions);
     }
 
     await fixture.initializeNpmEnvironment(packageManager);
@@ -90,8 +93,14 @@ export class Fixture {
     return fixture;
   }
 
+  private async setNpmRegistry(packageManager: PackageManager): Promise<void> {
+    if (packageManager === "pnpm") {
+      await this.exec(`echo "registry=${REGISTRY}" > .npmrc`);
+    }
+  }
+
   private async initializeNpmEnvironment(packageManager: PackageManager): Promise<void> {
-    if (packageManager !== "npm") {
+    if (packageManager !== "npm" && existsSync(joinPathFragments(this.fixtureWorkspacePath, "lerna.json"))) {
       await this.overrideLernaConfig({ npmClient: packageManager });
     }
 
@@ -99,7 +108,7 @@ export class Fixture {
       const pnpmWorkspaceContent = dump({
         packages: ["packages/*", "!**/__test__/**"],
       });
-      writeFile(this.getWorkspacePath("pnpm-workspace.yaml"), pnpmWorkspaceContent, "utf-8");
+      await writeFile(this.getWorkspacePath("pnpm-workspace.yaml"), pnpmWorkspaceContent, "utf-8");
     }
   }
 
@@ -142,10 +151,26 @@ export class Fixture {
    * Resolve the locally published version of lerna and run the `init` command, with an optionally
    * provided arguments. Reverts useNx and useWorkspaces to false when options.keepDefaultOptions is not provided, since those options are off for most users.
    */
-  async lernaInit(args?: string, options?: { keepDefaultOptions: true }): Promise<RunCommandResult> {
-    return this.exec(
-      `npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()} init ${args || ""}`
-    ).then((initResult) =>
+  async lernaInit(args?: string, options?: { keepDefaultOptions?: true }): Promise<RunCommandResult> {
+    let execCommandResult: Promise<RunCommandResult>;
+    switch (this.packageManager) {
+      case "npm":
+        execCommandResult = this.exec(
+          `npx --registry=${REGISTRY} --yes lerna@${getPublishedVersion()} init ${args || ""}`
+        );
+        break;
+      case "yarn":
+        execCommandResult = this.exec(
+          `npx --registry=${REGISTRY} --yes lerna@${getPublishedVersion()} init ${args || ""}`
+        );
+        break;
+      case "pnpm":
+        execCommandResult = this.exec(`pnpm dlx lerna@${getPublishedVersion()} init ${args || ""}`);
+        break;
+      default:
+        throw new Error(`Unsupported package manager: ${this.packageManager}`);
+    }
+    return execCommandResult.then((initResult) =>
       options?.keepDefaultOptions ? initResult : this.revertDefaultInitOptions().then(() => initResult)
     );
   }
@@ -196,8 +221,16 @@ export class Fixture {
     opts: { silenceError?: true; allowNetworkRequests?: true } = {}
   ): Promise<RunCommandResult> {
     const offlineFlag = opts.allowNetworkRequests ? "" : "--offline ";
-    // Ensure we reference the locally installed copy of lerna
-    return this.exec(`npx ${offlineFlag}--no lerna ${args}`, { silenceError: opts.silenceError });
+    switch (this.packageManager) {
+      case "npm":
+        return this.exec(`npx ${offlineFlag}--no lerna ${args}`, { silenceError: opts.silenceError });
+      case "yarn":
+        return this.exec(`npx ${offlineFlag}--no lerna ${args}`, { silenceError: opts.silenceError });
+      case "pnpm":
+        return this.exec(`pnpm exec lerna ${args}`, { silenceError: opts.silenceError });
+      default:
+        throw new Error(`Unsupported package manager: ${this.packageManager}`);
+    }
   }
 
   async addNxToWorkspace(): Promise<void> {
