@@ -387,5 +387,24 @@ describe("core-command", () => {
         })
       );
     });
+
+    it("throws ENOWORKSPACES when npm client is pnpm and useWorkspaces is not true", async () => {
+      const cwd = await initFixture("basic");
+
+      const lernaConfigPath = path.join(cwd, "lerna.json");
+      const lernaConfig = await fs.readJson(lernaConfigPath);
+      await fs.writeJson(lernaConfigPath, {
+        ...lernaConfig,
+        npmClient: "pnpm",
+      });
+
+      await expect(testFactory({ cwd })).rejects.toThrow(
+        expect.objectContaining({
+          prefix: "ENOWORKSPACES",
+          message:
+            "Usage of pnpm without workspaces is not supported. To use pnpm with lerna, set useWorkspaces to true in lerna.json and configure pnpm to use workspaces: https://pnpm.io/workspaces.",
+        })
+      );
+    });
   });
 });
