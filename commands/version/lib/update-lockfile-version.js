@@ -14,7 +14,7 @@ function updateLockfileVersion(pkg) {
 
   chain = chain.then(() =>
     loadJsonFile(lockfilePath).catch(() => {
-      log.verbose(`${pkg.name} has no lockfile. Skipping lockfile update.`);
+      log.verbose("version", `${pkg.name} has no lockfile. Skipping lockfile update.`);
     })
   );
   chain = chain.then((obj) => {

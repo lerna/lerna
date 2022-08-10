@@ -271,9 +271,8 @@ class Package {
     }
 
     if (resolved.workspaceSpec) {
-      if (resolved.workspaceAlias) {
-        // do nothing, since aliases don't directly specify a version
-      } else {
+      // do nothing if there is a workspace alias since they don't specify a version number
+      if (!resolved.workspaceAlias) {
         const workspacePrefix = resolved.workspaceSpec.match(/^(workspace:[*|~|^]?)/)[0];
         depCollection[depName] = `${workspacePrefix}${depVersion}`;
       }
