@@ -62,7 +62,9 @@ function spawn(command, args, opts) {
 // istanbul ignore next
 function spawnStreaming(command, args, opts, prefix) {
   const options = Object.assign({}, opts);
-  options.stdio = ["ignore", "pipe", "pipe"];
+  if (!options.stdio) {
+    options.stdio = ["ignore", "pipe", "pipe"];
+  }
 
   const spawned = spawnProcess(command, args, options);
 
@@ -176,9 +178,3 @@ exports.spawn = spawn;
 exports.spawnStreaming = spawnStreaming;
 exports.getChildProcessCount = getChildProcessCount;
 exports.getExitCode = getExitCode;
-
-/**
- * @typedef {object} ExecOpts Provided to any execa-based call
- * @property {string} cwd
- * @property {number} [maxBuffer]
- */

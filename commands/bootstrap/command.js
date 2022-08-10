@@ -66,6 +66,11 @@ exports.builder = (yargs) => {
         describe: "Enable integration with Yarn workspaces.",
         type: "boolean",
       },
+      "npm-client-stdout": {
+        group: "Command Options:",
+        describe: "Enable pass through output from the underlying NPM client.",
+        type: "boolean",
+      },
       "force-local": {
         group: "Command Options:",
         describe: "Force local sibling links regardless of version range match",

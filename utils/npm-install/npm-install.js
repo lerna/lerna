@@ -5,6 +5,7 @@ const log = require("npmlog");
 const npa = require("npm-package-arg");
 const onExit = require("signal-exit");
 const writePkg = require("write-pkg");
+const cloneDeep = require("clone-deep");
 
 const childProcess = require("@lerna/child-process");
 const { getNpmExecOpts } = require("@lerna/get-npm-exec-opts");
@@ -14,7 +15,7 @@ module.exports.npmInstallDependencies = npmInstallDependencies;
 
 function npmInstall(
   pkg,
-  { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe", subCommand = "install" }
+  { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe", subCommand = "install", useSpawnStreaming }
 ) {
   // build command, arguments, and options
   const opts = getNpmExecOpts(pkg, registry);
@@ -46,10 +47,13 @@ function npmInstall(
   opts.env.LERNA_ROOT_PATH = pkg.rootPath;
 
   log.silly("npmInstall", [cmd, args]);
+  if (useSpawnStreaming) {
+    return childProcess.spawnStreaming(cmd, args, opts, pkg);
+  }
   return childProcess.exec(cmd, args, opts);
 }
 
-function npmInstallDependencies(pkg, dependencies, config) {
+function npmInstallDependencies(pkg, dependencies, _config) {
   log.silly("npmInstallDependencies", pkg.name, dependencies);
 
   // Nothing to do if we weren't given any deps.
@@ -58,6 +62,8 @@ function npmInstallDependencies(pkg, dependencies, config) {
 
     return Promise.resolve();
   }
+
+  const config = cloneDeep(_config);
 
   const packageJsonBkp = `${pkg.manifestLocation}.lerna_backup`;
 
@@ -87,7 +93,13 @@ function npmInstallDependencies(pkg, dependencies, config) {
     const tempJson = transformManifest(pkg, dependencies);
 
     log.silly("npmInstallDependencies", "writing tempJson", tempJson);
-
+    let stdio = ["ignore", "ignore", "pipe"];
+    if (config.npmClientStdout) {
+      stdio = ["ignore", "pipe", "pipe"];
+    }
+    Object.assign(config, {
+      stdio
+    });
     // Write out our temporary cooked up package.json and then install.
     return writePkg(pkg.manifestLocation, tempJson)
       .then(() => npmInstall(pkg, config))

@@ -36,7 +36,7 @@ class BootstrapCommand extends Command {
   }
 
   initialize() {
-    const { registry, npmClient = "npm", npmClientArgs = [], mutex, hoist, nohoist } = this.options;
+    const { registry, npmClient = "npm", npmClientArgs = [], mutex, hoist, nohoist, npmClientStdout  } = this.options;
 
     if (npmClient === "yarn" && hoist) {
       throw new ValidationError(
@@ -103,6 +103,7 @@ class BootstrapCommand extends Command {
       npmClient,
       npmClientArgs,
       mutex,
+      npmClientStdout
     };
 
     if (npmClient === "npm" && this.options.ci && hasNpmVersion(">=5.7.0")) {
@@ -227,7 +228,10 @@ class BootstrapCommand extends Command {
     // don't hide yarn or npm output
     this.npmConfig.stdio = "inherit";
 
-    return npmInstall(this.project.manifest, this.npmConfig);
+    const config = Object.assign({}, this.npmConfig, {
+      installRootPackageOnly: true
+    });
+    return npmInstall(this.project.manifest, config);
   }
 
   /**
