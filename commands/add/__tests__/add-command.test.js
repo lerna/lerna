@@ -44,6 +44,15 @@ describe("AddCommand", () => {
     await expect(command).rejects.toThrow(/Requested package has no version:/);
   });
 
+  it("should throw when using pnpm", async () => {
+    const testDir = await initFixture("pnpm");
+    const command = lernaAdd(testDir)("@test/package-1");
+
+    await expect(command).rejects.toThrow(
+      "The 'add' command is not supported when using `pnpm` workspaces. Use `pnpm` directly to add dependencies to packages: https://pnpm.io/cli/add."
+    );
+  });
+
   it("should reference remote dependencies", async () => {
     const testDir = await initFixture("basic");
 

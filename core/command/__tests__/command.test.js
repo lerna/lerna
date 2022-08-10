@@ -389,13 +389,13 @@ describe("core-command", () => {
     });
 
     it("throws ENOWORKSPACES when npm client is pnpm and useWorkspaces is not true", async () => {
-      const cwd = await initFixture("basic");
+      const cwd = await initFixture("pnpm");
 
       const lernaConfigPath = path.join(cwd, "lerna.json");
       const lernaConfig = await fs.readJson(lernaConfigPath);
       await fs.writeJson(lernaConfigPath, {
         ...lernaConfig,
-        npmClient: "pnpm",
+        useWorkspaces: false,
       });
 
       await expect(testFactory({ cwd })).rejects.toThrow(

@@ -36,6 +36,13 @@ class AddCommand extends Command {
   }
 
   initialize() {
+    if (this.options.npmClient === "pnpm") {
+      throw new ValidationError(
+        "EPNPMNOTSUPPORTED",
+        "The 'add' command is not supported when using `pnpm` workspaces. Use `pnpm` directly to add dependencies to packages: https://pnpm.io/cli/add."
+      );
+    }
+
     this.spec = npa(this.options.pkg);
     this.dirs = new Set(this.options.globs.map((fp) => path.resolve(this.project.rootPath, fp)));
     this.selfSatisfied = this.packageSatisfied();
