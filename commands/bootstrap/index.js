@@ -235,10 +235,7 @@ class BootstrapCommand extends Command {
     // don't hide yarn or npm output
     this.npmConfig.stdio = "inherit";
 
-    const config = Object.assign({}, this.npmConfig, {
-      installRootPackageOnly: true
-    });
-    return npmInstall(this.project.manifest, config);
+    return npmInstall(this.project.manifest, this.npmConfig);
   }
 
   /**
