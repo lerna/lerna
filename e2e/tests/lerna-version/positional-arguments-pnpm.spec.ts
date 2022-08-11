@@ -102,6 +102,8 @@ describe("lerna-version-positional-arguments-pnpm", () => {
         "package-a": "workspace:^0.0.0",
       },
     }));
+    await fixture.exec("git add packages/package-b/package.json");
+    await fixture.exec("git commit -m 'Add package-a dependency'");
 
     const output = await fixture.lerna("version 3.3.3 -y");
     expect(output.combinedOutput).toMatchInlineSnapshot(`
