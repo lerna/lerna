@@ -93,12 +93,8 @@ function npmInstallDependencies(pkg, dependencies, _config) {
     const tempJson = transformManifest(pkg, dependencies);
 
     log.silly("npmInstallDependencies", "writing tempJson", tempJson);
-    let stdio = ["ignore", "ignore", "pipe"];
-    if (config.npmClientStdout) {
-      stdio = ["ignore", "pipe", "pipe"];
-    }
+
     Object.assign(config, {
-      stdio,
       useSpawnStreaming: true
     });
     // Write out our temporary cooked up package.json and then install.

@@ -97,13 +97,20 @@ class BootstrapCommand extends Command {
       this.hoisting = hoisting;
     }
 
-    this.runPackageLifecycle = createRunner({ registry });
+    // inherit stderr output
+    let stdio = ["ignore", "ignore", "inherit"];
+    let runnerStdio = "pipe";
+    if (npmClientStdout) {
+      stdio = ["ignore", "inherit", "inherit"];
+      runnerStdio = "inherit";
+    }
+    this.runPackageLifecycle = createRunner({ registry, stdio: runnerStdio });
     this.npmConfig = {
       registry,
       npmClient,
       npmClientArgs,
       mutex,
-      npmClientStdout
+      stdio
     };
 
     if (npmClient === "npm" && this.options.ci && hasNpmVersion(">=5.7.0")) {

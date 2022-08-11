@@ -21,7 +21,7 @@ module.exports.createRunner = createRunner;
  * @property {string} [scriptShell]
  * @property {boolean} [scriptsPrependNodePath]
  * @property {boolean} [unsafePerm=true]
- * @property {string} [stdio]
+ * @property {string | string[]} [stdio]
  */
 
 /**
