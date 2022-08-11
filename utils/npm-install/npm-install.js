@@ -98,7 +98,8 @@ function npmInstallDependencies(pkg, dependencies, _config) {
       stdio = ["ignore", "pipe", "pipe"];
     }
     Object.assign(config, {
-      stdio
+      stdio,
+      useSpawnStreaming: true
     });
     // Write out our temporary cooked up package.json and then install.
     return writePkg(pkg.manifestLocation, tempJson)
