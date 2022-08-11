@@ -2,6 +2,7 @@
 
 const fs = require("fs-extra");
 const path = require("path");
+const { dump } = require("js-yaml");
 const { loggingOutput } = require("@lerna-test/helpers/logging-output");
 
 // helpers
@@ -221,6 +222,61 @@ describe("Project", () => {
   });
 
   describe("get .packageConfigs", () => {
+    describe("when npmClient is pnpm", () => {
+      it("returns packages from pnpm workspace config", async () => {
+        const cwd = await initFixture("pnpm");
+
+        const project = new Project(cwd);
+
+        expect(project.packageConfigs).toEqual(["packages/*", "modules/*"]);
+
+        const warningLogs = loggingOutput("warn");
+        expect(warningLogs).toEqual([]);
+
+        const verboseLogs = loggingOutput("verbose");
+        expect(
+          verboseLogs.includes(
+            "Package manager 'pnpm' detected. Resolving packages using 'pnpm-workspace.yaml'."
+          )
+        ).toBe(true);
+      });
+
+      it("throws with friendly error if pnpm workspaces file does not exist", async () => {
+        const cwd = await initFixture("pnpm");
+
+        await fs.remove(path.join(cwd, "pnpm-workspace.yaml"));
+
+        const project = new Project(cwd);
+
+        expect(() => project.packageConfigs).toThrowErrorMatchingInlineSnapshot(
+          `"No pnpm-workspace.yaml found. See https://pnpm.io/workspaces for help configuring workspaces in pnpm."`
+        );
+
+        const verboseLogs = loggingOutput("verbose");
+        expect(
+          verboseLogs.includes(
+            "Package manager 'pnpm' detected. Resolving packages using 'pnpm-workspace.yaml'."
+          )
+        ).toBe(true);
+      });
+
+      it("throws with friendly error if pnpm workspaces file has no packages property", async () => {
+        const cwd = await initFixture("pnpm");
+
+        const pnpmWorkspaceConfigPath = path.join(cwd, "pnpm-workspace.yaml");
+        const pnpmWorkspaceConfigContent = dump({
+          otherProperty: ["someValue"],
+        });
+        await fs.writeFile(pnpmWorkspaceConfigPath, pnpmWorkspaceConfigContent);
+
+        const project = new Project(cwd);
+
+        expect(() => project.packageConfigs).toThrowErrorMatchingInlineSnapshot(
+          `"No 'packages' property found in pnpm-workspace.yaml. See https://pnpm.io/workspaces for help configuring workspaces in pnpm."`
+        );
+      });
+    });
+
     it("returns the default packageConfigs and warns when neither workspaces nor packages are explicitly configured", () => {
       const project = new Project(testDir);
       expect(project.packageConfigs).toEqual(["packages/*"]);

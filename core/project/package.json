@@ -39,6 +39,7 @@
     "dot-prop": "^6.0.1",
     "glob-parent": "^5.1.1",
     "globby": "^11.0.2",
+    "js-yaml": "^4.1.0",
     "load-json-file": "^6.2.0",
     "npmlog": "^6.0.2",
     "p-map": "^4.0.0",
