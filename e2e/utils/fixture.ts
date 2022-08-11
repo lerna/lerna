@@ -206,7 +206,7 @@ export class Fixture {
       case "yarn":
         return this.exec(`yarn --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
       case "pnpm":
-        return this.exec(`pnpm --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
+        return this.exec(`pnpm install${args ? ` ${args}` : ""}`);
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
