@@ -1,8 +1,8 @@
-# Using [`pnpm`](https://pnpm.io) with Lerna
+# Using pnpm with Lerna
 
 Lerna can be used in a [`pnpm` workspace](https://pnpm.io/workspaces) to get the full benefits of both [`pnpm`](https://pnpm.io) and Lerna.
 
-When used in a `pnpm` space, Lerna will:
+When used in a `pnpm` workspace, Lerna will:
 
 - resolve package locations with `pnpm-workspace.yaml` (https://pnpm.io/workspaces)
 - enforce `useWorkspaces: true` in `lerna.json` (and ignore `packages:` in `package.json`).
@@ -21,8 +21,7 @@ To set up pnpm with Lerna:
 4. Create a `pnpm-workspace.yaml` file in the root of your project.
    If you are already using npm or yarn workspaces, move the "workspaces" property from `package.json` to `pnpm-workspace.yaml`. If you were not already using workspaces, move the "packages" property from `lerna.json` to `pnpm-workspace.yaml`. For example:
 
-   ```json
-   // package.json
+   ```json title="package.json"
    {
      "workspaces": ["packages/*"]
    }
@@ -30,8 +29,7 @@ To set up pnpm with Lerna:
 
    and
 
-   ```json
-   // lerna.json
+   ```json title="lerna.json"
    {
      "packages": ["packages/*"]
    }
@@ -39,10 +37,10 @@ To set up pnpm with Lerna:
 
    become:
 
-   ```yaml
-   # pnpm-workspace.yaml
+   ```yaml title="pnpm-workspace.yaml"
    packages:
      - "packages/*"
    ```
 
-5. Run `pnpm install`.
+5. (optional) Run `pnpm import` to generate a `pnpm-lock.yaml` file from an existing lockfile. See https://pnpm.io/cli/import for supported lockfile sources.
+6. Run `pnpm install`.
