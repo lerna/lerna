@@ -44,6 +44,22 @@ Note, `cacheableOperations` need to be side effect free, meaning that given the 
 the same output. As an example, e2e test runs that hit the backend API cannot be cached as the backend might influence
 the result of the test run.
 
+
+:::tip
+
+if you hope `nx` work, you need set `"useNx": true` in `lerna.json` 
+
+:::
+
+```json title="lerna.json"
+{
+    ...
+    "useNx": true
+}
+```
+
+
+
 :::
 
 Now, run the following command twice. The second time the operation will be instant:
