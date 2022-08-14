@@ -83,7 +83,7 @@ const callouts: Callout[] = [
   {
     title: "Minimal",
     text:
-      "Lerna requires requires very little configuration, and doesn’t clutter your files. You still run your npm scripts, just faster.",
+      "Lerna requires very little configuration, and doesn’t clutter your files. You still run your npm scripts, just faster.",
     link: "/docs/getting-started",
     icon: CubeTransparentIcon,
   },

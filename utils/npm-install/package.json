@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-install",
-  "version": "5.4.0",
+  "version": "5.4.1",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
