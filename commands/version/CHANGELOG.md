@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.4.2](https://github.com/lerna/lerna/compare/v5.4.1...v5.4.2) (2022-08-14)
+
+
+### Bug Fixes
+
+* **version:** update package-lock at the root if it exists ([#3290](https://github.com/lerna/lerna/issues/3290)) ([7f62bab](https://github.com/lerna/lerna/commit/7f62babdd240983b0a9bbc658c44346e153b2c9e))
+
+
+
+
+
 ## [5.4.1](https://github.com/lerna/lerna/compare/v5.4.0...v5.4.1) (2022-08-12)
 
 

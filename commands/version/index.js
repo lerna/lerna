@@ -10,6 +10,7 @@ const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
 const path = require("path");
+const fs = require("fs");
 
 const { Command } = require("@lerna/command");
 const { recommendVersion, updateChangelog } = require("@lerna/conventional-commits");
@@ -584,7 +585,7 @@ class VersionCommand extends Command {
     if (!independentVersions) {
       this.project.version = this.globalVersion;
 
-      if (this.options.npmClient === "pnpm") {
+      if (this.options.npmClient === "su") {
         chain = chain.then(() =>
           childProcess.exec("pnpm", ["install", "--lockfile-only"], this.execOpts).then(() => {
             const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
@@ -619,6 +620,18 @@ class VersionCommand extends Command {
           changedFiles.add(lernaConfigLocation);
         })
       );
+    }
+
+    if (this.options.npmClient === "npm" || !this.options.npmClient) {
+      const lockfilePath = path.join(this.project.rootPath, "package-lock.json");
+      if (fs.existsSync(lockfilePath)) {
+        chain = chain.then(() => {
+          this.logger.verbose("version", "Updating root package-lock.json");
+          return childProcess.exec("npm", ["install", "--package-lock-only"], this.execOpts).then(() => {
+            changedFiles.add(lockfilePath);
+          });
+        });
+      }
     }
 
     if (!this.hasRootedLeaf) {
