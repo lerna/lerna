@@ -23,7 +23,7 @@ class LinkCommand extends Command {
     if (this.options.npmClient === "pnpm") {
       throw new ValidationError(
         "EWORKSPACES",
-        "Link is not supported with pnpm workspaces, since pnpm will automatically link dependencies during `pnpm install`. See the pnpm docs for details: https://pnpm.io/workspaces."
+        "Link is not supported with pnpm workspaces, since pnpm will automatically link dependencies during `pnpm install`. See the pnpm docs for details: https://pnpm.io/workspaces"
       );
     }
 

@@ -144,7 +144,7 @@ describe("BootstrapCommand", () => {
       const command = lernaBootstrap(testDir)();
 
       await expect(command).rejects.toThrow(
-        "Bootstrapping with pnpm is not supported. Use pnpm directly to manage dependencies (https://pnpm.io/cli/install)."
+        "Bootstrapping with pnpm is not supported. Use pnpm directly to manage dependencies: https://pnpm.io/cli/install"
       );
     });
   });

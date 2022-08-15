@@ -77,14 +77,14 @@ export class Fixture {
       await fixture.createEmptyDirectoryForWorkspace();
     }
 
-    await fixture.setNpmRegistry(packageManager);
+    await fixture.setNpmRegistry();
 
     if (runLernaInit) {
       const initOptions = packageManager === "pnpm" ? ({ keepDefaultOptions: true } as const) : {};
       await fixture.lernaInit("", initOptions);
     }
 
-    await fixture.initializeNpmEnvironment(packageManager);
+    await fixture.initializeNpmEnvironment();
 
     if (installDependencies) {
       await fixture.install();
@@ -93,18 +93,21 @@ export class Fixture {
     return fixture;
   }
 
-  private async setNpmRegistry(packageManager: PackageManager): Promise<void> {
-    if (packageManager === "pnpm") {
+  private async setNpmRegistry(): Promise<void> {
+    if (this.packageManager === "pnpm") {
       await this.exec(`echo "registry=${REGISTRY}" > .npmrc`);
     }
   }
 
-  private async initializeNpmEnvironment(packageManager: PackageManager): Promise<void> {
-    if (packageManager !== "npm" && existsSync(joinPathFragments(this.fixtureWorkspacePath, "lerna.json"))) {
-      await this.overrideLernaConfig({ npmClient: packageManager });
+  private async initializeNpmEnvironment(): Promise<void> {
+    if (
+      this.packageManager !== "npm" &&
+      existsSync(joinPathFragments(this.fixtureWorkspacePath, "lerna.json"))
+    ) {
+      await this.overrideLernaConfig({ npmClient: this.packageManager });
     }
 
-    if (packageManager === "pnpm") {
+    if (this.packageManager === "pnpm") {
       const pnpmWorkspaceContent = dump({
         packages: ["packages/*", "!**/__test__/**"],
       });
@@ -170,9 +173,13 @@ export class Fixture {
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
-    return execCommandResult.then((initResult) =>
-      options?.keepDefaultOptions ? initResult : this.revertDefaultInitOptions().then(() => initResult)
-    );
+
+    const initResult = await execCommandResult;
+    if (!options?.keepDefaultOptions) {
+      await this.revertDefaultInitOptions();
+    }
+
+    return initResult;
   }
 
   async overrideLernaConfig(lernaConfig: Record<string, any>): Promise<void> {
