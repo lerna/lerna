@@ -228,7 +228,7 @@ npx lerna run test --scope=header
 ```
 
 ```
-> lerna run test --scope=header
+> npx lerna run test --scope=header
 
 > header:test  [existing outputs match the cache, left as is]
 
