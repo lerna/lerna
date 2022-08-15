@@ -39,7 +39,7 @@ class AddCommand extends Command {
     if (this.options.npmClient === "pnpm") {
       throw new ValidationError(
         "EPNPMNOTSUPPORTED",
-        "The 'add' command is not supported when using `pnpm` workspaces. Use `pnpm` directly to add dependencies to packages: https://pnpm.io/cli/add"
+        "Add is not supported when using `pnpm` workspaces. Use `pnpm` directly to add dependencies to packages: https://pnpm.io/cli/add"
       );
     }
 

@@ -49,7 +49,7 @@ describe("AddCommand", () => {
     const command = lernaAdd(testDir)("@test/package-1");
 
     await expect(command).rejects.toThrow(
-      "The 'add' command is not supported when using `pnpm` workspaces. Use `pnpm` directly to add dependencies to packages: https://pnpm.io/cli/add"
+      "Add is not supported when using `pnpm` workspaces. Use `pnpm` directly to add dependencies to packages: https://pnpm.io/cli/add"
     );
   });
 
