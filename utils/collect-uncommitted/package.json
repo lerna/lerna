@@ -1,6 +1,6 @@
 {
   "name": "@lerna/collect-uncommitted",
-  "version": "5.4.0",
+  "version": "5.4.2",
   "description": "Collect uncommitted changes to working tree for display in error messages",
   "keywords": [
     "lerna",

@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.4.2](https://github.com/lerna/lerna/compare/v5.4.1...v5.4.2) (2022-08-14)
+
+**Note:** Version bump only for package @lerna/package-graph
+
+
+
+
+
+## [5.4.1](https://github.com/lerna/lerna/compare/v5.4.0...v5.4.1) (2022-08-12)
+
+
+### Bug Fixes
+
+* **package-graph:** ensure to touch all nodes ([#3234](https://github.com/lerna/lerna/issues/3234)) ([f3c211d](https://github.com/lerna/lerna/commit/f3c211dd7d08fb41b27b6f7bec2013b2192d291c))
+
+
+
+
+
 # [5.4.0](https://github.com/lerna/lerna/compare/v5.3.0...v5.4.0) (2022-08-08)
 
 **Note:** Version bump only for package @lerna/package-graph
