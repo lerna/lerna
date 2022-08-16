@@ -68,4 +68,43 @@ describe("lerna-version-with-workspaces", () => {
     expect(packages["packages/package-b"].version).toEqual("3.3.3");
     expect(packages["packages/package-b"].dependencies["package-a"]).toEqual("^3.3.3");
   });
+
+  it("should not run npm install lifecycle scripts, but still update package-lock.json", async () => {
+    await fixture.updateJson("package.json", (json) => ({
+      ...json,
+      scripts: {
+        preinstall: "exit 1",
+        install: "exit 1",
+        postinstall: "exit 1",
+        prepublish: "exit 1",
+        prepare: "exit 1",
+      },
+    }));
+    await fixture.exec("git add package.json");
+    await fixture.exec("git commit -m 'update package.json with failing install lifecycle scripts'");
+
+    const output = await fixture.lerna("version 3.3.3 -y");
+    expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
+
+      Changes:
+       - package-a: 0.0.0 => 3.3.3
+       - package-b: 0.0.0 => 3.3.3
+
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
+
+    `);
+
+    const packageLockJson = await fixture.readWorkspaceFile("package-lock.json");
+    const packages = JSON.parse(packageLockJson).packages;
+
+    expect(packages["packages/package-a"].version).toEqual("3.3.3");
+    expect(packages["packages/package-b"].version).toEqual("3.3.3");
+    expect(packages["packages/package-b"].dependencies["package-a"]).toEqual("^3.3.3");
+  });
 });
