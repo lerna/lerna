@@ -2,12 +2,11 @@
 
 const path = require("path");
 
-const { URL } = require("whatwg-url");
 const log = require("npmlog");
 const fetch = require("node-fetch");
 
 class GitLabClient {
-  constructor(baseUrl = "https://gitlab.com/api/v4", token) {
+  constructor(token, baseUrl = "https://gitlab.com/api/v4") {
     this.baseUrl = baseUrl;
     this.token = token;
   }
