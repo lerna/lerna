@@ -19,7 +19,7 @@ function createGitLabClient() {
     throw new Error("A GL_TOKEN environment variable is required.");
   }
 
-  const client = new GitLabClient(GL_API_URL, GL_TOKEN);
+  const client = new GitLabClient(GL_TOKEN, GL_API_URL);
 
   return OcktokitAdapter(client);
 }
