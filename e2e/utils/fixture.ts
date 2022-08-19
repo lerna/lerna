@@ -5,7 +5,7 @@ import isCI from "is-ci";
 import { dump } from "js-yaml";
 import { dirSync } from "tmp";
 
-export interface RunCommandOptions {
+interface RunCommandOptions {
   silenceError?: boolean;
   env?: Record<string, string>;
   cwd?: string;
@@ -23,7 +23,7 @@ interface FixtureCreateOptions {
   forceDeterministicTerminalOutput?: boolean;
 }
 
-export type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string };
+type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string };
 
 const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4872/";
