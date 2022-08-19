@@ -587,10 +587,12 @@ class VersionCommand extends Command {
 
       if (this.options.npmClient === "pnpm") {
         chain = chain.then(() =>
-          childProcess.exec("pnpm", ["install", "--lockfile-only"], this.execOpts).then(() => {
-            const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
-            changedFiles.add(lockfilePath);
-          })
+          childProcess
+            .exec("pnpm", ["install", "--lockfile-only", "--ignore-scripts"], this.execOpts)
+            .then(() => {
+              const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
+              changedFiles.add(lockfilePath);
+            })
         );
       }
 
