@@ -103,7 +103,6 @@
     "upath": "^2.0.1",
     "validate-npm-package-license": "^3.0.4",
     "validate-npm-package-name": "^4.0.0",
-    "whatwg-url": "^8.4.0",
     "write-file-atomic": "^4.0.1",
     "write-json-file": "^4.3.0",
     "write-pkg": "^4.0.0",

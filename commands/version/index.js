@@ -627,9 +627,11 @@ class VersionCommand extends Command {
       if (fs.existsSync(lockfilePath)) {
         chain = chain.then(() => {
           this.logger.verbose("version", "Updating root package-lock.json");
-          return childProcess.exec("npm", ["install", "--package-lock-only"], this.execOpts).then(() => {
-            changedFiles.add(lockfilePath);
-          });
+          return childProcess
+            .exec("npm", ["install", "--package-lock-only", "--ignore-scripts"], this.execOpts)
+            .then(() => {
+              changedFiles.add(lockfilePath);
+            });
         });
       }
     }
