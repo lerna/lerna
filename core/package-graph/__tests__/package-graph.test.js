@@ -94,7 +94,7 @@ describe("PackageGraph", () => {
     });
 
     describe("with spec containing workspace: prefix", () => {
-      describe("localizes sibling when semver is satisfied", () => {
+      describe("creates graph links for sibling package when semver is satisfied", () => {
         it("with exact match", () => {
           const packages = [
             new Package(
@@ -186,7 +186,7 @@ describe("PackageGraph", () => {
         });
       });
 
-      it("localizes sibling when using * alias", () => {
+      it("creates graph links for sibling package when using * alias", () => {
         const packages = [
           new Package(
             {
@@ -216,7 +216,7 @@ describe("PackageGraph", () => {
         expect(package2.localDependencies.get("test-1").workspaceAlias).toBe("*");
       });
 
-      it("localizes sibling when using ~ alias", () => {
+      it("creates graph links for sibling package when using ~ alias", () => {
         const packages = [
           new Package(
             {
@@ -246,7 +246,7 @@ describe("PackageGraph", () => {
         expect(package2.localDependencies.get("test-1").workspaceAlias).toBe("~");
       });
 
-      it("localizes sibling when using ^ alias", () => {
+      it("creates graph links for sibling package when using ^ alias", () => {
         const packages = [
           new Package(
             {
