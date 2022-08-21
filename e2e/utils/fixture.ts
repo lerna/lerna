@@ -229,6 +229,24 @@ export class Fixture {
     }));
   }
 
+  async addDevDependencyToPackage({
+    packagePath,
+    dependencyName,
+    version,
+  }: {
+    packagePath: string;
+    dependencyName: string;
+    version: string;
+  }): Promise<void> {
+    await this.updateJson(`${packagePath}/package.json`, (json) => ({
+      ...json,
+      devDependencies: {
+        ...(json.devDependencies as Record<string, string>),
+        [dependencyName]: version,
+      },
+    }));
+  }
+
   async addScriptsToPackage({
     packagePath,
     scripts,

@@ -92,3 +92,7 @@ $ lerna exec --since --include-merged-tags -- ls -la
 ```
 
 Include tags from merged branches when running a command with `--since`. This is only useful if you do a lot of publishing from feature branches, which is not generally recommended.
+
+### `--ignore-dev-dependencies`
+
+Exclude all transitive devDependencies when running a command regardless of `--include-dependencies` or `--include-dependents`.

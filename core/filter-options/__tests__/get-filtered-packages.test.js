@@ -199,3 +199,25 @@ test("--include-dependencies", async () => {
   expect(result.map((pkg) => pkg.name)).toEqual(["package-3", "package-2", "package-1"]);
   expect(collectUpdates).not.toHaveBeenCalled();
 });
+
+test("--include-dependents --ignore-dev-dependencies", async () => {
+  const packageGraph = await buildGraph(cwd);
+  const execOpts = { cwd };
+  const options = parseOptions("--scope", "package-2", "--include-dependents", "--ignore-dev-dependencies");
+
+  const result = await getFilteredPackages(packageGraph, execOpts, options);
+
+  expect(result.map((pkg) => pkg.name)).toEqual(["package-2"]);
+  expect(collectUpdates).not.toHaveBeenCalled();
+});
+
+test("--include-dependencies --ignore-dev-dependencies", async () => {
+  const packageGraph = await buildGraph(cwd);
+  const execOpts = { cwd };
+  const options = parseOptions("--scope", "package-3", "--include-dependencies", "--ignore-dev-dependencies");
+
+  const result = await getFilteredPackages(packageGraph, execOpts, options);
+
+  expect(result.map((pkg) => pkg.name)).toEqual(["package-3"]);
+  expect(collectUpdates).not.toHaveBeenCalled();
+});

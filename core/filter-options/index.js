@@ -68,6 +68,13 @@ function filterOptions(yargs) {
       hidden: true,
       type: "boolean",
     },
+    "ignore-dev-dependencies": {
+      describe: dedent`
+        Exclude all transitive devDependencies when running a command
+        regardless of --include-dependencies or --include-dependents.
+      `,
+      type: "boolean",
+    },
   };
 
   return yargs

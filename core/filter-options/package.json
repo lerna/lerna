@@ -34,6 +34,7 @@
   "dependencies": {
     "@lerna/collect-updates": "file:../../utils/collect-updates",
     "@lerna/filter-packages": "file:../../utils/filter-packages",
+    "@lerna/package-graph": "file:../../core/package-graph",
     "dedent": "^0.7.0",
     "npmlog": "^6.0.2"
   }

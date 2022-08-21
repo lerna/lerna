@@ -40,7 +40,7 @@ describe("lerna-list-filter-options", () => {
       dependencyName: "package-c",
       version: "0.0.0",
     });
-    await fixture.addDependencyToPackage({
+    await fixture.addDevDependencyToPackage({
       packagePath: "modules/package-a",
       dependencyName: "package-d",
       version: "0.0.0",
@@ -106,6 +106,23 @@ describe("lerna-list-filter-options", () => {
         package-a
         package-c
         lerna success found 2 packages
+
+      `);
+    });
+  });
+
+  describe("--include-dependents --ignore-dev-dependencies", () => {
+    it("should list all packages, narrowed to only those that match the scope glob, but with all of their dependents, excluding devDependecies", async () => {
+      const output = await fixture.lerna("list --all --scope package-d --include-dependents --ignore-dev-dependencies");
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna notice filter including "package-d"
+        lerna notice filter excluding devDependencies
+        lerna notice filter including dependents
+        lerna info filter [ 'package-d' ]
+        package-d (PRIVATE)
+        lerna success found 1 package
 
       `);
     });

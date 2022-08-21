@@ -3,6 +3,7 @@
 const log = require("npmlog");
 const { collectUpdates } = require("@lerna/collect-updates");
 const { filterPackages } = require("@lerna/filter-packages");
+const { PackageGraph } = require("@lerna/package-graph");
 
 module.exports.getFilteredPackages = getFilteredPackages;
 
@@ -17,12 +18,13 @@ module.exports.getFilteredPackages = getFilteredPackages;
  * @property {boolean} includeDependents
  * @property {boolean} includeDependencies
  * @property {boolean} includeMergedTags
+ * @property {boolean} ignoreDevDependencies
  * @property {typeof log} log
  */
 
 /**
  * Retrieve a list of Package instances filtered by various options.
- * @param {import("@lerna/package-graph").PackageGraph} packageGraph
+ * @param {PackageGraph} packageGraph
  * @param {import("@lerna/child-process").ExecOpts} execOpts
  * @param {Partial<FilterOptions>} opts
  * @returns {Promise<import("@lerna/package").Package[]>}
@@ -38,11 +40,18 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
     options.log.notice("filter", "excluding %j", options.ignore);
   }
 
+  let targetGraph = packageGraph;
+
+  if (options.ignoreDevDependencies) {
+    options.log.notice("filter", "excluding devDependencies");
+    targetGraph = new PackageGraph(packageGraph.rawPackageList, "dependencies");
+  }
+
   let chain = Promise.resolve();
 
   chain = chain.then(() =>
     filterPackages(
-      packageGraph.rawPackageList,
+      targetGraph.rawPackageList,
       options.scope,
       options.ignore,
       options.private,
@@ -62,7 +71,7 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
     }
 
     chain = chain.then((/** @type {ReturnType<typeof filterPackages>} */ filteredPackages) =>
-      Promise.resolve(collectUpdates(filteredPackages, packageGraph, execOpts, opts)).then((updates) => {
+      Promise.resolve(collectUpdates(filteredPackages, targetGraph, execOpts, opts)).then((updates) => {
         const updated = new Set(updates.map(({ pkg }) => pkg.name));
 
         return filteredPackages.filter((pkg) => updated.has(pkg.name));
@@ -73,13 +82,13 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
   if (options.includeDependents) {
     options.log.notice("filter", "including dependents");
 
-    chain = chain.then((filteredPackages) => packageGraph.addDependents(filteredPackages));
+    chain = chain.then((filteredPackages) => targetGraph.addDependents(filteredPackages));
   }
 
   if (options.includeDependencies) {
     options.log.notice("filter", "including dependencies");
 
-    chain = chain.then((filteredPackages) => packageGraph.addDependencies(filteredPackages));
+    chain = chain.then((filteredPackages) => targetGraph.addDependencies(filteredPackages));
   }
 
   return chain;
