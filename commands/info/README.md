@@ -6,7 +6,7 @@ Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` C
 
 ## Usage
 
-The `info` prints local environment information that proves to be useful especially while submitting bug reports.
+The `info` command prints local environment information that proves to be useful especially while submitting bug reports.
 
 `lerna info`
 
