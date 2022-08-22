@@ -1,6 +1,6 @@
 {
   "name": "@lerna/gitlab-client",
-  "version": "5.4.2",
+  "version": "5.4.3",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "node-fetch": "^2.6.1",
-    "npmlog": "^6.0.2",
-    "whatwg-url": "^8.4.0"
+    "npmlog": "^6.0.2"
   }
 }

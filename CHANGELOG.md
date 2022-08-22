@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.4.3](https://github.com/lerna/lerna/compare/v5.4.2...v5.4.3) (2022-08-16)
+
+
+### Bug Fixes
+
+* **version:** ignore npm lifecycle scripts on package lock update ([#3295](https://github.com/lerna/lerna/issues/3295)) ([1ba2b8a](https://github.com/lerna/lerna/commit/1ba2b8a61dd2518f1e55c3f1e7880e04f7a7967f))
+
+
+
+
+
 ## [5.4.2](https://github.com/lerna/lerna/compare/v5.4.1...v5.4.2) (2022-08-14)
 
 

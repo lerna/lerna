@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "5.4.2",
+  "version": "5.4.3",
   "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",
@@ -49,7 +49,6 @@
     "slash": "^3.0.0",
     "validate-npm-package-license": "^3.0.4",
     "validate-npm-package-name": "^4.0.0",
-    "whatwg-url": "^8.4.0",
     "yargs-parser": "20.2.4"
   }
 }
