@@ -19,7 +19,10 @@
   "files": [
     "index.js",
     "cli.js",
-    "schemas/lerna-schema.json"
+    "schemas/lerna-schema.json",
+    "migrations",
+    "commands",
+    "migrations.json"
   ],
   "engines": {
     "node": "^14.15.0 || >=16.0.0"
@@ -32,12 +35,16 @@
     "url": "git+https://github.com/lerna/lerna.git",
     "directory": "core/lerna"
   },
+  "nx-migrations": {
+    "migrations": "./migrations.json"
+  },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
     "@lerna/add": "file:../../commands/add",
     "@lerna/bootstrap": "file:../../commands/bootstrap",
+    "@lerna/command": "file:../command",
     "@lerna/changed": "file:../../commands/changed",
     "@lerna/clean": "file:../../commands/clean",
     "@lerna/cli": "file:../cli",
@@ -52,6 +59,7 @@
     "@lerna/publish": "file:../../commands/publish",
     "@lerna/run": "file:../../commands/run",
     "@lerna/version": "file:../../commands/version",
+    "@nrwl/devkit": ">=14.5.8 < 16",
     "import-local": "^3.0.2",
     "npmlog": "^6.0.2",
     "nx": ">=14.8.1 < 16",

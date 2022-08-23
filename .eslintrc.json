@@ -1,5 +1,8 @@
 {
   "root": true,
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
   "extends": ["airbnb-base", "plugin:jest/recommended", "plugin:node/recommended", "prettier"],
   "plugins": ["jest", "node"],
   "ignorePatterns": ["website/**/*"],
