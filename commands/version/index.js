@@ -585,17 +585,6 @@ class VersionCommand extends Command {
     if (!independentVersions) {
       this.project.version = this.globalVersion;
 
-      if (this.options.npmClient === "pnpm") {
-        chain = chain.then(() =>
-          childProcess
-            .exec("pnpm", ["install", "--lockfile-only", "--ignore-scripts"], this.execOpts)
-            .then(() => {
-              const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
-              changedFiles.add(lockfilePath);
-            })
-        );
-      }
-
       if (conventionalCommits && changelog) {
         chain = chain.then(() =>
           updateChangelog(this.project.manifest, "root", {
@@ -622,6 +611,18 @@ class VersionCommand extends Command {
           changedFiles.add(lernaConfigLocation);
         })
       );
+    }
+
+    if (this.options.npmClient === "pnpm") {
+      chain = chain.then(() => {
+        this.logger.verbose("version", "Updating root pnpm-lock.yaml");
+        return childProcess
+          .exec("pnpm", ["install", "--lockfile-only", "--ignore-scripts"], this.execOpts)
+          .then(() => {
+            const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
+            changedFiles.add(lockfilePath);
+          });
+      });
     }
 
     if (this.options.npmClient === "npm" || !this.options.npmClient) {
