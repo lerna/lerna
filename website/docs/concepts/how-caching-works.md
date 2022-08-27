@@ -57,7 +57,7 @@ The result of building/testing an application or a library depends on the source
 codes of all the libraries it depends on (directly or indirectly).
 
 By default, Lerna is conservative. When running,
-say, `lerna run test --script=remixapp` Lerna will consider all the files in the `remixapp` directory and all the files
+say, `lerna run test --scope=remixapp` Lerna will consider all the files in the `remixapp` directory and all the files
 in the `header` and `footer` directories (`remixapp` dependencies). This would result in unnecessary cache misses. For
 instance, we know that changing a `footer`'s spec file will not change the result of the test command above.
 

@@ -9,6 +9,8 @@ const pPipe = require("p-pipe");
 const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
+const path = require("path");
+const fs = require("fs");
 
 const { Command } = require("@lerna/command");
 const { recommendVersion, updateChangelog } = require("@lerna/conventional-commits");
@@ -20,6 +22,7 @@ const { createRunner } = require("@lerna/run-lifecycle");
 const { runTopologically } = require("@lerna/run-topologically");
 const { ValidationError } = require("@lerna/validation-error");
 const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
+const childProcess = require("@lerna/child-process");
 
 const { getCurrentBranch } = require("./lib/get-current-branch");
 const { gitAdd } = require("./lib/git-add");
@@ -608,6 +611,20 @@ class VersionCommand extends Command {
           changedFiles.add(lernaConfigLocation);
         })
       );
+    }
+
+    if (this.options.npmClient === "npm" || !this.options.npmClient) {
+      const lockfilePath = path.join(this.project.rootPath, "package-lock.json");
+      if (fs.existsSync(lockfilePath)) {
+        chain = chain.then(() => {
+          this.logger.verbose("version", "Updating root package-lock.json");
+          return childProcess
+            .exec("npm", ["install", "--package-lock-only", "--ignore-scripts"], this.execOpts)
+            .then(() => {
+              changedFiles.add(lockfilePath);
+            });
+        });
+      }
     }
 
     if (!this.hasRootedLeaf) {

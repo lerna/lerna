@@ -1,3 +1,5 @@
+// @ts-check
+
 "use strict";
 
 const cli = require("@lerna/cli");
@@ -18,6 +20,8 @@ const publishCmd = require("@lerna/publish/command");
 const runCmd = require("@lerna/run/command");
 const versionCmd = require("@lerna/version/command");
 
+const repairCmd = require("./commands/repair/command");
+
 const pkg = require("./package.json");
 
 module.exports = main;
@@ -27,6 +31,7 @@ function main(argv) {
     lernaVersion: pkg.version,
   };
 
+  // @ts-ignore
   return cli()
     .command(addCmd)
     .command(bootstrapCmd)
@@ -41,6 +46,7 @@ function main(argv) {
     .command(linkCmd)
     .command(listCmd)
     .command(publishCmd)
+    .command(repairCmd)
     .command(runCmd)
     .command(versionCmd)
     .parse(argv, context);
