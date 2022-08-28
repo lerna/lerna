@@ -16,7 +16,7 @@ const tempDir = require("temp-dir");
 
 const writeFileP = promisify(fs.writeFile);
 
-const tempfile = (filePath) => path.join(tempDir, uuid.v4(), filePath || "");
+const tempfile = (filePath) => path.join(process.env['LERNA_CACHE_PATH'] || tempDir, 'lerna-' + uuid.v4(), filePath || "");
 
 const writeStream = async (filePath, fileContent) =>
   new Promise((resolve, reject) => {
