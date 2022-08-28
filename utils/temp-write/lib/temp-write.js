@@ -13,6 +13,54 @@ const isStream = require("is-stream");
 const makeDir = require("make-dir");
 const uuid = require("uuid");
 const tempDir = require("temp-dir");
+const { unlinkSync } = require("fs");
+
+const callbacks = new Set();
+let isCalled = false;
+let isRegistered = false;
+
+function exit(shouldManuallyExit, signal) {
+  if (isCalled) {
+    return;
+  }
+
+  isCalled = true;
+
+  for (const callback of callbacks) {
+    callback();
+  }
+
+  if (shouldManuallyExit === true) {
+    // eslint-disable-next-line no-process-exit
+    process.exit(128 + signal); // eslint-disable-line unicorn/no-process-exit
+  }
+}
+
+// eslint-disable-next-line flowtype/require-return-type
+function exitHook(onExit) {
+  callbacks.add(onExit);
+
+  if (!isRegistered) {
+    isRegistered = true;
+
+    process.once('exit', exit);
+    process.once('SIGINT', exit.bind(undefined, true, 2));
+    process.once('SIGTERM', exit.bind(undefined, true, 15));
+
+    // PM2 Cluster shutdown message. Caught to support async handlers with pm2, needed because
+    // explicitly calling process.exit() doesn't trigger the beforeExit event, and the exit
+    // event cannot support async handlers, since the event loop is never called after it.
+    process.on('message', message => {
+      if (message === 'shutdown') {
+        exit(true, -128);
+      }
+    });
+  }
+
+  return () => {
+    callbacks.delete(onExit);
+  };
+}
 
 const writeFileP = promisify(fs.writeFile);
 
@@ -42,6 +90,15 @@ module.exports = async (fileContent, filePath) => {
 
   await makeDir(path.dirname(tempPath));
   await write(tempPath, fileContent);
+
+  exitHook(() => {
+    try {
+      unlinkSync(tempPath);
+    } catch (e) {}
+    try {
+      unlinkSync(path.dirname(tempPath));
+    } catch (e) {}
+  })
 
   return tempPath;
 };
