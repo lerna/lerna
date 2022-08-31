@@ -138,6 +138,17 @@ describe("BootstrapCommand", () => {
     });
   });
 
+  describe("with pnpm", () => {
+    it("should throw validation error", async () => {
+      const testDir = await initFixture("pnpm");
+      const command = lernaBootstrap(testDir)();
+
+      await expect(command).rejects.toThrow(
+        "Bootstrapping with pnpm is not supported. Use pnpm directly to manage dependencies: https://pnpm.io/cli/install"
+      );
+    });
+  });
+
   describe("with hoisting", () => {
     it("should hoist", async () => {
       const testDir = await initFixture("basic");

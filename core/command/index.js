@@ -247,6 +247,13 @@ class Command {
         `
       );
     }
+
+    if (this.options.npmClient === "pnpm" && !this.options.useWorkspaces) {
+      throw new ValidationError(
+        "ENOWORKSPACES",
+        "Usage of pnpm without workspaces is not supported. To use pnpm with lerna, set useWorkspaces to true in lerna.json and configure pnpm to use workspaces: https://pnpm.io/workspaces."
+      );
+    }
   }
 
   runPreparations() {

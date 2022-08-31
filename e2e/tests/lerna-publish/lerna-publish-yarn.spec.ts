@@ -1,13 +1,12 @@
 import { Fixture } from "../../utils/fixture";
-import { normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
+import { normalizeCommitSHAs, normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const randomVersion = () => `${randomInt(10, 89)}.${randomInt(10, 89)}.${randomInt(10, 89)}`;
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
-    return normalizeEnvironment(str)
-      .replaceAll(/shasum:\s*\w*/g, "shasum: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    return normalizeCommitSHAs(normalizeEnvironment(str))
       .replaceAll(/integrity:\s*.*/g, "integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
       .replaceAll(/\d*B package\.json/g, "XXXB package.json")
       .replaceAll(/size:\s*\d*\s?B/g, "size: XXXB")
@@ -23,7 +22,7 @@ describe("lerna-publish-yarn", () => {
 
   beforeEach(async () => {
     fixture = await Fixture.create({
-      name: "lerna-publish-yarn",
+      name: "lerna-publish",
       packageManager: "yarn",
       initializeGit: true,
       runLernaInit: true,
@@ -74,7 +73,7 @@ describe("lerna-publish-yarn", () => {
         lerna notice filename:      test-1-XX.XX.XX.tgz                     
         lerna notice package size: XXXB                                   
         lerna notice unpacked size: XXX.XXX kb                                  
-        lerna notice shasum: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         lerna notice total files:   3                                       
         lerna notice 
@@ -137,7 +136,7 @@ describe("lerna-publish-yarn", () => {
           lerna notice filename:      test-1-XX.XX.XX.tgz                     
           lerna notice package size: XXXB                                   
           lerna notice unpacked size: XXX.XXX kb                                  
-          lerna notice shasum: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+          lerna notice shasum:        {FULL_COMMIT_SHA}
           lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           lerna notice total files:   3                                       
           lerna notice 

@@ -613,6 +613,18 @@ class VersionCommand extends Command {
       );
     }
 
+    if (this.options.npmClient === "pnpm") {
+      chain = chain.then(() => {
+        this.logger.verbose("version", "Updating root pnpm-lock.yaml");
+        return childProcess
+          .exec("pnpm", ["install", "--lockfile-only", "--ignore-scripts"], this.execOpts)
+          .then(() => {
+            const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
+            changedFiles.add(lockfilePath);
+          });
+      });
+    }
+
     if (this.options.npmClient === "npm" || !this.options.npmClient) {
       const lockfilePath = path.join(this.project.rootPath, "package-lock.json");
       if (fs.existsSync(lockfilePath)) {
