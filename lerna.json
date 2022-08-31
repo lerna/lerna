@@ -16,8 +16,12 @@
       "message": "chore(release): %s"
     }
   },
-  "ignoreChanges": ["**/__fixtures__/**", "**/__tests__/**", "**/*.md"],
+  "ignoreChanges": [
+    "**/__fixtures__/**",
+    "**/__tests__/**",
+    "**/*.md"
+  ],
   "useWorkspaces": true,
   "useNx": true,
-  "version": "5.4.3"
+  "version": "5.5.0"
 }
