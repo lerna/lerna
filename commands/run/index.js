@@ -2,6 +2,8 @@
 "use strict";
 
 const pMap = require("p-map");
+const path = require("path");
+const { existsSync } = require("fs-extra");
 
 const { Command } = require("@lerna/command");
 const { npmRunScript, npmRunScriptStreaming } = require("@lerna/npm-run-script");
@@ -184,7 +186,8 @@ class RunCommand extends Command {
     }
     performance.mark("init-local");
     this.configureNxOutput();
-    const { targetDependencies, options } = this.prepNxOptions();
+    const { targetDependencies, options, extraOptions } = this.prepNxOptions();
+
     if (this.packagesWithScript.length === 1) {
       const { runOne } = require("nx/src/command-line/run-one");
       const fullQualifiedTarget =
@@ -197,7 +200,8 @@ class RunCommand extends Command {
           "project:target:configuration": fullQualifiedTarget,
           ...options,
         },
-        targetDependencies
+        targetDependencies,
+        extraOptions
       );
     } else {
       const { runMany } = require("nx/src/command-line/run-many");
@@ -208,7 +212,8 @@ class RunCommand extends Command {
           target: this.script,
           ...options,
         },
-        targetDependencies
+        targetDependencies,
+        extraOptions
       );
     }
   }
@@ -246,10 +251,25 @@ class RunCommand extends Command {
       nxBail: this.bail,
       nxIgnoreCycles: !this.options.rejectCycles,
       skipNxCache: this.options.skipNxCache,
+      verbose: this.options.verbose,
       __overrides__: this.args.map((t) => t.toString()),
     };
 
-    return { targetDependencies, options };
+    const excludeTaskDependencies = !existsSync(path.join(this.project.rootPath, "nx.json"));
+    if (excludeTaskDependencies) {
+      this.logger.verbose(
+        this.name,
+        "nx.json was not found. Task dependencies will not be automatically included."
+      );
+    } else {
+      this.logger.verbose(this.name, "nx.json was found. Task dependencies will be automatically included.");
+    }
+
+    const extraOptions = {
+      excludeTaskDependencies,
+    };
+
+    return { targetDependencies, options, extraOptions };
   }
 
   runScriptInPackagesParallel() {

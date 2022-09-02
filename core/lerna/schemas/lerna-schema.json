@@ -1638,6 +1638,10 @@
         "skipNxCache": {
           "type": "boolean",
           "description": "During `lerna run`, when true, skip the nx cache."
+        },
+        "verbose": {
+          "type": "boolean",
+          "description": "When useNx is true, show verbose output from dependent tasks."
         }
       },
       "version": {
