@@ -118,46 +118,46 @@ describe("lerna-run-nx-include-dependencies", () => {
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
 
-         >  Lerna (powered by Nx)   Running target print-name for project package-X and 2 task(s) it depends on
+ >  Lerna (powered by Nx)   Running target print-name for project package-X and 2 task(s) it depends on
 
-         
+ 
 
-        > package-X:print-name
-
-
-        > package-X@0.0.0 print-name
-        > echo test-package-X
-
-        test-package-X
-
-        > package-X:print-name
+> package-X:print-name
 
 
-        > package-X@0.0.0 print-name
-        > echo test-package-X
+> package-X@0.0.0 print-name
+> echo test-package-X
 
-        test-package-X
+test-package-X
 
-        > package-X:print-name --silent
-
-
-        > package-X@0.0.0 print-name
-        > echo test-package-X "--silent"
-
-        test-package-X --silent
-
-         
-
-         >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X
+> package-X:print-name
 
 
-        lerna notice cli v999.9.9-e2e.0
-        lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies/lerna-workspace
-        lerna notice filter including "package-X"
-        lerna info filter [ 'package-X' ]
-        lerna verb run nx.json was found. Task dependencies will be automatically included.
+> package-X@0.0.0 print-name
+> echo test-package-X
 
-      `);
+test-package-X
+
+> package-X:print-name --silent
+
+
+> package-X@0.0.0 print-name
+> echo test-package-X "--silent"
+
+test-package-X --silent
+
+ 
+
+ >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X
+
+
+lerna notice cli v999.9.9-e2e.0
+lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies/lerna-workspace
+lerna notice filter including "package-X"
+lerna info filter [ 'package-X' ]
+lerna verb run nx.json was found. Task dependencies will be automatically included.
+
+`);
     });
   });
 });
