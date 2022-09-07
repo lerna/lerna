@@ -73,13 +73,6 @@ class PackageGraph extends Map {
           fullWorkspaceSpec = spec;
           spec = spec.replace(/^workspace:/, "");
 
-          if (!depNode) {
-            throw new ValidationError(
-              "EWORKSPACE",
-              `Package specification "${depName}@${spec}" could not be resolved within the workspace. To use the 'workspace:' protocol, ensure that a package with name "${depName}" exists in the current workspace.`
-            );
-          }
-
           // replace aliases (https://pnpm.io/workspaces#referencing-workspace-packages-through-aliases)
           if (spec === "*" || spec === "^" || spec === "~") {
             workspaceAlias = spec;
