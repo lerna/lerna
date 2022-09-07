@@ -211,7 +211,7 @@ useful to have a project-specific configuration, which is placed in the project'
     "namedInputs": {
       "prod": [
         "!{projectRoot}/**/*.test.tsx",
-        "{workspacRoot}/configs/webpack.conf.js"
+        "{workspaceRoot}/configs/webpack.conf.js"
       ]
     },
     "targets": {
