@@ -171,6 +171,10 @@ class Command {
       // Environmental defaults prepared in previous step
       this.envDefaults
     );
+
+    if (this.options.verbose && this.options.loglevel !== "silly") {
+      this.options.loglevel = "verbose";
+    }
   }
 
   configureProperties() {
@@ -187,7 +191,7 @@ class Command {
   }
 
   configureLogging() {
-    const { loglevel } = this.options;
+    const { loglevel, verbose } = this.options;
 
     if (loglevel) {
       log.level = loglevel;

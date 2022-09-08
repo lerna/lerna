@@ -905,6 +905,9 @@
             "profileLocation": {
               "$ref": "#/$defs/commandOptions/shared/profileLocation"
             },
+            "verbose": {
+              "$ref": "#/$defs/commandOptions/shared/verbose"
+            },
             "skipNxCache": {
               "$ref": "#/$defs/commandOptions/run/skipNxCache"
             },
@@ -1395,6 +1398,9 @@
     },
     "ignorePrepublish": {
       "$ref": "#/$defs/commandOptions/shared/ignorePrepublish"
+    },
+    "verbose": {
+      "$ref": "#/$defs/commandOptions/shared/verbose"
     }
   },
   "$defs": {
@@ -1638,10 +1644,6 @@
         "skipNxCache": {
           "type": "boolean",
           "description": "During `lerna run`, when true, skip the nx cache."
-        },
-        "verbose": {
-          "type": "boolean",
-          "description": "When useNx is true, show verbose output from dependent tasks."
         }
       },
       "version": {
@@ -1832,6 +1834,10 @@
         "ignorePrepublish": {
           "type": "boolean",
           "description": "During `lerna publish` and `lerna bootstrap`, when true, disable deprecated 'prepublish' lifecycle script."
+        },
+        "verbose": {
+          "type": "boolean",
+          "description": "When true, escalates loglevel to 'verbose' and shows nx verbose output if useNx is true."
         }
       }
     }
