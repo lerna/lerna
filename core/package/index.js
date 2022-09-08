@@ -270,7 +270,13 @@ class Package {
       depCollection = this.devDependencies;
     }
 
-    if (resolved.registry || resolved.type === "directory") {
+    if (resolved.workspaceSpec) {
+      // do nothing if there is a workspace alias since they don't specify a version number
+      if (!resolved.workspaceAlias) {
+        const workspacePrefix = resolved.workspaceSpec.match(/^(workspace:[*|~|^]?)/)[0];
+        depCollection[depName] = `${workspacePrefix}${depVersion}`;
+      }
+    } else if (resolved.registry || resolved.type === "directory") {
       // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)
       depCollection[depName] = `${savePrefix}${depVersion}`;
     } else if (resolved.gitCommittish) {

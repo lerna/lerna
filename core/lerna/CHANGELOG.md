@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.5.0](https://github.com/lerna/lerna/compare/v5.4.3...v5.5.0) (2022-08-31)
+
+
+### Features
+
+* pnpm workspaces support ([#3284](https://github.com/lerna/lerna/issues/3284)) ([1b18dbe](https://github.com/lerna/lerna/commit/1b18dbeb03e98c70b5428a9fe457781a59f8d65d))
+* **repair:** add lerna repair command ([#3302](https://github.com/lerna/lerna/issues/3302)) ([aae1a2b](https://github.com/lerna/lerna/commit/aae1a2bed1cd2d61ed7b86013d7e6108415cfbcd))
+
+
+### Reverts
+
+* Revert "feat(repair): add lerna repair command" (#3313) ([d261112](https://github.com/lerna/lerna/commit/d261112ede3256ec1c68a22943ae8854ec9fb906)), closes [#3313](https://github.com/lerna/lerna/issues/3313) [#3302](https://github.com/lerna/lerna/issues/3302)
+
+
+
+
+
 ## [5.4.3](https://github.com/lerna/lerna/compare/v5.4.2...v5.4.3) (2022-08-16)
 
 **Note:** Version bump only for package lerna

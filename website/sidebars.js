@@ -60,6 +60,11 @@ const sidebars = {
     },
     {
       type: "category",
+      label: "Recipes",
+      items: ["recipes/using-pnpm-with-lerna"],
+    },
+    {
+      type: "category",
       label: "API Reference",
       items: ["api-reference/commands", "api-reference/configuration"],
     },

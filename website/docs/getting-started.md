@@ -274,7 +274,7 @@ Caching not only restores the terminal output logs, but also artifacts that migh
 Build all the projects, then remove the remix build folder and run the build command again.
 
 ```bash
-lerna run build
+npx lerna run build
 rm -rf packages/remixapp/public/build
 ```
 

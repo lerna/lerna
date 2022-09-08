@@ -1,5 +1,6 @@
 "use strict";
 
+const log = require("npmlog");
 const path = require("path");
 const loadJsonFile = require("load-json-file");
 const writeJsonFile = require("write-json-file");
@@ -11,7 +12,11 @@ function updateLockfileVersion(pkg) {
 
   let chain = Promise.resolve();
 
-  chain = chain.then(() => loadJsonFile(lockfilePath).catch(() => {}));
+  chain = chain.then(() =>
+    loadJsonFile(lockfilePath).catch(() => {
+      log.verbose("version", `${pkg.name} has no lockfile. Skipping lockfile update.`);
+    })
+  );
   chain = chain.then((obj) => {
     if (obj) {
       obj.version = pkg.version;
