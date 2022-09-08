@@ -191,7 +191,7 @@ class Command {
   }
 
   configureLogging() {
-    const { loglevel, verbose } = this.options;
+    const { loglevel } = this.options;
 
     if (loglevel) {
       log.level = loglevel;
