@@ -300,31 +300,6 @@ describe("PackageGraph", () => {
           `"Package specification \\"test-1@^1.1.0\\" could not be resolved within the workspace. To reference a non-matching, remote version of a local dependency, remove the 'workspace:' prefix."`
         );
       });
-
-      it("throws an error when sibling package does not exist in the workspace, regardless of version specification", () => {
-        const packages = [
-          new Package(
-            {
-              name: "test-1",
-              version: "1.0.0",
-            },
-            "/test/test-1"
-          ),
-          new Package(
-            {
-              name: "test-2",
-              version: "1.0.0",
-              dependencies: {
-                "test-3": "workspace:^1.0.0",
-              },
-            },
-            "/test/test-2"
-          ),
-        ];
-        expect(() => new PackageGraph(packages)).toThrowErrorMatchingInlineSnapshot(
-          `"Package specification \\"test-3@^1.0.0\\" could not be resolved within the workspace. To use the 'workspace:' protocol, ensure that a package with name \\"test-3\\" exists in the current workspace."`
-        );
-      });
     });
   });
 
@@ -620,14 +595,6 @@ Set {
     });
   });
 });
-
-// eslint-disable-next-line no-unused-vars
-function deepInspect(obj) {
-  // jest console mutilates console.dir() options argument,
-  // so sidestep it by requiring the non-shimmed method directly.
-  // eslint-disable-next-line global-require
-  require("console").dir(obj, { depth: 10, compact: false });
-}
 
 function topoPackages() {
   return [
