@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.1](https://github.com/lerna/lerna/compare/v5.5.0...v5.5.1) (2022-09-09)
+
+
+### Bug Fixes
+
+* **run:** exclude dependencies with --scope when nx.json is not present ([#3316](https://github.com/lerna/lerna/issues/3316)) ([99a13a9](https://github.com/lerna/lerna/commit/99a13a9bae2020f2773d21c4109148a59b1ec2d6))
+
+
+
+
+
 # [5.5.0](https://github.com/lerna/lerna/compare/v5.4.3...v5.5.0) (2022-08-31)
 
 
