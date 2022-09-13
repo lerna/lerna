@@ -222,7 +222,7 @@ class RunCommand extends Command {
     const { readNxJson } = require("nx/src/config/configuration");
     const nxJson = readNxJson();
     const nxJsonExists = existsSync(path.join(this.project.rootPath, "nx.json"));
-    const useParallel = this.options.parallel && nxJsonExists;
+    const useParallel = this.options.parallel && !nxJsonExists;
 
     const targetDependenciesAreDefined =
       Object.keys(nxJson.targetDependencies || nxJson.targetDefaults || {}).length > 0;
