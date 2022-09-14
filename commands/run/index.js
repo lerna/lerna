@@ -264,7 +264,7 @@ class RunCommand extends Command {
       if (this.options.parallel || this.options.sort !== undefined || this.options.includeDependencies) {
         this.logger.warn(
           this.name,
-          `"parallel", "sort", "no-sort", and "include-dependencies" are not valid options when nx.json exists.`
+          `"parallel", "sort", "no-sort", and "include-dependencies" are ignored when nx.json exists. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks for details.`
         );
       }
     } else {
