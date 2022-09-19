@@ -34,7 +34,7 @@
     "@lerna/child-process": "file:../../core/child-process",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
     "@octokit/rest": "^19.0.3",
-    "git-url-parse": "^12.0.0",
+    "git-url-parse": "^13.1.0",
     "npmlog": "^6.0.2"
   }
 }
