@@ -63,7 +63,7 @@
     "fs-extra": "^9.1.0",
     "get-port": "^5.1.1",
     "get-stream": "^6.0.0",
-    "git-url-parse": "^12.0.0",
+    "git-url-parse": "^13.1.0",
     "glob-parent": "^5.1.1",
     "globby": "^11.0.2",
     "has-unicode": "^2.0.1",
