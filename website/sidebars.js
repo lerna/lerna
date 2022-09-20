@@ -61,7 +61,7 @@ const sidebars = {
     {
       type: "category",
       label: "Recipes",
-      items: ["recipes/using-pnpm-with-lerna"],
+      items: ["recipes/using-pnpm-with-lerna", "recipes/using-lerna-powered-by-nx-to-run-tasks"],
     },
     {
       type: "category",
