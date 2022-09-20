@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.2](https://github.com/lerna/lerna/compare/v5.5.1...v5.5.2) (2022-09-20)
+
+
+### Bug Fixes
+
+* **run:** missing `fs-extra` dependency declaration ([#3332](https://github.com/lerna/lerna/issues/3332)) ([068830e](https://github.com/lerna/lerna/commit/068830e95f0552a33db3ea678092134372a40af1))
+* **run:** warn on incompatible arguments with useNx ([#3326](https://github.com/lerna/lerna/issues/3326)) ([ebf6542](https://github.com/lerna/lerna/commit/ebf654240aa1c0c67d7f1ba5dec458c14edd5c32))
+
+
+
+
+
 ## [5.5.1](https://github.com/lerna/lerna/compare/v5.5.0...v5.5.1) (2022-09-09)
 
 
