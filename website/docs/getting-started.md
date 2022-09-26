@@ -73,9 +73,7 @@ This will generate `lerna.json` and will add `lerna` to the root `package.json`.
 {
   "name": "root",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "devDependencies": {
     "lerna": "5.1.6"
   }
@@ -256,6 +254,8 @@ and environment, so instead running it Lerna restored the necessary files and re
 
 Most of the time Lerna (powered by Nx) is good at recognizing what files need to be cached and restored. In case of
 building the Remix app we need to help it by adding the following section to `packages/remixapp/package.json`.
+
+> NOTE: "{projectRoot}" is a special syntax supported by the task-runner, which will be appropriately interpolated internally when the command runs. You should therefore not replace "{projectRoot}" with a fixed path as this makes your configuration less flexible.
 
 ```json
 {
