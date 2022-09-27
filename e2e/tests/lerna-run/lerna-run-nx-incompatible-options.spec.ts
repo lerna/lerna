@@ -290,7 +290,7 @@ test-package-X
 
 lerna notice cli v999.9.9-e2e.0
 lerna notice filter including dependencies
-lerna info run Using "include-dependencies" option when nx.json exists will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks#--include-dependencies for details.
+lerna info run Using the "include-dependencies" option when nx.json exists will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks#--include-dependencies for details.
 
 `);
   });
