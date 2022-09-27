@@ -198,18 +198,16 @@ lerna info run Using the "include-dependencies" option when nx.json exists will 
 
       await fixture.updateJson("packages/package-3/package.json", (json) => ({
         ...json,
-        "nx": {
-          "targets": {
+        nx: {
+          targets: {
             "print-name": {
-              "inputs": [],
-              "outputs": [],
-              "dependsOn": [
-                "^print-name"
-              ]
-            }
-          }
-        }
-      }))
+              inputs: [],
+              outputs: [],
+              dependsOn: ["^print-name"],
+            },
+          },
+        },
+      }));
 
       const output = await fixture.lerna("run print-name --scope package-3");
 
@@ -260,18 +258,16 @@ lerna verb run nx.json was found. Task dependencies will be automatically includ
 
       await fixture.updateJson("packages/package-3/package.json", (json) => ({
         ...json,
-        "nx": {
-          "targets": {
+        nx: {
+          targets: {
             "print-name": {
-              "inputs": [],
-              "outputs": [],
-              "dependsOn": [
-                "^print-name"
-              ]
-            }
-          }
-        }
-      }))
+              inputs: [],
+              outputs: [],
+              dependsOn: ["^print-name"],
+            },
+          },
+        },
+      }));
 
       const output = await fixture.lerna("run print-name --scope package-3 --ignore package-1");
 
