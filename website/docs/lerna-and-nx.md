@@ -8,7 +8,7 @@ type: explainer
 
 Nrwl (the company behind the open source build system Nx) has taken over [stewardship of Lerna](https://dev.to/nrwl/lerna-is-dead-long-live-lerna-3jal). [Nx](https://nx.dev) is a build system developed by ex-Googlers and utilizes many of the techniques used by internal Google tools. Lerna v5 is the first release under this new stewardship, updating outdated packages and starting to do some cleanup on the repository itself. Starting with v5.1+, Lerna comes with the new possibility to integrate Nx and defer a lot of the task scheduling work to it.
 
-The following is a high level overview of what each tool provides.  Note that all of the existing Lerna commands will continue to function as they have.  Adding Nx or Nx Cloud simply improves what you're already doing.
+The following is a high level overview of what each tool provides. Note that all of the existing Lerna commands will continue to function as they have. Adding Nx or Nx Cloud simply improves what you're already doing.
 
 ## Lerna
 
@@ -27,7 +27,7 @@ Free and open source
 - `npm install lerna`
 - `npx lerna init`
 
------
+---
 
 ## Nx
 
@@ -50,7 +50,11 @@ Free and open source
 - Set `"useNx": true` in `lerna.json`
 - Continue using Lerna as usual
 
-------
+:::note
+When Lerna is set to use Nx and detects `nx.json` in the workspace, it will defer to Nx to detect task dependencies. Some options for `lerna run` will behave differently. See [Using Lerna (Powered by Nx) to Run Tasks](./recipes/using-lerna-powered-by-nx-to-run-tasks) for more details.
+:::
+
+---
 
 ## Nx Cloud
 
@@ -63,7 +67,7 @@ Free and open source
 
 Free for open source projects
 
-For closed source repositories, the first 500 computation hours per month are free.  Most repositories do not exceed this limit. $1 per computation hour after that.
+For closed source repositories, the first 500 computation hours per month are free. Most repositories do not exceed this limit. $1 per computation hour after that.
 
 ### Set up
 
