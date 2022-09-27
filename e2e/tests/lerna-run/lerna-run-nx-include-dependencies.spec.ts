@@ -89,10 +89,8 @@ describe("lerna-run-nx-include-dependencies", () => {
 
         > package-X:print-name --silent
 
-
         > package-X@0.0.0 print-name
         > echo test-package-X "--silent"
-
         test-package-X --silent
 
          
@@ -111,39 +109,17 @@ describe("lerna-run-nx-include-dependencies", () => {
   });
 
   describe("with nx enabled and with nx.json", () => {
-    it("should include dependencies by default", async () => {
+    it("should not include package dependencies by default", async () => {
       await fixture.addNxToWorkspace();
 
       const output = await fixture.lerna("run print-name --scope package-3 -- --silent");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for project package-X and 2 task(s) it depends on
-
- 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
 > package-X:print-name --silent
-
 
 > package-X@0.0.0 print-name
 > echo test-package-X "--silent"
-
 test-package-X --silent
 
  
@@ -156,6 +132,61 @@ lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies/lerna-works
 lerna notice filter including "package-X"
 lerna info filter [ 'package-X' ]
 lerna verb run nx.json was found. Task dependencies will be automatically included.
+
+`);
+    });
+
+    it("should include package dependencies with --include-dependencies", async () => {
+      await fixture.addNxToWorkspace();
+
+      const output = await fixture.lerna("run print-name --scope package-3 --include-dependencies");
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+
+ >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+
+    - package-X
+    - package-X
+    - package-X
+
+ 
+
+> package-X:print-name
+
+
+> package-X@0.0.0 print-name
+> echo test-package-X
+
+test-package-X
+
+> package-X:print-name
+
+
+> package-X@0.0.0 print-name
+> echo test-package-X
+
+test-package-X
+
+> package-X:print-name
+
+
+> package-X@0.0.0 print-name
+> echo test-package-X
+
+test-package-X
+
+ 
+
+ >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+lerna notice cli v999.9.9-e2e.0
+lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies/lerna-workspace
+lerna notice filter including "package-X"
+lerna notice filter including dependencies
+lerna info filter [ 'package-X' ]
+lerna verb run nx.json was found. Task dependencies will be automatically included.
+lerna info run Using "include-dependencies" option when nx.json exists will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks#--include-dependencies for details.
 
 `);
     });
