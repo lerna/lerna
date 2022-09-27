@@ -29,6 +29,10 @@ Lerna by itself does not have knowledge of which tasks depend on others, so it d
 
 This is no longer a problem when Lerna uses Nx to run tasks. Nx, utilizing its [task graph](https://nx.dev/concepts/mental-model#the-task-graph), will automatically run dependent tasks first when necessary, so `--include-dependencies` is obsolete. However, it can still be used to include project dependencies that Lerna detects but Nx does not deem necessary and would otherwise exclude.
 
+### `--ignore`
+
+When used with Nx, `--ignore` will never cause `lerna run` to exclude any tasks that are deemed to be required by the Nx [task graph](https://nx.dev/concepts/mental-model#the-task-graph).
+
 :::tip
 
 The effects on the options above will only apply if `nx.json` exists in the root. If `nx.json` does not exist and `useNx` is `true`, then they will behave just as they would with Lerna's base task runner (if `useNx` is `false`).
