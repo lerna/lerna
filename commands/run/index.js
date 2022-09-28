@@ -219,15 +219,10 @@ class RunCommand extends Command {
   }
 
   prepNxOptions() {
-    const { readNxJson } = require("nx/src/config/configuration");
-    const nxJson = readNxJson();
     const nxJsonExists = existsSync(path.join(this.project.rootPath, "nx.json"));
-    const useParallel = this.options.parallel && !nxJsonExists;
 
-    const targetDependenciesAreDefined =
-      Object.keys(nxJson.targetDependencies || nxJson.targetDefaults || {}).length > 0;
     const targetDependencies =
-      this.toposort && !useParallel && !targetDependenciesAreDefined
+      this.toposort && !this.options.parallel && !nxJsonExists
         ? {
             [this.script]: [
               {
@@ -250,7 +245,7 @@ class RunCommand extends Command {
        * To match lerna's own behavior (via pMap's default concurrency), we set parallel to a very large number if
        * the flag has been set (we can't use Infinity because that would cause issues with the task runner).
        */
-      parallel: useParallel ? 999 : this.concurrency,
+      parallel: this.options.parallel && !nxJsonExists ? 999 : this.concurrency,
       nxBail: this.bail,
       nxIgnoreCycles: !this.options.rejectCycles,
       skipNxCache: this.options.skipNxCache,
@@ -261,10 +256,24 @@ class RunCommand extends Command {
     if (nxJsonExists) {
       this.logger.verbose(this.name, "nx.json was found. Task dependencies will be automatically included.");
 
-      if (this.options.parallel || this.options.sort !== undefined || this.options.includeDependencies) {
+      if (this.options.parallel || this.options.sort !== undefined) {
         this.logger.warn(
           this.name,
-          `"parallel", "sort", "no-sort", and "include-dependencies" are ignored when nx.json exists. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks for details.`
+          `"parallel", "sort", and "no-sort" are ignored when nx.json exists. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks for details.`
+        );
+      }
+
+      if (this.options.includeDependencies) {
+        this.logger.info(
+          this.name,
+          `Using the "include-dependencies" option when nx.json exists will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks#--include-dependencies for details.`
+        );
+      }
+
+      if (this.options.ignore) {
+        this.logger.info(
+          this.name,
+          `Using the "ignore" option when nx.json exists will exclude only tasks that are not determined to be required by Nx. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks#--ignore for details.`
         );
       }
     } else {

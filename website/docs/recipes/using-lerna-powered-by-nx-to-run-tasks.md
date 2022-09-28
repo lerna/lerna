@@ -27,7 +27,11 @@ If you want to limit the concurrency of tasks, you can still use the [concurrenc
 
 Lerna by itself does not have knowledge of which tasks depend on others, so it defaults to excluding tasks on dependent projects when using [filter options](https://github.com/lerna/lerna/tree/6cb8ab2d4af7ce25c812e8fb05cd04650105705f/core/filter-options#lernafilter-options) and relies on `--include-dependencies` to manually specify that dependent projects' tasks should be included.
 
-This is no longer a problem when Lerna uses Nx to run tasks. Nx, utilizing its [task graph](https://nx.dev/concepts/mental-model#the-task-graph), will automatically run dependent tasks first when necessary, so `--include-dependencies` is obsolete.
+This is no longer a problem when Lerna uses Nx to run tasks. Nx, utilizing its [task graph](https://nx.dev/concepts/mental-model#the-task-graph), will automatically run dependent tasks first when necessary, so `--include-dependencies` is obsolete. However, it can still be used to include project dependencies that Lerna detects but Nx does not deem necessary and would otherwise exclude.
+
+### `--ignore`
+
+When used with Nx, `--ignore` will never cause `lerna run` to exclude any tasks that are deemed to be required by the Nx [task graph](https://nx.dev/concepts/mental-model#the-task-graph).
 
 :::tip
 

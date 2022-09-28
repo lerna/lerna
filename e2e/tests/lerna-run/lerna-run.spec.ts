@@ -396,10 +396,8 @@ lerna notice cli v999.9.9-e2e.0
   
   > package-X:print-name-run-one-only
   
-  
   > package-X@0.0.0 print-name-run-one-only
   > echo test-package-X-run-one-only
-  
   test-package-X-run-one-only
   
    
@@ -419,10 +417,8 @@ lerna notice cli v999.9.9-e2e.0
 
   > package-X:"print:name:run-one-only"
   
-  
   > package-X@0.0.0 print:name:run-one-only
   > echo test-package-X-run-one-only-with-colon
-  
   test-package-X-run-one-only-with-colon
   
    
