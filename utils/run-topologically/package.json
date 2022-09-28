@@ -1,6 +1,6 @@
 {
   "name": "@lerna/run-topologically",
-  "version": "5.5.3",
+  "version": "5.5.4",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",

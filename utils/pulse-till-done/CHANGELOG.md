@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.4](https://github.com/lerna/lerna/compare/v5.5.3...v5.5.4) (2022-09-28)
+
+**Note:** Version bump only for package @lerna/pulse-till-done
+
+
+
+
+
 ## [5.5.3](https://github.com/lerna/lerna/compare/v5.5.2...v5.5.3) (2022-09-28)
 
 **Note:** Version bump only for package @lerna/pulse-till-done
