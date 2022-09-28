@@ -1,6 +1,6 @@
 {
   "name": "@lerna/rimraf-dir",
-  "version": "5.5.2",
+  "version": "5.5.3",
   "description": "Run rimraf on a directory in a subprocess to hack around slowness",
   "keywords": [
     "lerna",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.3](https://github.com/lerna/lerna/compare/v5.5.2...v5.5.3) (2022-09-28)
+
+
+### Bug Fixes
+
+* **run:** fully defer to Nx for dep detection when nx.json exists ([#3345](https://github.com/lerna/lerna/issues/3345)) ([fef2ae6](https://github.com/lerna/lerna/commit/fef2ae6c13b35330b2367d89a63e539f2646f04e))
+
+
+
+
+
 ## [5.5.2](https://github.com/lerna/lerna/compare/v5.5.1...v5.5.2) (2022-09-20)
 
 
