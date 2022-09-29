@@ -21,6 +21,7 @@ const runCmd = require("@lerna/run/command");
 const versionCmd = require("@lerna/version/command");
 
 const repairCmd = require("./commands/repair/command");
+const addCachingCmd = require("./commands/add-caching/command");
 
 const pkg = require("./package.json");
 
@@ -34,6 +35,7 @@ function main(argv) {
   // @ts-ignore
   return cli()
     .command(addCmd)
+    .command(addCachingCmd)
     .command(bootstrapCmd)
     .command(changedCmd)
     .command(cleanCmd)
