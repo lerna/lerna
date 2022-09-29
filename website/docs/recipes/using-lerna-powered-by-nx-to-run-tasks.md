@@ -35,6 +35,6 @@ When used with Nx, `--ignore` will never cause `lerna run` to exclude any tasks 
 
 :::tip
 
-The effects on the options above will only apply if `nx.json` exists in the root. If `nx.json` does not exist and `useNx` is `true`, then they will behave just as they would with Lerna's base task runner (if `useNx` is `false`).
+The effects on the options above will only apply if `nx.json` exists in the root with the `targetDefaults` property defined. Otherwise, they will behave just as they would with Lerna's base task runner (if `useNx` is `false`).
 
 :::
