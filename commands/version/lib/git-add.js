@@ -9,23 +9,30 @@ const childProcess = require("@lerna/child-process");
 
 module.exports.gitAdd = gitAdd;
 
+let resolvedPrettier;
+function resolvePrettier() {
+  if (!resolvedPrettier) {
+    try {
+      // If the workspace has prettier installed, apply it to the updated files
+      const prettierPath = path.join(workspaceRoot, "node_modules", "prettier");
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      resolvedPrettier = require(prettierPath);
+    } catch {
+      return;
+    }
+  }
+  return resolvedPrettier;
+}
+
 function maybeFormatFile(filePath) {
-  let prettier;
-  try {
-    // If the workspace has prettier installed, apply it to the updated files
-    const prettierPath = path.join(workspaceRoot, "node_modules", "prettier");
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    prettier = require(prettierPath);
-  } catch {
+  const prettier = resolvePrettier();
+  if (!prettier) {
     return;
   }
-
-  log.silly("version", `Applying prettier to updated file: ${filePath}`);
-
-  const config = prettier.resolveConfig.sync(filePath);
+  const config = resolvedPrettier.resolveConfig.sync(filePath);
   try {
     const input = fs.readFileSync(filePath, "utf8");
-    fs.writeFileSync(filePath, prettier.format(input, { ...config, filepath: filePath }), "utf8");
+    fs.writeFileSync(filePath, resolvedPrettier.format(input, { ...config, filepath: filePath }), "utf8");
     log.silly("version", `Successfully applied prettier to updated file: ${filePath}`);
   } catch {
     log.silly("version", `Failed to apply prettier to updated file: ${filePath}`);
