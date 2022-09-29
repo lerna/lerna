@@ -22,7 +22,7 @@ class AddCachingCommand extends Command {
     if (this.options.useNx === false) {
       this.logger.error(
         "add-caching",
-        "The `add-caching` command is only available when using the Nx task runner"
+        "The `add-caching` command is only available when using the Nx task runner (do not set `useNx` to `false` in `lerna.json`)"
       );
       // eslint-disable-next-line no-process-exit
       process.exit(1);
@@ -61,7 +61,7 @@ class AddCachingCommand extends Command {
         type: "checkbox",
         name: "cacheableOperations",
         message:
-          "Which of the following scripts are cacheable? (Produce the same output given the same input)\n",
+          "Which of the following scripts are cacheable? (Produce the same output given the same input, e.g. build, test and lint usually are, serve and start are not)\n",
         choices: this.uniqueScriptNames,
       },
     ]);
@@ -74,14 +74,7 @@ class AddCachingCommand extends Command {
         {
           type: "input",
           name: scriptName,
-          message: `Where within a particular project directory does the "${scriptName}" script write its outputs?\n`,
-          default: "dist",
-          validate: (input) => {
-            if (!input) {
-              return "Please provide a project relative path";
-            }
-            return true;
-          },
+          message: `Does the "${scriptName}" script create any outputs? If not, leave blank, otherwise provide a path relative to a project root (e.g. dist, lib, build, coverage)\n`,
         },
       ]);
     }
@@ -97,6 +90,10 @@ class AddCachingCommand extends Command {
     this.logger.info(
       "add-caching",
       "Learn more about task runner configuration here: https://lerna.js.org/docs/concepts/task-pipeline-configuration"
+    );
+    this.logger.info(
+      "add-caching",
+      "Note that the legacy task runner options of --sort, --no-sort and --parallel no longer apply. Learn more here: https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks"
     );
   }
 
@@ -138,6 +135,10 @@ class AddCachingCommand extends Command {
     }
 
     for (const [scriptName, scriptAnswerData] of Object.entries(answers.scriptOutputs)) {
+      if (!scriptAnswerData[scriptName]) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
       nxJson.targetDefaults[scriptName] = nxJson.targetDefaults[scriptName] || {};
       nxJson.targetDefaults[scriptName].outputs = [`{projectRoot}/${scriptAnswerData[scriptName]}`];
     }
