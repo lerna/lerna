@@ -374,8 +374,8 @@ describe("RunCommand", () => {
     it("runs a script in packages with --stream", async () => {
       collectedOutput = "";
       await lernaRun(testDir)("my-script", "--stream");
-      expect(collectedOutput).toContain("[package-1      ] package-1");
-      expect(collectedOutput).toContain("[package-3      ] package-3");
+      expect(collectedOutput).toContain("package-1: package-1");
+      expect(collectedOutput).toContain("package-3: package-3");
     });
 
     it("runs a cacheable script", async () => {
