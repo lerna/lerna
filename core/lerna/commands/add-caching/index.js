@@ -24,6 +24,7 @@ class AddCachingCommand extends Command {
         "add-caching",
         "The `add-caching` command is only available when using the Nx task runner"
       );
+      // eslint-disable-next-line no-process-exit
       process.exit(1);
     }
 
@@ -104,7 +105,8 @@ class AddCachingCommand extends Command {
     let nxJson = {};
     try {
       nxJson = readJsonFile(nxJsonPath);
-    } catch (e) {}
+      // eslint-disable-next-line no-empty
+    } catch {}
 
     nxJson.tasksRunnerOptions = nxJson.tasksRunnerOptions || {};
     nxJson.tasksRunnerOptions.default = nxJson.tasksRunnerOptions.default || {};
