@@ -19,7 +19,7 @@ const { warnIfHanging } = require("./lib/warn-if-hanging");
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
 class Command {
-  constructor(_argv) {
+  constructor(_argv, { skipValidations } = { skipValidations: false }) {
     log.pause();
     log.heading = "lerna";
 
@@ -49,7 +49,10 @@ class Command {
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureProperties());
       chain = chain.then(() => this.configureLogging());
-      chain = chain.then(() => this.runValidations());
+      // For the special "repair" command we want to intitialize everything but don't want to run validations as that will end up becoming cyclical
+      if (!skipValidations) {
+        chain = chain.then(() => this.runValidations());
+      }
       chain = chain.then(() => this.runPreparations());
       chain = chain.then(() => this.runCommand());
 

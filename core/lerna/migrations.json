@@ -1,0 +1,10 @@
+{
+  "generators": {
+    "noop": {
+      "cli": "nx",
+      "version": "5.3.0",
+      "description": "Noop example migration, can be removed once a real migration is created",
+      "implementation": "./migrations/noop/noop"
+    }
+  }
+}
