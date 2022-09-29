@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "5.5.4",
+  "version": "5.6.0",
   "description": "A tool for managing JavaScript projects with multiple packages.",
   "keywords": [
     "lerna",
@@ -44,10 +44,10 @@
   "dependencies": {
     "@lerna/add": "file:../../commands/add",
     "@lerna/bootstrap": "file:../../commands/bootstrap",
-    "@lerna/command": "file:../command",
     "@lerna/changed": "file:../../commands/changed",
     "@lerna/clean": "file:../../commands/clean",
     "@lerna/cli": "file:../cli",
+    "@lerna/command": "file:../command",
     "@lerna/create": "file:../../commands/create",
     "@lerna/diff": "file:../../commands/diff",
     "@lerna/exec": "file:../../commands/exec",
