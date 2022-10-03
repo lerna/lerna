@@ -42,7 +42,6 @@ describe("InitCommand", () => {
       expect(lernaJson).toMatchInlineSnapshot(`
         Object {
           "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-          "useNx": true,
           "useWorkspaces": true,
           "version": "0.0.0",
         }
@@ -137,7 +136,6 @@ describe("InitCommand", () => {
       expect(lernaJson).toMatchInlineSnapshot(`
         Object {
           "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-          "useNx": true,
           "useWorkspaces": true,
           "version": "0.0.0",
         }
@@ -279,7 +277,7 @@ describe("InitCommand", () => {
 
   describe("when lerna.json exists", () => {
     describe("when useWorkspaces is false or missing", () => {
-      it("updates to explicitly set useNx, $schema, and packages", async () => {
+      it("updates to explicitly set $schema, and packages", async () => {
         const testDir = await initFixture("has-lerna");
         const lernaJsonPath = path.join(testDir, "lerna.json");
 
@@ -296,7 +294,6 @@ describe("InitCommand", () => {
             "packages": Array [
               "packages/*",
             ],
-            "useNx": false,
             "useWorkspaces": false,
             "version": "1.2.3",
           }
@@ -342,7 +339,7 @@ describe("InitCommand", () => {
     });
 
     describe("when useNx is false", () => {
-      it("preserves useNx false and does not add nx as dependency", async () => {
+      it("preserves useNx false", async () => {
         const testDir = await initFixture("has-lerna");
         const lernaJsonPath = path.join(testDir, "lerna.json");
 
@@ -379,7 +376,7 @@ describe("InitCommand", () => {
     });
 
     describe("when useNx is true", () => {
-      it("preserves useNx true", async () => {
+      it("removes useNx true as it would do nothing", async () => {
         const testDir = await initFixture("has-lerna");
         const lernaJsonPath = path.join(testDir, "lerna.json");
 
@@ -397,7 +394,6 @@ describe("InitCommand", () => {
             "packages": Array [
               "packages/*",
             ],
-            "useNx": true,
             "useWorkspaces": false,
             "version": "1.2.3",
           }
@@ -407,7 +403,7 @@ describe("InitCommand", () => {
   });
 
   describe("when re-initializing with --exact", () => {
-    it("sets lerna.json command.init.exact to true and explicitly sets useNx, useWorkspaces, $schema, and packages", async () => {
+    it("sets lerna.json command.init.exact to true and explicitly sets useWorkspaces, $schema, and packages", async () => {
       const testDir = await initFixture("updates");
       const lernaJsonPath = path.join(testDir, "lerna.json");
       const pkgJsonPath = path.join(testDir, "package.json");
@@ -444,7 +440,6 @@ describe("InitCommand", () => {
           "packages": Array [
             "packages/*",
           ],
-          "useNx": false,
           "useWorkspaces": false,
           "version": "1.2.3",
         }

@@ -32,7 +32,6 @@ describe("lerna-init", () => {
     expect(await fixture.readWorkspaceFile("lerna.json")).toMatchInlineSnapshot(`
       "{
         \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
-        \\"useNx\\": true,
         \\"useWorkspaces\\": true,
         \\"version\\": \\"0.0.0\\"
       }
@@ -73,7 +72,6 @@ describe("lerna-init", () => {
       expect(await fixture.readWorkspaceFile("lerna.json")).toMatchInlineSnapshot(`
         "{
           \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
-          \\"useNx\\": true,
           \\"useWorkspaces\\": true,
           \\"version\\": \\"independent\\"
         }
@@ -120,7 +118,6 @@ describe("lerna-init", () => {
             }
           },
           \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
-          \\"useNx\\": true,
           \\"useWorkspaces\\": true,
           \\"version\\": \\"0.0.0\\"
         }
@@ -167,7 +164,6 @@ describe("lerna-init", () => {
             }
           },
           \\"$schema\\": \\"node_modules/lerna/schemas/lerna-schema.json\\",
-          \\"useNx\\": true,
           \\"useWorkspaces\\": true,
           \\"version\\": \\"independent\\"
         }

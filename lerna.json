@@ -18,6 +18,5 @@
   },
   "ignoreChanges": ["**/__fixtures__/**", "**/__tests__/**", "**/*.md"],
   "useWorkspaces": true,
-  "useNx": true,
   "version": "5.6.1"
 }

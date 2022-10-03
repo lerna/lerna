@@ -29,7 +29,7 @@ describe("lerna-run-nx-incompatible-options", () => {
       forceDeterministicTerminalOutput: true,
     });
 
-    await fixture.addNxToWorkspace();
+    await fixture.addNxJsonToWorkspace();
     await fixture.updateJson("nx.json", (json) => ({
       ...json,
       targetDefaults: {
@@ -322,7 +322,7 @@ describe("lerna-run-nx-incompatible-options without nx.json", () => {
       forceDeterministicTerminalOutput: true,
     });
 
-    await fixture.addNxToWorkspace();
+    await fixture.addNxJsonToWorkspace();
     await remove(fixture.getWorkspacePath("nx.json"));
 
     await fixture.lerna("create package-1 -y");
