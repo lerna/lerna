@@ -20,8 +20,8 @@
     },
     "useNx": {
       "type": "boolean",
-      "description": "When true, Lerna will delegate the implementation details of `lerna run` to the Nx task runner, instead of p-map or p-queue.",
-      "default": false
+      "description": "By setting `useNx` to `false` you can use the legacy task running implementations in `lerna` (`p-map` and `p-queue`) instead of using the default modern task runner implementation powered by [Nx](https://nx.dev).",
+      "default": true
     },
     "command": {
       "type": "object",

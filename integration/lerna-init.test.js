@@ -43,7 +43,6 @@ describe("lerna init", () => {
     expect(lernaJson).toMatchInlineSnapshot(`
       Object {
         "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-        "useNx": true,
         "useWorkspaces": true,
         "version": "0.0.0",
       }
@@ -88,7 +87,6 @@ describe("lerna init", () => {
         "packages": Array [
           "packages/*",
         ],
-        "useNx": false,
         "useWorkspaces": false,
         "version": "1.0.0",
       }
