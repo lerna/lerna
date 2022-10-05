@@ -6,6 +6,8 @@ on:
       - main
       - next
       - "test/*"
+      # TODO: Remove this pre-merge
+      - use-nx-default
   pull_request:
     types: [assigned, opened, synchronize, reopened, labeled]
 
