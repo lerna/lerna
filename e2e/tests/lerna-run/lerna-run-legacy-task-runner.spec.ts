@@ -179,7 +179,9 @@ describe("lerna-run-legacy-task-runner", () => {
 
       const lernaProfileSavedOutputLine = output.combinedOutput.split("\n")[8];
 
-      const lernaProfileFileName = lernaProfileSavedOutputLine.split("lerna-run-legacy-task-runner/lerna-workspace/")[1];
+      const lernaProfileFileName = lernaProfileSavedOutputLine.split(
+        "lerna-run-legacy-task-runner/lerna-workspace/"
+      )[1];
 
       expect(existsSync(fixture.getWorkspacePath(lernaProfileFileName))).toBe(true);
     });
@@ -208,7 +210,9 @@ describe("lerna-run-legacy-task-runner", () => {
 
       const lernaProfileSavedOutputLine = output.combinedOutput.split("\n")[8];
 
-      const lernaProfileFileName = lernaProfileSavedOutputLine.split("lerna-run-legacy-task-runner/lerna-workspace/")[1];
+      const lernaProfileFileName = lernaProfileSavedOutputLine.split(
+        "lerna-run-legacy-task-runner/lerna-workspace/"
+      )[1];
 
       expect(existsSync(fixture.getWorkspacePath(lernaProfileFileName))).toBe(true);
     });
