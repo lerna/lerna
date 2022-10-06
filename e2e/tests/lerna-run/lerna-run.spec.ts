@@ -53,7 +53,7 @@ describe("lerna-run", () => {
   });
   afterAll(() => fixture.destroy());
 
-  it("should run script on all child packages", async () => {
+  it("should run script on all child packages CATS", async () => {
     const output = await fixture.lerna("run print-name -- --silent");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
