@@ -16,6 +16,7 @@ describe("lerna-run-nx", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {
+    console.log("HERE...")
     fixture = await Fixture.create({
       name: "lerna-run",
       packageManager: "pnpm",
@@ -29,6 +30,7 @@ describe("lerna-run-nx", () => {
        */
       forceDeterministicTerminalOutput: true,
     });
+    console.log("HERE2...", fixture)
 
     await fixture.lerna("create package-1 -y");
     await fixture.addScriptsToPackage({
