@@ -15,7 +15,7 @@ expect.addSnapshotSerializer({
 describe("lerna-run-nx", () => {
   let fixture: Fixture;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     fixture = await Fixture.create({
       name: "lerna-run",
       packageManager: "pnpm",
@@ -186,7 +186,7 @@ describe("lerna-run-nx", () => {
       version: "workspace:~",
     });
   });
-  afterAll(() => fixture.destroy());
+  afterEach(() => fixture.destroy());
 
   it("should run script on all child packages", async () => {
     const output = await fixture.lerna("run print-name");
@@ -208,7 +208,7 @@ describe("lerna-run-nx", () => {
     - package-X
     - package-app
 
- 
+
 
 > package-X:print-name
 
@@ -306,7 +306,7 @@ test-package-X
 
 test-package-app
 
- 
+
 
  >  Lerna (powered by Nx)   Successfully ran target print-name for 12 projects
 
