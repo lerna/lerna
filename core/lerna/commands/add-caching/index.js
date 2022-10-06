@@ -26,21 +26,6 @@ class AddCachingCommand extends Command {
       );
       // eslint-disable-next-line no-process-exit
       process.exit(1);
-    } // TODO: remove auto-setting useNx: true in v6
-    else if (!this.options.useNx) {
-      const lernaJsonPath = joinPathFragments(workspaceRoot, "lerna.json");
-      try {
-        const lernaJson = readJsonFile(lernaJsonPath);
-        lernaJson.useNx = true;
-        writeJsonFile(lernaJsonPath, lernaJson);
-      } catch {
-        this.logger.error(
-          "add-caching",
-          "The `add-caching` command is only available when using the Nx task runner (set `useNx` to `true` in `lerna.json`)"
-        );
-        // eslint-disable-next-line no-process-exit
-        process.exit(1);
-      }
     }
 
     const packages = this.packageGraph?.rawPackageList || [];

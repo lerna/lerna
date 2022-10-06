@@ -1186,15 +1186,18 @@ describe("lerna-create", () => {
         lerna notice cli v999.9.9-e2e.0
         lerna notice filter including "test-script"
         lerna info filter [ 'test-script' ]
-        lerna info Executing command in 1 package: "npm run test"
-        lerna info run Ran npm script 'test' in 'test-script' in X.Xs:
+
+        > test-script:test
 
         > test-script@0.0.0 test
         > node ./__tests__/test-script.test.js
-
         testScript tests passed
-        lerna success run Ran npm script 'test' in 1 package in X.Xs:
-        lerna success - test-script
+
+         
+
+         >  Lerna (powered by Nx)   Successfully ran target test for project test-script
+
+
 
       `);
     });

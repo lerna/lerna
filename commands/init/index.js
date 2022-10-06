@@ -69,7 +69,7 @@ class InitCommand extends Command {
     const hasExistingLernaConfig = !!this.project.version;
     const hasExistingPackageJson = !!this.project.manifest;
 
-    const useNx = !hasExistingLernaConfig || this.project.config.useNx === true;
+    const useNx = !hasExistingLernaConfig || this.project.config.useNx !== false;
     const useWorkspaces = !hasExistingLernaConfig || this.project.config.useWorkspaces === true;
 
     let chain = Promise.resolve();
@@ -162,9 +162,10 @@ class InitCommand extends Command {
 
       Object.assign(this.project.config, {
         $schema: "node_modules/lerna/schemas/lerna-schema.json",
-        useNx,
         useWorkspaces,
         version,
+        // Only set if explicitly disabling
+        useNx: useNx === false ? false : undefined,
       });
 
       return this.project.serializeConfig();
