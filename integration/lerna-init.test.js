@@ -87,7 +87,6 @@ describe("lerna init", () => {
         "packages": Array [
           "packages/*",
         ],
-        "useNx": false,
         "useWorkspaces": false,
         "version": "1.0.0",
       }

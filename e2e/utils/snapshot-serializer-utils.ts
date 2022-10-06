@@ -46,5 +46,9 @@ export function normalizeCommandOutput(str: string): string {
     .replaceAll(/package-\d/g, "package-X")
     .replaceAll(/\d\.(\d{1,2})s/g, "X.Xs")
     .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json");
-  return lines.split("\n").map(r => r.trim()).join("\n");
+  // We trim each line to reduce the changes of snapshot flakiness
+  return lines
+    .split("\n")
+    .map((r) => r.trim())
+    .join("\n");
 }
