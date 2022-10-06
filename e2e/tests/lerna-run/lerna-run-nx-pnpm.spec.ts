@@ -15,8 +15,7 @@ expect.addSnapshotSerializer({
 describe("lerna-run-nx", () => {
   let fixture: Fixture;
 
-  beforeEach(async () => {
-    console.log("HERE...")
+  beforeAll(async () => {
     fixture = await Fixture.create({
       name: "lerna-run",
       packageManager: "pnpm",
@@ -30,7 +29,6 @@ describe("lerna-run-nx", () => {
        */
       forceDeterministicTerminalOutput: true,
     });
-    console.log("HERE2...", fixture)
 
     await fixture.lerna("create package-1 -y");
     await fixture.addScriptsToPackage({
@@ -188,7 +186,9 @@ describe("lerna-run-nx", () => {
       version: "workspace:~",
     });
   });
-  afterEach(() => fixture.destroy());
+  afterAll(() => {
+    fixture?.destroy();
+  });
 
   it("should run script on all child packages", async () => {
     const output = await fixture.lerna("run print-name");

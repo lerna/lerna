@@ -68,7 +68,7 @@ export class Fixture {
       forceDeterministicTerminalOutput || false
     );
 
-    fixture.createFixtureRoot();
+    await fixture.createFixtureRoot();
     await fixture.createGitOrigin();
 
     if (initializeGit) {
