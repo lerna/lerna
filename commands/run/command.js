@@ -75,7 +75,7 @@ exports.builder = (yargs) => {
       },
       verbose: {
         group: "Command Options:",
-        describe: "When useNx is true, show verbose output from dependent tasks.",
+        describe: "When useNx is not false, show verbose output from dependent tasks.",
         type: "boolean",
       },
     });

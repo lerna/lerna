@@ -8,7 +8,7 @@ const { existsSync } = require("fs-extra");
 const { Command } = require("@lerna/command");
 const { npmRunScript, npmRunScriptStreaming } = require("@lerna/npm-run-script");
 const { output } = require("@lerna/output");
-const { Profiler } = require("@lerna/profiler");
+const { Profiler, generateProfileOutputPath } = require("@lerna/profiler");
 const { timer } = require("@lerna/timer");
 const { runTopologically } = require("@lerna/run-topologically");
 const { ValidationError } = require("@lerna/validation-error");
@@ -35,6 +35,14 @@ class RunCommand extends Command {
 
     if (!script) {
       throw new ValidationError("ENOSCRIPT", "You must specify a lifecycle script to run");
+    }
+
+    // Check this.argv (not this.options) so that we only error in this case when --npm-client is set via the CLI (not via lerna.json which is a legitimate use case for other things)
+    if (this.argv.npmClient && this.options.useNx !== false) {
+      throw new ValidationError(
+        "run",
+        "The legacy task runner option `--npm-client` is not currently supported. Please open an issue on https://github.com/lerna/lerna if you require this feature."
+      );
     }
 
     // inverted boolean options
@@ -66,7 +74,7 @@ class RunCommand extends Command {
   }
 
   execute() {
-    if (!this.options.useNx) {
+    if (this.options.useNx === false) {
       this.logger.info(
         "",
         "Executing command in %d %s: %j",
@@ -79,7 +87,7 @@ class RunCommand extends Command {
     let chain = Promise.resolve();
     const getElapsed = timer();
 
-    if (this.options.useNx) {
+    if (this.options.useNx !== false) {
       chain = chain.then(() => this.runScriptsUsingNx());
     } else if (this.options.parallel) {
       chain = chain.then(() => this.runScriptInPackagesParallel());
@@ -184,6 +192,11 @@ class RunCommand extends Command {
     if (this.options.ci) {
       process.env.CI = "true";
     }
+    if (this.options.profile) {
+      const absolutePath = generateProfileOutputPath(this.options.profileLocation);
+      // Nx requires a workspace relative path for this
+      process.env.NX_PROFILE = path.relative(this.project.rootPath, absolutePath);
+    }
     performance.mark("init-local");
     this.configureNxOutput();
     const { targetDependencies, options, extraOptions } = this.prepNxOptions();
@@ -238,6 +251,10 @@ class RunCommand extends Command {
             ],
           }
         : {};
+
+    if (this.options.prefix === false && !this.options.stream) {
+      this.logger.warn(this.name, `"no-prefix" is ignored when not using streaming output.`);
+    }
 
     const outputStyle = this.options.stream
       ? this.prefix
@@ -333,14 +350,13 @@ class RunCommand extends Command {
       nxOutput.output.cliName = "Lerna (powered by Nx)";
       nxOutput.output.formatCommand = (taskId) => taskId;
       return nxOutput;
-    } catch (e) {
+    } catch (err) {
+      // This should be unreachable and we would want to know if it somehow occurred in a user's setup.
       this.logger.error(
         "\n",
-        "You have set 'useNx: true' in lerna.json, but you haven't installed Nx as a dependency.\n" +
-          "To do it run 'npm install -D nx@latest' or 'yarn add -D -W nx@latest'.\n" +
-          "Optional: To configure the caching and distribution run 'npx nx init' after installing it."
+        "There was a critical error when configuring the task runner, please report this on https://github.com/lerna/lerna"
       );
-      process.exit(1);
+      throw err;
     }
   }
 }
