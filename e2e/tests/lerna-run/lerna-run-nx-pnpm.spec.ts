@@ -195,20 +195,20 @@ describe("lerna-run-nx", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 12 project(s):
+>  Lerna (powered by Nx)   Running target print-name for 12 project(s):
 
-    - package-X
-    - package-X
-    - package-X
-    - package-X
-    - package-X
-    - package-X
-    - package-X
-    - package-X
-    - package-X
-    - package-X
-    - package-X
-    - package-app
+- package-X
+- package-X
+- package-X
+- package-X
+- package-X
+- package-X
+- package-X
+- package-X
+- package-X
+- package-X
+- package-X
+- package-app
 
 
 
@@ -310,7 +310,7 @@ test-package-app
 
 
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 12 projects
+>  Lerna (powered by Nx)   Successfully ran target print-name for 12 projects
 
 
 lerna notice cli v999.9.9-e2e.0
