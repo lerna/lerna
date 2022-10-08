@@ -94,6 +94,71 @@ describe("PackageGraph", () => {
     });
 
     describe("with spec containing workspace: prefix", () => {
+      describe("without depNode for sibling package", () => {
+        it("replaces workspace alias ~ with * and adds sibling to external dependencies", () => {
+          const packages = [
+            new Package(
+              {
+                name: "test-2",
+                version: "1.0.0",
+                dependencies: {
+                  "test-1": "workspace:~",
+                },
+              },
+              "/test/test-2"
+            ),
+          ];
+          const graph = new PackageGraph(packages, "allDependencies");
+          const package2 = graph.get("test-2");
+
+          expect(package2.externalDependencies.has("test-1")).toBe(true);
+          expect(package2.externalDependencies.get("test-1").workspaceSpec).toBe("workspace:~");
+          expect(package2.externalDependencies.get("test-1").workspaceAlias).toBe("~");
+        });
+
+        it("replaces workspace alias * with * and adds sibling to external dependencies", () => {
+          const packages = [
+            new Package(
+              {
+                name: "test-2",
+                version: "1.0.0",
+                dependencies: {
+                  "test-1": "workspace:*",
+                },
+              },
+              "/test/test-2"
+            ),
+          ];
+          const graph = new PackageGraph(packages, "allDependencies");
+          const package2 = graph.get("test-2");
+
+          expect(package2.externalDependencies.has("test-1")).toBe(true);
+          expect(package2.externalDependencies.get("test-1").workspaceSpec).toBe("workspace:*");
+          expect(package2.externalDependencies.get("test-1").workspaceAlias).toBe("*");
+        });
+
+        it("replaces workspace alias ^ with * and adds sibling to external dependencies", () => {
+          const packages = [
+            new Package(
+              {
+                name: "test-2",
+                version: "1.0.0",
+                dependencies: {
+                  "test-1": "workspace:^",
+                },
+              },
+              "/test/test-2"
+            ),
+          ];
+          const graph = new PackageGraph(packages, "allDependencies");
+          const package2 = graph.get("test-2");
+
+          expect(package2.externalDependencies.has("test-1")).toBe(true);
+          expect(package2.externalDependencies.get("test-1").workspaceSpec).toBe("workspace:^");
+          expect(package2.externalDependencies.get("test-1").workspaceAlias).toBe("^");
+        });
+      });
+
       describe("creates graph links for sibling package when semver is satisfied", () => {
         it("with exact match", () => {
           const packages = [

@@ -76,9 +76,13 @@ class PackageGraph extends Map {
           // replace aliases (https://pnpm.io/workspaces#referencing-workspace-packages-through-aliases)
           if (spec === "*" || spec === "^" || spec === "~") {
             workspaceAlias = spec;
-            const prefix = spec === "*" ? "" : spec;
-            const version = depNode.version;
-            spec = `${prefix}${version}`;
+            if (depNode?.version) {
+              const prefix = spec === "*" ? "" : spec;
+              const version = depNode.version;
+              spec = `${prefix}${version}`;
+            } else {
+              spec = "*";
+            }
           }
         }
 
