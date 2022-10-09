@@ -1,6 +1,6 @@
 {
   "name": "@lerna/has-npm-version",
-  "version": "5.6.1",
+  "version": "5.6.2",
   "description": "Test if the current version of npm satisfies a given semver range",
   "keywords": [
     "lerna",

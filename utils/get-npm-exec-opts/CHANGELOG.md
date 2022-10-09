@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.6.2](https://github.com/lerna/lerna/compare/v5.6.1...v5.6.2) (2022-10-09)
+
+### Bug Fixes
+
+- **run:** always set env LERNA_PACKAGE_NAME environment variable ([#3359](https://github.com/lerna/lerna/issues/3359)) ([012d31d](https://github.com/lerna/lerna/commit/012d31d1dee36bfacb392cb9f6503aab78cdd4d1))
+
 ## [5.6.1](https://github.com/lerna/lerna/compare/v5.6.0...v5.6.1) (2022-09-30)
 
 **Note:** Version bump only for package @lerna/get-npm-exec-opts

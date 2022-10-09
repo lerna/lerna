@@ -1,6 +1,6 @@
 {
   "name": "@lerna/map-to-registry",
-  "version": "5.6.1",
+  "version": "5.6.2",
   "description": "Produce registry uri and auth of package name from npm config",
   "keywords": [
     "lerna",

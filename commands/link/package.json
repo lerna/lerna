@@ -1,6 +1,6 @@
 {
   "name": "@lerna/link",
-  "version": "5.6.1",
+  "version": "5.6.2",
   "description": "Symlink together all packages that are dependencies of each other",
   "keywords": [
     "lerna",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.6.2](https://github.com/lerna/lerna/compare/v5.6.1...v5.6.2) (2022-10-09)
+
+### Bug Fixes
+
+- **bootstrap:** reject-cycles when using workspaces ([#3168](https://github.com/lerna/lerna/issues/3168)) ([8a47a6d](https://github.com/lerna/lerna/commit/8a47a6d55a871eb6ce1c0e620a3cea2b92bf76ea))
+- **core:** fix "cannot read property 'version' of undefined" for pnpm + independent versioning ([#3358](https://github.com/lerna/lerna/issues/3358)) ([31e4c98](https://github.com/lerna/lerna/commit/31e4c98cc77ba1689c28c5362c6a3de0f20f7fb7))
+- **core:** replace `"red"` color with `"brightBlue"` on package's output prefix ([#2774](https://github.com/lerna/lerna/issues/2774)) ([d7c1b87](https://github.com/lerna/lerna/commit/d7c1b8784841477b24ab44b248df7e1cd2958198))
+- **create:** remove unused globby dep ([#3360](https://github.com/lerna/lerna/issues/3360)) ([e873f0c](https://github.com/lerna/lerna/commit/e873f0c0b35275cd2568f43a945a84fbae364c2e))
+- **npm-publish:** Allows disabling of strict SSL checks ([#2952](https://github.com/lerna/lerna/issues/2952)) ([eec3207](https://github.com/lerna/lerna/commit/eec3207a3e26436e2311a136f5287558332fcb2a))
+- **run:** always set env LERNA_PACKAGE_NAME environment variable ([#3359](https://github.com/lerna/lerna/issues/3359)) ([012d31d](https://github.com/lerna/lerna/commit/012d31d1dee36bfacb392cb9f6503aab78cdd4d1))
+
 ## [5.6.1](https://github.com/lerna/lerna/compare/v5.6.0...v5.6.1) (2022-09-30)
 
 ### Bug Fixes
