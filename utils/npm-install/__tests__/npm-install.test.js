@@ -45,6 +45,7 @@ describe("npm-install", () => {
         {
           cwd: pkg.location,
           env: {
+            LERNA_PACKAGE_NAME: "test-npm-install",
             LERNA_EXEC_PATH: pkg.location,
             LERNA_ROOT_PATH: pkg.rootPath,
           },

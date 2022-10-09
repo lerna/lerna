@@ -3,9 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [6.0.0-alpha.0](https://github.com/lerna/lerna/compare/v5.6.1...v6.0.0-alpha.0) (2022-10-07)
+## [5.6.2](https://github.com/lerna/lerna/compare/v5.6.1...v5.6.2) (2022-10-09)
 
-**Note:** Version bump only for package @lerna/bootstrap
+### Bug Fixes
+
+- **bootstrap:** reject-cycles when using workspaces ([#3168](https://github.com/lerna/lerna/issues/3168)) ([8a47a6d](https://github.com/lerna/lerna/commit/8a47a6d55a871eb6ce1c0e620a3cea2b92bf76ea))
 
 ## [5.6.1](https://github.com/lerna/lerna/compare/v5.6.0...v5.6.1) (2022-09-30)
 

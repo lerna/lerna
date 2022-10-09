@@ -3,9 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [6.0.0-alpha.0](https://github.com/lerna/lerna/compare/v5.6.1...v6.0.0-alpha.0) (2022-10-07)
+## [5.6.2](https://github.com/lerna/lerna/compare/v5.6.1...v5.6.2) (2022-10-09)
 
-**Note:** Version bump only for package @lerna/npm-publish
+### Bug Fixes
+
+- **npm-publish:** Allows disabling of strict SSL checks ([#2952](https://github.com/lerna/lerna/issues/2952)) ([eec3207](https://github.com/lerna/lerna/commit/eec3207a3e26436e2311a136f5287558332fcb2a))
 
 ## [5.6.1](https://github.com/lerna/lerna/compare/v5.6.0...v5.6.1) (2022-09-30)
 

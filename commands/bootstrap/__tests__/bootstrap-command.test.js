@@ -656,6 +656,12 @@ describe("BootstrapCommand", () => {
 
       await expect(command).rejects.toThrow("Dependency cycles detected, you should fix these!");
     });
+    it("should throw an error with --reject-cycles when using yarn-workspaces", async () => {
+      const testDir = await initFixture("yarn-workspaces-cyclic");
+      const command = lernaBootstrap(testDir)("--reject-cycles");
+
+      await expect(command).rejects.toThrow("Dependency cycles detected, you should fix these!");
+    });
   });
 
   it("succeeds in repositories with zero packages", async () => {

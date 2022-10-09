@@ -3,9 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [6.0.0-alpha.0](https://github.com/lerna/lerna/compare/v5.6.1...v6.0.0-alpha.0) (2022-10-07)
+## [5.6.2](https://github.com/lerna/lerna/compare/v5.6.1...v5.6.2) (2022-10-09)
 
-**Note:** Version bump only for package @lerna/child-process
+### Bug Fixes
+
+- **core:** replace `"red"` color with `"brightBlue"` on package's output prefix ([#2774](https://github.com/lerna/lerna/issues/2774)) ([d7c1b87](https://github.com/lerna/lerna/commit/d7c1b8784841477b24ab44b248df7e1cd2958198))
 
 ## [5.6.1](https://github.com/lerna/lerna/compare/v5.6.0...v5.6.1) (2022-09-30)
 

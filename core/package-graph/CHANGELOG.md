@@ -3,9 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [6.0.0-alpha.0](https://github.com/lerna/lerna/compare/v5.6.1...v6.0.0-alpha.0) (2022-10-07)
+## [5.6.2](https://github.com/lerna/lerna/compare/v5.6.1...v5.6.2) (2022-10-09)
 
-**Note:** Version bump only for package @lerna/package-graph
+### Bug Fixes
+
+- **core:** fix "cannot read property 'version' of undefined" for pnpm + independent versioning ([#3358](https://github.com/lerna/lerna/issues/3358)) ([31e4c98](https://github.com/lerna/lerna/commit/31e4c98cc77ba1689c28c5362c6a3de0f20f7fb7))
 
 ## [5.6.1](https://github.com/lerna/lerna/compare/v5.6.0...v5.6.1) (2022-09-30)
 
