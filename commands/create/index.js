@@ -361,7 +361,7 @@ class CreateCommand extends Command {
     try {
       const url = childProcess.execSync("git", ["remote", "get-url", "origin"], this.execOpts);
 
-      this.conf.set("repository", url); // @here
+      this.conf.set("repository", url);
     } catch (err) {
       this.logger.warn("ENOREMOTE", "No git remote found, skipping repository property");
     }
