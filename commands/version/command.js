@@ -32,6 +32,10 @@ exports.builder = (yargs, composed) => {
       describe: "Version changed packages as prereleases when using --conventional-commits.",
       // type must remain ambiguous because it is overloaded (boolean _or_ string _or_ array)
     },
+    "conventional-bumpprerelease": {
+      describe: "Bumps a prerelease versions if convetional commits require it.",
+      type: "boolean",
+    },
     "changelog-preset": {
       describe: "Custom conventional-changelog preset.",
       type: "string",

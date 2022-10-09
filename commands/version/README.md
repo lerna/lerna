@@ -55,6 +55,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--conventional-commits`](#--conventional-commits)
     - [`--conventional-graduate`](#--conventional-graduate)
     - [`--conventional-prerelease`](#--conventional-prerelease)
+    - [`--conventional-bumpprerelease`](#--conventional-bumpprerelease)
     - [`--create-release <type>`](#--create-release-type)
     - [`--exact`](#--exact)
     - [`--force-publish`](#--force-publish)
@@ -200,6 +201,21 @@ lerna version --conventional-commits --conventional-prerelease
 ```
 
 When run with this flag, `lerna version` will release with prerelease versions the specified packages (comma-separated) or all packages using `*`. Releases all unreleased changes as pre(patch/minor/major/release) by prefixing the version recommendation from `conventional-commits` with `pre`, eg. if present changes include a feature commit, the recommended bump will be `minor`, so this flag will result in a `preminor` release. If changes are present for packages that are not specified (if specifying packages), or for packages that are already in prerelease, those packages will be versioned as they normally would using `--conventional-commits`.
+
+### `--conventional-bumpprerelease`
+
+```sh
+lerna version --conventional-commits --conventional-prerelease --conventional-bumpprerelease
+```
+
+When run with this flag, `lerna version` will release with bumped prerelease versions even if already released packages are prereleases. Releases all unreleased changes as pre(patch/minor/major/release) by prefixing the version recommendation from `conventional-commits` with `pre`, eg. if present changes include a feature commit, the recommended bump will be `minor`, so this flag will result in a `preminor` release. If not used just a prerelease bump will be applied to prereleased packages.
+
+```sh
+Changes:
+ - major: 1.0.0-alpha.0 => 2.0.0-alpha.0 
+ - minor: 1.0.0-alpha.0 => 1.1.0-alpha.0 
+ - patch: 1.0.0-alpha.0 => 1.0.1-alpha.0
+```
 
 ### `--create-release <type>`
 

@@ -91,6 +91,33 @@ describe("--conventional-commits", () => {
       });
     });
 
+    it("should call recommended version with conventionalBumpprerelease set", async () => {
+      prereleaseVersionBumps.forEach((bump) => recommendVersion.mockResolvedValueOnce(bump));
+      const cwd = await initFixture("prerelease-independent");
+
+      await lernaVersion(cwd)(
+        "--conventional-commits",
+        "--conventional-prerelease",
+        "--conventional-bumpprerelease"
+      );
+
+      prereleaseVersionBumps.forEach((version, name) => {
+        const prereleaseId = semver.prerelease(version)[0];
+        expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name }), "independent", {
+          changelogPreset: undefined,
+          rootPath: cwd,
+          tagPrefix: "v",
+          prereleaseId,
+          conventionalBumpprerelease: true,
+        });
+        expect(updateChangelog).toHaveBeenCalledWith(
+          expect.objectContaining({ name, version }),
+          "independent",
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
+        );
+      });
+    });
+
     it("should graduate prerelease version bumps and generate CHANGELOG", async () => {
       versionBumps.forEach((bump) => recommendVersion.mockResolvedValueOnce(bump));
       const cwd = await initFixture("prerelease-independent");
