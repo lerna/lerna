@@ -98,7 +98,9 @@ describe("npm-run-script", () => {
         ["run", script, "--bar", "baz"],
         {
           cwd: config.pkg.location,
-          env: {},
+          env: {
+            LERNA_PACKAGE_NAME: "qux",
+          },
           pkg: config.pkg,
           reject: true,
           windowsHide: false,
@@ -126,7 +128,9 @@ describe("npm-run-script", () => {
         ["run", script],
         {
           cwd: config.pkg.location,
-          env: {},
+          env: {
+            LERNA_PACKAGE_NAME: "qux",
+          },
           pkg: config.pkg,
           reject: false,
           windowsHide: false,
