@@ -113,7 +113,7 @@ $ lerna run build --profile --profile-location=logs/profile/
 
 ### `useNx`
 
-Enables integration with [Nx](https://nx.dev). Setting `"useNx": false` in `lerna.json` will tell Lerna to delegate
+Disables integration with [Nx](https://nx.dev). Setting `"useNx": false` in `lerna.json` will tell Lerna to delegate
 running tasks to `p-map` and `p-queue` instead of using Nx. Nx can be configured in `nx.json`.
 
 Example of `nx.json`:
