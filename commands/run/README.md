@@ -113,4 +113,25 @@ $ lerna run build --profile --profile-location=logs/profile/
 
 ### `useNx=false`
 
+<<<<<<< HEAD
 By setting `useNx` to `false` you can use the legacy task running implementations in `lerna` (`p-map` and `p-queue`) instead of using the default modern task runner implementation powered by [Nx](https://nx.dev).
+=======
+Disables integration with [Nx](https://nx.dev). Setting `"useNx": false` in `lerna.json` will tell Lerna to delegate
+running tasks to `p-map` and `p-queue` instead of using Nx. Nx can be configured in `nx.json`.
+
+Example of `nx.json`:
+
+```json
+{
+  "extends": "nx/presets/npm.json",
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build"]
+      }
+    }
+  }
+}
+```
+>>>>>>> 531eaf0f (docs: clarify useNx)
