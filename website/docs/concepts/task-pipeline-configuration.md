@@ -42,7 +42,7 @@ Note, you can also change the default in `nx.json`, like this:
 
 ## Define Task Dependencies (aka Task Pipelines)
 
-Without our help Lerna cannot know what targets (scripts) have prerequisites and which ones don't.  You can define task dependencies in the `nx.json` file:
+Without our help Lerna cannot know what targets (scripts) have prerequisites and which ones don't. You can define task dependencies in the `nx.json` file:
 
 ```json title="nx.json"
 {

@@ -196,7 +196,7 @@ This will take you through a series of prompts to configure your caching:
 ```
 
 ```bash
-? Which of the following scripts are cacheable? (Produce the same output given the same input, e.g. build, test and lint usually are, serve and 
+? Which of the following scripts are cacheable? (Produce the same output given the same input, e.g. build, test and lint usually are, serve and
 start are not)
  (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
  ◉ build
@@ -206,10 +206,10 @@ start are not)
 ```
 
 ```bash
-? Does the "build" script create any outputs? If not, leave blank, otherwise provide a path relative to a project root (e.g. dist, lib, build, 
+? Does the "build" script create any outputs? If not, leave blank, otherwise provide a path relative to a project root (e.g. dist, lib, build,
 coverage)
  dist
-? Does the "test" script create any outputs? If not, leave blank, otherwise provide a path relative to a project root (e.g. dist, lib, build, 
+? Does the "test" script create any outputs? If not, leave blank, otherwise provide a path relative to a project root (e.g. dist, lib, build,
 coverage)
 ```
 
@@ -221,27 +221,20 @@ This generates an `nx.json` at the root of your workspace:
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "test"
-        ]
+        "cacheableOperations": ["build", "test"]
       }
     }
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "{projectRoot}/dist"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
     }
   }
 }
 ```
 
-This configuration caches `build` and `test` tasks and forces `build` to run in topological order (but `test` will not).  Also each project's `dist` folder defaults to being cached as the `build` output.
+This configuration caches `build` and `test` tasks and forces `build` to run in topological order (but `test` will not). Also each project's `dist` folder defaults to being cached as the `build` output.
 
 Now, let's run tests on the header project twice. The second time the operation will be instant:
 
@@ -320,21 +313,19 @@ You will see all the files restored from cache and the command executing instant
 
 ## Target Dependencies (aka task pipelines)
 
-We have made good progress, but there is one problem left to be solved.  The following configuration in `nx.json` is incomplete:
+We have made good progress, but there is one problem left to be solved. The following configuration in `nx.json` is incomplete:
 
 ```jsonc
 {
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     }
   }
 }
 ```
 
-This ensures that `build` dependencies are run before any `build` command, but we also need to remember to build `header` and `footer` before we run `lerna run dev --scope=remixapp`.  We can fix that by defining dependencies between targets (also known as task pipelines) in the `nx.json`:
+This ensures that `build` dependencies are run before any `build` command, but we also need to remember to build `header` and `footer` before we run `lerna run dev --scope=remixapp`. We can fix that by defining dependencies between targets (also known as task pipelines) in the `nx.json`:
 
 ```json
 {
