@@ -31,6 +31,8 @@ Disable progress bars. This is always the case in a CI environment.
 
 ### `--no-sort`
 
+Note: As of Lerna 6 this property is ignored and should be configured in the `nx.json` file instead.  Use `lerna add-caching` to set up the `nx.json` file.
+
 By default, all tasks execute on packages in topologically sorted order as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis in a way not guaranteed to be consistent across Lerna invocations.
 
 Topological sorting can cause concurrency bottlenecks if there are a small number of packages with many dependents or if some packages take a disproportionately long time to execute. The `--no-sort` option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency.

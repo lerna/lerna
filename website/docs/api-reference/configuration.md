@@ -69,8 +69,6 @@ Find the available options in [the API docs](/docs/api-reference/commands).
 
 # Nx.json
 
-This configuration is only relevant if you have `useNx: true` in your `lerna.json`.
-
 > NOTE: "{projectRoot}" and "{workspaceRoot}" are special syntax supported by the task-runner, which will be appropriately interpolated internally when the command runs. You should therefore not replace "{projectRoot}" or "{workspaceRoot}" with fixed paths as this makes your configuration less flexible.
 
 ```json title="nx.json"
