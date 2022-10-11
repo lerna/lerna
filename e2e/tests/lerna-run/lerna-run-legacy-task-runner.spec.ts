@@ -223,15 +223,15 @@ describe("lerna-run-legacy-task-runner", () => {
       const output = await fixture.lerna(`run print-name --npm-client=yarn`);
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-        yarn run v1.22.18
+        yarn run v1.22.10
         $ echo test-package-X
         test-package-X
         Done in X.Xs.
-        yarn run v1.22.18
+        yarn run v1.22.10
         $ echo test-package-X
         test-package-X
         Done in X.Xs.
-        yarn run v1.22.18
+        yarn run v1.22.10
         $ echo test-package-X
         test-package-X
         Done in X.Xs.
@@ -253,31 +253,31 @@ describe("lerna-run-legacy-task-runner", () => {
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
 
-        > package-X@0.0.0 print-name
-        > echo test-package-X
+                > package-X@0.0.0 print-name
+                > echo test-package-X
 
-        test-package-X
+                test-package-X
 
-        > package-X@0.0.0 print-name
-        > echo test-package-X
+                > package-X@0.0.0 print-name
+                > echo test-package-X
 
-        test-package-X
+                test-package-X
 
-        > package-X@0.0.0 print-name
-        > echo test-package-X
+                > package-X@0.0.0 print-name
+                > echo test-package-X
 
-        test-package-X
-        lerna notice cli v999.9.9-e2e.0
-        lerna info Executing command in 3 packages: "npm run print-name"
-        lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
-        lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
-        lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
-        lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-        lerna success - package-X
-        lerna success - package-X
-        lerna success - package-X
+                test-package-X
+                lerna notice cli v999.9.9-e2e.0
+                lerna info Executing command in 3 packages: "npm run print-name"
+                lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+                lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+                lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+                lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+                lerna success - package-X
+                lerna success - package-X
+                lerna success - package-X
 
-      `);
+            `);
     });
   });
 

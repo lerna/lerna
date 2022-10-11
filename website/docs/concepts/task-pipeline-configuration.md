@@ -11,7 +11,7 @@ configure how Nx does it.
 
 :::tip
 
-If you don't have `nx.json`, run `npx nx init`.
+If you don't have `nx.json`, run `npx lerna add-caching`.
 
 :::
 

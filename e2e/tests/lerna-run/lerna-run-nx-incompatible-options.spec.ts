@@ -68,44 +68,29 @@ describe("lerna-run-nx-incompatible-options", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-      - package-X
-      - package-X
-      - package-X
-
-
-
-      > package-X:print-name
-
+      test-package-X
 
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
 
-      > package-X:print-name
-
-
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-
-
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
       lerna notice cli v999.9.9-e2e.0
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
 
     `);
   });
@@ -114,46 +99,21 @@ describe("lerna-run-nx-incompatible-options", () => {
     const output = await fixture.lerna(`run print-name --parallel`);
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
-
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
-
-      - package-X
-      - package-X
-      - package-X
-
-
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-
-
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
+      package-X: > package-X@0.0.0 print-name
+      package-X: > echo test-package-X
+      package-X: > package-X@0.0.0 print-name
+      package-X: > echo test-package-X
+      package-X: > package-X@0.0.0 print-name
+      package-X: > echo test-package-X
+      package-X: test-package-X
+      package-X: test-package-X
+      package-X: test-package-X
       lerna notice cli v999.9.9-e2e.0
-      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks for details.
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
 
     `);
   });
@@ -163,45 +123,29 @@ describe("lerna-run-nx-incompatible-options", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-      - package-X
-      - package-X
-      - package-X
-
-
-
-      > package-X:print-name
-
+      test-package-X
 
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
 
-      > package-X:print-name
-
-
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-
-
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
       lerna notice cli v999.9.9-e2e.0
-      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks for details.
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
 
     `);
   });
@@ -211,45 +155,29 @@ describe("lerna-run-nx-incompatible-options", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-      - package-X
-      - package-X
-      - package-X
-
-
-
-      > package-X:print-name
-
+      test-package-X
 
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
 
-      > package-X:print-name
-
-
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-
-
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
       lerna notice cli v999.9.9-e2e.0
-      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks for details.
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
 
     `);
   });
@@ -259,46 +187,30 @@ describe("lerna-run-nx-incompatible-options", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-      - package-X
-      - package-X
-      - package-X
-
-
-
-      > package-X:print-name
-
+      test-package-X
 
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
 
-      > package-X:print-name
-
-
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-
-
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
       lerna notice cli v999.9.9-e2e.0
       lerna notice filter including dependencies
-      lerna info run Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks#--include-dependencies for details.
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
 
     `);
   });
@@ -354,44 +266,29 @@ describe("lerna-run-nx-incompatible-options without nx.json", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-      - package-X
-      - package-X
-      - package-X
-
-
-
-      > package-X:print-name
-
+      test-package-X
 
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
 
-      > package-X:print-name
-
-
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-
-
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
       lerna notice cli v999.9.9-e2e.0
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
 
     `);
   });
@@ -400,45 +297,21 @@ describe("lerna-run-nx-incompatible-options without nx.json", () => {
     const output = await fixture.lerna(`run print-name --parallel`);
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
-
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
-
-      - package-X
-      - package-X
-      - package-X
-
-
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-
-
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
+      package-X: > package-X@0.0.0 print-name
+      package-X: > echo test-package-X
+      package-X: test-package-X
+      package-X: > package-X@0.0.0 print-name
+      package-X: > echo test-package-X
+      package-X: > package-X@0.0.0 print-name
+      package-X: > echo test-package-X
+      package-X: test-package-X
+      package-X: test-package-X
       lerna notice cli v999.9.9-e2e.0
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
 
     `);
   });
@@ -448,44 +321,29 @@ describe("lerna-run-nx-incompatible-options without nx.json", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-      - package-X
-      - package-X
-      - package-X
-
-
-
-      > package-X:print-name
-
+      test-package-X
 
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
 
-      > package-X:print-name
-
-
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-
-
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
       lerna notice cli v999.9.9-e2e.0
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
 
     `);
   });
@@ -495,44 +353,29 @@ describe("lerna-run-nx-incompatible-options without nx.json", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-      - package-X
-      - package-X
-      - package-X
-
-
-
-      > package-X:print-name
-
+      test-package-X
 
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
 
-      > package-X:print-name
-
-
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-
-
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
       lerna notice cli v999.9.9-e2e.0
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
 
     `);
   });
@@ -542,45 +385,30 @@ describe("lerna-run-nx-incompatible-options without nx.json", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-      - package-X
-      - package-X
-      - package-X
-
-
-
-      > package-X:print-name
-
+      test-package-X
 
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
 
-      > package-X:print-name
-
-
       > package-X@0.0.0 print-name
       > echo test-package-X
 
       test-package-X
-
-      > package-X:print-name
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
-
-
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
       lerna notice cli v999.9.9-e2e.0
       lerna notice filter including dependencies
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+      lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
 
     `);
   });

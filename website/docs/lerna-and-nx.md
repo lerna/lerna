@@ -49,7 +49,7 @@ Free and open source
 - Continue using Lerna as usual
 
 :::note
-When Lerna is set to use Nx and detects `nx.json` with `targetDefaults` in the workspace, it will defer to Nx to detect task dependencies. Some options for `lerna run` will behave differently than older versions of Lerna. See [Using Lerna (Powered by Nx) to Run Tasks](./recipes/using-lerna-powered-by-nx-to-run-tasks) for more details.
+When Lerna is set to use Nx and detects `nx.json` with `targetDefaults` in the workspace, it will defer to Nx to detect task dependencies. Some options for `lerna run` will behave differently than older versions of Lerna. See [Using Lerna (Powered by Nx) to Run Tasks](docs/lerna6-obsolete-options.md) for more details.
 :::
 
 ---
