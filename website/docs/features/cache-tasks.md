@@ -12,12 +12,6 @@ type: recipe
 It's costly to rebuild and retest the same code over and over again. Lerna uses a computation cache to never rebuild the
 same code twice.
 
-:::info
-
-To use task result caching, you must first enable nx by setting `"useNx": true` in `lerna.json`.
-
-:::
-
 ## Setup
 
 Lerna via Nx has the most sophisticated and battle-tested computation caching system. It knows when the task you are
@@ -25,7 +19,7 @@ about to run has been executed before, so it can use the cache to restore the re
 
 :::tip
 
-If you don't have `nx.json`, run `npx nx init`.
+If you don't have `nx.json`, run `npx lerna add-caching`.
 
 :::
 

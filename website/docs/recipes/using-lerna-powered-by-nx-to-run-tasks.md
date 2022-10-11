@@ -2,7 +2,7 @@
 
 Nx and Lerna work together seamlessly in the same workspace.
 
-When `nx.json` is detected in the current workspace and `useNx` is set to `true` in `lerna.json`, Lerna will respect `nx.json` configuration during `lerna run` and delegate to the Nx task runner.
+When `nx.json` is detected in the current workspace, Lerna will respect the `nx.json` configuration during `lerna run` and delegate to the Nx task runner.
 
 Nx will run tasks in an order and with a concurrency that it determines appropriate based on the task graph that it creates. For more information, see [Nx Mental Model: The Task Graph](https://nx.dev/concepts/mental-model#the-task-graph).
 
