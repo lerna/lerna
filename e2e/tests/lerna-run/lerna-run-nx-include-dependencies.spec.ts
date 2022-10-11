@@ -93,7 +93,7 @@ describe("lerna-run-nx-include-dependencies", () => {
         > echo test-package-X "--silent"
         test-package-X --silent
 
-         
+
 
          >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X
 
@@ -122,7 +122,7 @@ describe("lerna-run-nx-include-dependencies", () => {
         > echo test-package-X "--silent"
         test-package-X --silent
 
-         
+
 
          >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X
 
@@ -154,7 +154,7 @@ describe("lerna-run-nx-include-dependencies", () => {
 
  >  Lerna (powered by Nx)   Running target print-name for project package-X and 2 task(s) it depends on
 
- 
+
 
 > package-X:print-name
 
@@ -178,7 +178,7 @@ test-package-X
 > echo test-package-X
 test-package-X
 
- 
+
 
  >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X
 
@@ -213,7 +213,7 @@ lerna verb run nx.json with targetDefaults was found. Task dependencies will be 
     - package-X
     - package-X
 
- 
+
 
 > package-X:print-name
 
@@ -239,7 +239,7 @@ test-package-X
 
 test-package-X
 
- 
+
 
  >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
@@ -250,7 +250,7 @@ lerna notice filter including "package-X"
 lerna notice filter including dependencies
 lerna info filter [ 'package-X' ]
 lerna verb run nx.json with targetDefaults was found. Task dependencies will be automatically included.
-lerna info run Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks#--include-dependencies for details.
+lerna info run Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/lerna6-obsolete-options#--include-dependencies for details.
 
 `);
     });
@@ -272,7 +272,7 @@ lerna info run Using the "include-dependencies" option when nx.json has targetDe
 
  >  Lerna (powered by Nx)   Running target print-name for project package-X and 2 task(s) it depends on
 
- 
+
 
 > package-X:print-name
 
@@ -296,7 +296,7 @@ test-package-X
 > echo test-package-X
 test-package-X
 
- 
+
 
  >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X
 
@@ -307,7 +307,7 @@ lerna notice filter including "package-X"
 lerna notice filter excluding "package-X"
 lerna info filter [ 'package-X', '!package-X' ]
 lerna verb run nx.json with targetDefaults was found. Task dependencies will be automatically included.
-lerna info run Using the "ignore" option when nx.json has targetDefaults defined will exclude only tasks that are not determined to be required by Nx. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks#--ignore for details.
+lerna info run Using the "ignore" option when nx.json has targetDefaults defined will exclude only tasks that are not determined to be required by Nx. See https://lerna.js.org/docs/lerna6-obsolete-options#--ignore for details.
 
 `);
     });

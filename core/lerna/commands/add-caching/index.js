@@ -108,7 +108,7 @@ class AddCachingCommand extends Command {
     );
     this.logger.info(
       "add-caching",
-      "Note that the legacy task runner options of --sort, --no-sort and --parallel no longer apply. Learn more here: https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks"
+      "Note that the legacy task runner options of --sort, --no-sort and --parallel no longer apply. Learn more here: https://lerna.js.org/docs/lerna6-obsolete-options"
     );
   }
 
