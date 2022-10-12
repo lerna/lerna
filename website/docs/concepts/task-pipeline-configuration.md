@@ -11,7 +11,7 @@ configure how Nx does it.
 
 :::tip
 
-If you don't have `nx.json`, run `npx nx init`.
+If you don't have `nx.json`, run `npx lerna add-caching`.
 
 :::
 
@@ -40,37 +40,9 @@ Note, you can also change the default in `nx.json`, like this:
 }
 ```
 
-
-## Allow Tasks to Run in Any Order
-
-To run the `test` script for each of the projects, run the following:
-
-```bash
-npx lerna run test --no-sort
-```
-
-You should see the following output:
-
-```bash title="Terminal Output"
-    ✔  footer:test (1s)
-    ✔  header:test (1s)
-    ✔  remixapp:test (236ms)
-
- ——————————————————————————————————————————————————————————————————————————————
-
- >  Lerna (powered by Nx)   Successfully ran target test for 3 projects (1s)
-```
-
-Note that we are passing `--no-sort` to tell Lerna that tasks can run in any order.
-
 ## Define Task Dependencies (aka Task Pipelines)
 
-Without our help Lerna cannot know what targets (scripts) require order and which don't. That's why you can
-pass `--sort` and `--no-sort`, but this isn't the best way to go about it.
-
-If builds have to run in the topological order, they **always** have to run in that order; otherwise things will be broken. On the other hand, if tests can run in any order, it never make sense to run them in topological order. That would only make them slower.
-
-A better way to do it is to tell Lerna how targets relate. Add the following to `nx.json`:
+Without our help Lerna cannot know what targets (scripts) have prerequisites and which ones don't. You can define task dependencies in the `nx.json` file:
 
 ```json title="nx.json"
 {

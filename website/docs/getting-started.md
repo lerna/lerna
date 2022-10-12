@@ -171,12 +171,7 @@ You should see the following output:
 ```
 
 Note, `lerna` will run the three `test` npm scripts in the topological order as well. Although we had to do it when
-building, it isn't necessary for tests (and it also makes the command slower). We can change this behavior by
-adding `--no-sort` to the command.
-
-```bash
-npx lerna run test --no-sort
-```
+building, it isn't necessary for tests (and it also makes the command slower). We can change this behavior by configuring caching.
 
 ## Caching
 
@@ -186,25 +181,39 @@ a bit of configuration.
 First, let's run
 
 ```bash
-npx nx init
+npx lerna add-caching
 ```
 
-This which will generate a `nx.json` at the root of your workspace:
+This will take you through a series of prompts to configure your caching:
 
-```json
-{
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": []
-      }
-    }
-  }
-}
+```bash
+? Which of the following scripts need to be run in deterministic/topoglogical order?
+ (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
+❯◉ build
+ ◯ test
+ ◯ dev
+ ◯ start
 ```
 
-Second, let's mark `build` and `test` to be cacheable operations.
+```bash
+? Which of the following scripts are cacheable? (Produce the same output given the same input, e.g. build, test and lint usually are, serve and
+start are not)
+ (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
+ ◉ build
+❯◉ test
+ ◯ dev
+ ◯ start
+```
+
+```bash
+? Does the "build" script create any outputs? If not, leave blank, otherwise provide a path relative to a project root (e.g. dist, lib, build,
+coverage)
+ dist
+? Does the "test" script create any outputs? If not, leave blank, otherwise provide a path relative to a project root (e.g. dist, lib, build,
+coverage)
+```
+
+This generates an `nx.json` at the root of your workspace:
 
 ```json
 {
@@ -215,9 +224,17 @@ Second, let's mark `build` and `test` to be cacheable operations.
         "cacheableOperations": ["build", "test"]
       }
     }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
+    }
   }
 }
 ```
+
+This configuration caches `build` and `test` tasks and forces `build` to run in topological order (but `test` will not). Also each project's `dist` folder defaults to being cached as the `build` output.
 
 Now, let's run tests on the header project twice. The second time the operation will be instant:
 
@@ -252,10 +269,7 @@ Ran all test suites.
 Lerna (powered by Nx) was able to recognize that the same command has already executed against the same relevant code
 and environment, so instead running it Lerna restored the necessary files and replayed the terminal output.
 
-Most of the time Lerna (powered by Nx) is good at recognizing what files need to be cached and restored. In case of
-building the Remix app we need to help it by adding the following section to `packages/remixapp/package.json`.
-
-> NOTE: "{projectRoot}" is a special syntax supported by the task-runner, which will be appropriately interpolated internally when the command runs. You should therefore not replace "{projectRoot}" with a fixed path as this makes your configuration less flexible.
+We have specified the default build output as the `dist` folder, which works for `header` and `footer`. However, in the case of the Remix app we need to specify the output folder as `build` by adding the following section to `packages/remixapp/package.json`.
 
 ```json
 {
@@ -268,6 +282,8 @@ building the Remix app we need to help it by adding the following section to `pa
   }
 }
 ```
+
+> NOTE: "{projectRoot}" is a special syntax supported by the task-runner, which will be appropriately interpolated internally when the command runs. You should therefore not replace "{projectRoot}" with a fixed path as this makes your configuration less flexible.
 
 Caching not only restores the terminal output logs, but also artifacts that might have been produced.
 
@@ -297,14 +313,19 @@ You will see all the files restored from cache and the command executing instant
 
 ## Target Dependencies (aka task pipelines)
 
-We have made good progress, but there are two problems left to be solved:
+We have made good progress, but there is one problem left to be solved. The following configuration in `nx.json` is incomplete:
 
-1. We need to remember to use `--no-sort` when running tests.
-2. We need to remember to build `header` and `footer` before we run `lerna run dev --scope=remixapp`.
+```jsonc
+{
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"]
+    }
+  }
+}
+```
 
-Both are the symptoms of the same issue: by default, Lerna doesn't know how different targets (npm scripts) relate to
-each other. We can fix that by defining dependencies between targets (also often known as task pipelines) in
-the `nx.json`:
+This ensures that `build` dependencies are run before any `build` command, but we also need to remember to build `header` and `footer` before we run `lerna run dev --scope=remixapp`. We can fix that by defining dependencies between targets (also known as task pipelines) in the `nx.json`:
 
 ```json
 {

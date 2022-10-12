@@ -153,7 +153,7 @@ describe("lerna-run-nx-incompatible-options", () => {
 
 
       lerna notice cli v999.9.9-e2e.0
-      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks for details.
+      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
 
     `);
   });
@@ -201,7 +201,7 @@ describe("lerna-run-nx-incompatible-options", () => {
 
 
       lerna notice cli v999.9.9-e2e.0
-      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks for details.
+      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
 
     `);
   });
@@ -249,7 +249,7 @@ describe("lerna-run-nx-incompatible-options", () => {
 
 
       lerna notice cli v999.9.9-e2e.0
-      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks for details.
+      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
 
     `);
   });
@@ -298,7 +298,7 @@ describe("lerna-run-nx-incompatible-options", () => {
 
       lerna notice cli v999.9.9-e2e.0
       lerna notice filter including dependencies
-      lerna info run Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/recipes/using-lerna-powered-by-nx-to-run-tasks#--include-dependencies for details.
+      lerna info run Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/lerna6-obsolete-options#--include-dependencies for details.
 
     `);
   });
