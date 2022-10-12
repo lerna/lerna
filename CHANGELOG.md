@@ -5,7 +5,35 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [6.0.0](https://github.com/lerna/lerna/compare/v6.0.0-alpha.2...v6.0.0) (2022-10-12)
 
-**Note:** Version bump only for package lerna-monorepo
+### Super fast, modern task-runner implementation for `lerna run`
+
+As of version 6.0.0, Lerna will now delegate the implementation details of the `lerna run` command to the super fast, modern task-runner (powered by Nx) by default.
+
+If for some reason you wish to opt in to the legacy task-runner implementation details (powered by `p-map` and `p-queue`), you can do so by setting `"useNx": false` in your lerna.json. (Please let us know via a Github issue if you feel the need to do that, however, as in general the new task-runner should just work how you expect it to as a lerna user).
+
+### Interactive configurtion for `lerna run` caching and task pipelines via the new `lerna add-caching` command
+
+When using the modern task-runner implementation described above, the way to get the most out of it is to tell it about the outputs of your various scripts, and also any relationships that exist between them (such as needing to run the `build` script before the `test`, for example).
+
+Simply run `lerna add-caching` and follow the instructions in order to generate all the relevant configuration for your workspace.
+
+You can learn more about the configuration it generates here: https://lerna.js.org/docs/concepts/task-pipeline-configuration
+
+### Obselete options in `lerna run` with the new task-runner implementation
+
+There are certain legacy options for `lerna run` which are no longer applicable to the modern task-runner. Please see full details about those flags, and the reason behind their obselence, here:
+
+https://lerna.js.org/docs/lerna6-obsolete-options
+
+### New `lerna repair` command
+
+When configuration changes over time as new versions of a tool are published it can be tricky to keep up with the changes and sometimes it's possible to miss out on optimizations as a result.
+
+When you run the new command `lerna repair`, lerna will execute a serious of code migrations/codemods which update your workspace to the latest and greatest best practices for workspace configuration.
+
+The actual codemods which run will be added to over time, but for now one you might see run on your workspace is that it will remove any explicit `"useNx": true` references from lerna.json files, because that is no longer necessary and it's cleaner not to have it.
+
+We are really excited about this feature and how we can use it to help users keep their workspaces up to date.
 
 # [6.0.0-alpha.2](https://github.com/lerna/lerna/compare/v6.0.0-alpha.1...v6.0.0-alpha.2) (2022-10-12)
 
