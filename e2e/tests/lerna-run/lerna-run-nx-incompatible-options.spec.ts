@@ -68,46 +68,46 @@ describe("lerna-run-nx-incompatible-options", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+       >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
-    - package-X
-    - package-X
-    - package-X
+          - package-X
+          - package-X
+          - package-X
 
+       
 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
+      > package-X:print-name
 
 
-> package-X@0.0.0 print-name
-> echo test-package-X
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-test-package-X
+      test-package-X
 
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
+      > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      test-package-X
+
+      > package-X:print-name
 
 
-lerna notice cli v999.9.9-e2e.0
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-`);
+      test-package-X
+
+       
+
+       >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+      lerna notice cli v999.9.9-e2e.0
+
+    `);
   });
 
   it("--parallel should warn", async () => {
@@ -115,47 +115,47 @@ lerna notice cli v999.9.9-e2e.0
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+       >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
-    - package-X
-    - package-X
-    - package-X
+          - package-X
+          - package-X
+          - package-X
 
+       
 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
+      > package-X:print-name
 
 
-> package-X@0.0.0 print-name
-> echo test-package-X
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-test-package-X
+      test-package-X
 
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
+      > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      test-package-X
+
+      > package-X:print-name
 
 
-lerna notice cli v999.9.9-e2e.0
-lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-`);
+      test-package-X
+
+       
+
+       >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+      lerna notice cli v999.9.9-e2e.0
+      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
+
+    `);
   });
 
   it("--sort should warn", async () => {
@@ -163,47 +163,47 @@ lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has ta
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+       >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
-    - package-X
-    - package-X
-    - package-X
+          - package-X
+          - package-X
+          - package-X
 
+       
 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
+      > package-X:print-name
 
 
-> package-X@0.0.0 print-name
-> echo test-package-X
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-test-package-X
+      test-package-X
 
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
+      > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      test-package-X
+
+      > package-X:print-name
 
 
-lerna notice cli v999.9.9-e2e.0
-lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-`);
+      test-package-X
+
+       
+
+       >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+      lerna notice cli v999.9.9-e2e.0
+      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
+
+    `);
   });
 
   it("--no-sort should warn", async () => {
@@ -211,47 +211,47 @@ lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has ta
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+       >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
-    - package-X
-    - package-X
-    - package-X
+          - package-X
+          - package-X
+          - package-X
 
+       
 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
+      > package-X:print-name
 
 
-> package-X@0.0.0 print-name
-> echo test-package-X
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-test-package-X
+      test-package-X
 
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
+      > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      test-package-X
+
+      > package-X:print-name
 
 
-lerna notice cli v999.9.9-e2e.0
-lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-`);
+      test-package-X
+
+       
+
+       >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+      lerna notice cli v999.9.9-e2e.0
+      lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
+
+    `);
   });
 
   it("--include-dependencies should warn", async () => {
@@ -259,48 +259,48 @@ lerna WARN run "parallel", "sort", and "no-sort" are ignored when nx.json has ta
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+       >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
-    - package-X
-    - package-X
-    - package-X
+          - package-X
+          - package-X
+          - package-X
 
+       
 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
+      > package-X:print-name
 
 
-> package-X@0.0.0 print-name
-> echo test-package-X
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-test-package-X
+      test-package-X
 
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
+      > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      test-package-X
+
+      > package-X:print-name
 
 
-lerna notice cli v999.9.9-e2e.0
-lerna notice filter including dependencies
-lerna info run Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/lerna6-obsolete-options#--include-dependencies for details.
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-`);
+      test-package-X
+
+       
+
+       >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+      lerna notice cli v999.9.9-e2e.0
+      lerna notice filter including dependencies
+      lerna info run Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/lerna6-obsolete-options#--include-dependencies for details.
+
+    `);
   });
 });
 
@@ -354,46 +354,46 @@ describe("lerna-run-nx-incompatible-options without nx.json", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+       >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
-    - package-X
-    - package-X
-    - package-X
+          - package-X
+          - package-X
+          - package-X
 
+       
 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
+      > package-X:print-name
 
 
-> package-X@0.0.0 print-name
-> echo test-package-X
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-test-package-X
+      test-package-X
 
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
+      > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      test-package-X
+
+      > package-X:print-name
 
 
-lerna notice cli v999.9.9-e2e.0
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-`);
+      test-package-X
+
+       
+
+       >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+      lerna notice cli v999.9.9-e2e.0
+
+    `);
   });
 
   it("--parallel should not warn", async () => {
@@ -401,46 +401,46 @@ lerna notice cli v999.9.9-e2e.0
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+       >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
-    - package-X
-    - package-X
-    - package-X
+          - package-X
+          - package-X
+          - package-X
 
+       
 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
+      > package-X:print-name
 
 
-> package-X@0.0.0 print-name
-> echo test-package-X
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-test-package-X
+      test-package-X
 
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
+      > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      test-package-X
+
+      > package-X:print-name
 
 
-lerna notice cli v999.9.9-e2e.0
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-`);
+      test-package-X
+
+       
+
+       >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+      lerna notice cli v999.9.9-e2e.0
+
+    `);
   });
 
   it("--sort should not warn", async () => {
@@ -448,46 +448,46 @@ lerna notice cli v999.9.9-e2e.0
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+       >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
-    - package-X
-    - package-X
-    - package-X
+          - package-X
+          - package-X
+          - package-X
 
+       
 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
+      > package-X:print-name
 
 
-> package-X@0.0.0 print-name
-> echo test-package-X
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-test-package-X
+      test-package-X
 
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
+      > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      test-package-X
+
+      > package-X:print-name
 
 
-lerna notice cli v999.9.9-e2e.0
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-`);
+      test-package-X
+
+       
+
+       >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+      lerna notice cli v999.9.9-e2e.0
+
+    `);
   });
 
   it("--no-sort should not warn", async () => {
@@ -495,46 +495,46 @@ lerna notice cli v999.9.9-e2e.0
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+       >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
-    - package-X
-    - package-X
-    - package-X
+          - package-X
+          - package-X
+          - package-X
 
+       
 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
+      > package-X:print-name
 
 
-> package-X@0.0.0 print-name
-> echo test-package-X
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-test-package-X
+      test-package-X
 
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
+      > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      test-package-X
+
+      > package-X:print-name
 
 
-lerna notice cli v999.9.9-e2e.0
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-`);
+      test-package-X
+
+       
+
+       >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+      lerna notice cli v999.9.9-e2e.0
+
+    `);
   });
 
   it("--include-dependencies should not warn", async () => {
@@ -542,46 +542,46 @@ lerna notice cli v999.9.9-e2e.0
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
- >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+       >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
-    - package-X
-    - package-X
-    - package-X
+          - package-X
+          - package-X
+          - package-X
 
+       
 
-
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
-
-> package-X:print-name
+      > package-X:print-name
 
 
-> package-X@0.0.0 print-name
-> echo test-package-X
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-test-package-X
+      test-package-X
 
-> package-X:print-name
-
-
-> package-X@0.0.0 print-name
-> echo test-package-X
-
-test-package-X
+      > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
- >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      test-package-X
+
+      > package-X:print-name
 
 
-lerna notice cli v999.9.9-e2e.0
-lerna notice filter including dependencies
+      > package-X@0.0.0 print-name
+      > echo test-package-X
 
-`);
+      test-package-X
+
+       
+
+       >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+      lerna notice cli v999.9.9-e2e.0
+      lerna notice filter including dependencies
+
+    `);
   });
 });
