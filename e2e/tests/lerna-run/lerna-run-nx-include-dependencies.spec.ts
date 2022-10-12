@@ -255,7 +255,7 @@ describe("lerna-run-nx-include-dependencies", () => {
         lerna notice filter including dependencies
         lerna info filter [ 'package-X' ]
         lerna verb run nx.json with targetDefaults was found. Task dependencies will be automatically included.
-        lerna info run Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/recipes/lerna6-obsolete-options#--include-dependencies for details.
+        lerna info run Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/lerna6-obsolete-options#--include-dependencies for details.
 
       `);
     });
@@ -312,7 +312,7 @@ describe("lerna-run-nx-include-dependencies", () => {
         lerna notice filter excluding "package-X"
         lerna info filter [ 'package-X', '!package-X' ]
         lerna verb run nx.json with targetDefaults was found. Task dependencies will be automatically included.
-        lerna info run Using the "ignore" option when nx.json has targetDefaults defined will exclude only tasks that are not determined to be required by Nx. See https://lerna.js.org/docs/recipes/lerna6-obsolete-options#--ignore for details.
+        lerna info run Using the "ignore" option when nx.json has targetDefaults defined will exclude only tasks that are not determined to be required by Nx. See https://lerna.js.org/docs/lerna6-obsolete-options#--ignore for details.
 
       `);
     });
