@@ -1,6 +1,6 @@
 {
   "name": "@lerna/query-graph",
-  "version": "6.0.0-alpha.1",
+  "version": "6.0.0-alpha.2",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
