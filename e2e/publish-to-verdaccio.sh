@@ -45,3 +45,17 @@ npx lerna publish from-package --registry="http://localhost:4872/" --yes
 echo ""
 
 echo "Publishing complete"
+
+echo ""
+
+# Only prune the pnpm store if pnpm is installed. If it's not, then delegate 
+# to the pnpm e2e tests to fail with a clear error of "pnpm: command not found".
+if command -v pnpm &> /dev/null
+then
+  echo "Clearing pnpm store"
+
+  pnpm store prune
+  rm -rf ~/Library/pnpm/store/v3/files/
+
+  echo "pnpm store cleared"
+fi
