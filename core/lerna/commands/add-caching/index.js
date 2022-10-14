@@ -51,7 +51,7 @@ class AddCachingCommand extends Command {
       {
         type: "checkbox",
         name: "targetDefaults",
-        message: "Which of the following scripts need to be run in deterministic/topoglogical order?\n",
+        message: "Which of the following scripts need to be run in deterministic/topological order?\n",
         choices: this.uniqueScriptNames,
       },
     ]);
