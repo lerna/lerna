@@ -70,3 +70,9 @@ Learn more [here](../api-reference/commands).
 For more control over the order tasks are executed, edit the [Task Pipeline Configuration](../concepts/task-pipeline-configuration).
 
 To speed up your task execution, learn how to [Cache Task Results](./cache-tasks) and [Distribute Task Execution](./distribute-tasks)
+
+## Automatic loading of .env files
+
+By default the modern task runner powered by Nx will automatically load `.env` files for you. You can set `--load-env-files` to false if you want to disable this behavior for any reason.
+
+For more details about what `.env` files will be loaded by default please see: https://nx.dev/recipes/environment-variables/define-environment-variables
