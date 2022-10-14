@@ -311,6 +311,7 @@ class RunCommand extends Command {
 
     const extraOptions = {
       excludeTaskDependencies: mimicLernaDefaultBehavior,
+      loadDotEnvFiles: this.options.loadEnvFiles ?? true,
     };
 
     return { targetDependencies, options, extraOptions };

@@ -19,6 +19,12 @@ Simply run `lerna add-caching` and follow the instructions in order to generate 
 
 You can learn more about the configuration it generates here: https://lerna.js.org/docs/concepts/task-pipeline-configuration
 
+### Automatic loading of .env files in `lerna run` with the new task-runner implementation
+
+By default the modern task runner powered by Nx will automatically load `.env` files for you. You can set `--load-env-files` to false if you want to disable this behavior for any reason.
+
+For more details about what `.env` files will be loaded by default please see: https://nx.dev/recipes/environment-variables/define-environment-variables
+
 ### Obselete options in `lerna run` with the new task-runner implementation
 
 There are certain legacy options for `lerna run` which are no longer applicable to the modern task-runner. Please see full details about those flags, and the reason behind their obselence, here:
