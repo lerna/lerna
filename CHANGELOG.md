@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.1](https://github.com/lerna/lerna/compare/v6.0.0...v6.0.1) (2022-10-14)
+
+### Bug Fixes
+
+- **run:** allow for loading of env files to be skipped ([#3375](https://github.com/lerna/lerna/issues/3375)) ([5dbd904](https://github.com/lerna/lerna/commit/5dbd904009ede4cc952fc7f8cbafebf6b12d81a1))
+
 # [6.0.0](https://github.com/lerna/lerna/compare/v6.0.0-alpha.2...v6.0.0) (2022-10-12)
 
 ### Super fast, modern task-runner implementation for `lerna run`

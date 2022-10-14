@@ -1,6 +1,6 @@
 {
   "name": "@lerna/write-log-file",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "What lerna uses to dump logs",
   "keywords": [
     "lerna",
