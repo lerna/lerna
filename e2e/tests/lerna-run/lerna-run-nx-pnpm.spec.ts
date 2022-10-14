@@ -186,9 +186,7 @@ describe("lerna-run-nx", () => {
       version: "workspace:~",
     });
   });
-  afterAll(() => {
-    fixture?.destroy();
-  });
+  afterAll(() => fixture.destroy());
 
   it("should run script on all child packages", async () => {
     const output = await fixture.lerna("run print-name");
