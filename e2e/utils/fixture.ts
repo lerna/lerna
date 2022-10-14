@@ -25,6 +25,7 @@ interface FixtureCreateOptions {
 
 type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string };
 
+const PNPM_STORE = "../.pnpm-store";
 const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4872/";
 
@@ -95,7 +96,8 @@ export class Fixture {
 
   private async setNpmRegistry(): Promise<void> {
     if (this.packageManager === "pnpm") {
-      await this.exec(`echo "registry=${REGISTRY}" > .npmrc`);
+      await this.exec(`mkdir ${PNPM_STORE}`);
+      await this.exec(`echo "registry=${REGISTRY}\nstore-dir = ${PNPM_STORE}" > .npmrc`);
     }
   }
 
