@@ -616,11 +616,13 @@ class VersionCommand extends Command {
       );
     }
 
+    const npmClientArgs = this.options.npmClientArgs || [];
+
     if (this.options.npmClient === "pnpm") {
       chain = chain.then(() => {
         this.logger.verbose("version", "Updating root pnpm-lock.yaml");
         return childProcess
-          .exec("pnpm", ["install", "--lockfile-only", "--ignore-scripts"], this.execOpts)
+          .exec("pnpm", ["install", "--lockfile-only", "--ignore-scripts", ...npmClientArgs], this.execOpts)
           .then(() => {
             const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
             changedFiles.add(lockfilePath);
@@ -634,7 +636,11 @@ class VersionCommand extends Command {
         chain = chain.then(() => {
           this.logger.verbose("version", "Updating root package-lock.json");
           return childProcess
-            .exec("npm", ["install", "--package-lock-only", "--ignore-scripts"], this.execOpts)
+            .exec(
+              "npm",
+              ["install", "--package-lock-only", "--ignore-scripts", ...npmClientArgs],
+              this.execOpts
+            )
             .then(() => {
               changedFiles.add(lockfilePath);
             });
