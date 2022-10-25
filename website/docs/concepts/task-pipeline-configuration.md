@@ -92,7 +92,7 @@ in parallel as possible as long as the constraints are met.
 
 Situations like this are pretty common:
 
-![Mixing Targets](../images/running-tasks/mixing-targets.png)
+![Mixing Targets](../images/running-tasks/task-graph-execution.svg)
 
 Because we described the rules in `nx.json`, they will apply to all the projects in the repo. You can also define
 project-specific rules by adding them the project's `package.json`.
