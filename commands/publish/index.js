@@ -240,6 +240,7 @@ class PublishCommand extends Command {
     }
 
     chain = chain.then(() => this.resolveLocalDependencyLinks());
+    chain = chain.then(() => this.resolveWorkspaceDependencyLinks());
     chain = chain.then(() => this.annotateGitHead());
     chain = chain.then(() => this.serializeChanges());
     chain = chain.then(() => this.packUpdated());
@@ -542,6 +543,32 @@ class PublishCommand extends Command {
       for (const [depName, resolved] of node.localDependencies) {
         // regardless of where the version comes from, we can't publish "file:../sibling-pkg" specs
         const depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
+
+        // it no longer matters if we mutate the shared Package instance
+        node.pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
+      }
+
+      // writing changes to disk handled in serializeChanges()
+    });
+  }
+
+  resolveWorkspaceDependencyLinks() {
+    // resolve relative workspace: links to their actual version range
+    const updatesWithWorkspaceLinks = this.updates.filter((node) =>
+      Array.from(node.localDependencies.values()).some((resolved) => !!resolved.workspaceSpec)
+    );
+
+    return pMap(updatesWithWorkspaceLinks, (node) => {
+      for (const [depName, resolved] of node.localDependencies) {
+        let depVersion;
+        if (resolved.workspaceAlias) {
+          const exactVersion =
+            this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
+          depVersion =
+            resolved.workspaceAlias === "*" ? exactVersion : `${resolved.workspaceAlias}${exactVersion}`;
+        } else {
+          depVersion = resolved.workspaceSpec.match(/^(workspace:)(.*)/)[2];
+        }
 
         // it no longer matters if we mutate the shared Package instance
         node.pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
