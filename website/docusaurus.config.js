@@ -65,14 +65,14 @@ const config = {
         contextualSearch: false,
         searchPagePath: false,
       },
-      announcementBar: {
-        id: "lerna-talks",
-        content:
-          'Do not miss Lerna talks at <a target="_blank" style="font-weight: bolder" rel="noopener noreferrer" href="https://nx.dev/conf?utm_source=lerna.js.org">NxConf on October 17!</a>',
-        backgroundColor: "#9333EA",
-        textColor: "#FFFFFF",
-        isCloseable: false,
-      },
+      // announcementBar: {
+      //   id: "lerna-talks",
+      //   content:
+      //     'Do not miss Lerna talks at <a target="_blank" style="font-weight: bolder" rel="noopener noreferrer" href="https://nx.dev/conf?utm_source=lerna.js.org">NxConf on October 17!</a>',
+      //   backgroundColor: "#9333EA",
+      //   textColor: "#FFFFFF",
+      //   isCloseable: false,
+      // },
       colorMode: {
         defaultMode: "light",
         disableSwitch: false,
