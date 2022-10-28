@@ -561,17 +561,18 @@ class PublishCommand extends Command {
     return pMap(updatesWithWorkspaceLinks, (node) => {
       for (const [depName, resolved] of node.localDependencies) {
         let depVersion;
+        let savePrefix;
         if (resolved.workspaceAlias) {
-          const exactVersion =
-            this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
-          depVersion =
-            resolved.workspaceAlias === "*" ? exactVersion : `${resolved.workspaceAlias}${exactVersion}`;
+          depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
+          savePrefix = resolved.workspaceAlias === "*" ? "" : resolved.workspaceAlias;
         } else {
-          depVersion = resolved.workspaceSpec.match(/^(workspace:)(.*)/)[2];
+          const specMatch = resolved.workspaceSpec.match(/^workspace:([~|^]?)(.*)/);
+          savePrefix = specMatch[1];
+          depVersion = specMatch[2];
         }
 
         // it no longer matters if we mutate the shared Package instance
-        node.pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
+        node.pkg.updateLocalDependency(resolved, depVersion, savePrefix, { retainWorkspacePrefix: false });
       }
 
       // writing changes to disk handled in serializeChanges()
