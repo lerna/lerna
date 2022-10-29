@@ -41,7 +41,7 @@ https://lerna.js.org/docs/lerna6-obsolete-options
 
 When configuration changes over time as new versions of a tool are published it can be tricky to keep up with the changes and sometimes it's possible to miss out on optimizations as a result.
 
-When you run the new command `lerna repair`, lerna will execute a serious of code migrations/codemods which update your workspace to the latest and greatest best practices for workspace configuration.
+When you run the new command `lerna repair`, lerna will execute a series of code migrations/codemods which update your workspace to the latest and greatest best practices for workspace configuration.
 
 The actual codemods which run will be added to over time, but for now one you might see run on your workspace is that it will remove any explicit `"useNx": true` references from lerna.json files, because that is no longer necessary and it's cleaner not to have it.
 
