@@ -550,4 +550,16 @@ Map {
       await expect(command).rejects.toThrow("Dependency cycles detected, you should fix these!");
     });
   });
+
+  describe("--dry-run", () => {
+    it("auto-rejects the confirmation prompt", async () => {
+      const testDir = await initFixture("normal");
+      await lernaPublish(testDir)("--dry-run");
+
+      expect(promptConfirmation).not.toHaveBeenCalled();
+
+      const consoleMessages = await loggingOutput();
+      expect(consoleMessages).toContain("Auto-rejected. This is a dry-run.");
+    });
+  });
 });

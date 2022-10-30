@@ -110,6 +110,10 @@ exports.builder = (yargs) => {
       describe: "Verify package read-write access for current npm user.",
       type: "boolean",
     },
+    "dry-run": {
+      describe: "Preview of packages to be published.",
+      type: "boolean",
+    },
   };
 
   composeVersionOptions(yargs);

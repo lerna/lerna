@@ -444,6 +444,11 @@ class PublishCommand extends Command {
       return true;
     }
 
+    if (this.options.dryRun) {
+      this.logger.info("Auto-rejected. This is a dry-run.");
+      return false;
+    }
+
     return promptConfirmation("Are you sure you want to publish these packages?");
   }
 
