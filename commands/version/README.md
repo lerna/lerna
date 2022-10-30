@@ -75,6 +75,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--force-git-tag`](#--force-git-tag)
     - [`--tag-version-prefix`](#--tag-version-prefix)
     - [`--yes`](#--yes)
+    - [`--dry-run`](#--dry-run)
   - [Deprecated Options](#deprecated-options)
     - [`--cd-version`](#--cd-version)
     - [`--repo-version`](#--repo-version)
@@ -430,6 +431,16 @@ lerna version --yes
 
 When run with this flag, `lerna version` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
+
+### `--dry-run`
+
+```sh
+lerna version --dry-run
+# auto-rejects `Are you sure you want to publish these packages?`
+```
+
+When run with this flag, `lerna version` will auto-reject confirmation prompts.
+Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt. (In this case, with "no").
 
 ## Deprecated Options
 

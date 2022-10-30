@@ -65,6 +65,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--tag-version-prefix`](#--tag-version-prefix)
 - [`--temp-tag`](#--temp-tag)
 - [`--yes`](#--yes)
+- [`--dry-run`](#--dry-run)
 
 ### `--canary`
 
@@ -293,6 +294,16 @@ lerna publish --canary --yes
 
 When run with this flag, `lerna publish` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
+
+### `--dry-run`
+
+```sh
+lerna publish --dry-run
+# auto-rejects `Are you sure you want to publish the above changes?`
+```
+
+When run with this flag, `lerna publish` will skip all confirmation prompts.
+Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt. (In this case, with "no").
 
 ## Deprecated Options
 
