@@ -487,6 +487,11 @@ class VersionCommand extends Command {
       return true;
     }
 
+    if (this.options.dryRun) {
+      this.logger.info("Auto-rejected. This is a dry-run.");
+      return false;
+    }
+
     // When composed from `lerna publish`, use this opportunity to confirm publishing
     const message = this.composed
       ? "Are you sure you want to publish these packages?"

@@ -165,6 +165,10 @@ exports.builder = (yargs, composed) => {
       alias: "yes",
       type: "boolean",
     },
+    "dry-run": {
+      describe: "Preview versions to be created.",
+      type: "boolean",
+    },
   };
 
   if (composed) {
