@@ -1,4 +1,4 @@
-import { ChevronRightIcon, DuplicateIcon } from "@heroicons/react/outline";
+import { ChevronRightIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
@@ -66,7 +66,7 @@ export default function HeroLerna(): JSX.Element {
                     <span className={styles.command__text}>
                       <span aria-hidden="true">$</span> {command}
                     </span>
-                    <DuplicateIcon className={styles.command__icon} />
+                    <DocumentDuplicateIcon className={styles.command__icon} />
                   </button>
                 </CopyToClipboard>
               </div>
