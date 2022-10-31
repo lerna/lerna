@@ -11,3 +11,11 @@
 .item__inner div {
   padding: 3rem;
 }
+.item__title span {
+  display: block;
+  font-size: 1.25rem;
+}
+
+iframe {
+  min-height: 100%;
+}

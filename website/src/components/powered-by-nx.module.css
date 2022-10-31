@@ -9,7 +9,7 @@
   display: flex;
 }
 .item__inner div {
-  padding: 5rem;
+  padding: 3rem;
 }
 .item__title span {
   display: block;

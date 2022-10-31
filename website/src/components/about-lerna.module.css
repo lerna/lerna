@@ -44,3 +44,8 @@
 .callout:hover .callout__bottom {
   width: 100%;
 }
+
+.video {
+  box-shadow: 0 2px 6px var(--ifm-background-surface-color-dark);
+  border-radius: 0.375rem;
+}
