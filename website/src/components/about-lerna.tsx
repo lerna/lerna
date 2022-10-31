@@ -1,16 +1,13 @@
 import {
   ClockIcon,
   CogIcon,
-  CollectionIcon,
   CubeTransparentIcon,
-  EmojiHappyIcon,
-  GlobeIcon,
-  LightningBoltIcon,
+  RectangleGroupIcon,
+  RectangleStackIcon,
   ShareIcon,
   SparklesIcon,
-  TemplateIcon,
   UsersIcon,
-} from "@heroicons/react/outline";
+} from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import React from "react";
 import styles from "./about-lerna.module.css";
@@ -41,7 +38,7 @@ const callouts: Callout[] = [
     title: "Target Dependencies",
     text: "Lerna lets you specify how different targets (npm scripts) depend on each other.",
     link: "/docs/features/run-tasks#target-dependencies-aka-task-pipelines",
-    icon: CollectionIcon,
+    icon: RectangleStackIcon,
   },
   {
     title: "Efficient Execution",
@@ -92,7 +89,7 @@ const callouts: Callout[] = [
     text:
       "Why have separate tools for running tasks, linking packages and publishing them? Lerna does it--less config, less overhead.",
     link: "/docs/getting-started",
-    icon: TemplateIcon,
+    icon: RectangleGroupIcon,
   },
 ];
 
