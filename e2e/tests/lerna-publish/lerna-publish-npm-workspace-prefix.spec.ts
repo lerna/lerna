@@ -28,7 +28,7 @@ describe("lerna-publish-workspace-prefix", () => {
       installDependencies: true,
     });
   });
-  // afterEach(() => fixture.destroy());
+  afterEach(() => fixture.destroy());
 
   describe("from-git", () => {
     it("should publish to the remote registry, removing workspace: prefix from dependencies", async () => {
