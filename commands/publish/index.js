@@ -566,7 +566,7 @@ class PublishCommand extends Command {
           depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
           savePrefix = resolved.workspaceAlias === "*" ? "" : resolved.workspaceAlias;
         } else {
-          const specMatch = resolved.workspaceSpec.match(/^workspace:([~|^]?)(.*)/);
+          const specMatch = resolved.workspaceSpec.match(/^workspace:([~^]?)(.*)/);
           savePrefix = specMatch[1];
           depVersion = specMatch[2];
         }

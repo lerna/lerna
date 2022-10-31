@@ -273,7 +273,7 @@ class Package {
     if (resolved.workspaceSpec && options.retainWorkspacePrefix) {
       // do nothing if there is a workspace alias since they don't specify a version number
       if (!resolved.workspaceAlias) {
-        const workspacePrefix = resolved.workspaceSpec.match(/^(workspace:[*|~|^]?)/)[0];
+        const workspacePrefix = resolved.workspaceSpec.match(/^(workspace:[*~^]?)/)[0];
         depCollection[depName] = `${workspacePrefix}${depVersion}`;
       }
     } else if (resolved.registry || resolved.type === "directory") {
