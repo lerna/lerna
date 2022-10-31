@@ -45,13 +45,13 @@ html[data-theme="dark"] {
 }
 
 /**
- Generics iframe
+ Generics iframe in docs
  */
-iframe[src*="youtube"] {
+.docs-doc-page iframe[src*="youtube"] {
   box-shadow: 0 2px 6px var(--ifm-background-surface-color-dark);
   border-radius: 0.375rem;
 }
-iframe {
+.docs-doc-page iframe {
   border: 2px solid var(--ifm-background-surface-color-dark);
   display: block;
   margin: 1.7rem auto;

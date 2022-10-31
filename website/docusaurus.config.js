@@ -113,7 +113,7 @@ const config = {
             position: "left",
             label: "Get Started",
           },
-          // { to: "/blog", label: "Blog", position: "left" },
+          { to: "/upgrade", label: "Upgrade", position: "left" },
           // {
           //   href: "https://nx.dev",
           //   className: "header-nxdev-link",
