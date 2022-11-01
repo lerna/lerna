@@ -240,6 +240,7 @@ class PublishCommand extends Command {
     }
 
     chain = chain.then(() => this.resolveLocalDependencyLinks());
+    chain = chain.then(() => this.resolveWorkspaceDependencyLinks());
     chain = chain.then(() => this.annotateGitHead());
     chain = chain.then(() => this.serializeChanges());
     chain = chain.then(() => this.packUpdated());
@@ -545,6 +546,33 @@ class PublishCommand extends Command {
 
         // it no longer matters if we mutate the shared Package instance
         node.pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
+      }
+
+      // writing changes to disk handled in serializeChanges()
+    });
+  }
+
+  resolveWorkspaceDependencyLinks() {
+    // resolve relative workspace: links to their actual version range
+    const updatesWithWorkspaceLinks = this.updates.filter((node) =>
+      Array.from(node.localDependencies.values()).some((resolved) => !!resolved.workspaceSpec)
+    );
+
+    return pMap(updatesWithWorkspaceLinks, (node) => {
+      for (const [depName, resolved] of node.localDependencies) {
+        let depVersion;
+        let savePrefix;
+        if (resolved.workspaceAlias) {
+          depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
+          savePrefix = resolved.workspaceAlias === "*" ? "" : resolved.workspaceAlias;
+        } else {
+          const specMatch = resolved.workspaceSpec.match(/^workspace:([~^]?)(.*)/);
+          savePrefix = specMatch[1];
+          depVersion = specMatch[2];
+        }
+
+        // it no longer matters if we mutate the shared Package instance
+        node.pkg.updateLocalDependency(resolved, depVersion, savePrefix, { retainWorkspacePrefix: false });
       }
 
       // writing changes to disk handled in serializeChanges()
