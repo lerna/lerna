@@ -4,7 +4,7 @@ const fs = require("fs");
 const log = require("npmlog");
 const path = require("path");
 const slash = require("slash");
-const { workspaceRoot } = require("@nrwl/devkit");
+const { workspaceRoot, readJsonFile } = require("@nrwl/devkit");
 const childProcess = require("@lerna/child-process");
 
 module.exports.gitAdd = gitAdd;
@@ -13,7 +13,12 @@ let resolvedPrettier;
 function resolvePrettier() {
   if (!resolvedPrettier) {
     try {
-      // If the workspace has prettier installed, apply it to the updated files
+      // If the workspace has prettier (explicitly) installed, apply it to the updated files
+      const packageJson = readJsonFile(path.join(workspaceRoot, "package.json"));
+      const hasPrettier = packageJson.devDependencies?.prettier || packageJson.dependencies?.prettier;
+      if (!hasPrettier) {
+        return;
+      }
       const prettierPath = path.join(workspaceRoot, "node_modules", "prettier");
       // eslint-disable-next-line import/no-dynamic-require, global-require
       resolvedPrettier = require(prettierPath);
