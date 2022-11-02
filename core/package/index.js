@@ -254,7 +254,7 @@ class Package {
    * @param {String} depVersion semver
    * @param {String} savePrefix npm_config_save_prefix
    */
-  updateLocalDependency(resolved, depVersion, savePrefix) {
+  updateLocalDependency(resolved, depVersion, savePrefix, options = { retainWorkspacePrefix: true }) {
     const depName = resolved.name;
 
     // first, try runtime dependencies
@@ -270,10 +270,10 @@ class Package {
       depCollection = this.devDependencies;
     }
 
-    if (resolved.workspaceSpec) {
+    if (resolved.workspaceSpec && options.retainWorkspacePrefix) {
       // do nothing if there is a workspace alias since they don't specify a version number
       if (!resolved.workspaceAlias) {
-        const workspacePrefix = resolved.workspaceSpec.match(/^(workspace:[*|~|^]?)/)[0];
+        const workspacePrefix = resolved.workspaceSpec.match(/^(workspace:[*~^]?)/)[0];
         depCollection[depName] = `${workspacePrefix}${depVersion}`;
       }
     } else if (resolved.registry || resolved.type === "directory") {
