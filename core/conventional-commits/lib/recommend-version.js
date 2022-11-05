@@ -4,15 +4,16 @@ const conventionalRecommendedBump = require("conventional-recommended-bump");
 const log = require("npmlog");
 const semver = require("semver");
 const { getChangelogConfig } = require("./get-changelog-config");
+const { getPreviousPrerelease } = require("./get-previous-prerelease");
 
 module.exports.recommendVersion = recommendVersion;
 
 /**
  * @param {import("@lerna/package").Package} pkg
  * @param {import("..").VersioningStrategy} type
- * @param {import("..").BaseChangelogOptions & { prereleaseId?: string }} commandOptions
+ * @param {import("..").BaseChangelogOptions & { prereleaseId?: string, detectPreid: boolean }} commandOptions
  */
-function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, prereleaseId }) {
+function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, prereleaseId, detectPreid }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   const options = {
@@ -61,8 +62,14 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, pre
         if (prereleaseId) {
           const shouldBump = shouldBumpPrerelease(releaseType, pkg.version);
           const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
-          log.verbose(type, "increment %s by %s", pkg.version, prereleaseType);
-          resolve(semver.inc(pkg.version, prereleaseType, prereleaseId));
+
+          let currentVersion = pkg.version;
+          if (detectPreid) {
+            currentVersion = getPreviousPrerelease(pkg.version, pkg.name, prereleaseId);
+          }
+
+          log.verbose(type, "increment %s by %s", currentVersion, prereleaseType);
+          resolve(semver.inc(currentVersion, prereleaseType, prereleaseId));
         } else {
           if (semver.major(pkg.version) === 0) {
             // According to semver, major version zero (0.y.z) is for initial

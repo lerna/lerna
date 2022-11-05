@@ -142,6 +142,10 @@ exports.builder = (yargs, composed) => {
       requiresArg: true,
       defaultDescription: "alpha",
     },
+    "detect-preid": {
+      describe: "Find latest tag of preid when incrementing conventional prerelease version",
+      type: "boolean",
+    },
     "sign-git-commit": {
       describe: "Pass the `--gpg-sign` flag to `git commit`.",
       type: "boolean",

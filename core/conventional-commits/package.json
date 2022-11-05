@@ -32,6 +32,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@lerna/child-process": "file:../../core/child-process",
     "@lerna/validation-error": "file:../validation-error",
     "conventional-changelog-angular": "^5.0.12",
     "conventional-changelog-core": "^4.2.4",

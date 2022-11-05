@@ -70,6 +70,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--no-private`](#--no-private)
     - [`--no-push`](#--no-push)
     - [`--preid`](#--preid)
+    - [`--detect-preid`](#--detect-preid)
     - [`--sign-git-commit`](#--sign-git-commit)
     - [`--sign-git-tag`](#--sign-git-tag)
     - [`--force-git-tag`](#--force-git-tag)
@@ -395,6 +396,23 @@ lerna version prepatch --preid next
 
 When run with this flag, `lerna version` will increment `premajor`, `preminor`, `prepatch`, or `prerelease` semver
 bumps using the specified [prerelease identifier](http://semver.org/#spec-item-9).
+
+### `--detect-preid`
+
+```sh
+lerna version prerelease --preid alpha --detect-preid
+# 1.0.0 => 1.0.1-alpha.0
+
+lerna version prerelease --preid beta --detect-preid
+# 1.0.1-alpha.0 => 1.0.1-beta.0
+
+lerna version prerelease --preid alpha --detect-preid
+# 1.0.1-beta.0 => 1.0.1-alpha.1
+```
+
+This option is used with the `--preid` and `--conventional-commits` options.
+It ensures that the prerelease version is bumped to a non-existent git tag by searching the latest tag of
+this semantic prerelease version with a specific [prerelease identifier](http://semver.org/#spec-item-9).
 
 ### `--sign-git-commit`
 

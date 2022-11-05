@@ -49,6 +49,28 @@ describe("conventional-commits", () => {
       expect(bump).toBe("1.1.0-alpha.0");
     });
 
+    it("returns next version prerelease bump with existing prereleaseId", async () => {
+      const cwd = await initFixture("independent");
+      const [pkg1] = await getPackages(cwd);
+      pkg1.version = "1.0.1-beta.0";
+
+      await gitTag(cwd, "package-1@1.0.1-alpha.0");
+      await gitTag(cwd, "package-1@1.0.1-alpha.1");
+      await gitTag(cwd, "package-1@1.0.1-alpha.2");
+
+      const bump = await recommendVersion(pkg1, "independent", { prereleaseId: "alpha", detectPreid: true });
+      expect(bump).toBe("1.0.1-alpha.3");
+    });
+
+    it("returns next independent version prerelease bump with non-existing prereleaseId", async () => {
+      const cwd = await initFixture("independent");
+      const [pkg1] = await getPackages(cwd);
+      pkg1.version = "1.0.1-beta.0";
+
+      const bump = await recommendVersion(pkg1, "independent", { prereleaseId: "alpha", detectPreid: true });
+      expect(bump).toBe("1.0.1-alpha.0");
+    });
+
     it("returns package-specific bumps in independent mode", async () => {
       const cwd = await initFixture("independent");
       const [pkg1, pkg2] = await getPackages(cwd);
