@@ -77,8 +77,9 @@ describe("lerna-publish-workspace-prefix", () => {
       expect(replaceVersion(output.combinedOutput)).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
 
-        Found 7 packages to publish:
+        Found 8 packages to publish:
          - test-main => XX.XX.XX
+         - test-no-workspace-prefix => XX.XX.XX
          - test-workspace-alias-caret => XX.XX.XX
          - test-workspace-alias-star => XX.XX.XX
          - test-workspace-alias-tilde => XX.XX.XX
@@ -90,9 +91,26 @@ describe("lerna-publish-workspace-prefix", () => {
         lerna info publish Publishing packages to npm...
         lerna notice Skipping all user and access validation due to third-party registry
         lerna notice Make sure you're authenticated properly ¯\\_(ツ)_/¯
-        lerna WARN ENOLICENSE Packages test-main, test-workspace-alias-caret, test-workspace-alias-star, test-workspace-alias-tilde, test-workspace-approx, test-workspace-compat, and test-workspace-exact are missing a license.
+        lerna WARN ENOLICENSE Packages test-main, test-no-workspace-prefix, test-workspace-alias-caret, test-workspace-alias-star, test-workspace-alias-tilde, test-workspace-approx, test-workspace-compat, and test-workspace-exact are missing a license.
         lerna WARN ENOLICENSE One way to fix this is to add a LICENSE.md file to the root of this repository.
         lerna WARN ENOLICENSE See https://choosealicense.com for additional guidance.
+        lerna success published test-no-workspace-prefix XX.XX.XX
+        lerna notice 
+        lerna notice 📦  test-no-workspace-prefix@XX.XX.XX
+        lerna notice === Tarball Contents === 
+        lerna notice XXXB lib/test-no-workspace-prefix.js
+        lerna notice XXXB package.json                   
+        lerna notice XXXB README.md                      
+        lerna notice === Tarball Details === 
+        lerna notice name:          test-no-workspace-prefix                
+        lerna notice version:       XX.XX.XX                                
+        lerna notice filename:      test-no-workspace-prefix-XX.XX.XX.tgz   
+        lerna notice package size:  XXXB                                   
+        lerna notice unpacked size: XXXB                                  
+        lerna notice shasum:        {FULL_COMMIT_SHA}
+        lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        lerna notice total files:   3                                       
+        lerna notice 
         lerna success published test-workspace-alias-caret XX.XX.XX
         lerna notice 
         lerna notice 📦  test-workspace-alias-caret@XX.XX.XX
@@ -214,13 +232,14 @@ describe("lerna-publish-workspace-prefix", () => {
         lerna notice 
         Successfully published:
          - test-main@XX.XX.XX
+         - test-no-workspace-prefix@XX.XX.XX
          - test-workspace-alias-caret@XX.XX.XX
          - test-workspace-alias-star@XX.XX.XX
          - test-workspace-alias-tilde@XX.XX.XX
          - test-workspace-approx@XX.XX.XX
          - test-workspace-compat@XX.XX.XX
          - test-workspace-exact@XX.XX.XX
-        lerna success published 7 packages
+        lerna success published 8 packages
 
       `);
 
