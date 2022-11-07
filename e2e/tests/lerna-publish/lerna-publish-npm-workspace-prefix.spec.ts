@@ -38,6 +38,7 @@ describe("lerna-publish-workspace-prefix", () => {
       await fixture.lerna("create test-workspace-exact -y");
       await fixture.lerna("create test-workspace-compat -y");
       await fixture.lerna("create test-workspace-approx -y");
+      await fixture.lerna("create test-no-workspace-prefix -y");
       await fixture.lerna("create test-main -y");
 
       await fixture.updateJson(`packages/test-main/package.json`, (json) => ({
@@ -50,6 +51,7 @@ describe("lerna-publish-workspace-prefix", () => {
           "test-workspace-exact": `workspace:0.0.0`,
           "test-workspace-compat": `workspace:^0.0.0`,
           "test-workspace-approx": `workspace:~0.0.0`,
+          "test-no-workspace-prefix": `^0.0.0`,
         },
       }));
 
@@ -242,6 +244,8 @@ describe("lerna-publish-workspace-prefix", () => {
       await unpublish("test-workspace-exact");
       await unpublish("test-workspace-compat");
       await unpublish("test-workspace-approx");
+      await unpublish("test-no-workspace-prefix");
+      await unpublish("test-main");
     });
   });
 });
