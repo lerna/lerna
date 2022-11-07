@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.3](https://github.com/lerna/lerna/compare/v6.0.2...v6.0.3) (2022-11-07)
+
+### Bug Fixes
+
+- **publish:** support inconsistent workspace prefix usage ([#3413](https://github.com/lerna/lerna/issues/3413)) ([da2274b](https://github.com/lerna/lerna/commit/da2274ba68f75082e3d0399241c27038f99da40a))
+
 ## [6.0.2](https://github.com/lerna/lerna/compare/v6.0.1...v6.0.2) (2022-11-02)
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/prerelease-id-from-version",
-  "version": "6.0.2",
+  "version": "6.0.3",
   "description": "Get the prerelease ID from a version string",
   "keywords": [
     "lerna",
