@@ -91,14 +91,14 @@ describe("--conventional-commits", () => {
       });
     });
 
-    it("should call recommended version with conventionalBumpprerelease set", async () => {
+    it("should call recommended version with conventionalBumpPrerelease set", async () => {
       prereleaseVersionBumps.forEach((bump) => recommendVersion.mockResolvedValueOnce(bump));
       const cwd = await initFixture("prerelease-independent");
 
       await lernaVersion(cwd)(
         "--conventional-commits",
         "--conventional-prerelease",
-        "--conventional-bumpprerelease"
+        "--conventional-bump-prerelease"
       );
 
       prereleaseVersionBumps.forEach((version, name) => {
@@ -108,7 +108,7 @@ describe("--conventional-commits", () => {
           rootPath: cwd,
           tagPrefix: "v",
           prereleaseId,
-          conventionalBumpprerelease: true,
+          conventionalBumpPrerelease: true,
         });
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),

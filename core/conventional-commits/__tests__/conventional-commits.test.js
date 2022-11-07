@@ -118,17 +118,17 @@ describe("conventional-commits", () => {
         recommendVersion(
           pkg1,
           "independent",
-          Object.assign(opts, { prereleaseId: "alpha", conventionalBumpprerelease: true })
+          Object.assign(opts, { prereleaseId: "alpha", conventionalBumpPrerelease: true })
         ),
         recommendVersion(
           pkg2,
           "independent",
-          Object.assign(opts, { prereleaseId: "beta", conventionalBumpprerelease: true })
+          Object.assign(opts, { prereleaseId: "beta", conventionalBumpPrerelease: true })
         ),
         recommendVersion(
           pkg3,
           "independent",
-          Object.assign(opts, { prereleaseId: "beta", conventionalBumpprerelease: true })
+          Object.assign(opts, { prereleaseId: "beta", conventionalBumpPrerelease: true })
         ),
       ]);
 

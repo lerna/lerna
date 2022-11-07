@@ -15,7 +15,7 @@ module.exports.recommendVersion = recommendVersion;
 function recommendVersion(
   pkg,
   type,
-  { changelogPreset, rootPath, tagPrefix, prereleaseId, conventionalBumpprerelease }
+  { changelogPreset, rootPath, tagPrefix, prereleaseId, conventionalBumpPrerelease }
 ) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
@@ -30,8 +30,8 @@ function recommendVersion(
     options.tagPrefix = tagPrefix;
   }
 
-  const shouldBumpPrerelease = (releaseType, version, bumpPrerelease) => {
-    if (!semver.prerelease(version) || bumpPrerelease) {
+  const shouldBumpPrerelease = (releaseType, version) => {
+    if (!semver.prerelease(version)) {
       return true;
     }
     switch (releaseType) {
@@ -63,7 +63,7 @@ function recommendVersion(
         let releaseType = data.releaseType || "patch";
 
         if (prereleaseId) {
-          const shouldBump = shouldBumpPrerelease(releaseType, pkg.version, conventionalBumpprerelease);
+          const shouldBump = conventionalBumpPrerelease || shouldBumpPrerelease(releaseType, pkg.version);
           const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
           log.verbose(type, "increment %s by %s", pkg.version, prereleaseType);
           resolve(semver.inc(pkg.version, prereleaseType, prereleaseId));

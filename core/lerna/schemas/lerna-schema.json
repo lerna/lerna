@@ -985,6 +985,9 @@
             "conventionalPrerelease": {
               "$ref": "#/$defs/commandOptions/version/conventionalPrerelease"
             },
+            "conventionalBumpPrerelease": {
+              "$ref": "#/$defs/commandOptions/version/conventionalBumpPrerelease"
+            },
             "changelogPreset": {
               "$ref": "#/$defs/commandOptions/version/changelogPreset"
             },
@@ -1286,6 +1289,9 @@
     },
     "conventionalPrerelease": {
       "$ref": "#/$defs/commandOptions/version/conventionalPrerelease"
+    },
+    "conventionalBumpPrerelease": {
+      "$ref": "#/$defs/commandOptions/version/conventionalBumpPrerelease"
     },
     "changelogPreset": {
       "$ref": "#/$defs/commandOptions/version/changelogPreset"
@@ -1672,6 +1678,10 @@
             { "type": "array", "items": { "type": "string" } }
           ],
           "description": "During `lerna version`, version changed packages as prereleases when using --conventional-commits."
+        },
+        "conventionalBumpPrerelease": {
+          "type": "boolean",
+          "description": "During `lerna version`, bumps version of changed prereleased packages when using --conventional-commits."
         },
         "changelogPreset": {
           "type": "string",
