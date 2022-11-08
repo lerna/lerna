@@ -25,7 +25,7 @@ We are going to publish the `header` and the `footer` packages.
 
 ## Versioning
 
-Lerna comes with a `version` that allows you to increment your package's version number, commit the changes and tag them accordingly.
+Lerna comes with a `version` command that allows you to increment your package's version number, commit the changes and tag them accordingly.
 
 ```bash
 lerna version --no-private
