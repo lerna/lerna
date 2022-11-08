@@ -1,0 +1,8 @@
+{
+  "name": "package-3",
+  "repository": "lerna/conventional-commits-independent",
+  "version": "1.0.0-beta.0",
+  "dependencies": {
+    "package-1": "^1.0.0"
+  }
+}

@@ -12,7 +12,11 @@ module.exports.recommendVersion = recommendVersion;
  * @param {import("..").VersioningStrategy} type
  * @param {import("..").BaseChangelogOptions & { prereleaseId?: string }} commandOptions
  */
-function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, prereleaseId }) {
+function recommendVersion(
+  pkg,
+  type,
+  { changelogPreset, rootPath, tagPrefix, prereleaseId, conventionalBumpPrerelease }
+) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   const options = {
@@ -59,7 +63,7 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, pre
         let releaseType = data.releaseType || "patch";
 
         if (prereleaseId) {
-          const shouldBump = shouldBumpPrerelease(releaseType, pkg.version);
+          const shouldBump = conventionalBumpPrerelease || shouldBumpPrerelease(releaseType, pkg.version);
           const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
           log.verbose(type, "increment %s by %s", pkg.version, prereleaseType);
           resolve(semver.inc(pkg.version, prereleaseType, prereleaseId));
