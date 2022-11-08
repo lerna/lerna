@@ -9,7 +9,7 @@ runs:
   using: "composite"
   steps:
     - name: Install node and npm based on the given values (or the volta config in package.json)
-      uses: volta-cli/action@v1
+      uses: volta-cli/action@v4
       with:
         node-version: ${{ inputs.node-version }}
 
