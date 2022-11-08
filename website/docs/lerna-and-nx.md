@@ -37,7 +37,7 @@ Free and open source
 2. [Run prerequisite tasks first](./features/run-tasks)
 3. [Cache task results locally](./features/cache-tasks)
 4. [Visualize the project graph](./features/project-graph)
-5. [Nx Console](./features/project-graph) - Visual Studio Code plugin
+5. [Nx Console](./features/editor-integrations#nx-console-for-vscode) - Visual Studio Code plugin
 
 ### Cost
 
