@@ -16,8 +16,8 @@ runs:
     - name: Get npm cache directory and node version for cache key
       id: npm-cache-dir
       run: |
-        echo "::set-output name=node_version::$(node --version)"
-        echo "::set-output name=dir::$(npm config get cache)"
+        echo "node_version=$(node --version)" >> $GITHUB_OUTPUT
+        echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
       shell: bash
 
     - uses: actions/cache@v3
