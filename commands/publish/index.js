@@ -262,7 +262,9 @@ class PublishCommand extends Command {
 
       if (this.options.summaryFile) {
         // create a json object and output it to a file location.
-        const filePath = this.options.summaryFile || "./output.json";
+        const filePath = this.options.summaryFile
+          ? `${this.options.summaryFile}/lerna-publish-summary.json`
+          : "./lerna-publish-summary.json";
         const jsonObject = this.packagesToPublish.map((pkg) => {
           return {
             packageName: pkg.name,

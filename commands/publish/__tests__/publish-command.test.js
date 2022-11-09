@@ -374,7 +374,7 @@ Map {
     it("creates the summary file", async () => {
       const cwd = await initFixture("normal");
       const fsSpy = jest.spyOn(fsmain, "writeFileSync");
-      await lernaPublish(cwd)("--summary-file", "./output.json");
+      await lernaPublish(cwd)("--summary-file", "./outputs");
 
       const expectedJsonResponse = [
         { packageName: "package-1", version: "1.0.1" },
@@ -383,7 +383,10 @@ Map {
         { packageName: "package-4", version: "1.0.1" },
       ];
       expect(fsSpy).toHaveBeenCalled();
-      expect(fsSpy).toHaveBeenCalledWith("./output.json", JSON.stringify(expectedJsonResponse));
+      expect(fsSpy).toHaveBeenCalledWith(
+        "./outputs/lerna-publish-summary.json",
+        JSON.stringify(expectedJsonResponse)
+      );
     });
   });
   describe("--verify-access", () => {

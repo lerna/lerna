@@ -65,7 +65,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--tag-version-prefix`](#--tag-version-prefix)
 - [`--temp-tag`](#--temp-tag)
 - [`--yes`](#--yes)
-- [`--summary-file <dir/filename>`](#--summary-file)
+- [`--summary-file <dir>`](#--summary-file)
 
 ### `--canary`
 
@@ -119,11 +119,10 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 
 > Note: the `latest` tag is the one that is used when a user runs `npm install my-package`.
 > To install a different tag, a user can run `npm install my-package@prerelease`.
-> 
 
 ### `--force-publish`
 
-To be used with [`--canary`](#--canary) to publish a canary version of all packages in your monorepo. This flag can be helpful when you need to make canary releases of packages beyond what was changed in the most recent commit. 
+To be used with [`--canary`](#--canary) to publish a canary version of all packages in your monorepo. This flag can be helpful when you need to make canary releases of packages beyond what was changed in the most recent commit.
 
 ```
 lerna publish --canary --force-publish
@@ -307,7 +306,11 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 ### `--summary-file`
 
 ```sh
-lerna publish --canary --yes --summary-file ./output.json
+# Will create a summary file in the root directory ./lerna-publish-summary.json
+lerna publish --canary --yes --summary-file
+# Will create a summary file in the root directory ./some/other/dir/lerna-publish-summary.json
+lerna publish --canary --yes --summary-file ./some/other/dir
+
 ```
 
 When run with this flag, a json summary report will be generated after all packages have been successfully published (see below for an example).

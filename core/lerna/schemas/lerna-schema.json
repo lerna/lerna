@@ -874,6 +874,9 @@
             },
             "continueIfNoMatch": {
               "$ref": "#/$defs/filters/continueIfNoMatch"
+            },
+            "summaryFile": {
+              "$ref": "#/$defs/filters/summaryFile"
             }
           }
         },
@@ -1487,6 +1490,10 @@
       "continueIfNoMatch": {
         "type": "boolean",
         "description": "Don't fail if no package is matched."
+      },
+      "summaryFile": {
+        "type": "string",
+        "description": "A json summary report will be generated after all packages have been successfully published"
       }
     },
     "commandOptions": {

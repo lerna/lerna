@@ -111,8 +111,7 @@ exports.builder = (yargs) => {
       type: "boolean",
     },
     "summary-file": {
-      // Json output.
-      hidden: true,
+      // generate lerna publish json output.
       type: "string",
     },
     // y: {
