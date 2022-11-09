@@ -302,7 +302,7 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 lerna publish --canary --yes --summary-file ./output.json
 ```
 
-When run with this flag, once a successfully publish it will create a json summary report(see below for an example).
+When run with this flag, a json summary report will be generated after all packages have been successfully published (see below for an example).
 
 ```json
 [

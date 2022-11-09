@@ -253,7 +253,7 @@ class PublishCommand extends Command {
         output(jsonObject);
         try {
           fs.writeFileSync(filePath, JSON.stringify(jsonObject));
-          output("Locate Summary Report Here: ", filePath);
+          output("Publish summary created: ", filePath);
         } catch (error) {
           output("Failed to create the summary report", error);
         }
