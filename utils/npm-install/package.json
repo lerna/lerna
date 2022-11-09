@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-install",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -34,7 +34,7 @@
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/get-npm-exec-opts": "file:../get-npm-exec-opts",
     "fs-extra": "^9.1.0",
-    "npm-package-arg": "^8.1.0",
+    "npm-package-arg": "8.1.1",
     "npmlog": "^6.0.2",
     "signal-exit": "^3.0.3",
     "write-pkg": "^4.0.0"

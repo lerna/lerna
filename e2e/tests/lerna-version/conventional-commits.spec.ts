@@ -38,14 +38,14 @@ describe("lerna-version-conventional-commits", () => {
       const output = await fixture.lerna("version --conventional-commits -y", { silenceError: true });
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-
-        Changes:
-         - package-a: 0.0.0 => 0.1.0
-
         lerna notice cli v999.9.9-e2e.0
         lerna info current version 0.0.0
         lerna info Assuming all packages changed
         lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
+
+        Changes:
+         - package-a: 0.0.0 => 0.1.0
+
         lerna info auto-confirmed 
         lerna info execute Skipping releases
         lerna info git Pushing tags...
@@ -135,19 +135,19 @@ describe("lerna-version-conventional-commits", () => {
       const output = await fixture.lerna("version --conventional-commits -y", { silenceError: true });
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna info current version 0.0.0
+        lerna info Assuming all packages changed
+        lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
 
-          Changes:
-           - package-a: 0.0.0 => 0.1.0
-           - package-b: 0.0.0 => 0.1.0
+        Changes:
+         - package-a: 0.0.0 => 0.1.0
+         - package-b: 0.0.0 => 0.1.0
 
-          lerna notice cli v999.9.9-e2e.0
-          lerna info current version 0.0.0
-          lerna info Assuming all packages changed
-          lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
-          lerna info auto-confirmed 
-          lerna info execute Skipping releases
-          lerna info git Pushing tags...
-          lerna success version finished
+        lerna info auto-confirmed 
+        lerna info execute Skipping releases
+        lerna info git Pushing tags...
+        lerna success version finished
 
       `);
 
@@ -249,14 +249,14 @@ describe("lerna-version-conventional-commits", () => {
       });
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-
-        Changes:
-         - package-a: 0.1.0 => 0.1.1-alpha.0
-
         lerna notice cli v999.9.9-e2e.0
         lerna info current version 0.1.0
         lerna info Looking for changed packages since v0.1.0
         lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
+
+        Changes:
+         - package-a: 0.1.0 => 0.1.1-alpha.0
+
         lerna info auto-confirmed 
         lerna info execute Skipping releases
         lerna info git Pushing tags...
@@ -270,16 +270,61 @@ describe("lerna-version-conventional-commits", () => {
       });
 
       expect(output2.combinedOutput).toMatchInlineSnapshot(`
-
-        Changes:
-         - package-a: 0.1.1-alpha.0 => 0.1.1
-
         lerna notice cli v999.9.9-e2e.0
         lerna info current version 0.1.1-alpha.0
         lerna WARN conventional-graduate all packages
         lerna info Graduating all prereleased packages
         lerna info Looking for changed packages since v0.1.1-alpha.0
         lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
+
+        Changes:
+         - package-a: 0.1.1-alpha.0 => 0.1.1
+
+        lerna info auto-confirmed 
+        lerna info execute Skipping releases
+        lerna info git Pushing tags...
+        lerna success version finished
+
+      `);
+    });
+
+    it("should correctly generate and bump prerelease versions when using --conventional-prerelease and --conventional-bump-prerelease", async () => {
+      await fixture.createInitialGitCommit();
+
+      await fixture.lerna("create package-a -y");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'feat: add package-a'");
+
+      await fixture.lerna("create package-b -y");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'feat: add package-b'");
+
+      await fixture.exec("git push origin test-main");
+
+      // Initial versioning with two packages created
+      await fixture.lerna("version --conventional-commits --conventional-prerelease -y", {
+        silenceError: true,
+      });
+
+      // Update and version just package-a
+      await fixture.exec("echo update_package_a > packages/package-a/new_file.txt");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'fix: update package-a'");
+
+      // Bump a prerelease version
+      const output = await fixture.lerna("version --conventional-commits --conventional-bump-prerelease -y", {
+        silenceError: true,
+      });
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna info current version 0.1.0-alpha.0
+        lerna info Looking for changed packages since v0.1.0-alpha.0
+        lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
+
+        Changes:
+         - package-a: 0.1.0-alpha.0 => 0.1.1-alpha.0
+
         lerna info auto-confirmed 
         lerna info execute Skipping releases
         lerna info git Pushing tags...
@@ -316,15 +361,15 @@ describe("lerna-version-conventional-commits", () => {
 
         // NOTE: In the independent case, lerna started with verion 1.0.0 as its assumed baseline (not 0.0.0 as in the fixed mode case)
         expect(output1.combinedOutput).toMatchInlineSnapshot(`
+          lerna notice cli v999.9.9-e2e.0
+          lerna info versioning independent
+          lerna info Assuming all packages changed
+          lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
 
           Changes:
            - package-a: 1.0.0 => 1.1.0
            - package-b: 1.0.0 => 1.1.0
 
-          lerna notice cli v999.9.9-e2e.0
-          lerna info versioning independent
-          lerna info Assuming all packages changed
-          lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
           lerna info auto-confirmed 
           lerna info execute Skipping releases
           lerna info git Pushing tags...
@@ -411,18 +456,18 @@ describe("lerna-version-conventional-commits", () => {
         const output2 = await fixture.lerna("version --conventional-commits -y", { silenceError: true });
 
         expect(output2.combinedOutput).toMatchInlineSnapshot(`
+          lerna notice cli v999.9.9-e2e.0
+          lerna info versioning independent
+          lerna info Looking for changed packages since package-a@1.1.0
+          lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
 
-            Changes:
-             - package-a: 1.1.0 => 1.1.1
+          Changes:
+           - package-a: 1.1.0 => 1.1.1
 
-            lerna notice cli v999.9.9-e2e.0
-            lerna info versioning independent
-            lerna info Looking for changed packages since package-a@1.1.0
-            lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
-            lerna info auto-confirmed 
-            lerna info execute Skipping releases
-            lerna info git Pushing tags...
-            lerna success version finished
+          lerna info auto-confirmed 
+          lerna info execute Skipping releases
+          lerna info git Pushing tags...
+          lerna success version finished
 
         `);
 

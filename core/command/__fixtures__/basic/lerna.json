@@ -1,5 +1,6 @@
 {
   "version": "1.0.0",
+  "packages": ["packages/*"],
   "testOption": "default",
   "command": {
     "testb": {

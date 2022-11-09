@@ -18,6 +18,7 @@ When run, this command will:
 
 1. Add `lerna` as a [`devDependency`](https://docs.npmjs.com/files/package.json#devdependencies) in `package.json` if it doesn't already exist.
 2. Create a `lerna.json` config file to store the `version` number.
+3. Generate a `.gitignore` file if one doesn't already exist.
 
 Example output on a new git repo:
 

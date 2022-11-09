@@ -8,12 +8,12 @@ const globby = require("globby");
 const childProcess = require("@lerna/child-process");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { loggingOutput } = require("@lerna-test/logging-output");
-const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+const { normalizeRelativeDir } = require("@lerna-test/helpers");
 
 // file under test
-const lernaExec = require("@lerna-test/command-runner")(require("../command"));
+const lernaExec = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // assertion helpers
 const calledInPackages = () => childProcess.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));

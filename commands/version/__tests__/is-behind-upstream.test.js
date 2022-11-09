@@ -1,7 +1,7 @@
 "use strict";
 
 const execa = require("execa");
-const cloneFixture = require("@lerna-test/clone-fixture")(__dirname);
+const cloneFixture = require("@lerna-test/helpers").cloneFixtureFactory(__dirname);
 const { isBehindUpstream } = require("../lib/is-behind-upstream");
 
 test("isBehindUpstream", async () => {

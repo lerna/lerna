@@ -19,7 +19,7 @@ const { warnIfHanging } = require("./lib/warn-if-hanging");
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
 class Command {
-  constructor(_argv) {
+  constructor(_argv, { skipValidations } = { skipValidations: false }) {
     log.pause();
     log.heading = "lerna";
 
@@ -49,7 +49,10 @@ class Command {
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureProperties());
       chain = chain.then(() => this.configureLogging());
-      chain = chain.then(() => this.runValidations());
+      // For the special "repair" command we want to intitialize everything but don't want to run validations as that will end up becoming cyclical
+      if (!skipValidations) {
+        chain = chain.then(() => this.runValidations());
+      }
       chain = chain.then(() => this.runPreparations());
       chain = chain.then(() => this.runCommand());
 
@@ -171,6 +174,10 @@ class Command {
       // Environmental defaults prepared in previous step
       this.envDefaults
     );
+
+    if (this.options.verbose && this.options.loglevel !== "silly") {
+      this.options.loglevel = "verbose";
+    }
   }
 
   configureProperties() {
@@ -245,6 +252,13 @@ class Command {
           To use independent mode you need to set lerna.json's "version" property to "independent".
           Then you won't need to pass the --independent or -i flags.
         `
+      );
+    }
+
+    if (this.options.npmClient === "pnpm" && !this.options.useWorkspaces) {
+      throw new ValidationError(
+        "ENOWORKSPACES",
+        "Usage of pnpm without workspaces is not supported. To use pnpm with lerna, set useWorkspaces to true in lerna.json and configure pnpm to use workspaces: https://pnpm.io/workspaces."
       );
     }
   }

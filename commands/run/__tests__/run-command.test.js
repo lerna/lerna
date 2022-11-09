@@ -10,13 +10,13 @@ const { npmRunScript, npmRunScriptStreaming } = require("@lerna/npm-run-script")
 const { output } = require("@lerna/output");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { loggingOutput } = require("@lerna-test/logging-output");
-const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+const { normalizeRelativeDir } = require("@lerna-test/helpers");
 const { afterEach, afterAll } = require("jest-circus");
 
 // file under test
-const lernaRun = require("@lerna-test/command-runner")(require("../command"));
+const lernaRun = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // assertion helpers
 const ranInPackagesStreaming = (testDir) =>
@@ -298,6 +298,25 @@ describe("RunCommand", () => {
     });
   });
 
+  describe("in a pnpm repo with workspaces", () => {
+    it("runs a script on all packages", async () => {
+      const testDir = await initFixture("pnpm");
+      await lernaRun(testDir)("my-script");
+
+      expect(output.logged()).toMatchInlineSnapshot(`
+        "package-1
+        package-2"
+      `);
+    });
+
+    it("runs a script only in scoped packages", async () => {
+      const testDir = await initFixture("pnpm");
+      await lernaRun(testDir)("my-script", "--scope", "package-1");
+
+      expect(output.logged()).toMatchInlineSnapshot(`"package-1"`);
+    });
+  });
+
   // this is a temporary set of tests, which will be replaced by verdacio-driven tests
   // once the required setup is fully set up
   describe("in a repo powered by Nx", () => {
@@ -355,8 +374,8 @@ describe("RunCommand", () => {
     it("runs a script in packages with --stream", async () => {
       collectedOutput = "";
       await lernaRun(testDir)("my-script", "--stream");
-      expect(collectedOutput).toContain("[package-1      ] package-1");
-      expect(collectedOutput).toContain("[package-3      ] package-3");
+      expect(collectedOutput).toContain("package-1: package-1");
+      expect(collectedOutput).toContain("package-3: package-3");
     });
 
     it("runs a cacheable script", async () => {

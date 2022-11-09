@@ -1,11 +1,48 @@
 "use strict";
 
+const fs = require("fs");
 const log = require("npmlog");
 const path = require("path");
 const slash = require("slash");
+const { workspaceRoot, readJsonFile } = require("@nrwl/devkit");
 const childProcess = require("@lerna/child-process");
 
 module.exports.gitAdd = gitAdd;
+
+let resolvedPrettier;
+function resolvePrettier() {
+  if (!resolvedPrettier) {
+    try {
+      // If the workspace has prettier (explicitly) installed, apply it to the updated files
+      const packageJson = readJsonFile(path.join(workspaceRoot, "package.json"));
+      const hasPrettier = packageJson.devDependencies?.prettier || packageJson.dependencies?.prettier;
+      if (!hasPrettier) {
+        return;
+      }
+      const prettierPath = path.join(workspaceRoot, "node_modules", "prettier");
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      resolvedPrettier = require(prettierPath);
+    } catch {
+      return;
+    }
+  }
+  return resolvedPrettier;
+}
+
+function maybeFormatFile(filePath) {
+  const prettier = resolvePrettier();
+  if (!prettier) {
+    return;
+  }
+  const config = resolvedPrettier.resolveConfig.sync(filePath);
+  try {
+    const input = fs.readFileSync(filePath, "utf8");
+    fs.writeFileSync(filePath, resolvedPrettier.format(input, { ...config, filepath: filePath }), "utf8");
+    log.silly("version", `Successfully applied prettier to updated file: ${filePath}`);
+  } catch {
+    log.silly("version", `Failed to apply prettier to updated file: ${filePath}`);
+  }
+}
 
 /**
  * @param {string[]} changedFiles
@@ -13,10 +50,19 @@ module.exports.gitAdd = gitAdd;
  * @param {import("@lerna/child-process").ExecOpts} execOpts
  */
 function gitAdd(changedFiles, gitOpts, execOpts) {
+  let files = [];
+  for (const file of changedFiles) {
+    const filePath = slash(path.relative(execOpts.cwd, path.resolve(execOpts.cwd, file)));
+    maybeFormatFile(filePath);
+    if (gitOpts.granularPathspec) {
+      files.push(filePath);
+    }
+  }
+
   // granular pathspecs should be relative to the git root, but that isn't necessarily where lerna lives
-  const files = gitOpts.granularPathspec
-    ? changedFiles.map((file) => slash(path.relative(execOpts.cwd, path.resolve(execOpts.cwd, file))))
-    : ".";
+  if (!gitOpts.granularPathspec) {
+    files = ".";
+  }
 
   log.silly("gitAdd", files);
 

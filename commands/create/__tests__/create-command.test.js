@@ -11,14 +11,14 @@ const slash = require("slash");
 const pacote = require("pacote");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { gitAdd } = require("@lerna-test/git-add");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { gitAdd } = require("@lerna-test/helpers");
 
 // file under test
-const lernaCreate = require("@lerna-test/command-runner")(require("../command"));
+const lernaCreate = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // stabilize commit SHA
-expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-git-sha"));
 
 // assertion helpers
 const addRemote = (cwd, remote = "origin", url = "git@github.com:test/test.git") =>
@@ -50,7 +50,7 @@ const manifestCreated = async (cwd) => {
 describe("CreateCommand", () => {
   pacote.manifest.mockImplementation(() => Promise.resolve({ version: "1.0.0-mocked" }));
 
-  // preserve value from @lerna-test/set-npm-userconfig
+  // preserve value from @lerna-test/helpers/npm/set-npm-userconfig
   const userconfig = process.env.npm_config_userconfig;
 
   afterEach(() => {
@@ -355,5 +355,21 @@ describe("CreateCommand", () => {
     await lernaCreate(cwd)("a-pkg");
 
     expect(await manifestCreated(cwd)).not.toHaveProperty("repository");
+  });
+
+  it("adds type field when using esModule", async () => {
+    const cwd = await initFixture("basic");
+
+    await lernaCreate(cwd)("a-pkg", "--es-module");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("type", "module");
+  });
+
+  it("skips type field when not using esModule", async () => {
+    const cwd = await initFixture("basic");
+
+    await lernaCreate(cwd)("a-pkg");
+
+    expect(await manifestCreated(cwd)).not.toHaveProperty("type");
   });
 });

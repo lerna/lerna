@@ -1,8 +1,18 @@
 {
   "root": true,
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
   "extends": ["airbnb-base", "plugin:jest/recommended", "plugin:node/recommended", "prettier"],
   "plugins": ["jest", "node"],
   "ignorePatterns": ["website/**/*"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".ts"]
+      }
+    }
+  },
   "rules": {
     "class-methods-use-this": [
       "error",
@@ -33,6 +43,7 @@
         "classes": false
       }
     ],
+    "node/no-unsupported-features/es-syntax": "off",
     "prefer-destructuring": "off",
     "prefer-object-spread": "off",
     "strict": "off",
@@ -48,7 +59,7 @@
       }
     },
     {
-      "files": ["integration/**", "**/__tests__/**", "**/__mocks__/**", "**/__helpers__/**"],
+      "files": ["integration/**", "helpers/**", "**/__tests__/**", "**/__mocks__/**", "**/__helpers__/**"],
       "env": {
         "jest": true
       },

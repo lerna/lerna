@@ -3,7 +3,6 @@
 const fs = require("fs-extra");
 const path = require("path");
 const os = require("os");
-const { URL } = require("whatwg-url");
 const { camelCase } = require("yargs-parser");
 const dedent = require("dedent");
 const initPackageJson = require("pify")(require("init-package-json"));
@@ -399,7 +398,7 @@ class CreateCommand extends Command {
     const libContent = this.options.esModule
       ? dedent`
         export default function ${this.camelName}() {
-            // TODO
+            return "Hello from ${this.camelName}";
         }
       `
       : dedent`
@@ -408,7 +407,7 @@ class CreateCommand extends Command {
         module.exports = ${this.camelName};
 
         function ${this.camelName}() {
-            // TODO
+            return "Hello from ${this.camelName}";
         }
     `;
 
@@ -418,20 +417,20 @@ class CreateCommand extends Command {
   writeTestFile() {
     const testContent = this.options.esModule
       ? dedent`
-        import ${this.camelName} from '../src/${this.dirName}';
+        import ${this.camelName} from '../src/${this.dirName}.js';
+        import { strict as assert } from 'assert';
 
-        describe('${this.pkgName}', () => {
-            it('needs tests');
-        });
+        assert.strictEqual(${this.camelName}(), 'Hello from ${this.camelName}');
+        console.info("${this.camelName} tests passed");
       `
       : dedent`
         'use strict';
 
         const ${this.camelName} = require('..');
+        const assert = require('assert').strict;
 
-        describe('${this.pkgName}', () => {
-            it('needs tests');
-        });
+        assert.strictEqual(${this.camelName}(), 'Hello from ${this.camelName}');
+        console.info("${this.camelName} tests passed");
       `;
 
     return catFile(this.testDir, this.testFileName, testContent);

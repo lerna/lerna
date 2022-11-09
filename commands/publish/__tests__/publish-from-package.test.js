@@ -24,11 +24,11 @@ const { throwIfUncommitted } = require("@lerna/check-working-tree");
 const { getUnpublishedPackages } = require("../lib/get-unpublished-packages");
 
 // helpers
-const { loggingOutput } = require("@lerna-test/logging-output");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
 // file under test
-const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
+const lernaPublish = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 describe("publish from-package", () => {
   it("publishes unpublished packages", async () => {
@@ -55,9 +55,25 @@ describe("publish from-package", () => {
 
     expect(npmPublish.order()).toEqual([
       "package-1",
-      "package-3",
       "package-4",
       "package-2",
+      "package-3",
+      // package-5 is private
+    ]);
+  });
+
+  it("publishes unpublished independent packages, lexically sorted when --no-sort is present", async () => {
+    const cwd = await initFixture("independent");
+
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => Array.from(packageGraph.values()));
+
+    await lernaPublish(cwd)("from-package", "--no-sort");
+
+    expect(npmPublish.order()).toEqual([
+      "package-1",
+      "package-2",
+      "package-3",
+      "package-4",
       // package-5 is private
     ]);
   });

@@ -15,9 +15,9 @@ const os = require("os");
 jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { loggingOutput } = require("@lerna-test/logging-output");
-const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+const { updateLernaConfig } = require("@lerna-test/helpers");
 
 // file under test
 const { Command } = require("..");
@@ -386,6 +386,124 @@ describe("core-command", () => {
           prefix: "ENOLERNA",
         })
       );
+    });
+
+    it("throws ENOWORKSPACES when npm client is pnpm and useWorkspaces is not true", async () => {
+      const cwd = await initFixture("pnpm");
+
+      const lernaConfigPath = path.join(cwd, "lerna.json");
+      const lernaConfig = await fs.readJson(lernaConfigPath);
+      await fs.writeJson(lernaConfigPath, {
+        ...lernaConfig,
+        useWorkspaces: false,
+      });
+
+      await expect(testFactory({ cwd })).rejects.toThrow(
+        expect.objectContaining({
+          prefix: "ENOWORKSPACES",
+          message:
+            "Usage of pnpm without workspaces is not supported. To use pnpm with lerna, set useWorkspaces to true in lerna.json and configure pnpm to use workspaces: https://pnpm.io/workspaces.",
+        })
+      );
+    });
+  });
+
+  describe("loglevel with verbose option true", () => {
+    it("should be set to verbose if loglevel is error", async () => {
+      const command = testFactory({
+        loglevel: "error",
+        verbose: true,
+      });
+      await command;
+
+      expect(command.options.loglevel).toEqual("verbose");
+    });
+
+    it("should be set to verbose if loglevel is warn", async () => {
+      const command = testFactory({
+        loglevel: "warn",
+        verbose: true,
+      });
+      await command;
+
+      expect(command.options.loglevel).toEqual("verbose");
+    });
+
+    it("should be set to verbose if loglevel is info", async () => {
+      const command = testFactory({
+        loglevel: "info",
+        verbose: true,
+      });
+      await command;
+
+      expect(command.options.loglevel).toEqual("verbose");
+    });
+
+    it("should remain set to verbose if loglevel is verbose", async () => {
+      const command = testFactory({
+        loglevel: "verbose",
+        verbose: true,
+      });
+      await command;
+
+      expect(command.options.loglevel).toEqual("verbose");
+    });
+
+    it("should not be set to verbose if loglevel is silly", async () => {
+      const command = testFactory({
+        loglevel: "silly",
+        verbose: true,
+      });
+      await command;
+
+      expect(command.options.loglevel).toEqual("silly");
+    });
+  });
+
+  describe("loglevel without verbose option", () => {
+    it("should remain set to error if loglevel is error", async () => {
+      const command = testFactory({
+        loglevel: "error",
+      });
+      await command;
+
+      expect(command.options.loglevel).toEqual("error");
+    });
+
+    it("should remain set to warn if loglevel is warn", async () => {
+      const command = testFactory({
+        loglevel: "warn",
+      });
+      await command;
+
+      expect(command.options.loglevel).toEqual("warn");
+    });
+
+    it("should remain set to info if loglevel is info", async () => {
+      const command = testFactory({
+        loglevel: "info",
+      });
+      await command;
+
+      expect(command.options.loglevel).toEqual("info");
+    });
+
+    it("should remain set to verbose if loglevel is verbose", async () => {
+      const command = testFactory({
+        loglevel: "verbose",
+      });
+      await command;
+
+      expect(command.options.loglevel).toEqual("verbose");
+    });
+
+    it("should remain set to silly if loglevel is silly", async () => {
+      const command = testFactory({
+        loglevel: "silly",
+      });
+      await command;
+
+      expect(command.options.loglevel).toEqual("silly");
     });
   });
 });

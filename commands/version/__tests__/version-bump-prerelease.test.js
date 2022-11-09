@@ -17,20 +17,22 @@ const path = require("path");
 const { promptTextInput, promptSelectOne } = require("@lerna/prompt");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const { showCommit } = require("@lerna-test/show-commit");
-const { gitInit } = require("@lerna-test/git-init");
-const { gitAdd } = require("@lerna-test/git-add");
-const { gitTag } = require("@lerna-test/git-tag");
-const { gitCommit } = require("@lerna-test/git-commit");
-const { getCommitMessage } = require("@lerna-test/get-commit-message");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(
+  path.resolve(__dirname, "../../publish/__tests__")
+);
+const { showCommit } = require("@lerna-test/helpers");
+const { gitInit } = require("@lerna-test/helpers");
+const { gitAdd } = require("@lerna-test/helpers");
+const { gitTag } = require("@lerna-test/helpers");
+const { gitCommit } = require("@lerna-test/helpers");
+const { getCommitMessage } = require("@lerna-test/helpers");
 const Tacks = require("tacks");
 const tempy = require("tempy");
 
 const { File, Dir } = Tacks;
 
 // test command
-const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
+const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({
@@ -44,7 +46,7 @@ expect.addSnapshotSerializer({
 });
 
 // stabilize commit SHA
-expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-changelog"));
 
 const setupChanges = async (cwd) => {
   await gitTag(cwd, "v1.0.1-beta.3");

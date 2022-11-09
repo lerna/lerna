@@ -8,7 +8,7 @@ const pacote = require("pacote");
 // helpers
 const { PackageGraph } = require("@lerna/package-graph");
 const { getPackages } = require("@lerna/project");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
 // file under test
 const { getUnpublishedPackages } = require("../lib/get-unpublished-packages");

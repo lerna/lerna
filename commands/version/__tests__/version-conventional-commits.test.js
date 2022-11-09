@@ -15,11 +15,13 @@ const { collectUpdates } = require("@lerna/collect-updates");
 const { recommendVersion, updateChangelog } = require("@lerna/conventional-commits");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const { showCommit } = require("@lerna-test/show-commit");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(
+  path.resolve(__dirname, "../../publish/__tests__")
+);
+const { showCommit } = require("@lerna-test/helpers");
 
 // test command
-const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
+const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 describe("--conventional-commits", () => {
   describe("independent", () => {
@@ -80,6 +82,33 @@ describe("--conventional-commits", () => {
           rootPath: cwd,
           tagPrefix: "v",
           prereleaseId,
+        });
+        expect(updateChangelog).toHaveBeenCalledWith(
+          expect.objectContaining({ name, version }),
+          "independent",
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
+        );
+      });
+    });
+
+    it("should call recommended version with conventionalBumpPrerelease set", async () => {
+      prereleaseVersionBumps.forEach((bump) => recommendVersion.mockResolvedValueOnce(bump));
+      const cwd = await initFixture("prerelease-independent");
+
+      await lernaVersion(cwd)(
+        "--conventional-commits",
+        "--conventional-prerelease",
+        "--conventional-bump-prerelease"
+      );
+
+      prereleaseVersionBumps.forEach((version, name) => {
+        const prereleaseId = semver.prerelease(version)[0];
+        expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name }), "independent", {
+          changelogPreset: undefined,
+          rootPath: cwd,
+          tagPrefix: "v",
+          prereleaseId,
+          conventionalBumpPrerelease: true,
         });
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),

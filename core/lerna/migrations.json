@@ -1,0 +1,10 @@
+{
+  "generators": {
+    "remove-unnecessary-use-nx": {
+      "cli": "nx",
+      "version": "6.0.0-alpha.0",
+      "description": "Remove unnecessary `useNx: true` from lerna.json as it is the default",
+      "implementation": "./migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx"
+    }
+  }
+}

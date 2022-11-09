@@ -6,8 +6,8 @@ const chalk = require("chalk");
 
 // helpers
 const { getPackages } = require("@lerna/project");
-const { gitAdd } = require("@lerna-test/git-add");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const { gitAdd } = require("@lerna-test/helpers");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
 // file under test
 const { collectUncommitted, collectUncommittedSync } = require("../lib/collect-uncommitted");

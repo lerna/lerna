@@ -1,6 +1,6 @@
 {
   "name": "@lerna/prompt",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "inquirer": "^7.3.3",
+    "inquirer": "^8.2.4",
     "npmlog": "^6.0.2"
   }
 }

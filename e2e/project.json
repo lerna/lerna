@@ -1,6 +1,6 @@
 {
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
   "name": "@lerna/e2e",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
   "targets": {
     "e2e": {
       "executor": "nx:run-commands",
@@ -14,12 +14,12 @@
             "forwardAllArgs": false
           },
           {
-            "command": "./prepare-local-publish.sh",
+            "command": "npm run prepare-local-publish",
             "description": "Prepare the dist/ directory ready for publishing to verdaccio",
             "forwardAllArgs": false
           },
           {
-            "command": "npm_config_registry=\"http://localhost:4872/\" ./publish-to-verdaccio.sh 999.9.9-e2e.0",
+            "command": "npm run publish-to-verdaccio -- 999.9.9-e2e.0",
             "description": "Publish all the lerna packages to the verdaccio instance",
             "forwardAllArgs": false
           },

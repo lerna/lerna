@@ -1,3 +1,9 @@
+---
+id: faq
+title: FAQ
+type: recipe
+---
+
 # Frequently asked questions
 
 _This document is a work in progress._
@@ -38,7 +44,7 @@ If it has been updated, you can force re-publish. `lerna publish --force-publish
 Projects having many packages inside them could take a very long time to bootstrap.
 
 You can significantly reduce the time spent in `lerna bootstrap` if you turn
-on hoisting, see the [hoisting docs](./guides/hoisting) for more information.
+on hoisting, see the [hoisting docs](./concepts/hoisting) for more information.
 
 In combination with that you may increase the bootstrap performance even more by
 [using yarn as an npm client](https://github.com/lerna/lerna/blob/main/commands/bootstrap/README.md#usage) instead of `npm`.

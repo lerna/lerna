@@ -28,16 +28,16 @@ const { getTwoFactorAuthRequired } = require("../lib/get-two-factor-auth-require
 const { gitCheckout } = require("../lib/git-checkout");
 
 // helpers
-const { commitChangeToPackage } = require("@lerna-test/commit-change-to-package");
-const { loggingOutput } = require("@lerna-test/logging-output");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const { commitChangeToPackage } = require("@lerna-test/helpers");
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 const path = require("path");
 const fs = require("fs-extra");
 
 const fsmain = require("fs");
 
 // file under test
-const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
+const lernaPublish = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 gitCheckout.mockImplementation(() => Promise.resolve());
 
@@ -103,46 +103,31 @@ describe("PublishCommand", () => {
       expect(packDirectory.registry).toMatchInlineSnapshot(`
 Set {
   "package-1",
-  "package-3",
   "package-4",
   "package-2",
+  "package-3",
 }
 `);
       expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
   "package-1" => "latest",
-  "package-3" => "latest",
   "package-4" => "latest",
   "package-2" => "latest",
+  "package-3" => "latest",
 }
 `);
       expect(npmPublish.order()).toEqual([
         "package-1",
-        "package-3",
         "package-4",
         "package-2",
+        "package-3",
         // package-5 is private
       ]);
       expect(npmDistTag.remove).not.toHaveBeenCalled();
       expect(npmDistTag.add).not.toHaveBeenCalled();
 
-      expect(getNpmUsername).toHaveBeenCalled();
-      expect(getNpmUsername).toHaveBeenLastCalledWith(
-        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
-      );
-
-      expect(verifyNpmPackageAccess).toHaveBeenCalled();
-      expect(verifyNpmPackageAccess).toHaveBeenLastCalledWith(
-        expect.any(Array),
-        "lerna-test",
-        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
-      );
-
-      expect(getTwoFactorAuthRequired).toHaveBeenCalled();
-      expect(getTwoFactorAuthRequired).toHaveBeenLastCalledWith(
-        // extra insurance that @lerna/npm-conf is defaulting things correctly
-        expect.objectContaining({ otp: undefined })
-      );
+      expect(getNpmUsername).not.toHaveBeenCalled();
+      expect(verifyNpmPackageAccess).not.toHaveBeenCalled();
 
       expect(gitCheckout).toHaveBeenCalledWith(
         // the list of changed files has been asserted many times already
@@ -159,9 +144,9 @@ Map {
 
       expect(npmPublish.order()).toEqual([
         "package-1",
-        "package-3",
         "package-4",
         "package-2",
+        "package-3",
         // package-5 is private
       ]);
     });
@@ -186,6 +171,21 @@ Map {
   });
 
   describe("--graph-type", () => {
+    it("produces a topological ordering that _includes_ devDependencies when value is not set", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)();
+
+      expect(npmPublish.order()).toEqual([
+        "package-1",
+        "package-4",
+        "package-2",
+        // package-3 has a peer/devDependency on package-2
+        "package-3",
+        // package-5 is private
+      ]);
+    });
+
     it("produces a topological ordering that _includes_ devDependencies when value is 'all'", async () => {
       const cwd = await initFixture("normal");
 
@@ -201,11 +201,49 @@ Map {
       ]);
     });
 
+    it("produces a topological ordering that _excludes_ devDependencies when value is 'dependencies' (DEPRECATED)", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--graph-type", "dependencies");
+
+      expect(npmPublish.order()).toEqual([
+        "package-1",
+        // package-3 has a peer/devDependency on package-2
+        "package-3",
+        "package-4",
+        "package-2",
+        // package-5 is private
+      ]);
+
+      const logMessages = loggingOutput("warn");
+      expect(logMessages).toMatchInlineSnapshot(`
+        Array [
+          "--graph-type=dependencies is deprecated and will be removed in lerna v6. If you have a use-case you feel requires it please open an issue to discuss: https://github.com/lerna/lerna/issues/new/choose",
+        ]
+      `);
+    });
+
     it("throws an error when value is _not_ 'all' or 'dependencies'", async () => {
       const testDir = await initFixture("normal");
       const command = lernaPublish(testDir)("--graph-type", "poopy-pants");
 
       await expect(command).rejects.toThrow("poopy-pants");
+    });
+  });
+
+  describe("--no-sort", () => {
+    it("produces a lexical ordering when --no-sort is set", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--no-sort");
+
+      expect(npmPublish.order()).toEqual([
+        "package-1",
+        "package-2",
+        "package-3",
+        "package-4",
+        // package-5 is private
+      ]);
     });
   });
 
@@ -230,7 +268,23 @@ Map {
       expect(getOneTimePassword).not.toHaveBeenCalled();
     });
 
-    it("prompts for OTP when option missing and account-level 2FA enabled", async () => {
+    it("prompts for OTP when option missing, account-level 2FA enabled, and verify access is true", async () => {
+      const testDir = await initFixture("normal");
+
+      getTwoFactorAuthRequired.mockResolvedValueOnce(true);
+
+      await lernaPublish(testDir)("--verify-access", true);
+
+      expect(npmPublish).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.objectContaining({ otp: undefined }),
+        expect.objectContaining({ otp: "654321" })
+      );
+      expect(getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
+    });
+
+    it("defers OTP prompt when option missing, account-level 2FA enabled, and verify access is not true", async () => {
       const testDir = await initFixture("normal");
 
       getTwoFactorAuthRequired.mockResolvedValueOnce(true);
@@ -241,9 +295,9 @@ Map {
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
         expect.objectContaining({ otp: undefined }),
-        expect.objectContaining({ otp: "654321" })
+        expect.objectContaining({ otp: undefined })
       );
-      expect(getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
+      expect(getOneTimePassword).not.toHaveBeenCalled();
     });
   });
 
@@ -332,8 +386,74 @@ Map {
       expect(fsSpy).toHaveBeenCalledWith("./output.json", JSON.stringify(expectedJsonResponse));
     });
   });
+  describe("--verify-access", () => {
+    it("publishes packages after verifying the user's access to each package", async () => {
+      const testDir = await initFixture("normal");
+
+      await lernaPublish(testDir)("--verify-access");
+
+      expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to publish these packages?");
+      expect(packDirectory.registry).toMatchInlineSnapshot(`
+Set {
+  "package-1",
+  "package-4",
+  "package-2",
+  "package-3",
+}
+`);
+      expect(npmPublish.registry).toMatchInlineSnapshot(`
+Map {
+  "package-1" => "latest",
+  "package-4" => "latest",
+  "package-2" => "latest",
+  "package-3" => "latest",
+}
+`);
+      expect(npmPublish.order()).toEqual([
+        "package-1",
+        "package-4",
+        "package-2",
+        "package-3",
+        // package-5 is private
+      ]);
+      expect(npmDistTag.remove).not.toHaveBeenCalled();
+      expect(npmDistTag.add).not.toHaveBeenCalled();
+
+      expect(getNpmUsername).toHaveBeenCalled();
+      expect(getNpmUsername).toHaveBeenLastCalledWith(
+        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
+      );
+
+      expect(verifyNpmPackageAccess).toHaveBeenCalled();
+      expect(verifyNpmPackageAccess).toHaveBeenLastCalledWith(
+        expect.any(Array),
+        "lerna-test",
+        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
+      );
+
+      expect(getTwoFactorAuthRequired).toHaveBeenCalled();
+      expect(getTwoFactorAuthRequired).toHaveBeenLastCalledWith(expect.objectContaining({ otp: undefined }));
+
+      expect(gitCheckout).toHaveBeenCalledWith(
+        expect.any(Array),
+        { granularPathspec: true },
+        { cwd: testDir }
+      );
+    });
+  });
 
   describe("--no-verify-access", () => {
+    it("shows warning that this is the default behavior and that this option is no longer needed", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--no-verify-access");
+
+      const logMessages = loggingOutput("warn");
+      expect(logMessages).toContain(
+        "--verify-access=false and --no-verify-access are no longer needed, because the legacy preemptive access verification is now disabled by default. Requests will fail with appropriate errors when not authorized correctly."
+      );
+    });
+
     it("skips package access verification", async () => {
       const cwd = await initFixture("normal");
 

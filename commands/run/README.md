@@ -111,23 +111,12 @@ current working directory.
 $ lerna run build --profile --profile-location=logs/profile/
 ```
 
-### `useNx` (experimental)
+### `--load-env-files`
 
-Enables integration with [Nx](https://nx.dev). Setting `"useNx": true` in `lerna.json` will tell Lerna to delegate
-running tasks to Nx instead of using `p-map` and `p-queue`. This only works if Nx is installed and `nx.json` is present.
+By default the modern task runner powered by Nx will automatically load .env files for you. You can set `--load-env-files` to false if you want to disable this behavior for any reason.
 
-Example of `nx.json`:
+For more details about what `.env` files will be loaded by default please see: https://nx.dev/recipes/environment-variables/define-environment-variables
 
-```json
-{
-  "extends": "nx/presets/npm.json",
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build"]
-      }
-    }
-  }
-}
-```
+### `useNx=false`
+
+By setting `useNx` to `false` you can use the legacy task running implementations in `lerna` (`p-map` and `p-queue`) instead of using the default modern task runner implementation powered by [Nx](https://nx.dev).

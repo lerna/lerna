@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-publish",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -34,10 +34,10 @@
     "@lerna/otplease": "file:../../core/otplease",
     "@lerna/run-lifecycle": "file:../run-lifecycle",
     "fs-extra": "^9.1.0",
-    "libnpmpublish": "^4.0.0",
-    "npm-package-arg": "^8.1.0",
+    "libnpmpublish": "^6.0.4",
+    "npm-package-arg": "8.1.1",
     "npmlog": "^6.0.2",
     "pify": "^5.0.0",
-    "read-package-json": "^3.0.0"
+    "read-package-json": "^5.0.1"
   }
 }

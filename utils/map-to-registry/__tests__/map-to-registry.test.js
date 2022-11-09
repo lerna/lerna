@@ -3,7 +3,7 @@
 const npmConf = require("@lerna/npm-conf");
 const mapToRegistry = require("..");
 
-// override value provided by set-npm-userconfig, ensuring blank slate
+// override value provided by @lerna-test/helpers/npm/set-npm-userconfig, ensuring blank slate
 process.env.npm_config_userconfig = __dirname;
 
 describe("@lerna/map-to-registry", () => {

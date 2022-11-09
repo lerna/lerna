@@ -5,17 +5,17 @@ const path = require("path");
 const { getPackages } = require("@lerna/project");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { gitAdd } = require("@lerna-test/git-add");
-const { gitCommit } = require("@lerna-test/git-commit");
-const { gitTag } = require("@lerna-test/git-tag");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { gitAdd } = require("@lerna-test/helpers");
+const { gitCommit } = require("@lerna-test/helpers");
+const { gitTag } = require("@lerna-test/helpers");
 
 // file under test
 const { recommendVersion, updateChangelog } = require("..");
 const { getChangelogConfig } = require("../lib/get-changelog-config");
 
 // stabilize changelog commit SHA and datestamp
-expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-changelog"));
 
 describe("conventional-commits", () => {
   beforeEach(() => {
@@ -93,6 +93,80 @@ describe("conventional-commits", () => {
       ]);
       expect(bump1).toBe("1.0.1-alpha.0");
       expect(bump2).toBe("1.1.0-beta.0");
+    });
+
+    it("returns package-specific version bumps from prereleases with prereleaseId", async () => {
+      const cwd = await initFixture("prerelease-independent");
+      const [pkg1, pkg2, pkg3] = await getPackages(cwd);
+      const opts = { changelogPreset: "angular" };
+
+      // make a change in package-1, package-2 and package-3
+      await pkg1.set("changed", 1).serialize();
+      await pkg2.set("changed", 2).serialize();
+      await pkg3.set("changed", 3).serialize();
+
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix: changed 1");
+
+      await gitAdd(cwd, pkg2.manifestLocation);
+      await gitCommit(cwd, "feat: changed 2");
+
+      await gitAdd(cwd, pkg3.manifestLocation);
+      await gitCommit(cwd, "feat!: changed\n\nBREAKING CHANGE: changed");
+
+      const [bump1, bump2, bump3] = await Promise.all([
+        recommendVersion(
+          pkg1,
+          "independent",
+          Object.assign(opts, { prereleaseId: "alpha", conventionalBumpPrerelease: true })
+        ),
+        recommendVersion(
+          pkg2,
+          "independent",
+          Object.assign(opts, { prereleaseId: "beta", conventionalBumpPrerelease: true })
+        ),
+        recommendVersion(
+          pkg3,
+          "independent",
+          Object.assign(opts, { prereleaseId: "beta", conventionalBumpPrerelease: true })
+        ),
+      ]);
+
+      // all versions should be bumped
+      expect(bump1).toBe("1.0.1-alpha.0");
+      expect(bump2).toBe("1.1.0-beta.0");
+      expect(bump3).toBe("2.0.0-beta.0");
+    });
+
+    it("returns package-specific prerelease bumps from prereleases with prereleaseId", async () => {
+      const cwd = await initFixture("prerelease-independent");
+      const [pkg1, pkg2, pkg3] = await getPackages(cwd);
+      const opts = { changelogPreset: "angular" };
+
+      // make a change in package-1, package-2 and package-3
+      await pkg1.set("changed", 1).serialize();
+      await pkg2.set("changed", 2).serialize();
+      await pkg3.set("changed", 3).serialize();
+
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix: changed 1");
+
+      await gitAdd(cwd, pkg2.manifestLocation);
+      await gitCommit(cwd, "feat: changed 2");
+
+      await gitAdd(cwd, pkg3.manifestLocation);
+      await gitCommit(cwd, "feat!: changed\n\nBREAKING CHANGE: changed");
+
+      const [bump1, bump2, bump3] = await Promise.all([
+        recommendVersion(pkg1, "independent", Object.assign(opts, { prereleaseId: "alpha" })),
+        recommendVersion(pkg2, "independent", Object.assign(opts, { prereleaseId: "beta" })),
+        recommendVersion(pkg3, "independent", Object.assign(opts, { prereleaseId: "beta" })),
+      ]);
+
+      // we just have a bump in the prerelease
+      expect(bump1).toBe("1.0.0-alpha.1");
+      expect(bump2).toBe("1.0.0-beta.1");
+      expect(bump3).toBe("1.0.0-beta.1");
     });
 
     it("falls back to patch bumps for non-bumping commit types", async () => {
@@ -384,7 +458,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+        * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
       `);
       expect(rootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
         ## [1.0.1](/compare/dragons-are-awesome1.0.0...dragons-are-awesome1.0.1) (YYYY-MM-DD)
@@ -392,7 +466,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+        * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
       `);
 
       await gitAdd(cwd, pkg1.manifestLocation);
@@ -416,7 +490,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * A third commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+        * A third commit for our CHANGELOG ([SHA](COMMIT_URL))
       `);
     });
 
@@ -573,7 +647,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * **stuff:** changed ([SHA](https://github.com/lerna/conventional-commits-independent/commit/GIT_HEAD))
+        * **stuff:** changed ([SHA](COMMIT_URL))
       `);
       expect(changelogTwo.newEntry.trimRight()).toMatchInlineSnapshot(`
         # [1.1.0](/compare/package-2@1.0.0...package-2@1.1.0) (YYYY-MM-DD)
@@ -581,7 +655,7 @@ describe("conventional-commits", () => {
 
         ### Features
 
-        * **thing:** added ([SHA](https://github.com/lerna/conventional-commits-independent/commit/GIT_HEAD))
+        * **thing:** added ([SHA](COMMIT_URL))
       `);
     });
   });

@@ -1,7 +1,0 @@
-{
-  "name": "@lerna-test/set-npm-userconfig",
-  "version": "0.0.0-test-only",
-  "description": "A local test helper",
-  "private": true,
-  "license": "MIT"
-}

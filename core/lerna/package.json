@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "A tool for managing JavaScript projects with multiple packages.",
   "keywords": [
     "lerna",
@@ -19,7 +19,10 @@
   "files": [
     "index.js",
     "cli.js",
-    "schemas/lerna-schema.json"
+    "schemas/lerna-schema.json",
+    "migrations",
+    "commands",
+    "migrations.json"
   ],
   "engines": {
     "node": "^14.15.0 || >=16.0.0"
@@ -32,6 +35,9 @@
     "url": "git+https://github.com/lerna/lerna.git",
     "directory": "core/lerna"
   },
+  "nx-migrations": {
+    "migrations": "./migrations.json"
+  },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
   },
@@ -41,6 +47,7 @@
     "@lerna/changed": "file:../../commands/changed",
     "@lerna/clean": "file:../../commands/clean",
     "@lerna/cli": "file:../cli",
+    "@lerna/command": "file:../command",
     "@lerna/create": "file:../../commands/create",
     "@lerna/diff": "file:../../commands/diff",
     "@lerna/exec": "file:../../commands/exec",
@@ -52,7 +59,11 @@
     "@lerna/publish": "file:../../commands/publish",
     "@lerna/run": "file:../../commands/run",
     "@lerna/version": "file:../../commands/version",
+    "@nrwl/devkit": ">=14.8.6 < 16",
     "import-local": "^3.0.2",
-    "npmlog": "^6.0.2"
+    "inquirer": "^8.2.4",
+    "npmlog": "^6.0.2",
+    "nx": ">=14.8.6 < 16",
+    "typescript": "^3 || ^4"
   }
 }

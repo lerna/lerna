@@ -2,17 +2,18 @@
 "use strict";
 
 const pMap = require("p-map");
+const path = require("path");
+const { existsSync } = require("fs-extra");
 
 const { Command } = require("@lerna/command");
 const { npmRunScript, npmRunScriptStreaming } = require("@lerna/npm-run-script");
 const { output } = require("@lerna/output");
-const { Profiler } = require("@lerna/profiler");
+const { Profiler, generateProfileOutputPath } = require("@lerna/profiler");
 const { timer } = require("@lerna/timer");
 const { runTopologically } = require("@lerna/run-topologically");
 const { ValidationError } = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
 const { performance } = require("perf_hooks");
-const { readFileSync } = require("fs");
 
 module.exports = factory;
 
@@ -34,6 +35,14 @@ class RunCommand extends Command {
 
     if (!script) {
       throw new ValidationError("ENOSCRIPT", "You must specify a lifecycle script to run");
+    }
+
+    // Check this.argv (not this.options) so that we only error in this case when --npm-client is set via the CLI (not via lerna.json which is a legitimate use case for other things)
+    if (this.argv.npmClient && this.options.useNx !== false) {
+      throw new ValidationError(
+        "run",
+        "The legacy task runner option `--npm-client` is not currently supported. Please open an issue on https://github.com/lerna/lerna if you require this feature."
+      );
     }
 
     // inverted boolean options
@@ -65,7 +74,7 @@ class RunCommand extends Command {
   }
 
   execute() {
-    if (!this.options.useNx) {
+    if (this.options.useNx === false) {
       this.logger.info(
         "",
         "Executing command in %d %s: %j",
@@ -78,7 +87,7 @@ class RunCommand extends Command {
     let chain = Promise.resolve();
     const getElapsed = timer();
 
-    if (this.options.useNx) {
+    if (this.options.useNx !== false) {
       chain = chain.then(() => this.runScriptsUsingNx());
     } else if (this.options.parallel) {
       chain = chain.then(() => this.runScriptInPackagesParallel());
@@ -183,9 +192,15 @@ class RunCommand extends Command {
     if (this.options.ci) {
       process.env.CI = "true";
     }
+    if (this.options.profile) {
+      const absolutePath = generateProfileOutputPath(this.options.profileLocation);
+      // Nx requires a workspace relative path for this
+      process.env.NX_PROFILE = path.relative(this.project.rootPath, absolutePath);
+    }
     performance.mark("init-local");
     this.configureNxOutput();
-    const { targetDependencies, options } = this.prepNxOptions();
+    const { targetDependencies, options, extraOptions } = this.prepNxOptions();
+
     if (this.packagesWithScript.length === 1) {
       const { runOne } = require("nx/src/command-line/run-one");
       const fullQualifiedTarget =
@@ -198,7 +213,8 @@ class RunCommand extends Command {
           "project:target:configuration": fullQualifiedTarget,
           ...options,
         },
-        targetDependencies
+        targetDependencies,
+        extraOptions
       );
     } else {
       const { runMany } = require("nx/src/command-line/run-many");
@@ -209,18 +225,23 @@ class RunCommand extends Command {
           target: this.script,
           ...options,
         },
-        targetDependencies
+        targetDependencies,
+        extraOptions
       );
     }
   }
 
   prepNxOptions() {
+    const nxJsonExists = existsSync(path.join(this.project.rootPath, "nx.json"));
+
     const { readNxJson } = require("nx/src/config/configuration");
     const nxJson = readNxJson();
     const targetDependenciesAreDefined =
       Object.keys(nxJson.targetDependencies || nxJson.targetDefaults || {}).length > 0;
+    const mimicLernaDefaultBehavior = !(nxJsonExists && targetDependenciesAreDefined);
+
     const targetDependencies =
-      this.toposort && !targetDependenciesAreDefined
+      this.toposort && !this.options.parallel && mimicLernaDefaultBehavior
         ? {
             [this.script]: [
               {
@@ -231,8 +252,12 @@ class RunCommand extends Command {
           }
         : {};
 
+    if (this.options.prefix === false && !this.options.stream) {
+      this.logger.warn(this.name, `"no-prefix" is ignored when not using streaming output.`);
+    }
+
     const outputStyle = this.options.stream
-      ? this.options.prefix !== false
+      ? this.prefix
         ? "stream"
         : "stream-without-prefixes"
       : "dynamic";
@@ -243,14 +268,53 @@ class RunCommand extends Command {
        * To match lerna's own behavior (via pMap's default concurrency), we set parallel to a very large number if
        * the flag has been set (we can't use Infinity because that would cause issues with the task runner).
        */
-      parallel: this.options.parallel ? 999 : this.concurrency,
+      parallel: this.options.parallel && mimicLernaDefaultBehavior ? 999 : this.concurrency,
       nxBail: this.bail,
       nxIgnoreCycles: !this.options.rejectCycles,
       skipNxCache: this.options.skipNxCache,
-      _: this.args.map((t) => t.toString()),
+      verbose: this.options.verbose,
+      __overrides__: this.args.map((t) => t.toString()),
     };
 
-    return { targetDependencies, options };
+    if (!mimicLernaDefaultBehavior) {
+      this.logger.verbose(
+        this.name,
+        "nx.json with targetDefaults was found. Task dependencies will be automatically included."
+      );
+
+      if (this.options.parallel || this.options.sort !== undefined) {
+        this.logger.warn(
+          this.name,
+          `"parallel", "sort", and "no-sort" are ignored when nx.json has targetDefaults defined. See https://lerna.js.org/docs/lerna6-obsolete-options for details.`
+        );
+      }
+
+      if (this.options.includeDependencies) {
+        this.logger.info(
+          this.name,
+          `Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/lerna6-obsolete-options#--include-dependencies for details.`
+        );
+      }
+
+      if (this.options.ignore) {
+        this.logger.info(
+          this.name,
+          `Using the "ignore" option when nx.json has targetDefaults defined will exclude only tasks that are not determined to be required by Nx. See https://lerna.js.org/docs/lerna6-obsolete-options#--ignore for details.`
+        );
+      }
+    } else {
+      this.logger.verbose(
+        this.name,
+        "nx.json was not found or is missing targetDefaults. Task dependencies will not be automatically included."
+      );
+    }
+
+    const extraOptions = {
+      excludeTaskDependencies: mimicLernaDefaultBehavior,
+      loadDotEnvFiles: this.options.loadEnvFiles ?? true,
+    };
+
+    return { targetDependencies, options, extraOptions };
   }
 
   runScriptInPackagesParallel() {
@@ -287,14 +351,13 @@ class RunCommand extends Command {
       nxOutput.output.cliName = "Lerna (powered by Nx)";
       nxOutput.output.formatCommand = (taskId) => taskId;
       return nxOutput;
-    } catch (e) {
+    } catch (err) {
+      // This should be unreachable and we would want to know if it somehow occurred in a user's setup.
       this.logger.error(
         "\n",
-        "You have set 'useNx: true' in lerna.json, but you haven't installed Nx as a dependency.\n" +
-          "To do it run 'npm install -D nx@latest' or 'yarn add -D -W nx@latest'.\n" +
-          "Optional: To configure the caching and distribution run 'npx nx init' after installing it."
+        "There was a critical error when configuring the task runner, please report this on https://github.com/lerna/lerna"
       );
-      process.exit(1);
+      throw err;
     }
   }
 }

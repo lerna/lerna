@@ -16,12 +16,12 @@ const { createSymlink } = require("@lerna/create-symlink");
 const { hasNpmVersion } = require("@lerna/has-npm-version");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
-const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { normalizeRelativeDir } = require("@lerna-test/helpers");
+const { updateLernaConfig } = require("@lerna-test/helpers");
 
 // file under test
-const lernaBootstrap = require("@lerna-test/command-runner")(require("../command"));
+const lernaBootstrap = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // assertion helpers
 const installedPackagesInDirectories = (testDir) =>
@@ -135,6 +135,17 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)();
 
       expect(runLifecycle).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("with pnpm", () => {
+    it("should throw validation error", async () => {
+      const testDir = await initFixture("pnpm");
+      const command = lernaBootstrap(testDir)();
+
+      await expect(command).rejects.toThrow(
+        "Bootstrapping with pnpm is not supported. Use pnpm directly to manage dependencies: https://pnpm.io/cli/install"
+      );
     });
   });
 
@@ -641,6 +652,12 @@ describe("BootstrapCommand", () => {
   describe("in a cyclical repo", () => {
     it("should throw an error with --reject-cycles", async () => {
       const testDir = await initFixture("toposort");
+      const command = lernaBootstrap(testDir)("--reject-cycles");
+
+      await expect(command).rejects.toThrow("Dependency cycles detected, you should fix these!");
+    });
+    it("should throw an error with --reject-cycles when using yarn-workspaces", async () => {
+      const testDir = await initFixture("yarn-workspaces-cyclic");
       const command = lernaBootstrap(testDir)("--reject-cycles");
 
       await expect(command).rejects.toThrow("Dependency cycles detected, you should fix these!");

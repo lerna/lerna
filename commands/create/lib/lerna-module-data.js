@@ -193,10 +193,14 @@ if (!this.package.repository) {
 
 if (!this.package.scripts) {
   exports.scripts = {
-    test: 'echo "Error: run tests from root" && exit 1',
+    test: `node ./__tests__/${name}.test.js`,
   };
 }
 
 if (!this.package.dependencies && this.config.get("dependencies")) {
   exports.dependencies = this.config.get("dependencies");
+}
+
+if (this.config.get("esModule")) {
+  exports.type = "module";
 }

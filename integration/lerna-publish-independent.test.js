@@ -2,14 +2,14 @@
 
 const path = require("path");
 
-const { cliRunner } = require("@lerna-test/cli-runner");
-const { showCommit } = require("@lerna-test/show-commit");
-const cloneFixture = require("@lerna-test/clone-fixture")(
+const { cliRunner } = require("@lerna-test/helpers");
+const { showCommit } = require("@lerna-test/helpers");
+const cloneFixture = require("@lerna-test/helpers").cloneFixtureFactory(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
 
 // stabilize changelog commit SHA and datestamp
-expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-changelog"));
 
 const env = {
   // never actually upload when calling `npm publish`
@@ -57,8 +57,8 @@ index SHA..SHA 100644
 --- a/packages/package-1/package.json
 +++ b/packages/package-1/package.json
 @@ -3 +3 @@
--  "version": "1.0.0"
-+  "version": "2.0.0"
+-  "version": "1.0.0",
++  "version": "2.0.0",
 diff --git a/packages/package-2/package.json b/packages/package-2/package.json
 index SHA..SHA 100644
 --- a/packages/package-2/package.json
@@ -94,7 +94,7 @@ index SHA..SHA 100644
 -    "package-3": "^3.0.0"
 +    "package-3": "^4.0.0"
 @@ -7 +7 @@
--  "version": "5.0.0"
-+  "version": "6.0.0"
+-  "version": "5.0.0",
++  "version": "6.0.0",
 `);
 });

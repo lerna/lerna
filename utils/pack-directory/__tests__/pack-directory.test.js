@@ -8,7 +8,7 @@ const normalizePath = require("normalize-path");
 const { printObjectProperties } = require("pretty-format/build/collections");
 const npmConf = require("@lerna/npm-conf");
 const { getPackages } = require("@lerna/project");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
 const { packDirectory } = require("..");
 

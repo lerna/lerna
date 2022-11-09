@@ -7,8 +7,10 @@ const globParent = require("glob-parent");
 const loadJsonFile = require("load-json-file");
 const log = require("npmlog");
 const pMap = require("p-map");
+const fs = require("fs");
 const path = require("path");
 const writeJsonFile = require("write-json-file");
+const { load } = require("js-yaml");
 
 const { ValidationError } = require("@lerna/validation-error");
 const { Package } = require("@lerna/package");
@@ -19,8 +21,15 @@ const { makeFileFinder, makeSyncFileFinder } = require("./lib/make-file-finder")
 /**
  * @typedef {object} ProjectConfig
  * @property {string[]} packages
+ * @property {boolean} useNx
  * @property {boolean} useWorkspaces
  * @property {string} version
+ * @property {string} npmClient
+ */
+
+/**
+ * @typedef {object} PnpmWorkspaceConfig
+ * @property {string[]} packages
  */
 
 /**
@@ -102,6 +111,24 @@ class Project {
   }
 
   get packageConfigs() {
+    if (this.config.npmClient === "pnpm") {
+      log.verbose(
+        "packageConfigs",
+        "Package manager 'pnpm' detected. Resolving packages using 'pnpm-workspace.yaml'."
+      );
+
+      const workspaces = this.pnpmWorkspaceConfig.packages;
+
+      if (!workspaces) {
+        throw new ValidationError(
+          "EWORKSPACES",
+          "No 'packages' property found in pnpm-workspace.yaml. See https://pnpm.io/workspaces for help configuring workspaces in pnpm."
+        );
+      }
+
+      return workspaces;
+    }
+
     if (this.config.useWorkspaces) {
       const workspaces = this.manifest.get("workspaces");
 
@@ -109,7 +136,7 @@ class Project {
         throw new ValidationError(
           "EWORKSPACES",
           dedent`
-            Yarn workspaces need to be defined in the root package.json.
+            Workspaces need to be defined in the root package.json.
             See: https://github.com/lerna/lerna/blob/master/commands/bootstrap/README.md#--use-workspaces
           `
         );
@@ -118,7 +145,25 @@ class Project {
       return workspaces.packages || workspaces;
     }
 
-    return this.config.packages || [Project.PACKAGE_GLOB];
+    if (this.manifest.get("workspaces")) {
+      log.warn(
+        "EWORKSPACES",
+        dedent`
+          Workspaces exist in the root package.json, but Lerna is not configured to use them.
+          To fix this and have Lerna use workspaces to resolve packages, set \`useWorkspaces: true\` in lerna.json.
+        `
+      );
+    }
+
+    if (this.config.packages) {
+      return this.config.packages;
+    }
+
+    log.warn(
+      "EPACKAGES",
+      `No packages defined in lerna.json. Defaulting to packages in ${Project.PACKAGE_GLOB}`
+    );
+    return [Project.PACKAGE_GLOB];
   }
 
   get packageParentDirs() {
@@ -154,6 +199,32 @@ class Project {
     }
 
     return manifest;
+  }
+
+  /** @type {PnpmWorkspaceConfig} */
+  get pnpmWorkspaceConfig() {
+    let config;
+
+    try {
+      const configLocation = path.join(this.rootPath, "pnpm-workspace.yaml");
+      const configContent = fs.readFileSync(configLocation);
+      config = load(configContent);
+
+      Object.defineProperty(this, "pnpmWorkspaceConfig", {
+        value: config,
+      });
+    } catch (err) {
+      if (err.message.includes("ENOENT: no such file or directory")) {
+        throw new ValidationError(
+          "ENOENT",
+          "No pnpm-workspace.yaml found. See https://pnpm.io/workspaces for help configuring workspaces in pnpm."
+        );
+      }
+
+      throw new ValidationError(err.name, err.message);
+    }
+
+    return config;
   }
 
   get licensePath() {

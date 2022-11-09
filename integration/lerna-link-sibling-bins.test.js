@@ -1,7 +1,7 @@
 "use strict";
 
-const { cliRunner } = require("@lerna-test/cli-runner");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const { cliRunner } = require("@lerna-test/helpers");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
 if (process.platform !== "win32") {
   test("lerna link symlinks generated binaries of sibling packages", async () => {

@@ -8,14 +8,14 @@ const bootstrap = require("@lerna/bootstrap");
 const pacote = require("pacote");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 const { getPackages } = require("@lerna/project");
 
 // file under test
-const lernaAdd = require("@lerna-test/command-runner")(require("../command"));
+const lernaAdd = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // assertion helpers
-expect.extend(require("@lerna-test/pkg-matchers"));
+expect.extend(require("@lerna-test/helpers/pkg-matchers"));
 
 describe("AddCommand", () => {
   // we already have enough tests of BootstrapCommand
@@ -42,6 +42,15 @@ describe("AddCommand", () => {
     const command = lernaAdd(testDir)("@test/package-1");
 
     await expect(command).rejects.toThrow(/Requested package has no version:/);
+  });
+
+  it("should throw when using pnpm", async () => {
+    const testDir = await initFixture("pnpm");
+    const command = lernaAdd(testDir)("@test/package-1");
+
+    await expect(command).rejects.toThrow(
+      "Add is not supported when using `pnpm` workspaces. Use `pnpm` directly to add dependencies to packages: https://pnpm.io/cli/add"
+    );
   });
 
   it("should reference remote dependencies", async () => {

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/add",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "Add a dependency to matched packages",
   "keywords": [
     "lerna",
@@ -39,9 +39,9 @@
     "@lerna/npm-conf": "file:../../utils/npm-conf",
     "@lerna/validation-error": "file:../../core/validation-error",
     "dedent": "^0.7.0",
-    "npm-package-arg": "^8.1.0",
+    "npm-package-arg": "8.1.1",
     "p-map": "^4.0.0",
-    "pacote": "^13.4.1",
+    "pacote": "^13.6.1",
     "semver": "^7.3.4"
   }
 }

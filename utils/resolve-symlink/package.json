@@ -1,6 +1,6 @@
 {
   "name": "@lerna/resolve-symlink",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -33,6 +33,6 @@
   "dependencies": {
     "fs-extra": "^9.1.0",
     "npmlog": "^6.0.2",
-    "read-cmd-shim": "^2.0.0"
+    "read-cmd-shim": "^3.0.0"
   }
 }

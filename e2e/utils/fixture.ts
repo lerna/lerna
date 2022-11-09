@@ -1,7 +1,8 @@
 import { joinPathFragments, readJsonFile, writeJsonFile } from "@nrwl/devkit";
-import { exec } from "child_process";
-import { ensureDir, ensureDirSync, readFile, remove, writeFile } from "fs-extra";
+import { exec, spawn } from "child_process";
+import { ensureDir, ensureDirSync, existsSync, readFile, remove, writeFile } from "fs-extra";
 import isCI from "is-ci";
+import { dump } from "js-yaml";
 import { dirSync } from "tmp";
 
 interface RunCommandOptions {
@@ -11,7 +12,7 @@ interface RunCommandOptions {
   silent?: boolean;
 }
 
-type PackageManager = "npm";
+type PackageManager = "npm" | "yarn" | "pnpm";
 
 interface FixtureCreateOptions {
   name: string;
@@ -19,10 +20,12 @@ interface FixtureCreateOptions {
   runLernaInit: boolean;
   initializeGit: boolean;
   installDependencies: boolean;
+  forceDeterministicTerminalOutput?: boolean;
 }
 
 type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string };
 
+const PNPM_STORE = "../.pnpm-store";
 const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4872/";
 
@@ -45,7 +48,11 @@ export class Fixture {
   private readonly fixtureWorkspacePath = joinPathFragments(this.fixtureRootPath, "lerna-workspace");
   private readonly fixtureOriginPath = joinPathFragments(this.fixtureRootPath, ORIGIN_GIT);
 
-  constructor(private readonly name: string, private readonly packageManager: PackageManager = "npm") {}
+  constructor(
+    private readonly name: string,
+    private readonly packageManager: PackageManager = "npm",
+    private readonly forceDeterministicTerminalOutput: boolean
+  ) {}
 
   static async create({
     name,
@@ -53,14 +60,16 @@ export class Fixture {
     runLernaInit,
     initializeGit,
     installDependencies,
+    forceDeterministicTerminalOutput,
   }: FixtureCreateOptions): Promise<Fixture> {
     const fixture = new Fixture(
       // Make the underlying name include the package manager and be globally unique
       uniq(`${name}-${packageManager}`),
-      packageManager
+      packageManager,
+      forceDeterministicTerminalOutput || false
     );
 
-    fixture.createFixtureRoot();
+    await fixture.createFixtureRoot();
     await fixture.createGitOrigin();
 
     if (initializeGit) {
@@ -69,15 +78,43 @@ export class Fixture {
       await fixture.createEmptyDirectoryForWorkspace();
     }
 
+    await fixture.setNpmRegistry();
+
     if (runLernaInit) {
-      await fixture.lernaInit();
+      const initOptions = packageManager === "pnpm" ? ({ keepDefaultOptions: true } as const) : {};
+      await fixture.lernaInit("", initOptions);
     }
+
+    await fixture.initializeNpmEnvironment();
 
     if (installDependencies) {
       await fixture.install();
     }
 
     return fixture;
+  }
+
+  private async setNpmRegistry(): Promise<void> {
+    if (this.packageManager === "pnpm") {
+      await this.exec(`mkdir ${PNPM_STORE}`);
+      await this.exec(`echo "registry=${REGISTRY}\nstore-dir = ${PNPM_STORE}" > .npmrc`);
+    }
+  }
+
+  private async initializeNpmEnvironment(): Promise<void> {
+    if (
+      this.packageManager !== "npm" &&
+      existsSync(joinPathFragments(this.fixtureWorkspacePath, "lerna.json"))
+    ) {
+      await this.overrideLernaConfig({ npmClient: this.packageManager });
+    }
+
+    if (this.packageManager === "pnpm") {
+      const pnpmWorkspaceContent = dump({
+        packages: ["packages/*", "!**/__test__/**"],
+      });
+      await writeFile(this.getWorkspacePath("pnpm-workspace.yaml"), pnpmWorkspaceContent, "utf-8");
+    }
   }
 
   /**
@@ -117,12 +154,53 @@ export class Fixture {
 
   /**
    * Resolve the locally published version of lerna and run the `init` command, with an optionally
-   * provided arguments.
+   * provided arguments. Reverts useNx and useWorkspaces to false when options.keepDefaultOptions is not provided, since those options are off for most users.
    */
-  async lernaInit(args?: string): Promise<RunCommandResult> {
-    return this.exec(
-      `npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()} init ${args || ""}`
-    );
+  async lernaInit(args?: string, options?: { keepDefaultOptions?: true }): Promise<RunCommandResult> {
+    let execCommandResult: Promise<RunCommandResult>;
+    switch (this.packageManager) {
+      case "npm":
+        execCommandResult = this.exec(
+          `npx --registry=${REGISTRY} --yes lerna@${getPublishedVersion()} init ${args || ""}`
+        );
+        break;
+      case "yarn":
+        execCommandResult = this.exec(
+          `npx --registry=${REGISTRY} --yes lerna@${getPublishedVersion()} init ${args || ""}`
+        );
+        break;
+      case "pnpm":
+        execCommandResult = this.exec(`pnpm dlx lerna@${getPublishedVersion()} init ${args || ""}`);
+        break;
+      default:
+        throw new Error(`Unsupported package manager: ${this.packageManager}`);
+    }
+
+    const initResult = await execCommandResult;
+    if (!options?.keepDefaultOptions) {
+      await this.revertDefaultInitOptions();
+    }
+
+    return initResult;
+  }
+
+  async overrideLernaConfig(lernaConfig: Record<string, any>): Promise<void> {
+    return this.updateJson("lerna.json", (json) => ({
+      ...json,
+      ...lernaConfig,
+    }));
+  }
+
+  private async revertDefaultInitOptions(): Promise<void> {
+    await this.overrideLernaConfig({
+      useWorkspaces: false,
+      packages: ["packages/*"],
+    });
+    await this.updateJson("package.json", (json) => {
+      const newJson = { ...json };
+      delete newJson.workspaces;
+      return newJson;
+    });
   }
 
   /**
@@ -133,6 +211,10 @@ export class Fixture {
     switch (this.packageManager) {
       case "npm":
         return this.exec(`npm --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
+      case "yarn":
+        return this.exec(`yarn --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
+      case "pnpm":
+        return this.exec(`pnpm install${args ? ` ${args}` : ""}`);
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
@@ -144,18 +226,22 @@ export class Fixture {
    */
   async lerna(
     args: string,
-    opts: { silenceError: boolean } = { silenceError: false }
+    opts: { silenceError?: true; allowNetworkRequests?: true } = {}
   ): Promise<RunCommandResult> {
-    // Ensure we reference the locally installed copy of lerna
-    return this.exec(`npx --offline --no lerna ${args}`, { silenceError: opts.silenceError });
+    const offlineFlag = opts.allowNetworkRequests ? "" : "--offline ";
+    switch (this.packageManager) {
+      case "npm":
+        return this.exec(`npx ${offlineFlag}--no lerna ${args}`, { silenceError: opts.silenceError });
+      case "yarn":
+        return this.exec(`npx ${offlineFlag}--no lerna ${args}`, { silenceError: opts.silenceError });
+      case "pnpm":
+        return this.exec(`pnpm exec lerna ${args}`, { silenceError: opts.silenceError });
+      default:
+        throw new Error(`Unsupported package manager: ${this.packageManager}`);
+    }
   }
 
-  async addNxToWorkspace(): Promise<void> {
-    await this.updateJson("lerna.json", (json) => ({
-      ...json,
-      useNx: true,
-    }));
-
+  async addNxJsonToWorkspace(): Promise<void> {
     writeJsonFile(this.getWorkspacePath("nx.json"), {
       extends: "nx/presets/npm.json",
       tasksRunnerOptions: {
@@ -164,8 +250,6 @@ export class Fixture {
         },
       },
     });
-
-    await this.install("-D nx@latest");
   }
 
   async addPackagesDirectory(path: string): Promise<void> {
@@ -250,28 +334,86 @@ export class Fixture {
       cwd: undefined,
     }
   ): Promise<RunCommandResult> {
-    return new Promise((resolve, reject) => {
-      exec(
-        command,
-        {
-          cwd: opts.cwd || this.fixtureRootPath,
-          env: {
-            ...(opts.env || process.env),
-            FORCE_COLOR: "false",
+    /**
+     * For certain commands combining independent streams for stdout and stderr is not viable,
+     * because it produces too much non-determinism in the final output being asserted in the test.
+     *
+     * We therefore provide a way for a fixture to opt-in to an alternative command execution implementation
+     * in which we simply append the stderr contents to the stdout contents in a deterministic manner.
+     */
+    if (this.forceDeterministicTerminalOutput) {
+      return new Promise((resolve, reject) => {
+        exec(
+          command,
+          {
+            cwd: opts.cwd || this.fixtureRootPath,
+            env: {
+              ...(opts.env || process.env),
+              FORCE_COLOR: "false",
+            },
+            encoding: "utf-8",
           },
-          encoding: "utf-8",
-        },
-        (err, stdout, stderr) => {
-          if (!opts.silenceError && err) {
-            reject(err);
+          (err, stdout, stderr) => {
+            if (!opts.silenceError && err) {
+              reject(err);
+            }
+            resolve({
+              stdout: stripConsoleColors(stdout),
+              stderr: stripConsoleColors(stderr),
+              combinedOutput: stripConsoleColors(`${stdout}${stderr}`),
+            });
           }
-          resolve({
-            stdout: stripConsoleColors(stdout),
-            stderr: stripConsoleColors(stderr),
-            combinedOutput: stripConsoleColors(`${stdout}${stderr}`),
-          });
+        );
+      });
+    }
+    return new Promise((resolve, reject) => {
+      const [cmd, ...args] = command.split(" ");
+
+      let stdout = "";
+      let stderr = "";
+      let combinedOutput = "";
+      let error: Error | null = null;
+
+      const childProcess = spawn(cmd, args, {
+        shell: true,
+        cwd: opts.cwd || this.fixtureRootPath,
+        env: {
+          ...(opts.env || process.env),
+          FORCE_COLOR: "false",
+        },
+      });
+
+      childProcess.stdout.setEncoding("utf8");
+      childProcess.stdout.on("data", (chunk) => {
+        stdout += chunk;
+        combinedOutput += chunk;
+      });
+
+      childProcess.stderr.setEncoding("utf8");
+      childProcess.stderr.on("data", (chunk) => {
+        stderr += chunk;
+        combinedOutput += chunk;
+      });
+
+      childProcess.on("error", (err) => {
+        error = err;
+      });
+
+      childProcess.on("close", (code) => {
+        if (!opts.silenceError) {
+          if (error) {
+            reject(error);
+          } else if (code !== 0) {
+            reject(new Error(stderr));
+          }
         }
-      );
+
+        resolve({
+          stdout: stripConsoleColors(stdout),
+          stderr: stripConsoleColors(stderr),
+          combinedOutput: stripConsoleColors(combinedOutput),
+        });
+      });
     });
   }
 

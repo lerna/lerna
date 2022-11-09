@@ -1,6 +1,6 @@
 {
   "name": "@lerna/init",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna",
   "keywords": [
     "lerna",
@@ -34,6 +34,7 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/command": "file:../../core/command",
+    "@lerna/project": "file:../../core/project",
     "fs-extra": "^9.1.0",
     "p-map": "^4.0.0",
     "write-json-file": "^4.3.0"

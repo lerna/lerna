@@ -54,7 +54,6 @@ function shallowCopy(json) {
  * @property {Record<string, string>} [optionalDependencies]
  * @property {Record<string, string>} [peerDependencies]
  * @property {Record<'directory' | 'registry' | 'tag', string>} [publishConfig]
- * @property {string[] | { packages: string[] }} [workspaces]
  */
 
 /**
@@ -255,7 +254,7 @@ class Package {
    * @param {String} depVersion semver
    * @param {String} savePrefix npm_config_save_prefix
    */
-  updateLocalDependency(resolved, depVersion, savePrefix) {
+  updateLocalDependency(resolved, depVersion, savePrefix, options = { retainWorkspacePrefix: true }) {
     const depName = resolved.name;
 
     // first, try runtime dependencies
@@ -271,7 +270,13 @@ class Package {
       depCollection = this.devDependencies;
     }
 
-    if (resolved.registry || resolved.type === "directory") {
+    if (resolved.workspaceSpec && options.retainWorkspacePrefix) {
+      // do nothing if there is a workspace alias since they don't specify a version number
+      if (!resolved.workspaceAlias) {
+        const workspacePrefix = resolved.workspaceSpec.match(/^(workspace:[*~^]?)/)[0];
+        depCollection[depName] = `${workspacePrefix}${depVersion}`;
+      }
+    } else if (resolved.registry || resolved.type === "directory") {
       // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)
       depCollection[depName] = `${savePrefix}${depVersion}`;
     } else if (resolved.gitCommittish) {

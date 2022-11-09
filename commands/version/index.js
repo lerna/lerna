@@ -9,6 +9,8 @@ const pPipe = require("p-pipe");
 const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
+const path = require("path");
+const fs = require("fs");
 
 const { Command } = require("@lerna/command");
 const { recommendVersion, updateChangelog } = require("@lerna/conventional-commits");
@@ -20,6 +22,7 @@ const { createRunner } = require("@lerna/run-lifecycle");
 const { runTopologically } = require("@lerna/run-topologically");
 const { ValidationError } = require("@lerna/validation-error");
 const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
+const childProcess = require("@lerna/child-process");
 
 const { getCurrentBranch } = require("./lib/get-current-branch");
 const { gitAdd } = require("./lib/git-add");
@@ -232,7 +235,7 @@ class VersionCommand extends Command {
       this.logger.info("version", "rooted leaf detected, skipping synthetic root lifecycles");
     }
 
-    this.runPackageLifecycle = createRunner(this.options);
+    this.runPackageLifecycle = createRunner({ ...this.options, stdio: "inherit" });
 
     // don't execute recursively if run from a poorly-named script
     this.runRootLifecycle = /^(pre|post)?version$/.test(process.env.npm_lifecycle_event)
@@ -364,7 +367,7 @@ class VersionCommand extends Command {
 
   recommendVersions(resolvePrereleaseId) {
     const independentVersions = this.project.isIndependent();
-    const { changelogPreset, conventionalGraduate } = this.options;
+    const { changelogPreset, conventionalGraduate, conventionalBumpPrerelease } = this.options;
     const rootPath = this.project.manifest.location;
     const type = independentVersions ? "independent" : "fixed";
     const prereleasePackageNames = this.getPrereleasePackageNames();
@@ -391,6 +394,7 @@ class VersionCommand extends Command {
           rootPath,
           tagPrefix: this.tagPrefix,
           prereleaseId: getPrereleaseId(node),
+          conventionalBumpPrerelease,
         })
       )
     );
@@ -608,6 +612,32 @@ class VersionCommand extends Command {
           changedFiles.add(lernaConfigLocation);
         })
       );
+    }
+
+    if (this.options.npmClient === "pnpm") {
+      chain = chain.then(() => {
+        this.logger.verbose("version", "Updating root pnpm-lock.yaml");
+        return childProcess
+          .exec("pnpm", ["install", "--lockfile-only", "--ignore-scripts"], this.execOpts)
+          .then(() => {
+            const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
+            changedFiles.add(lockfilePath);
+          });
+      });
+    }
+
+    if (this.options.npmClient === "npm" || !this.options.npmClient) {
+      const lockfilePath = path.join(this.project.rootPath, "package-lock.json");
+      if (fs.existsSync(lockfilePath)) {
+        chain = chain.then(() => {
+          this.logger.verbose("version", "Updating root package-lock.json");
+          return childProcess
+            .exec("npm", ["install", "--package-lock-only", "--ignore-scripts"], this.execOpts)
+            .then(() => {
+              changedFiles.add(lockfilePath);
+            });
+        });
+      }
     }
 
     if (!this.hasRootedLeaf) {

@@ -1,18 +1,29 @@
 ---
 id: getting-started
 title: Getting Started
+type: tutorial
 ---
 
 # Getting Started
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/WgO5iG57jeQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/1oxFYphTS4Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
 
-You can incrementally adopt Lerna for existing monorepos or create a new Lerna workspace by running `npx lerna init`.
+You can incrementally adopt Lerna for existing monorepos or create a new Lerna workspace by running:
+
+```bash
+npx lerna init
+```
+
 All Lerna functionality will work the same way regardless.
 
-To show a lot of what Lerna can do, we will use [this repository](https://github.com/lerna/getting-started-example).
+This tutorial will give you an introduction to Lerna's features. To get started with the tutorial, clone [this repository](https://github.com/lerna/getting-started-example). The `main` branch contains the final setup. If you want to follow along, please checkout the `prelerna` branch.
 
-> If you learn better by doing, clone the repo, check out the prelerna branch and follow along!
+```bash
+git clone https://github.com/lerna/getting-started-example.git
+cd getting-started-example
+git checkout prelerna
+npm install
+```
 
 The repo contains three packages or projects:
 
@@ -51,97 +62,90 @@ package.json
 To add Lerna run the following command:
 
 ```bash
-> npx lerna@latest init
+npx lerna@latest init
 ```
 
-This will generate `lerna.json` and will add `lerna` to the root `package.json`.
+This will
+
+- add `lerna` to the root `package.json`
+- generate a `lerna.json`
+- configure a npm/yarn/pnpm workspace
 
 ```json title="package.json"
 {
   "name": "root",
   "private": true,
+  "workspaces": ["packages/*"],
   "devDependencies": {
-    "lerna": "5.1.0"
+    "lerna": "6.0.1"
   }
 }
 ```
 
 What makes Lerna 5.1+ so powerful is the task delegation and other features that come with its integration
-with [Nx](https://nx.dev). To opt in, install the `nx` package:
+with [Nx](https://nx.dev).
 
-```bash
-> npm i nx --save-dev
-```
+## Package Dependency Management
 
-You should get a `package.json` as follows:
+When running `lerna init`, Lerna configures the workspace to use NPM/YARN/PNPM workspaces, the built-in solution for local referencing of packages. In this tutorial, in particular, we are leveraging [NPM workspaces](https://docs.npmjs.com/cli/using-npm/workspaces).
+
+:::info
+
+Lerna has its own dependency management solution: `lerna bootstrap`. This was required because at the times when Lerna got first released, there were no solutions available. Nowadays the modern package managers come with a built-in "workspaces" solution, so it is highly recommended to go with that instead.
+:::
+
+You can see this configured in the root-level `package.json` `workspaces` property as well as by having `useWorkspaces` set to `true` in `lerna.json`
 
 ```json title="package.json"
 {
   "name": "root",
-  "private": true,
-  "devDependencies": {
-    "lerna": "5.1.0",
-    "nx": "14.2.0"
-  }
+  ...
+  "workspaces": [
+    "packages/*"
+  ],
+  ...
 }
 ```
 
-Finally, set `useNx` to `true` in `lerna.json`:
+To see how it works, let's for example inspect the `package.json` file of `remixapp`.
 
-```json title="lerna.json"
-{
-  "packages": ["packages/*"],
-  "useNx": true,
-  "version": "0.0.0"
-}
-```
-
-## Visualizing Workspace
-
-By having Nx installed alongside Lerna, you can use its capabilities to open an interactive visualization of the
-workspace project graph.
-
-Run `npx nx graph` to open the visualization:
-
-![Project Graph](./images/getting-started/project-graph.png)
-
-## Bootstrapping Projects
-
-Bootstrapping is one of the three main key features of Lerna. It enables different projects in the same repository to
-import each other without having to be published to a registry.
-
-To see how it works, let for example inspect the `package.json` file of `remixapp`.
-
-```json
+```json title="packages/remixapp/package.json"
 {
   ...
   "dependencies": {
-    "@remix-run/node": "^1.5.1",
-    "@remix-run/react": "^1.5.1",
-    "@remix-run/serve": "^1.5.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    ...
     "header": "*",
     "footer": "*"
   }
 }
 ```
 
-The `"header": "*"` and `"footer": "*"` tell Lerna to link the contents of the `header` and `footer` as if they were
-published to the registry. To do that, we need to run:
+The `"header": "*"` and `"footer": "*"` tell Lerna to link the contents of the `header` and `footer` as if they were published to the registry. Make sure to run:
 
 ```bash
-> npx lerna bootstrap
+npm install
 ```
 
-Now all the projects in the workspace can properly reference each other so that they can now be built.
+Now all the projects in the workspace can properly reference each other via local package linking.
+
+## Visualizing Workspace
+
+Since Lerna is powered by Nx, you can use its capabilities to open an interactive visualization of the workspace project graph.
+
+To open the visualization, run:
+
+```bash
+npx nx graph
+```
+
+![Project Graph](./images/getting-started/project-graph.png)
 
 ## Building All Projects
 
 To build all projects, run
 
 ```bash
-> npx lerna run build
+npx lerna run build
 ```
 
 This builds the three projects in the right order: `header` and `footer` will be built first (and in parallel),
@@ -164,7 +168,7 @@ and `footer`.
 Now, let's run the tests.
 
 ```bash
-> npx lerna run test
+npx lerna run test
 ```
 
 You should see the following output:
@@ -174,18 +178,13 @@ You should see the following output:
     ✔  header:test (1s)
     ✔  remixapp:test (236ms)
 
- ——————————————————————————————————————————————————————————————————————————————
+—————————————————————————————————————————————————————————————————
 
  >  Lerna (powered by Nx)   Successfully ran target test for 3 projects (1s)
 ```
 
 Note, `lerna` will run the three `test` npm scripts in the topological order as well. Although we had to do it when
-building, it isn't necessary for tests (and it also makes the command slower). We can change this behavior by
-adding `--no-sort` to the command.
-
-```bash
-> npx lerna run test --no-sort
-```
+building, it isn't necessary for tests (and it also makes the command slower). We can change this behavior by configuring caching.
 
 ## Caching
 
@@ -195,27 +194,41 @@ a bit of configuration.
 First, let's run
 
 ```bash
-> npx nx init
+npx lerna add-caching
 ```
 
-This which will generate a `nx.json` at the root of your workspace:
+A series of questions will be asked to properly configure the workspace:
 
-```json
-{
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": []
-      }
-    }
-  }
-}
+```bash
+? Which of the following scripts need to be run in deterministic/topoglogical order?
+ (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
+❯◉ build
+ ◯ test
+ ◯ dev
+ ◯ start
 ```
 
-Second, let's mark `build` and `test` to be cacheable operations.
+```bash
+? Which of the following scripts are cacheable? (Produce the same output given the same input, e.g. build, test and lint usually are, serve and
+start are not)
+ (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
+ ◉ build
+❯◉ test
+ ◯ dev
+ ◯ start
+```
 
-```json
+```bash
+? Does the "build" script create any outputs? If not, leave blank, otherwise provide a path relative to a project root (e.g. dist, lib, build,
+coverage)
+ dist
+? Does the "test" script create any outputs? If not, leave blank, otherwise provide a path relative to a project root (e.g. dist, lib, build,
+coverage)
+```
+
+A `nx.json` gets generated at the root of your workspace:
+
+```json title="nx.json"
 {
   "tasksRunnerOptions": {
     "default": {
@@ -224,11 +237,23 @@ Second, let's mark `build` and `test` to be cacheable operations.
         "cacheableOperations": ["build", "test"]
       }
     }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
+    }
   }
 }
 ```
 
-Now, let's run `npx lerna run test --scope=header` twice. The second time the operation will be instant:
+This configuration caches `build` and `test` tasks and forces `build` to run in topological order (but `test` will not). Also each project's `dist` folder defaults to being cached as the `build` output.
+
+Now, let's run tests on the header project twice. The second time the operation will be instant:
+
+```bash
+npx lerna run test --scope=header
+```
 
 ```
 > lerna run test --scope=header
@@ -247,21 +272,46 @@ Snapshots:   0 total
 Time:        0.439 s, estimated 1 s
 Ran all test suites.
 
-———————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+—————————————————————————————————————————————————————————————————
 
 >  Lerna (powered by Nx)   Successfully ran target test for project header (4ms)
 
    Nx read the output from the cache instead of running the command for 1 out of 1 tasks.
 ```
 
-Lerna (powered by Nx) was able to recognize that the same command has already executed against the same relevant code
-and environment, so instead running it Lerna restored the necessary files and replayed the terminal output.
+Lerna was able to recognize that the same command has already executed against the same relevant code and environment. As a result, instead of running the command, Lerna restored the necessary files and replayed the terminal output.
 
-Most of the time Lerna (powered by Nx) is good at recognizing what files need to be cached and restored. In case of
-building the Remix app we need to help it by adding the following section to `packages/remixapp/package.json`.
+Caching not only restores the terminal output logs, but also artifacts that might have been produced. Build all the projects, then remove the remix build folder and run the build command again.
 
-```json
+```bash
+npx lerna run build
+rm -rf packages/remixapp/public/build
+```
+
+You will see all the files restored from cache and the command executing instantly.
+
+```
+    ✔  header:build  [existing outputs match the cache, left as is]
+    ✔  footer:build  [existing outputs match the cache, left as is]
+    ✔  remixapp:build  [local cache]
+
+ ——————————————————————————————————————————————————————————————————————————————
+
+ >  Lerna (powered by Nx)   Successfully ran target build for 3 projects (19ms)
+
+    Nx read the output from the cache instead of running the command for 3 out of 3 tasks.
+```
+
+Lerna automatically recognizes most common output directories (e.g. `dist`, `build`,...) and captures their content in the cache. As we have seen, we can also customize that output directory, by defining it either globally in the `nx.json` (see the example further up), or on a per project basis in the corresponding `package.json`.
+
+We can for example fine-tune the configuration of our Remix application by configuring the Remix-specific output path's in the `package.json`:
+
+```json title="packages/remixapp/package.json"
 {
+  "name": "remixapp",
+  ...
+  "dependencies": {...},
+  "devDependencies": {...},
   "nx": {
     "targets": {
       "build": {
@@ -272,38 +322,31 @@ building the Remix app we need to help it by adding the following section to `pa
 }
 ```
 
-Caching not only restores the terminal output logs, but also artifacts that might have been produced.
+:::note
 
-Run `lerna run build`, then remove `packages/remixapp/public/build` and run the build command again. You will see all
-the files restored from cache and the command executing instantly.
+`{projectRoot}` is a special syntax supported by the task-runner, which will be appropriately interpolated internally when the command runs. You should therefore not replace "{projectRoot}" with a fixed path as this makes your configuration less flexible.
 
-```
-    ✔  header:build  [existing outputs match the cache, left as is]
-    ✔  footer:build  [existing outputs match the cache, left as is]
-    ✔  remixapp:build  [local cache]
+:::
 
- ———————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-
- >  Lerna (powered by Nx)   Successfully ran target build for 3 projects (19ms)
-
-    Nx read the output from the cache instead of running the command for 3 out of 3 tasks.
-```
-
-> Lerna also supports [distributed caching](./core-concepts/caching.md)
-> and [config-free distributed task execution](./core-concepts/dte.md).
+Lerna also supports [distributed caching](./features/cache-tasks.md) and [config-free distributed task execution](./features/distribute-tasks.md).
 
 ## Target Dependencies (aka task pipelines)
 
-We have made good progress, but there are two problems left to be solved:
+We have made good progress, but there is one problem left to be solved. The following configuration in `nx.json` is incomplete:
 
-1. We need to remember to use `--no-sort` when running tests.
-2. We need to remember to build `header` and `footer` before we run `lerna run dev --scope=remixapp`.
+```json title="nx.json"
+{
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"]
+    }
+  }
+}
+```
 
-Both are the symptoms of the same issue: by default, Lerna doesn't know how different targets (npm scripts) relate to
-each other. We can fix that by defining dependencies between targets (also often known as task pipelines) in
-the `nx.json`:
+This ensures that `build` dependencies are run before any `build` command, but we also need to remember to build `header` and `footer` before we run `lerna run dev --scope=remixapp`. We can fix that by defining dependencies between targets (also known as task pipelines) in the `nx.json`:
 
-```json
+```json title="nx.json"
 {
   ...
   "targetDefaults": {
@@ -320,9 +363,6 @@ the `nx.json`:
   }
 }
 ```
-
-> Note, older versions of Nx used targetDependencies instead of targetDefaults. Both still work, but targetDefaults is
-> recommended.
 
 With this change:
 
@@ -341,15 +381,15 @@ Finally, let's talk about the third key Lerna feature: publishing to npm. Lerna 
 built-in. To publish our packages `header` and `footer`, all we need to do is to run:
 
 ```bash
-> npx lerna publish --no-private
+npx lerna publish --no-private
 ```
 
 This will
 
 - determine the current version of the packages
-- detect which packages has changed since the last publishing & then update its version in `package.json` accordingly
+- detect which packages have changed since the last publishing & then update its version in `package.json` accordingly
 - create a commit of the changed `package.json` files, tag the commit and push the tag & commit to the remote
 - publish the packages to NPM
 
 Read more about the publishing and versioning
-process [in the corresponding docs page](./core-concepts/versioning-and-publishing.md).
+process [in the corresponding docs page](./features/version-and-publish.md).

@@ -3,11 +3,11 @@
 const fs = require("fs-extra");
 const path = require("path");
 
-const { cliRunner } = require("@lerna-test/cli-runner");
-const { commitChangeToPackage } = require("@lerna-test/commit-change-to-package");
-const { gitCheckout } = require("@lerna-test/git-checkout");
-const { gitTag } = require("@lerna-test/git-tag");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const { cliRunner } = require("@lerna-test/helpers");
+const { commitChangeToPackage } = require("@lerna-test/helpers");
+const { gitCheckout } = require("@lerna-test/helpers");
+const { gitTag } = require("@lerna-test/helpers");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
 const env = {
   // Hush timing information

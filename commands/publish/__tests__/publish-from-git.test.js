@@ -22,12 +22,12 @@ const { output } = require("@lerna/output");
 const { throwIfUncommitted } = require("@lerna/check-working-tree");
 
 // helpers
-const { loggingOutput } = require("@lerna-test/logging-output");
-const { gitTag } = require("@lerna-test/git-tag");
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
+const { gitTag } = require("@lerna-test/helpers");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
 
 // file under test
-const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
+const lernaPublish = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 describe("publish from-git", () => {
   it("publishes tagged packages", async () => {
@@ -43,9 +43,29 @@ describe("publish from-git", () => {
     expect(output.logged()).toMatch("Found 4 packages to publish:");
     expect(npmPublish.order()).toEqual([
       "package-1",
-      "package-3",
       "package-4",
       "package-2",
+      "package-3",
+      // package-5 is private
+    ]);
+  });
+
+  it("publishes tagged packages, lexically sorted when --no-sort is present", async () => {
+    const cwd = await initFixture("normal");
+
+    await gitTag(cwd, "v1.0.0");
+    await lernaPublish(cwd)("from-git", "--no-sort");
+
+    // called from chained describeRef()
+    expect(throwIfUncommitted).toHaveBeenCalled();
+
+    expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to publish these packages?");
+    expect(output.logged()).toMatch("Found 4 packages to publish:");
+    expect(npmPublish.order()).toEqual([
+      "package-1",
+      "package-2",
+      "package-3",
+      "package-4",
       // package-5 is private
     ]);
   });
@@ -64,9 +84,9 @@ describe("publish from-git", () => {
 
     expect(npmPublish.order()).toEqual([
       "package-1",
-      "package-3",
       "package-4",
       "package-2",
+      "package-3",
       // package-5 is private
     ]);
   });
@@ -79,9 +99,9 @@ describe("publish from-git", () => {
 
     expect(npmPublish.order()).toEqual([
       "package-1",
-      "package-3",
       "package-4",
       "package-2",
+      "package-3",
       // package-5 is private
     ]);
   });

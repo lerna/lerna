@@ -67,16 +67,20 @@ diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
 --- a/lerna.json
 +++ b/lerna.json
-@@ -2 +2 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\"
+@@ -2,4 +2,2 @@
+-  \\"version\\": \\"1.0.0\\",
+-  \\"packages\\": [
+-    \\"packages/*\\"
+-  ]
++  \\"version\\": \\"1.0.1\\",
++  \\"packages\\": [\\"packages/*\\"]
 diff --git a/packages/package-1/package.json b/packages/package-1/package.json
 index SHA..SHA 100644
 --- a/packages/package-1/package.json
 +++ b/packages/package-1/package.json
 @@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\"
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1\\",
 diff --git a/packages/package-2/package.json b/packages/package-2/package.json
 index SHA..SHA 100644
 --- a/packages/package-2/package.json
@@ -115,13 +119,16 @@ index SHA..SHA 100644
 -    \\"package-3\\": \\"^1.0.0\\"
 +    \\"package-3\\": \\"1.0.1\\"
 @@ -10 +10 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\""
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1\\","
 `;
 
 exports[`VersionCommand --no-git-tag-version versions changed packages without git commit or push: gitHead 1`] = `
 Object {
   "name": "package-1",
+  "repository": Object {
+    "url": "https://github.com/lerna/normal-package-1",
+  },
   "version": "1.0.1",
 }
 `;
@@ -135,16 +142,20 @@ diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
 --- a/lerna.json
 +++ b/lerna.json
-@@ -2 +2 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\"
+@@ -2,4 +2,2 @@
+-  \\"version\\": \\"1.0.0\\",
+-  \\"packages\\": [
+-    \\"packages/*\\"
+-  ]
++  \\"version\\": \\"1.0.1\\",
++  \\"packages\\": [\\"packages/*\\"]
 diff --git a/packages/package-1/package.json b/packages/package-1/package.json
 index SHA..SHA 100644
 --- a/packages/package-1/package.json
 +++ b/packages/package-1/package.json
 @@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\"
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1\\",
 diff --git a/packages/package-2/package.json b/packages/package-2/package.json
 index SHA..SHA 100644
 --- a/packages/package-2/package.json
@@ -183,8 +194,8 @@ index SHA..SHA 100644
 -    \\"package-3\\": \\"^1.0.0\\"
 +    \\"package-3\\": \\"^1.0.1\\"
 @@ -10 +10 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\""
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1\\","
 `;
 
 exports[`VersionCommand independent mode versions changed packages: commit 1`] = `
@@ -203,8 +214,8 @@ index SHA..SHA 100644
 --- a/packages/package-1/package.json
 +++ b/packages/package-1/package.json
 @@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\"
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1\\",
 diff --git a/packages/package-2/package.json b/packages/package-2/package.json
 index SHA..SHA 100644
 --- a/packages/package-2/package.json
@@ -240,8 +251,8 @@ index SHA..SHA 100644
 -    \\"package-3\\": \\"^3.0.0\\"
 +    \\"package-3\\": \\"^4.0.0\\"
 @@ -7 +7 @@
--  \\"version\\": \\"5.0.0\\"
-+  \\"version\\": \\"5.0.1\\""
+-  \\"version\\": \\"5.0.0\\",
++  \\"version\\": \\"5.0.1\\","
 `;
 
 exports[`VersionCommand independent mode versions changed packages: console output 1`] = `
@@ -258,6 +269,9 @@ Changes:
 exports[`VersionCommand independent mode versions changed packages: gitHead 1`] = `
 Object {
   "name": "package-1",
+  "repository": Object {
+    "url": "https://github.com/lerna/independent-package-1",
+  },
   "version": "1.0.1",
 }
 `;
@@ -271,16 +285,20 @@ diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
 --- a/lerna.json
 +++ b/lerna.json
-@@ -2 +2 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"2.0.0\\"
+@@ -2,4 +2,2 @@
+-  \\"version\\": \\"1.0.0\\",
+-  \\"packages\\": [
+-    \\"packages/*\\"
+-  ]
++  \\"version\\": \\"2.0.0\\",
++  \\"packages\\": [\\"packages/*\\"]
 diff --git a/packages/package-1/package.json b/packages/package-1/package.json
 index SHA..SHA 100644
 --- a/packages/package-1/package.json
 +++ b/packages/package-1/package.json
 @@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"2.0.0\\"
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0\\",
 diff --git a/packages/package-2/package.json b/packages/package-2/package.json
 index SHA..SHA 100644
 --- a/packages/package-2/package.json
@@ -319,8 +337,8 @@ index SHA..SHA 100644
 -    \\"package-3\\": \\"^1.0.0\\"
 +    \\"package-3\\": \\"^2.0.0\\"
 @@ -10 +10 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"2.0.0\\""
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0\\","
 `;
 
 exports[`VersionCommand normal mode only bumps changed packages when non-major version selected 1`] = `
@@ -332,9 +350,13 @@ diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
 --- a/lerna.json
 +++ b/lerna.json
-@@ -2 +2 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.1.0\\"
+@@ -2,4 +2,2 @@
+-  \\"version\\": \\"1.0.0\\",
+-  \\"packages\\": [
+-    \\"packages/*\\"
+-  ]
++  \\"version\\": \\"1.1.0\\",
++  \\"packages\\": [\\"packages/*\\"]
 diff --git a/packages/package-3/package.json b/packages/package-3/package.json
 index SHA..SHA 100644
 --- a/packages/package-3/package.json
@@ -353,16 +375,20 @@ diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
 --- a/lerna.json
 +++ b/lerna.json
-@@ -2 +2 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\"
+@@ -2,4 +2,2 @@
+-  \\"version\\": \\"1.0.0\\",
+-  \\"packages\\": [
+-    \\"packages/*\\"
+-  ]
++  \\"version\\": \\"1.0.1\\",
++  \\"packages\\": [\\"packages/*\\"]
 diff --git a/packages/package-1/package.json b/packages/package-1/package.json
 index SHA..SHA 100644
 --- a/packages/package-1/package.json
 +++ b/packages/package-1/package.json
 @@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\"
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1\\",
 diff --git a/packages/package-2/package.json b/packages/package-2/package.json
 index SHA..SHA 100644
 --- a/packages/package-2/package.json
@@ -401,8 +427,8 @@ index SHA..SHA 100644
 -    \\"package-3\\": \\"^1.0.0\\"
 +    \\"package-3\\": \\"^1.0.1\\"
 @@ -10 +10 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\""
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1\\","
 `;
 
 exports[`VersionCommand normal mode versions changed packages: console output 1`] = `
@@ -419,6 +445,9 @@ Changes:
 exports[`VersionCommand normal mode versions changed packages: gitHead 1`] = `
 Object {
   "name": "package-1",
+  "repository": Object {
+    "url": "https://github.com/lerna/normal-package-1",
+  },
   "version": "1.0.1",
 }
 `;

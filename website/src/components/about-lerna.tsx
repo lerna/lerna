@@ -1,16 +1,13 @@
 import {
   ClockIcon,
   CogIcon,
-  CollectionIcon,
   CubeTransparentIcon,
-  EmojiHappyIcon,
-  GlobeIcon,
-  LightningBoltIcon,
+  RectangleGroupIcon,
+  RectangleStackIcon,
   ShareIcon,
   SparklesIcon,
-  TemplateIcon,
   UsersIcon,
-} from "@heroicons/react/outline";
+} from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import React from "react";
 import styles from "./about-lerna.module.css";
@@ -27,33 +24,33 @@ const callouts: Callout[] = [
     title: "Never Rebuilds Same Code Twice",
     text:
       "Lerna won't run the tasks it executed before, and instead will restore the files and the terminal output from its cache.",
-    link: "/docs/core-concepts/computation-caching",
+    link: "/docs/features/cache-tasks",
     icon: CogIcon,
   },
   {
     title: "Distributed Cache",
     text:
       "Computation cache can be shared between developers or CI/CD machines, drastically reducing average CI times.",
-    link: "/docs/core-concepts/computation-caching#distributed-computation-caching",
+    link: "/docs/features/cache-tasks#distributed-computation-caching",
     icon: ShareIcon,
   },
   {
     title: "Target Dependencies",
     text: "Lerna lets you specify how different targets (npm scripts) depend on each other.",
-    link: "/docs/core-concepts/running-tasks#target-dependencies-aka-task-pipelines",
-    icon: CollectionIcon,
+    link: "/docs/features/run-tasks#target-dependencies-aka-task-pipelines",
+    icon: RectangleStackIcon,
   },
   {
     title: "Efficient Execution",
     text:
       "Lerna runs any command in the most efficient way with the max degree of parallelization while respecting the execution order.",
-    link: "/docs/core-concepts/running-tasks",
+    link: "/docs/features/run-tasks",
     icon: ClockIcon,
   },
   {
     title: "Infinite Scaling with Distributed Execution",
     text: "Lerna can run any command across multiple machines without having to configure anything.",
-    link: "/docs/core-concepts/distributed-task-execution",
+    link: "/docs/features/distribute-tasks",
     icon: SparklesIcon,
   },
   {
@@ -83,7 +80,7 @@ const callouts: Callout[] = [
   {
     title: "Minimal",
     text:
-      "Lerna requires requires very little configuration, and doesn’t clutter your files. You still run your npm scripts, just faster.",
+      "Lerna requires very little configuration, and doesn’t clutter your files. You still run your npm scripts, just faster.",
     link: "/docs/getting-started",
     icon: CubeTransparentIcon,
   },
@@ -92,7 +89,7 @@ const callouts: Callout[] = [
     text:
       "Why have separate tools for running tasks, linking packages and publishing them? Lerna does it--less config, less overhead.",
     link: "/docs/getting-started",
-    icon: TemplateIcon,
+    icon: RectangleGroupIcon,
   },
 ];
 

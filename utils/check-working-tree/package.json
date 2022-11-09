@@ -1,6 +1,6 @@
 {
   "name": "@lerna/check-working-tree",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "Check git working tree status and error appropriately",
   "keywords": [
     "lerna",

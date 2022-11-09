@@ -4,7 +4,7 @@ jest.mock("@npmcli/run-script", () => jest.fn(() => Promise.resolve({ stdout: ""
 
 // eslint-disable-next-line no-unused-vars
 const log = require("npmlog");
-const { loggingOutput } = require("@lerna-test/logging-output");
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
 const runScript = require("@npmcli/run-script");
 const npmConf = require("@lerna/npm-conf");
 const { Package } = require("@lerna/package");

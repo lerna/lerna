@@ -3,7 +3,7 @@
 // windows sucks
 jest.mock("has-unicode", () => () => false);
 
-const { loggingOutput } = require("@lerna-test/logging-output");
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
 const { logPacked } = require("../lib/log-packed");
 
 // remove quotes around top-level strings

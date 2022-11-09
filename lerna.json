@@ -9,7 +9,6 @@
       "tempTag": true
     },
     "version": {
-      "allowBranch": "main",
       "conventionalCommits": true,
       "createRelease": "github",
       "exact": true,
@@ -18,6 +17,5 @@
   },
   "ignoreChanges": ["**/__fixtures__/**", "**/__tests__/**", "**/*.md"],
   "useWorkspaces": true,
-  "useNx": true,
-  "version": "5.1.8"
+  "version": "6.0.3"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",
@@ -39,17 +39,15 @@
     "@lerna/validation-error": "file:../../core/validation-error",
     "dedent": "^0.7.0",
     "fs-extra": "^9.1.0",
-    "globby": "^11.0.2",
-    "init-package-json": "^2.0.2",
-    "npm-package-arg": "^8.1.0",
+    "init-package-json": "^3.0.2",
+    "npm-package-arg": "8.1.1",
     "p-reduce": "^2.1.0",
-    "pacote": "^13.4.1",
+    "pacote": "^13.6.1",
     "pify": "^5.0.0",
     "semver": "^7.3.4",
     "slash": "^3.0.0",
     "validate-npm-package-license": "^3.0.4",
-    "validate-npm-package-name": "^3.0.0",
-    "whatwg-url": "^8.4.0",
+    "validate-npm-package-name": "^4.0.0",
     "yargs-parser": "20.2.4"
   }
 }

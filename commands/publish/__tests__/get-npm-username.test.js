@@ -3,7 +3,7 @@
 jest.mock("npm-registry-fetch");
 
 const fetch = require("npm-registry-fetch");
-const { loggingOutput } = require("@lerna-test/logging-output");
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
 const { getNpmUsername } = require("../lib/get-npm-username");
 
 fetch.json.mockImplementation(() => Promise.resolve({ username: "lerna-test" }));
@@ -66,6 +66,23 @@ describe("getNpmUsername", () => {
       "Authentication error. Use `npm whoami` to troubleshoot."
     );
     expect(console.error).toHaveBeenCalledWith("third-party whoami fail");
+  });
+
+  test("logs failure message when npm returns forbidden response", async () => {
+    fetch.json.mockImplementationOnce(() => {
+      const err = new Error("npm profile fail due to insufficient permissions");
+
+      err.code = "E403";
+
+      return Promise.reject(err);
+    });
+
+    const opts = { registry: "https://registry.npmjs.org/" };
+
+    await expect(getNpmUsername(opts)).rejects.toThrow(
+      "Access verification failed. Ensure that your npm access token has both read and write access, or remove the verifyAccess option to skip this verification. Note that npm automation tokens do NOT have read access (https://docs.npmjs.com/creating-and-viewing-access-tokens)."
+    );
+    expect(console.error).toHaveBeenCalledWith("npm profile fail due to insufficient permissions");
   });
 
   test("allows third-party registries to fail with a stern warning", async () => {

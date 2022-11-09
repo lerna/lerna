@@ -1,6 +1,6 @@
 {
   "name": "@lerna/version",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "Bump version of packages changed since the last release",
   "keywords": [
     "lerna",
@@ -48,6 +48,7 @@
     "@lerna/run-topologically": "file:../../utils/run-topologically",
     "@lerna/temp-write": "file:../../utils/temp-write",
     "@lerna/validation-error": "file:../../core/validation-error",
+    "@nrwl/devkit": ">=14.8.6 < 16",
     "chalk": "^4.1.0",
     "dedent": "^0.7.0",
     "load-json-file": "^6.2.0",

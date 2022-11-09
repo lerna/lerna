@@ -20,17 +20,17 @@ const { promptConfirmation } = require("@lerna/prompt");
 const { throwIfUncommitted } = require("@lerna/check-working-tree");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const { gitAdd } = require("@lerna-test/git-add");
-const { gitTag } = require("@lerna-test/git-tag");
-const { gitCommit } = require("@lerna-test/git-commit");
-const { loggingOutput } = require("@lerna-test/logging-output");
+const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const { gitAdd } = require("@lerna-test/helpers");
+const { gitTag } = require("@lerna-test/helpers");
+const { gitCommit } = require("@lerna-test/helpers");
+const { loggingOutput } = require("@lerna-test/helpers/logging-output");
 
 // test command
-const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
+const lernaPublish = require("@lerna-test/helpers").commandRunner(require("../command"));
 
 // stabilize commit SHA
-expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
+expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-git-sha"));
 
 async function initTaggedFixture(fixtureName, tagVersionPrefix = "v") {
   const cwd = await initFixture(fixtureName);
@@ -79,9 +79,9 @@ test("publish --canary", async () => {
   expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
   "package-1" => "canary",
-  "package-3" => "canary",
   "package-4" => "canary",
   "package-2" => "canary",
+  "package-3" => "canary",
 }
 `);
   expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`

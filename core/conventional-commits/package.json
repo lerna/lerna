@@ -1,6 +1,6 @@
 {
   "name": "@lerna/conventional-commits",
-  "version": "5.1.8",
+  "version": "6.0.3",
   "description": "Lerna's internal interface to conventional-changelog and friends",
   "keywords": [
     "lerna",
@@ -34,11 +34,11 @@
   "dependencies": {
     "@lerna/validation-error": "file:../validation-error",
     "conventional-changelog-angular": "^5.0.12",
-    "conventional-changelog-core": "^4.2.2",
+    "conventional-changelog-core": "^4.2.4",
     "conventional-recommended-bump": "^6.1.0",
     "fs-extra": "^9.1.0",
     "get-stream": "^6.0.0",
-    "npm-package-arg": "^8.1.0",
+    "npm-package-arg": "8.1.1",
     "npmlog": "^6.0.2",
     "pify": "^5.0.0",
     "semver": "^7.3.4"
