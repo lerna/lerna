@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import styles from "./hero-upgrade.module.css";
 export default function HeroUpgrade(): JSX.Element {
-  const upgradeCommand = "npx i lerna@latest -D -W";
+  const upgradeCommand = "npm i lerna@latest -D -W";
   const cachingCommand = "npx lerna add-caching";
 
   const [copied, setCopied] = useState(false);
