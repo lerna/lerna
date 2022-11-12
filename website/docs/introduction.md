@@ -6,7 +6,7 @@ type: explainer
 
 # Introduction
 
-Lerna is the original [monorepo tool](https://monorepo.tools) for TypeScript/JavaScript. It has been around for many years and is used by tens of thousands of projects, including React, Jest and Babel.
+Lerna is the original [monorepo tool](https://monorepo.tools) for TypeScript/JavaScript. It has been around for many years and is used by tens of thousands of projects, including React and Jest.
 
 It solves three of the biggest problems of JavaScript monorepos:
 
