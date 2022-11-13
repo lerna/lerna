@@ -32,6 +32,8 @@ const initFixture = require("@lerna-test/helpers").initFixtureFactory(
 const { showCommit } = require("@lerna-test/helpers");
 const { getCommitMessage } = require("@lerna-test/helpers");
 
+const childProcess = require("@lerna/child-process");
+
 // file under test
 const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
 
@@ -770,13 +772,55 @@ describe("VersionCommand", () => {
     });
   });
 
-  describe("with spurious -- arguments", () => {
-    it("ignores the extra arguments with cheesy parseConfiguration()", async () => {
-      const cwd = await initFixture("lifecycle");
-      await lernaVersion(cwd)("--yes", "--", "--loglevel", "ignored", "--blah");
+  describe("with npmClientArgs", () => {
+    it("forwards npmClientArgs using --", async () => {
+      const testDir = await initFixture("normal");
+      // create the root package lock file in order to trigger the npm install command
+      const packageLockPath = path.join(testDir, "package-lock.json");
+      await fs.writeJson(packageLockPath, {
+        name: "package-2",
+        version: "1.0.0",
+        lockfileVersion: 2,
+        requires: true,
+      });
+      const spy = jest.spyOn(childProcess, "exec");
 
-      const logMessages = loggingOutput("warn");
-      expect(logMessages).toContain("Arguments after -- are no longer passed to subprocess executions.");
+      await lernaVersion(testDir)("--", "--legacy-peer-deps");
+
+      expect(spy).toHaveBeenCalledWith(
+        "npm",
+        ["install", "--package-lock-only", "--ignore-scripts", "--legacy-peer-deps"],
+        { cwd: testDir, maxBuffer: undefined }
+      );
+    });
+
+    it("forwards npmClientArgs from lerna.json", async () => {
+      const testDir = await initFixture("normal");
+      // create the root package lock file in order to trigger the npm install command
+      const packageLockPath = path.join(testDir, "package-lock.json");
+      await fs.writeJson(packageLockPath, {
+        name: "package-2",
+        version: "1.0.0",
+        lockfileVersion: 2,
+        requires: true,
+      });
+      const spy = jest.spyOn(childProcess, "exec");
+
+      // create npmClientArgs in lerna.json
+      const lernaConfigPath = path.join(testDir, "lerna.json");
+      const lernaConfig = await fs.readJson(lernaConfigPath);
+      await fs.writeJson(lernaConfigPath, {
+        ...lernaConfig,
+        npmClientArgs: ["--legacy-peer-deps"],
+      });
+
+      await lernaVersion(testDir)();
+
+      expect(spy).toHaveBeenCalledWith(
+        "npm",
+        ["install", "--package-lock-only", "--ignore-scripts", "--legacy-peer-deps"],
+        { cwd: testDir, maxBuffer: undefined }
+      );
     });
   });
 });

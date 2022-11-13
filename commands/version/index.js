@@ -497,7 +497,10 @@ class VersionCommand extends Command {
   }
 
   updatePackageVersions() {
-    const { conventionalCommits, changelogPreset, changelog = true } = this.options;
+    const { conventionalCommits, changelogPreset, npmClientArgs = [], changelog = true } = this.options;
+
+    const doubleDashArgs = this.options["--"] || [];
+
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
     const changedFiles = new Set();
@@ -629,10 +632,20 @@ class VersionCommand extends Command {
     if (this.options.npmClient === "npm" || !this.options.npmClient) {
       const lockfilePath = path.join(this.project.rootPath, "package-lock.json");
       if (fs.existsSync(lockfilePath)) {
+        const appliedClientArgs = [...npmClientArgs, ...doubleDashArgs];
         chain = chain.then(() => {
           this.logger.verbose("version", "Updating root package-lock.json");
           return childProcess
-            .exec("npm", ["install", "--package-lock-only", "--ignore-scripts"], this.execOpts)
+            .exec(
+              "npm",
+              [
+                "install",
+                "--package-lock-only",
+                "--ignore-scripts",
+                ...appliedClientArgs.filter((it) => it !== "--ignore-scripts"),
+              ],
+              this.execOpts
+            )
             .then(() => {
               changedFiles.add(lockfilePath);
             });

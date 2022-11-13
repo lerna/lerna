@@ -263,12 +263,6 @@ exports.builder = (yargs, composed) => {
         delete argv.githubRelease;
         log.warn("deprecated", "--github-release has been replaced by --create-release=github");
       }
-      /* eslint-enable no-param-reassign */
-
-      if (argv["--"]) {
-        log.warn("EDOUBLEDASH", "Arguments after -- are no longer passed to subprocess executions.");
-        log.warn("EDOUBLEDASH", "This will cause an error in a future major version.");
-      }
 
       return argv;
     });
