@@ -188,7 +188,7 @@ class RunCommand extends Command {
     }
   }
 
-  runScriptsUsingNx() {
+  async runScriptsUsingNx() {
     if (this.options.ci) {
       process.env.CI = "true";
     }
@@ -199,7 +199,7 @@ class RunCommand extends Command {
     }
     performance.mark("init-local");
     this.configureNxOutput();
-    const { targetDependencies, options, extraOptions } = this.prepNxOptions();
+    const { targetDependencies, options, extraOptions } = await this.prepNxOptions();
 
     if (this.packagesWithScript.length === 1) {
       const { runOne } = require("nx/src/command-line/run-one");
@@ -231,14 +231,18 @@ class RunCommand extends Command {
     }
   }
 
-  prepNxOptions() {
+  async prepNxOptions() {
     const nxJsonExists = existsSync(path.join(this.project.rootPath, "nx.json"));
 
     const { readNxJson } = require("nx/src/config/configuration");
     const nxJson = readNxJson();
     const targetDependenciesAreDefined =
       Object.keys(nxJson.targetDependencies || nxJson.targetDefaults || {}).length > 0;
-    const mimicLernaDefaultBehavior = !(nxJsonExists && targetDependenciesAreDefined);
+
+    const hasProjectSpecificNxConfiguration = this.packagesWithScript.some((p) => !!p.get("nx"));
+    const hasCustomizedNxConfiguration =
+      (nxJsonExists && targetDependenciesAreDefined) || hasProjectSpecificNxConfiguration;
+    const mimicLernaDefaultBehavior = !hasCustomizedNxConfiguration;
 
     const targetDependencies =
       this.toposort && !this.options.parallel && mimicLernaDefaultBehavior
