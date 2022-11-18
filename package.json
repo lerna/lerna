@@ -110,8 +110,8 @@
   },
   "devDependencies": {
     "@lerna-test/helpers": "file:helpers",
-    "@nrwl/devkit": "14.8.6",
-    "@nrwl/nx-cloud": "14.7.0",
+    "@nrwl/devkit": "15.2.0",
+    "@nrwl/nx-cloud": "15.0.2",
     "@types/fs-extra": "^9.0.13",
     "@types/is-ci": "^2.0.0",
     "@types/jest": "^28.1.4",
@@ -137,7 +137,7 @@
     "node-jq": "^2.3.3",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
-    "nx": "14.8.6",
+    "nx": "15.2.0",
     "path-key": "^3.1.1",
     "prettier": "^2.2.1",
     "tacks": "1.2.6",
@@ -150,3 +150,4 @@
     "verdaccio": "^5.13.3"
   }
 }
+
