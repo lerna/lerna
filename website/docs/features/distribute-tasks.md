@@ -6,7 +6,7 @@ type: recipe
 
 # Distribute Task Execution (DTE)
 
-Lerna speeds up your average CI time with [caching](/core-features/cache-tasks) and the `--since` flag. But neither of these features help with the worst case scenario. When something at the core of your repo has been modified and every task needs to be run in CI, the only way to improve the performance is by adding more agent jobs and efficiently parallelizing the tasks.
+Lerna speeds up your average CI time with [caching](/docs/features/cache-tasks) and the `--since` flag. But neither of these features help with the worst case scenario. When something at the core of your repo has been modified and every task needs to be run in CI, the only way to improve the performance is by adding more agent jobs and efficiently parallelizing the tasks.
 
 The most obvious way to parallelize tasks is to split tasks up by type: running all tests on one job, all builds on another and all lint tasks on a third. This strategy is called binning. This can be made difficult if some test tasks have build tasks as prerequisites, but assuming you figure out some way to handle that, a typical set up can look like the diagram below. Here the test tasks are delayed until all necessary build artifacts are ready, but the build and lint tasks can start right away.
 
