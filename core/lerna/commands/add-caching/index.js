@@ -51,7 +51,8 @@ class AddCachingCommand extends Command {
       {
         type: "checkbox",
         name: "targetDefaults",
-        message: "Which of the following scripts need to be run in deterministic/topological order?\n",
+        message:
+          "Which scripts need to be run in order?  (e.g. before building a project, dependent projects must be built.)\n",
         choices: this.uniqueScriptNames,
       },
     ]);
@@ -61,7 +62,7 @@ class AddCachingCommand extends Command {
         type: "checkbox",
         name: "cacheableOperations",
         message:
-          "Which of the following scripts are cacheable? (Produce the same output given the same input, e.g. build, test and lint usually are, serve and start are not)\n",
+          "Which scripts are cacheable? (Produce the same output given the same input, e.g. build, test and lint usually are, serve and start are not)\n",
         choices: this.uniqueScriptNames,
       },
     ]);
