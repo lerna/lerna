@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "name": "@lerna/nx-plugin",
+  "generators": "./generators.json",
+  "executors": "./executors.json"
+}
