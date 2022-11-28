@@ -42,7 +42,7 @@ function mkThrowIfUncommitted(options = {}) {
   return function throwIfUncommitted({ isDirty }) {
     if (isDirty) {
       return collectUncommitted(options).then((uncommitted) => {
-        throw new ValidationError("EUNCOMMIT", `${EUNCOMMIT_MSG}${uncommitted.join("\n")}`);
+        // throw new ValidationError("EUNCOMMIT", `${EUNCOMMIT_MSG}${uncommitted.join("\n")}`);
       });
     }
   };
