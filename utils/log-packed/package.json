@@ -1,6 +1,6 @@
 {
   "name": "@lerna/log-packed",
-  "version": "6.0.3",
+  "version": "6.1.0",
   "description": "Log the result of npm pack --json",
   "keywords": [
     "lerna",
