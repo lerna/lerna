@@ -25,7 +25,6 @@ const sidebars = {
       type: "category",
       label: "Features",
       items: [
-        "features/bootstrap",
         "features/run-tasks",
         "features/cache-tasks",
         "features/share-your-cache",
@@ -33,6 +32,7 @@ const sidebars = {
         "features/distribute-tasks",
         "features/version-and-publish",
         "features/editor-integrations",
+        "features/legacy-package-management",
       ],
       link: {
         type: "generated-index",
@@ -45,11 +45,11 @@ const sidebars = {
       type: "category",
       label: "Concepts",
       items: [
-        "concepts/alternate-bootstrapping-methods",
-        "concepts/hoisting",
         "concepts/task-pipeline-configuration",
         "concepts/how-caching-works",
         "concepts/dte-guide",
+        "concepts/alternate-bootstrapping-methods",
+        "concepts/hoisting",
       ],
       link: {
         type: "generated-index",

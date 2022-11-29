@@ -14,9 +14,8 @@ The following is a high level overview of what each tool provides. Note that all
 
 ### Features
 
-1. [Bootstrap](./features/bootstrap) - Link packages together in the same repo so they can be imported as if they were installed from NPM.
-2. [Version](./features/version-and-publish) - Automatically increment versions of packages
-3. [Publish](./features/version-and-publish) - Automatically create tags and publish packages
+1. [Version](./features/version-and-publish) - Automatically increment versions of packages, generate changelog information, create Github releases etc.
+2. [Publish](./features/version-and-publish) - Automatically create tags and publish packages to package registries, such as npm
 
 ### Cost
 
