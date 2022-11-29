@@ -28,6 +28,7 @@ const sidebars = {
         "features/bootstrap",
         "features/run-tasks",
         "features/cache-tasks",
+        "features/share-your-cache",
         "features/project-graph",
         "features/distribute-tasks",
         "features/version-and-publish",
