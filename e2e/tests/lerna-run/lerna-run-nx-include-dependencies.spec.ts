@@ -107,7 +107,7 @@ describe("lerna-run-nx-include-dependencies", () => {
         lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies/lerna-workspace
         lerna notice filter including "package-X"
         lerna info filter [ 'package-X' ]
-        lerna verb run nx.json was not found or is missing targetDefaults. Task dependencies will not be automatically included.
+        lerna verb run Nx target configuration was not found. Task dependencies will not be automatically included.
 
       `);
     });
@@ -136,13 +136,13 @@ describe("lerna-run-nx-include-dependencies", () => {
         lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies/lerna-workspace
         lerna notice filter including "package-X"
         lerna info filter [ 'package-X' ]
-        lerna verb run nx.json was not found or is missing targetDefaults. Task dependencies will not be automatically included.
+        lerna verb run Nx target configuration was not found. Task dependencies will not be automatically included.
 
       `);
     });
   });
 
-  describe("with nx enabled and with nx.json with targetDefaults", () => {
+  describe("with nx enabled and with Nx target configuration", () => {
     it("should include package dependencies by default", async () => {
       await fixture.addNxJsonToWorkspace();
       await fixture.updateJson("nx.json", (json) => ({
@@ -192,7 +192,7 @@ describe("lerna-run-nx-include-dependencies", () => {
         lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies/lerna-workspace
         lerna notice filter including "package-X"
         lerna info filter [ 'package-X' ]
-        lerna verb run nx.json with targetDefaults was found. Task dependencies will be automatically included.
+        lerna verb run Nx target configuration was found. Task dependencies will be automatically included.
 
       `);
     });
@@ -254,8 +254,8 @@ describe("lerna-run-nx-include-dependencies", () => {
         lerna notice filter including "package-X"
         lerna notice filter including dependencies
         lerna info filter [ 'package-X' ]
-        lerna verb run nx.json with targetDefaults was found. Task dependencies will be automatically included.
-        lerna info run Using the "include-dependencies" option when nx.json has targetDefaults defined will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/lerna6-obsolete-options#--include-dependencies for details.
+        lerna verb run Nx target configuration was found. Task dependencies will be automatically included.
+        lerna info run Using the "include-dependencies" option when Nx targets are configured will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/lerna6-obsolete-options#--include-dependencies for details.
 
       `);
     });
@@ -311,8 +311,65 @@ describe("lerna-run-nx-include-dependencies", () => {
         lerna notice filter including "package-X"
         lerna notice filter excluding "package-X"
         lerna info filter [ 'package-X', '!package-X' ]
-        lerna verb run nx.json with targetDefaults was found. Task dependencies will be automatically included.
-        lerna info run Using the "ignore" option when nx.json has targetDefaults defined will exclude only tasks that are not determined to be required by Nx. See https://lerna.js.org/docs/lerna6-obsolete-options#--ignore for details.
+        lerna verb run Nx target configuration was found. Task dependencies will be automatically included.
+        lerna info run Using the "ignore" option when Nx targets are configured will exclude only tasks that are not determined to be required by Nx. See https://lerna.js.org/docs/lerna6-obsolete-options#--ignore for details.
+
+      `);
+    });
+  });
+
+  describe("with nx enabled and with targets in a library's package.json", () => {
+    it("should include dependencies by default", async () => {
+      await fixture.addNxJsonToWorkspace();
+      await fixture.updateJson("packages/package-3/package.json", (json) => ({
+        ...json,
+        nx: {
+          targets: {
+            "print-name": {
+              dependsOn: ["^print-name"],
+            },
+          },
+        },
+      }));
+      const output = await fixture.lerna("run print-name --scope package-3");
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+
+        >  Lerna (powered by Nx)   Running target print-name for project package-X and 2 task(s) it depends on
+
+
+
+        > package-X:print-name
+
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+
+        > package-X:print-name
+
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+
+        > package-X:print-name
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+        test-package-X
+
+
+
+        >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X
+
+
+        lerna notice cli v999.9.9-e2e.0
+        lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies/lerna-workspace
+        lerna notice filter including "package-X"
+        lerna info filter [ 'package-X' ]
+        lerna verb run Nx target configuration was found. Task dependencies will be automatically included.
 
       `);
     });
