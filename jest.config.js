@@ -1,5 +1,8 @@
 "use strict";
 
+// eslint-disable-next-line node/no-unpublished-require
+// const { getJestProjects } = require("@nrwl/jest");
+
 module.exports = {
   // ensure `npm cit` uses clean cache
   cacheDirectory: "./node_modules/.cache/jest",
@@ -17,6 +20,7 @@ module.exports = {
   setupFilesAfterEnv: ["@lerna-test/helpers/setup-unit-test-timeout.js"],
   testEnvironment: "node",
   verbose: !!process.env.CI,
+  // projects: getJestProjects(),
 };
 
 // split tests into smaller chunks because windows is agonizingly slow

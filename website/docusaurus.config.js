@@ -201,8 +201,7 @@ const config = {
               },
               {
                 label: "Help Us",
-                href:
-                  "https://github.com/lerna/lerna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Acommunity",
+                href: "https://github.com/lerna/lerna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Acommunity",
               },
             ],
           },
