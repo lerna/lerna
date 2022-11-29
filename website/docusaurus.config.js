@@ -159,7 +159,7 @@ const config = {
               },
               {
                 label: "Youtube Channel",
-                href: "https://youtube.com/nrwl_io?utm_source=lerna.js.org",
+                href: "https://youtube.com/@nxdevtools?utm_source=lerna.js.org",
               },
             ],
           },

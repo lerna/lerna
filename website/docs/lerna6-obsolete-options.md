@@ -2,8 +2,8 @@
 
 Nx and Lerna work together seamlessly in the same workspace.
 
-When `nx.json` is detected in the current workspace, Lerna will respect the `nx.json` configuration during `lerna run`
-and delegate to the Nx task runner.
+When Lerna is running tasks with Nx and detects Nx target configuration, Lerna will respect this configuration during `lerna run`
+and delegate dependency detection to the Nx task runner.
 
 Nx will run tasks in an order and with a concurrency that it determines appropriate based on the task graph that it
 creates. For more information,
@@ -17,7 +17,7 @@ for `lerna run` become obsolete.
 
 ### `--sort` and `--no-sort`
 
-When `nx.json` is present, Lerna will always run tasks in the order it deems is correct based on its knowledge of
+When Nx targets are configured, Lerna will always run tasks in the order it deems is correct based on its knowledge of
 project and task dependencies, so `--sort` and `--no-sort` have no effect.
 
 ### `--parallel`
@@ -44,7 +44,12 @@ required [task graph](https://nx.dev/concepts/mental-model#the-task-graph).
 
 :::tip
 
-The effects on the options above will only apply if `nx.json` exists in the root with the `targetDefaults` property
-defined. Otherwise, they will behave just as they would with Lerna's base task runner (if `useNx` is `false`).
+The effects on the options above will only apply if:
+
+1.  `nx.json` exists in the root with the `targetDefaults` property
+    defined.
+2.  The `"nx"` property is found in the package.json of a target package.
+
+Otherwise, they will behave just as they would with Lerna's legacy task runner (if `useNx` is `false`).
 
 :::

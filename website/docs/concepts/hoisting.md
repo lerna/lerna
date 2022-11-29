@@ -1,10 +1,17 @@
 ---
 id: hoisting
-title: Hoisting
+title: "Legacy: Hoisting"
 type: explainer
 ---
 
-# Hoisting
+# Legacy: Hoisting
+
+:::info
+
+NOTE: Lerna's legacy package management capabilities are being deprecated in Lerna v7, [please see here for full background](../features/legacy-package-management)
+
+:::
+
 
 ```bash
 lerna bootstrap --hoist

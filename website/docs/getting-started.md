@@ -91,7 +91,7 @@ When running `lerna init`, Lerna configures the workspace to use NPM/YARN/PNPM w
 
 :::info
 
-Lerna has its own dependency management solution: `lerna bootstrap`. This was required because at the times when Lerna got first released, there were no solutions available. Nowadays the modern package managers come with a built-in "workspaces" solution, so it is highly recommended to go with that instead.
+Lerna has historically its own dependency management solution: `lerna bootstrap`. This was required because at the time when Lerna was first released, there were no native solutions available. Nowadays the modern package managers come with a built-in "workspaces" solution, so it is highly recommended to go with that instead. `lerna bootstrap` and other related commands will be officially deprecated in Lerna v7. See https://github.com/lerna/lerna/discussions/3410
 :::
 
 You can see this configured in the root-level `package.json` `workspaces` property as well as by having `useWorkspaces` set to `true` in `lerna.json`
@@ -128,7 +128,7 @@ npm install
 
 Now all the projects in the workspace can properly reference each other via local package linking.
 
-## Visualizing Workspace
+## Visualizing the Workspace
 
 Since Lerna is powered by Nx, you can use its capabilities to open an interactive visualization of the workspace project graph.
 
@@ -200,7 +200,7 @@ npx lerna add-caching
 A series of questions will be asked to properly configure the workspace:
 
 ```bash
-? Which of the following scripts need to be run in deterministic/topoglogical order?
+? Which scripts need to be run in order? (e.g. before building a project, dependent projects must be built.)
  (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
 ❯◉ build
  ◯ test
@@ -209,8 +209,7 @@ A series of questions will be asked to properly configure the workspace:
 ```
 
 ```bash
-? Which of the following scripts are cacheable? (Produce the same output given the same input, e.g. build, test and lint usually are, serve and
-start are not)
+? Which scripts are cacheable? (Produce the same output given the same input, e.g. build, test and lint usually are, serve and start are not.)
  (Press <space> to select, <a> to toggle all, <i> to invert selection, and <enter> to proceed)
  ◉ build
 ❯◉ test
