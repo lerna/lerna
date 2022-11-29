@@ -9,7 +9,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna run with nx config", () => {
+describe.skip("lerna run with nx config", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {

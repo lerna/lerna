@@ -11,7 +11,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna-run-nx-pnpm", () => {
+describe.skip("lerna-run-nx-pnpm", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {

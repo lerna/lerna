@@ -10,7 +10,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna-run-nx-incompatible-options", () => {
+describe.skip("lerna-run-nx-incompatible-options", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
