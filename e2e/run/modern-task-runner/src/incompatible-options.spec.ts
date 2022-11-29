@@ -273,7 +273,7 @@ describe.skip("lerna-run-nx-incompatible-options", () => {
   });
 });
 
-describe("lerna-run-nx-incompatible-options without nx.json", () => {
+describe.skip("lerna-run-nx-incompatible-options without nx.json", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
