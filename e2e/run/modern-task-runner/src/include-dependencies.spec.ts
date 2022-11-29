@@ -10,7 +10,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna-run-nx-include-dependencies", () => {
+describe.skip("lerna-run-nx-include-dependencies", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {
