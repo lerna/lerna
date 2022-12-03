@@ -82,8 +82,7 @@ This mechanism is very flexible. Let's look at this example:
 When running `lerna run test --scope=myproj`, the above configuration would tell Lerna to
 
 1. Run the `test` command for `myproj`
-2. But since there's a dependency defined from `test -> build` (see `test:["build"]`), Lerna runs `build` for `myproj`
-   first.
+2. But since there's a dependency defined from `test -> build`, Lerna runs `build` for `myproj` first.
 3. `build` itself defines a dependency on `prebuild` (on the same project) as well as `build` of all the dependencies.
    Therefore, it will run the `prebuild` script and will run the `build` script for all the dependencies.
 
