@@ -79,6 +79,8 @@ This mechanism is very flexible. Let's look at this example:
 > Note, older versions of Nx used targetDependencies instead of targetDefaults. Both still work, but targetDefaults is
 > recommended.
 
+The `^` symbol indicates an upstream dependency. In other words, >---TODO: explain---<.
+
 When running `lerna run test --scope=myproj`, the above configuration would tell Lerna to
 
 1. Run the `test` command for `myproj`
