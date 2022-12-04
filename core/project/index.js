@@ -66,7 +66,7 @@ class Project {
             // No need to distinguish between missing and empty,
             // saves a lot of noisy guards elsewhere
             config: {},
-            isEmpty: true,
+            configNotFound: true,
             // path.resolve(".", ...) starts from process.cwd()
             filepath: path.resolve(cwd || ".", "lerna.json"),
           };
@@ -97,7 +97,7 @@ class Project {
 
     /** @type {ProjectConfig} */
     this.config = loaded.config;
-    this.configNotFound = loaded.isEmpty;
+    this.configNotFound = loaded.configNotFound;
     this.rootConfigLocation = loaded.filepath;
     this.rootPath = path.dirname(loaded.filepath);
 
