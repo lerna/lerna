@@ -49,32 +49,40 @@ the result of the test run.
 Now, run the following command twice. The second time the operation will be instant:
 
 ```bash
-lerna run test --scope=header
+lerna run build --scope=header
 ```
 
 ```bash title="Terminal Output"
-> lerna run test --scope=header
+> lerna run build --scope=header
 
-> header:test  [existing outputs match the cache, left as is]
+> header:build  [existing outputs match the cache, left as is]
 
-> header@0.1.0 test
-> jest
+> header@0.0.0 build
+> rimraf dist && rollup --config
 
-PASS  src/Header.spec.tsx
-✓ renders header (12 ms)
 
-Test Suites: 1 passed, 1 total
-Tests:       1 passed, 1 total
-Snapshots:   0 total
-Time:        0.439 s, estimated 1 s
-Ran all test suites.
+src/index.tsx → dist...
+created dist in 858ms
 
-———————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+ —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
 >  Lerna (powered by Nx)   Successfully ran target test for project header (4ms)
 
    Nx read the output from the cache instead of running the command for 1 out of 1 tasks.
 ```
+
+## Replaying from Cache
+
+When Lerna determines that the inputs for a task have not changed, it recreates the outputs of that task as if it actually ran on your machine - but much faster. The outputs of a cached task include both the terminal output and the files created in the defined `output` directories for that task.
+
+You can test this out by deleting the `dist` folder that the `header:build` task outputs to and then running `lerna run build --scope=header` again. The cached task will replay instantly and the correct files will be present in the `dist` folder.
+
+```treeview
+header/
+└── dist/  <-- this folder gets recreated
+```
+
+If your task creates output artifacts in a different location, you can [change the output folder(s)](https://nx.dev/reference/project-configuration#outputs) that are cached. You can also [customize which inputs](https://nx.dev/more-concepts/customizing-inputs) will invalidate the cache if they are changed.
 
 ## Advanced Caching
 
@@ -84,18 +92,3 @@ For a more in-depth understanding of the caching implementation and to fine-tune
 
 By default, Lerna (via Nx) uses a local computation cache. Nx stores the cached values only for a week, after which they
 are deleted. To clear the cache run `nx reset`, and Nx will create a new one the next time it tries to access it.
-
-## Distributed Computation Caching
-
-The computation cache provided by Nx can be distributed across multiple machines. You can either build an implementation
-of the cache or use Nx Cloud. Nx Cloud is an app that provides a fast and zero-config implementation of distributed
-caching. It's completely free for OSS projects and for most closed-sourced
-projects ([read more here](https://dev.to/nrwl/more-time-saved-for-free-with-nx-cloud-4a2j)).
-
-You can connect your workspace to Nx Cloud by running:
-
-```bash
-npx nx connect-to-nx-cloud
-```
-
-Learn more about Nx Cloud at [https://nx.app](https://nx.app).

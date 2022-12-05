@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/lerna/lerna/compare/v6.0.3...v6.1.0) (2022-11-29)
+
+### Bug Fixes
+
+- **run:** detect target configuration in package.json files ([#3432](https://github.com/lerna/lerna/issues/3432)) ([798aae1](https://github.com/lerna/lerna/commit/798aae14656c9fbbde62bd941fe3a11450112f3b))
+
 ## [6.0.3](https://github.com/lerna/lerna/compare/v6.0.2...v6.0.3) (2022-11-07)
 
 **Note:** Version bump only for package @lerna/run

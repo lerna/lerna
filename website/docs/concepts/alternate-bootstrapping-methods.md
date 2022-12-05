@@ -1,12 +1,18 @@
 ---
 id: alternate-bootstrapping-methods
-title: Alternate Bootstrapping Methods
+title: "Legacy: Alternate Bootstrapping Methods"
 type: explainer
 ---
 
-# Alternate Bootstrapping Methods
+# Legacy: Alternate Bootstrapping Methods
 
-If you can't [use your package manager's built in bootstrapping support](../features/bootstrap) for some reason, Lerna can handle the bootstrapping for you. There are several ways Lerna can set up your monorepo such that an app (`remixapp`) can find libraries in the same repo (`header` and `footer`), and one of them is to make it such that the `header` and `footer` end up in the `node_modules` folder of `remixapp` (or a different folder at the root)--that's what `lerna bootstrap` (without `--use-workspaces`) does.
+:::info
+
+NOTE: Lerna's legacy package management capabilities are being deprecated in Lerna v7, [please see here for full background](../features/legacy-package-management)
+
+:::
+
+There are several ways Lerna can set up your monorepo such that an app (`remixapp`) can find libraries in the same repo (`header` and `footer`), and one of them is to make it such that the `header` and `footer` end up in the `node_modules` folder of `remixapp` (or a different folder at the root)--that's what `lerna bootstrap` (without `--use-workspaces`) does.
 
 Running `lerna bootstrap` will invoke `npm install` in each of the packages, and will link local package such that the resulting structure will look like this.
 

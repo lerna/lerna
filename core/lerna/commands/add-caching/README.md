@@ -14,7 +14,7 @@ $ lerna add-caching
 
 Each question the wizard asks will inform how the `nx.json` file is updated.
 
-### Which of the following scripts need to be run in deterministic/topological order?
+### Which scripts need to be run in order?
 
 Each script selected will be marked to run dependency scripts of the same name before running the script itself.
 
@@ -32,7 +32,7 @@ If you mark `build` as needing topological order, the `nx.json` file will look l
 }
 ```
 
-### Which of the following scripts are cacheable?
+### Which scripts are cacheable?
 
 Each script selected will be cached by Lerna.  Only select scripts that do not depend on any external inputs (like network calls).  `build` and `test` are usually cacheable.  `start` and `serve` are usually not cacheable.  Sometimes `e2e` is cacheable.
 
