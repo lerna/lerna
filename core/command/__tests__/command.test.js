@@ -388,6 +388,36 @@ describe("core-command", () => {
       );
     });
 
+    it("throws ENOVERSION when lerna.json is empty", async () => {
+      const cwd = await initFixture("basic");
+
+      const lernaConfigPath = path.join(cwd, "lerna.json");
+      await fs.writeJson(lernaConfigPath, {});
+
+      await expect(testFactory({ cwd })).rejects.toThrow(
+        expect.objectContaining({
+          prefix: "ENOVERSION",
+        })
+      );
+    });
+
+    it("throws ENOVERSION when no version property exists in lerna.json", async () => {
+      const cwd = await initFixture("basic");
+
+      const lernaConfigPath = path.join(cwd, "lerna.json");
+      const lernaConfig = await fs.readJson(lernaConfigPath);
+      delete lernaConfig.version;
+      await fs.writeJson(lernaConfigPath, {
+        ...lernaConfig,
+      });
+
+      await expect(testFactory({ cwd })).rejects.toThrow(
+        expect.objectContaining({
+          prefix: "ENOVERSION",
+        })
+      );
+    });
+
     it("throws ENOWORKSPACES when npm client is pnpm and useWorkspaces is not true", async () => {
       const cwd = await initFixture("pnpm");
 

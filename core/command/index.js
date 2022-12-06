@@ -240,8 +240,12 @@ class Command {
       throw new ValidationError("ENOPKG", "`package.json` does not exist, have you run `lerna init`?");
     }
 
-    if (!this.project.version) {
+    if (this.project.configNotFound) {
       throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
+    }
+
+    if (!this.project.version) {
+      throw new ValidationError("ENOVERSION", "Required property version does not exist in `lerna.json`");
     }
 
     if (this.options.independent && !this.project.isIndependent()) {
