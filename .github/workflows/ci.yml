@@ -43,7 +43,11 @@ jobs:
           # TODO: update this once project targets are converted
           cmd5: npx nx run-many --target=test --projects=\"libs-*,nx-*\" --parallel=3
 
+      # e2e tests for everything except the primary task runner
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=2
+
+      # Isolated e2e tests for the task runner which become too flaky if nested through further node child processes
+      - run: e2e/run/task-runner/src/run-tests.sh
 
       - name: Stop all running agents for this CI run
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
