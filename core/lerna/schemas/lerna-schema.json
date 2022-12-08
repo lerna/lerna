@@ -1120,6 +1120,36 @@
               "$ref": "#/$defs/filters/continueIfNoMatch"
             }
           }
+        },
+        "watch": {
+          "type": "object",
+          "description": "Options for the `watch` command.",
+          "properties": {
+            "includeGlobalWorkspaceFiles": {
+              "$ref": "#/$defs/commandOptions/watch/includeGlobalWorkspaceFiles"
+            },
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            }
+          }
         }
       }
     },
@@ -1779,6 +1809,12 @@
         "tagVersionPrefix": {
           "type": "string",
           "description": "During `lerna version`, customize the tag prefix. To remove entirely, pass an empty string."
+        }
+      },
+      "watch": {
+        "includeGlobalWorkspaceFiles": {
+          "type": "boolean",
+          "description": "During `lerna watch`, when true, also watch for changes in the global workspace files. For example, the root package.json or lerna.json file."
         }
       },
       "shared": {
