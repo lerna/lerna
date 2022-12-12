@@ -94,6 +94,32 @@ export class Fixture {
     return fixture;
   }
 
+  static fromExisting(fixtureRootPath: string, forceDeterministicTerminalOutput = false) {
+    const fixtureName = fixtureRootPath.split(E2E_ROOT).pop();
+    if (!fixtureName) {
+      throw new Error(`Could not determine fixture name from path: ${fixtureRootPath}`);
+    }
+    const packageManager = Fixture.inferPackageManagerFromExistingFixture(fixtureRootPath);
+    return new Fixture(fixtureName, packageManager, forceDeterministicTerminalOutput);
+  }
+
+  private static inferPackageManagerFromExistingFixture(fixtureRootPath: string): PackageManager {
+    if (existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "pnpm-workspace.yaml"))) {
+      return "pnpm";
+    }
+    if (existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "yarn.lock"))) {
+      return "yarn";
+    }
+    return "npm";
+  }
+
+  async readOutput(fileName: string) {
+    return readFile(
+      joinPathFragments(this.fixtureWorkspacePath, "node_modules/.lerna-test-outputs", `${fileName}.txt`),
+      "utf8"
+    );
+  }
+
   private async setNpmRegistry(): Promise<void> {
     if (this.packageManager === "pnpm") {
       await this.exec(`mkdir ${PNPM_STORE}`);

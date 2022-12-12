@@ -1,0 +1,29 @@
+{
+  "name": "e2e-run-task-runner",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "implicitDependencies": ["lerna", "run"],
+  "tags": [],
+  "targets": {
+    "prepare-for-e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npm run e2e-start-local-registry"
+          },
+          {
+            "command": "npm run e2e-build-package-publish"
+          }
+        ],
+        "parallel": false
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["e2e/run/task-runner/**/*.ts"]
+      }
+    }
+  }
+}
