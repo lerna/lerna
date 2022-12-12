@@ -154,6 +154,10 @@ In addition to our lower level testing, we also have a suite of e2e tests which 
 
 Because of this high-value nature of the tests, they are also much slower than unit tests. Therefore they are split up into different e2e projects in the workspace which can be run independently and can benefit from more granular caching (thanks to Nx).
 
+The core concepts of building and publishing the packages to a local registry and then invoking the lerna CLI just look a user would remain the same across all areas, but there are some slightly different instructions for the task-runner tests.
+
+#### All Projects (except `e2e-run-task-runner`)
+
 To run the e2e tests for a particular project, such as `e2e/info`, which tests the `lerna info` CLI command, you can run:
 
 ```sh
@@ -168,6 +172,39 @@ npx nx e2e e2e-info -t qqqq -u
 ```
 
 > NOTE: The building, versioning and publishing of the packages will be the same regardless of the jest flags passed
+
+#### Testing the task-runner (`e2e-run-task-runner`)
+
+Because the task-runner itself handles spawning multiple nested child processes in node, it becomes hard to wrap that in further node child processes for the purposes of collecting the stdout and stderr outputs in order to assert things about them in test files. This is because node offers no guarantees around the ordering of writes to those stdout and stderr streams, meaning that, even though all the CLI output lines are the same as what a user would see, the ordering of those lines could be non-deterministic in our tests.
+
+Therefore in our task-runner tests we use bash to invoke the lerna CLI and first write the outputs to disk. Then our node tests read those files and assert things about them. We've found by doing it this way we remove most if not all of the non-determinism from the tests.
+
+To run the e2e tests for the task runner, you first need to make sure the local registry is running and has had the packages published to it. For that you can run:
+
+```sh
+npx nx prepare-for-e2e e2e-run-task-runner
+```
+
+Then you can actually execute the tests by running the bash script:
+
+```sh
+e2e/run/task-runner/src/run-tests.sh
+```
+
+This bash script takes the name of a subdirectory within `e2e/run/task-runner/src` as an argument, allowing you to focus on a smaller subset of tests. E.g. to just run the tests in `e2e/run/task-runner/src/env-files`, you can run:
+
+```sh
+e2e/run/task-runner/src/run-tests.sh env-files
+```
+
+If you pass `--update-snapshots` to the shell script it will run jest with the `-u` option to update any existing snapshots.
+
+E.g.
+
+```sh
+e2e/run/task-runner/src/run-tests.sh --update-snapshots # to update all test snapshots
+e2e/run/task-runner/src/run-tests.sh env-files --update-snapshots # to update just the snapshots env-files
+```
 
 ### Releasing
 
