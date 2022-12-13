@@ -112,13 +112,9 @@ exports.builder = (yargs) => {
     },
     "summary-file": {
       // generate lerna publish json output.
+      describe: "A json summary report will be generated after all packages have been successfully published",
       type: "string",
     },
-    // y: {
-    //   describe: "Skip all confirmation prompts.",
-    //   alias: "yes",
-    //   type: "boolean",
-    // },
   };
 
   composeVersionOptions(yargs);
