@@ -1691,7 +1691,12 @@
           "description": "During `lerna version`, bumps version of changed prereleased packages when using --conventional-commits."
         },
         "changelogPreset": {
-          "type": "string",
+          "anyOf": [
+            { "type": "string" },
+            {
+              "$ref": "https://raw.githubusercontent.com/conventional-changelog/conventional-changelog-config-spec/master/versions/2.2.0/schema.json"
+            }
+          ],
           "description": "For `lerna version`, the custom conventional-changelog preset."
         },
         "gitRemote": {
