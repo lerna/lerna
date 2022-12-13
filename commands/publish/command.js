@@ -110,6 +110,12 @@ exports.builder = (yargs) => {
       describe: "Verify package read-write access for current npm user.",
       type: "boolean",
     },
+    "summary-file": {
+      // generate lerna publish json output.
+      describe:
+        "Generate a json summary report after all packages have been successfully published, you can pass an optional path for where to save the file.",
+      type: "string",
+    },
   };
 
   composeVersionOptions(yargs);

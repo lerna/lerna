@@ -34,6 +34,8 @@ const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname)
 const path = require("path");
 const fs = require("fs-extra");
 
+const fsmain = require("fs");
+
 // file under test
 const lernaPublish = require("@lerna-test/helpers").commandRunner(require("../command"));
 
@@ -360,6 +362,51 @@ Map {
     });
   });
 
+  describe("--summary-file", () => {
+    it("skips creating the summary file", async () => {
+      const cwd = await initFixture("normal");
+      const fsSpy = jest.spyOn(fs, "writeFileSync");
+      await lernaPublish(cwd);
+
+      expect(fsSpy).not.toHaveBeenCalled();
+    });
+
+    it("creates the summary file within the provided directory", async () => {
+      const cwd = await initFixture("normal");
+      const fsSpy = jest.spyOn(fsmain, "writeFileSync");
+      await lernaPublish(cwd)("--summary-file", "./outputs");
+
+      const expectedJsonResponse = [
+        { packageName: "package-1", version: "1.0.1" },
+        { packageName: "package-2", version: "1.0.1" },
+        { packageName: "package-3", version: "1.0.1" },
+        { packageName: "package-4", version: "1.0.1" },
+      ];
+      expect(fsSpy).toHaveBeenCalled();
+      expect(fsSpy).toHaveBeenCalledWith(
+        "./outputs/lerna-publish-summary.json",
+        JSON.stringify(expectedJsonResponse)
+      );
+    });
+
+    it("creates the summary file at the root when no custom directory is provided", async () => {
+      const cwd = await initFixture("normal");
+      const fsSpy = jest.spyOn(fsmain, "writeFileSync");
+      await lernaPublish(cwd)("--summary-file");
+
+      const expectedJsonResponse = [
+        { packageName: "package-1", version: "1.0.1" },
+        { packageName: "package-2", version: "1.0.1" },
+        { packageName: "package-3", version: "1.0.1" },
+        { packageName: "package-4", version: "1.0.1" },
+      ];
+      expect(fsSpy).toHaveBeenCalled();
+      expect(fsSpy).toHaveBeenCalledWith(
+        "./lerna-publish-summary.json",
+        JSON.stringify(expectedJsonResponse)
+      );
+    });
+  });
   describe("--verify-access", () => {
     it("publishes packages after verifying the user's access to each package", async () => {
       const testDir = await initFixture("normal");
