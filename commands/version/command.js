@@ -150,6 +150,10 @@ exports.builder = (yargs, composed) => {
       describe: "Pass the `--gpg-sign` flag to `git commit`.",
       type: "boolean",
     },
+    "signoff-git-commit": {
+      describe: "Pass the `--signoff` flag to `git commit`.",
+      type: "boolean",
+    },
     "sign-git-tag": {
       describe: "Pass the `--sign` flag to `git tag`.",
       type: "boolean",

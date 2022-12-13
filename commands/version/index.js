@@ -68,6 +68,7 @@ class VersionCommand extends Command {
       granularPathspec = true,
       push = true,
       signGitCommit,
+      signoffGitCommit,
       signGitTag,
       forceGitTag,
       tagVersionPrefix = "v",
@@ -96,6 +97,7 @@ class VersionCommand extends Command {
       commitHooks,
       granularPathspec,
       signGitCommit,
+      signoffGitCommit,
       signGitTag,
       forceGitTag,
     };
