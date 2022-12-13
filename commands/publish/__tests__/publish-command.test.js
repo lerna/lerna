@@ -371,7 +371,7 @@ Map {
       expect(fsSpy).not.toHaveBeenCalled();
     });
 
-    it("creates the summary file with file path provided", async () => {
+    it("creates the summary file within the provided directory", async () => {
       const cwd = await initFixture("normal");
       const fsSpy = jest.spyOn(fsmain, "writeFileSync");
       await lernaPublish(cwd)("--summary-file", "./outputs");
@@ -389,7 +389,7 @@ Map {
       );
     });
 
-    it("creates the summary file with no path provided", async () => {
+    it("creates the summary file at the root when no custom directory is provided", async () => {
       const cwd = await initFixture("normal");
       const fsSpy = jest.spyOn(fsmain, "writeFileSync");
       await lernaPublish(cwd)("--summary-file");

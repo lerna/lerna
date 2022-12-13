@@ -306,9 +306,9 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 ### `--summary-file`
 
 ```sh
-# Will create a summary file in the root directory ./lerna-publish-summary.json
+# Will create a summary file in the root directory, i.e. `./lerna-publish-summary.json`
 lerna publish --canary --yes --summary-file
-# Will create a summary file in the root directory ./some/other/dir/lerna-publish-summary.json
+# Will create a summary file in the provided directory, i.e. `./some/other/dir/lerna-publish-summary.json`
 lerna publish --canary --yes --summary-file ./some/other/dir
 
 ```
