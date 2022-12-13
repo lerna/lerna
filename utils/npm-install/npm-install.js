@@ -132,7 +132,7 @@ function transformManifest(pkg, dependencies) {
 
   ["bundledDependencies", "bundleDependencies"].forEach((depType) => {
     const collection = json[depType];
-    if (collection instanceof Array) {
+    if (Array.isArray(collection)) {
       const newCollection = [];
       for (const depName of collection) {
         if (depMap.has(depName)) {
