@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "name": "packages-nx-plugin",
+  "version": "0.0.1",
+  "generators": {
+    "e2e-project": {
+      "factory": "./src/generators/e2e-project/generator",
+      "schema": "./src/generators/e2e-project/schema.json",
+      "description": "Create a new lerna e2e project"
+    }
+  }
+}

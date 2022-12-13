@@ -79,11 +79,12 @@ This mechanism is very flexible. Let's look at this example:
 > Note, older versions of Nx used targetDependencies instead of targetDefaults. Both still work, but targetDefaults is
 > recommended.
 
+The `^` symbol (a.k.a the caret symbol) simply means dependencies. Therefore whereas `"test": { "dependsOn": ["build"] }` means a particular project's "test" target depends on its own "build" target to have already completed before running, `"build": { "dependsOn": ["^build"] }` means that a particular project's "build" target depends on the "build" target of all of the project's dependencies to have already completed before running.
+
 When running `lerna run test --scope=myproj`, the above configuration would tell Lerna to
 
 1. Run the `test` command for `myproj`
-2. But since there's a dependency defined from `test -> build` (see `test:["build"]`), Lerna runs `build` for `myproj`
-   first.
+2. But since there's a dependency defined from `test -> build`, Lerna runs `build` for `myproj` first.
 3. `build` itself defines a dependency on `prebuild` (on the same project) as well as `build` of all the dependencies.
    Therefore, it will run the `prebuild` script and will run the `build` script for all the dependencies.
 

@@ -15,22 +15,51 @@ concurrency:
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_CLOUD_DISTRIBUTED_EXECUTION: true
+  NX_BRANCH: ${{ github.event.number || github.ref_name }}
 
 jobs:
-  lint:
+  main:
+    name: Nx Cloud - Main Job
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v3
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
 
-      - run: npm run format:check
-      - run: npm run ci:lint
+      - name: Run parallel distributed tasks
+        uses: jameshenry/parallel-bash-commands@v1
+        with:
+          cmd1: npx nx-cloud record -- npx nx format:check
+          cmd2: npx nx-cloud record -- npx nx workspace-lint
+          cmd3: npx nx-cloud record -- npm run ci:lint
+          cmd4: npx nx run-many --target=lint --all --parallel=3
+          # TODO: update this once project targets are converted
+          cmd5: npx nx run-many --target=test --projects=\"libs-*,nx-*\" --parallel=3
 
-  e2e:
-    needs: [lint]
+      # e2e tests for everything except the primary task runner
+      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=2
+
+      # Isolated e2e tests for the task runner which become too flaky if nested through further node child processes
+      - run: e2e/run/task-runner/src/run-tests.sh
+
+      - name: Stop all running agents for this CI run
+        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+        if: ${{ always() }}
+        run: npx nx-cloud stop-all-agents
+
+  agents:
+    name: Nx Cloud - Agent ${{ matrix.agent }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        agent: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v3
 
@@ -42,10 +71,17 @@ jobs:
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
 
-      - run: npm run e2e
+      - run: npm run e2e-start-local-registry
 
+      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npm run e2e-build-package-publish
+
+      - name: Start Nx Agent ${{ matrix.agent }}
+        run: npx nx-cloud start-agent
+        env:
+          NX_AGENT_NAME: ${{matrix.agent}}
+
+  # TODO: migrate to cacheable/distributable targets
   test:
-    needs: [lint]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -67,8 +103,8 @@ jobs:
 
       - run: npm run ${{ matrix.script }}
 
+  # TODO: migrate to cacheable/distributable targets
   windows:
-    needs: [lint]
     runs-on: windows-latest
     strategy:
       fail-fast: false

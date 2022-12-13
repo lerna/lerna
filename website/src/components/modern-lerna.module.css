@@ -1,0 +1,21 @@
+.item {
+  background-color: var(--ifm-color-primary);
+  border-radius: 0.75rem;
+  color: white;
+  overflow: hidden;
+}
+.item__inner {
+  align-items: center;
+  display: flex;
+}
+.item__inner div {
+  padding: 3rem;
+}
+.item__title span {
+  display: block;
+  font-size: 1.25rem;
+}
+
+iframe {
+  min-height: 100%;
+}

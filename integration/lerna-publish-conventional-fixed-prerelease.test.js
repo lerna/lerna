@@ -136,14 +136,8 @@ Successfully published:
       absolute: true,
       followSymbolicLinks: false,
     });
-    const [
-      rootChangelog,
-      pkg1Changelog,
-      pkg2Changelog,
-      pkg3Changelog,
-      pkg4Changelog,
-      pkg5Changelog,
-    ] = await Promise.all(changelogFilePaths.sort().map((fp) => fs.readFile(fp, "utf8")));
+    const [rootChangelog, pkg1Changelog, pkg2Changelog, pkg3Changelog, pkg4Changelog, pkg5Changelog] =
+      await Promise.all(changelogFilePaths.sort().map((fp) => fs.readFile(fp, "utf8")));
 
     /**
      * ./CHANGELOG.md

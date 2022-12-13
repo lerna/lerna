@@ -13,7 +13,7 @@ module.exports.collectUncommittedSync = collectUncommittedSync;
  * @property {typeof npmlog} [log]
  */
 
-const maybeColorize = (colorize) => (s) => (s !== " " ? colorize(s) : s);
+const maybeColorize = (colorize) => (s) => s !== " " ? colorize(s) : s;
 const cRed = maybeColorize(chalk.red);
 const cGreen = maybeColorize(chalk.green);
 

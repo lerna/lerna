@@ -1,11 +1,7 @@
 {
   "root": true,
-  "parserOptions": {
-    "ecmaVersion": 2020
-  },
-  "extends": ["airbnb-base", "plugin:jest/recommended", "plugin:node/recommended", "prettier"],
-  "plugins": ["jest", "node"],
-  "ignorePatterns": ["website/**/*"],
+  "ignorePatterns": ["website/**/*", "__fixtures__"],
+  "plugins": ["@nrwl/nx"],
   "settings": {
     "import/resolver": {
       "node": {
@@ -13,45 +9,83 @@
       }
     }
   },
-  "rules": {
-    "class-methods-use-this": [
-      "error",
-      {
-        "exceptMethods": ["defaultOptions", "otherCommandConfigs", "requiresGit"]
-      }
-    ],
-    "consistent-return": "off",
-    "curly": ["error", "all"],
-    "no-param-reassign": [
-      "error",
-      {
-        "props": true,
-        "ignorePropertyModificationsFor": ["err", "obj", "pkg"]
-      }
-    ],
-    "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
-    "no-underscore-dangle": [
-      "error",
-      {
-        "allowAfterThis": true
-      }
-    ],
-    "no-use-before-define": [
-      "error",
-      {
-        "functions": false,
-        "classes": false
-      }
-    ],
-    "node/no-unsupported-features/es-syntax": "off",
-    "prefer-destructuring": "off",
-    "prefer-object-spread": "off",
-    "strict": "off",
-    "default-param-last": "warn",
-    "max-len": "off",
-    "arrow-body-style": "off"
-  },
   "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@nrwl/nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nrwl/nx/typescript"],
+      "rules": {
+        "@typescript-eslint/no-empty-function": "off"
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["airbnb-base", "plugin:node/recommended", "plugin:@nrwl/nx/javascript"],
+      "rules": {
+        "@typescript-eslint/no-empty-function": "off",
+        "class-methods-use-this": [
+          "error",
+          {
+            "exceptMethods": ["defaultOptions", "otherCommandConfigs", "requiresGit"]
+          }
+        ],
+        "consistent-return": "off",
+        "curly": ["error", "all"],
+        "no-param-reassign": [
+          "error",
+          {
+            "props": true,
+            "ignorePropertyModificationsFor": ["err", "obj", "pkg"]
+          }
+        ],
+        "no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"],
+        "no-underscore-dangle": [
+          "error",
+          {
+            "allowAfterThis": true
+          }
+        ],
+        "no-use-before-define": [
+          "error",
+          {
+            "functions": false,
+            "classes": false
+          }
+        ],
+        "node/no-unsupported-features/es-syntax": "off",
+        "prefer-destructuring": "off",
+        "prefer-object-spread": "off",
+        "strict": "off",
+        "default-param-last": "warn",
+        "max-len": "off",
+        "arrow-body-style": "off"
+      }
+    },
+    {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx", "*.test.js"],
+      "extends": ["plugin:jest/recommended"],
+      "env": {
+        "jest": true
+      },
+      "rules": {}
+    },
     {
       "files": "commands/*/command.js",
       "rules": {
@@ -101,6 +135,11 @@
       "rules": {
         "no-useless-catch": "off"
       }
+    },
+    {
+      "files": "*.json",
+      "parser": "jsonc-eslint-parser",
+      "rules": {}
     }
   ]
 }

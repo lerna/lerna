@@ -1,0 +1,42 @@
+# path to a directory with all packages
+# JH: changed to dist
+storage: ../dist/local-registry/storage
+
+auth:
+  htpasswd:
+    file: ./htpasswd
+
+# a list of other known repositories we can talk to
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+    cache: true
+  yarn:
+    url: https://registry.yarnpkg.com
+    cache: true
+
+packages:
+  "@*/*":
+    # scoped packages
+    access: $all
+    publish: $all
+    unpublish: $all
+    proxy: npmjs
+
+  "**":
+    # allow all users (including non-authenticated users) to read and
+    # publish all packages
+    access: $all
+
+    # allow all users (including non-authenticated users) to publish/publish packages
+    publish: $all
+    unpublish: $all
+
+    # if package is not available locally, proxy requests to 'yarn' registry
+    proxy: npmjs
+
+# log settings
+logs:
+  type: stdout
+  format: pretty
+  level: http

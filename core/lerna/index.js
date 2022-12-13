@@ -32,6 +32,7 @@ function main(argv) {
     lernaVersion: pkg.version,
   };
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return cli()
     .command(addCmd)
