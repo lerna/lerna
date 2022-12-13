@@ -213,8 +213,8 @@ When run with this flag, `lerna version` will release with bumped prerelease ver
 
 ```sh
 Changes:
- - major: 1.0.0-alpha.0 => 2.0.0-alpha.0 
- - minor: 1.0.0-alpha.0 => 1.1.0-alpha.0 
+ - major: 1.0.0-alpha.0 => 2.0.0-alpha.0
+ - minor: 1.0.0-alpha.0 => 1.1.0-alpha.0
  - patch: 1.0.0-alpha.0 => 1.0.1-alpha.0
 ```
 
