@@ -112,7 +112,8 @@ exports.builder = (yargs) => {
     },
     "summary-file": {
       // generate lerna publish json output.
-      describe: "A json summary report will be generated after all packages have been successfully published",
+      describe:
+        "Generate a json summary report after all packages have been successfully published, you can pass an optional path for where to save the file.",
       type: "string",
     },
   };

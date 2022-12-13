@@ -371,7 +371,7 @@ Map {
       expect(fsSpy).not.toHaveBeenCalled();
     });
 
-    it("creates the summary file", async () => {
+    it("creates the summary file with file path provided", async () => {
       const cwd = await initFixture("normal");
       const fsSpy = jest.spyOn(fsmain, "writeFileSync");
       await lernaPublish(cwd)("--summary-file", "./outputs");
@@ -385,6 +385,24 @@ Map {
       expect(fsSpy).toHaveBeenCalled();
       expect(fsSpy).toHaveBeenCalledWith(
         "./outputs/lerna-publish-summary.json",
+        JSON.stringify(expectedJsonResponse)
+      );
+    });
+
+    it("creates the summary file with no path provided", async () => {
+      const cwd = await initFixture("normal");
+      const fsSpy = jest.spyOn(fsmain, "writeFileSync");
+      await lernaPublish(cwd)("--summary-file");
+
+      const expectedJsonResponse = [
+        { packageName: "package-1", version: "1.0.1" },
+        { packageName: "package-2", version: "1.0.1" },
+        { packageName: "package-3", version: "1.0.1" },
+        { packageName: "package-4", version: "1.0.1" },
+      ];
+      expect(fsSpy).toHaveBeenCalled();
+      expect(fsSpy).toHaveBeenCalledWith(
+        "./lerna-publish-summary.json",
         JSON.stringify(expectedJsonResponse)
       );
     });
