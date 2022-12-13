@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.2.0](https://github.com/lerna/lerna/compare/v6.1.0...v6.2.0) (2022-12-13)
+
+### Features
+
+- **version:** add --signoff git flag ([#2897](https://github.com/lerna/lerna/issues/2897)) ([93b24d7](https://github.com/lerna/lerna/commit/93b24d72d9a9b47fbbc2cec02919c572b0440e79))
+
 # [6.1.0](https://github.com/lerna/lerna/compare/v6.0.3...v6.1.0) (2022-11-29)
 
 ### Features

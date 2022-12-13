@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.2.0](https://github.com/lerna/lerna/compare/v6.1.0...v6.2.0) (2022-12-13)
+
+### Bug Fixes
+
+- **schema:** add the other format changelogPreset can assume ([#3441](https://github.com/lerna/lerna/issues/3441)) ([d286973](https://github.com/lerna/lerna/commit/d286973d7c2c9b43db65b903f94debd21bafd76e))
+
+### Features
+
+- **publish:** add --summary-file option ([#2653](https://github.com/lerna/lerna/issues/2653)) ([027d943](https://github.com/lerna/lerna/commit/027d9433b7bb0ca1de5fa593ed411e012af57623))
+
 # [6.1.0](https://github.com/lerna/lerna/compare/v6.0.3...v6.1.0) (2022-11-29)
 
 ### Features

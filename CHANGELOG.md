@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.2.0](https://github.com/lerna/lerna/compare/v6.1.0...v6.2.0) (2022-12-13)
+
+### Bug Fixes
+
+- **core:** more detailed error message when version cannot be found ([#3424](https://github.com/lerna/lerna/issues/3424)) ([b729b0c](https://github.com/lerna/lerna/commit/b729b0c01a6d303c6f3bc5d65beb0dcde924160f))
+- **schema:** add the other format changelogPreset can assume ([#3441](https://github.com/lerna/lerna/issues/3441)) ([d286973](https://github.com/lerna/lerna/commit/d286973d7c2c9b43db65b903f94debd21bafd76e))
+- **utils:** check validity of bundledDependencies before iteration ([#2960](https://github.com/lerna/lerna/issues/2960)) ([2517ffb](https://github.com/lerna/lerna/commit/2517ffb5a2854ca65ccb9128446eda8b5bc8741f))
+
+### Features
+
+- **publish:** add --summary-file option ([#2653](https://github.com/lerna/lerna/issues/2653)) ([027d943](https://github.com/lerna/lerna/commit/027d9433b7bb0ca1de5fa593ed411e012af57623))
+- **version:** add --signoff git flag ([#2897](https://github.com/lerna/lerna/issues/2897)) ([93b24d7](https://github.com/lerna/lerna/commit/93b24d72d9a9b47fbbc2cec02919c572b0440e79))
+
 # [6.1.0](https://github.com/lerna/lerna/compare/v6.0.3...v6.1.0) (2022-11-29)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.2.0](https://github.com/lerna/lerna/compare/v6.1.0...v6.2.0) (2022-12-13)
+
+### Bug Fixes
+
+- **utils:** check validity of bundledDependencies before iteration ([#2960](https://github.com/lerna/lerna/issues/2960)) ([2517ffb](https://github.com/lerna/lerna/commit/2517ffb5a2854ca65ccb9128446eda8b5bc8741f))
+
 # [6.1.0](https://github.com/lerna/lerna/compare/v6.0.3...v6.1.0) (2022-11-29)
 
 **Note:** Version bump only for package @lerna/npm-install

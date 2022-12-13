@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.2.0](https://github.com/lerna/lerna/compare/v6.1.0...v6.2.0) (2022-12-13)
+
+### Bug Fixes
+
+- **core:** more detailed error message when version cannot be found ([#3424](https://github.com/lerna/lerna/issues/3424)) ([b729b0c](https://github.com/lerna/lerna/commit/b729b0c01a6d303c6f3bc5d65beb0dcde924160f))
+
 # [6.1.0](https://github.com/lerna/lerna/compare/v6.0.3...v6.1.0) (2022-11-29)
 
 **Note:** Version bump only for package @lerna/command
