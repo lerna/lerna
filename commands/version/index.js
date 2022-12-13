@@ -325,8 +325,14 @@ class VersionCommand extends Command {
     if (repoVersion) {
       predicate = makeGlobalVersionPredicate(repoVersion);
     } else if (increment && independentVersions) {
-      // compute potential prerelease ID for each independent update
-      predicate = (node) => semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId));
+      // useful in Continuous integration (CI) to generate tags, changelogs
+      // and release notes from manually increased pkg.version's.
+      if (bump === "from-package") {
+        predicate = (node) => node.version;
+      } else {
+        // compute potential prerelease ID for each independent update
+        predicate = (node) => semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId));
+      }
     } else if (increment) {
       // compute potential prerelease ID once for all fixed updates
       const prereleaseId = prereleaseIdFromVersion(this.project.version);

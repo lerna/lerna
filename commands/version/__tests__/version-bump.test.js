@@ -85,7 +85,7 @@ describe("version bump", () => {
 
     await expect(command).rejects.toThrow(
       "bump must be an explicit version string _or_ one of: " +
-        "'major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', or 'prerelease'."
+        "'major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', 'prerelease', or 'from-package'."
     );
   });
 
