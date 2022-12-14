@@ -19,7 +19,7 @@ class WatchCommand extends Command {
   }
 
   async initialize() {
-    if (!this.options.callback) {
+    if (!this.options.command) {
       throw new ValidationError("ENOCOMMAND", "A command to execute is required");
     }
 
@@ -33,15 +33,16 @@ class WatchCommand extends Command {
     this.logger.info(
       "watch",
       "Executing command %j on changes in %d %s.",
-      this.options.callback,
+      this.options.command,
       this.count,
       this.packagePlural
     );
 
     await watch({
-      callback: this.options.callback,
+      command: this.options.command,
+      projectNameEnvName: "LERNA_PACKAGE_NAME",
+      fileChangesEnvName: "LERNA_FILE_CHANGES",
       includeDependentProjects: false, // dependent projects are accounted for via lerna filter options
-      includeGlobalWorkspaceFiles: this.options.includeGlobalWorkspaceFiles,
       projects: this.filteredPackages.map((p) => p.name),
       verbose: this.options.verbose,
     });
