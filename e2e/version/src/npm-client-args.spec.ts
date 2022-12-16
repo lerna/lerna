@@ -1,5 +1,4 @@
-import { Fixture } from "../../utils/fixture";
-import { normalizeCommitSHAs, normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
+import { Fixture, normalizeCommitSHAs, normalizeEnvironment } from "@lerna/e2e-utils";
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
@@ -34,13 +33,16 @@ describe("lerna-version-npm-client-args", () => {
         eslint: "8.25.0",
       },
     }));
+    await fixture.exec(
+      "npm install eslint-plugin-react-app@6.2.2 eslint@8.25.0 --save=false --legacy-peer-deps"
+    );
     await fixture.createInitialGitCommit();
     await fixture.exec("git push origin test-main");
   });
   afterEach(() => fixture.destroy());
 
   it("should add npmClientArgs to npm install at the end of the version command", async () => {
-    const output = await fixture.lerna("version 3.3.3 -y --npmClientArgs=--legacy-peer-deps");
+    const output = await fixture.lerna("version 3.3.3 -y --npm-client-args=--legacy-peer-deps");
     expect(output.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
       lerna info current version 0.0.0
