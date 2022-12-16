@@ -407,6 +407,15 @@ For example:
 
 `lerna version 3.3.3 --npm-client-args=--legacy-peer-deps`
 
+This can also be set in `lerna.json`:
+
+```json
+{
+  ...
+  "npmClientArgs": ["--legacy-peer-deps", "--production"]
+}
+```
+
 ### `--preid`
 
 ```sh
