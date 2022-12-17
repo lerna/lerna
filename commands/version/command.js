@@ -12,6 +12,10 @@ exports.describe = "Bump version of packages changed since the last release.";
 
 exports.builder = (yargs, composed) => {
   const opts = {
+    match: {
+      describe: "Only consider tags matching the given pattern.",
+      type: "string",
+    },
     "allow-branch": {
       describe: "Specify which branches to allow versioning from.",
       type: "array",
