@@ -196,7 +196,10 @@ class VersionCommand extends Command {
     this.updates = collectUpdates(
       this.packageGraph.rawPackageList,
       this.packageGraph,
-      this.execOpts,
+      {
+        ...this.execOpts,
+        match: this.options.match,
+      },
       this.options
     ).filter((node) => {
       // --no-private completely removes private packages from consideration
