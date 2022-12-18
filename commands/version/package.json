@@ -1,5 +1,5 @@
 {
-  "name": "@lerna/version",
+  "name": "@wix/lerna-version",
   "version": "6.2.0",
   "description": "Bump version of packages changed since the last release",
   "keywords": [
@@ -22,32 +22,29 @@
   "engines": {
     "node": "^14.15.0 || >=16.0.0"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git",
     "directory": "commands/version"
   },
   "scripts": {
-    "test": "echo \"Run tests from root\" && exit 1"
+    "test": "echo \"Run tests from root\""
   },
   "dependencies": {
-    "@lerna/check-working-tree": "file:../../utils/check-working-tree",
-    "@lerna/child-process": "file:../../core/child-process",
-    "@lerna/collect-updates": "file:../../utils/collect-updates",
-    "@lerna/command": "file:../../core/command",
-    "@lerna/conventional-commits": "file:../../core/conventional-commits",
-    "@lerna/github-client": "file:../../utils/github-client",
-    "@lerna/gitlab-client": "file:../../utils/gitlab-client",
-    "@lerna/output": "file:../../utils/output",
-    "@lerna/prerelease-id-from-version": "file:../../utils/prerelease-id-from-version",
-    "@lerna/prompt": "file:../../core/prompt",
-    "@lerna/run-lifecycle": "file:../../utils/run-lifecycle",
-    "@lerna/run-topologically": "file:../../utils/run-topologically",
-    "@lerna/temp-write": "file:../../utils/temp-write",
-    "@lerna/validation-error": "file:../../core/validation-error",
+    "@lerna/check-working-tree": "6.2.0",
+    "@lerna/child-process": "6.2.0",
+    "@lerna/collect-updates": "6.2.0",
+    "@lerna/command": "6.2.0",
+    "@lerna/conventional-commits": "6.2.0",
+    "@lerna/github-client": "6.2.0",
+    "@lerna/gitlab-client": "6.2.0",
+    "@lerna/output": "6.2.0",
+    "@lerna/prerelease-id-from-version": "6.2.0",
+    "@lerna/prompt": "6.2.0",
+    "@lerna/run-lifecycle": "6.2.0",
+    "@lerna/run-topologically": "6.2.0",
+    "@lerna/temp-write": "6.2.0",
+    "@lerna/validation-error": "6.2.0",
     "@nrwl/devkit": ">=14.8.6 < 16",
     "chalk": "^4.1.0",
     "dedent": "^0.7.0",
@@ -61,5 +58,15 @@
     "semver": "^7.3.4",
     "slash": "^3.0.0",
     "write-json-file": "^4.3.0"
+  },
+  "wix": {
+    "artifact": {
+      "groupId": "com.wixpress",
+      "artifactId": "lerna-version"
+    }
+  },
+  "publishConfig": {
+    "registry": "http://npm.dev.wixpress.com/",
+    "versionBumpStrategy": "manual"
   }
 }

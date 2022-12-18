@@ -1,3 +1,5 @@
+node_modules
+
 # OS Specific
 .DS_Store
 .DS_Store?
