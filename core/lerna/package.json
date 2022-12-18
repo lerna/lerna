@@ -1,5 +1,5 @@
 {
-  "name": "lerna",
+  "name": "@wix/lerna",
   "version": "6.2.0",
   "description": "A tool for managing JavaScript projects with multiple packages.",
   "keywords": [
@@ -27,9 +27,6 @@
   "engines": {
     "node": "^14.15.0 || >=16.0.0"
   },
-  "publishConfig": {
-    "tag": "next"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git",
@@ -39,31 +36,41 @@
     "migrations": "./migrations.json"
   },
   "scripts": {
-    "test": "echo \"Run tests from root\" && exit 1"
+    "test": "echo \"Run tests from root\""
   },
   "dependencies": {
-    "@lerna/add": "file:../../commands/add",
-    "@lerna/bootstrap": "file:../../commands/bootstrap",
-    "@lerna/changed": "file:../../commands/changed",
-    "@lerna/clean": "file:../../commands/clean",
-    "@lerna/cli": "file:../cli",
-    "@lerna/command": "file:../command",
-    "@lerna/create": "file:../../commands/create",
-    "@lerna/diff": "file:../../commands/diff",
-    "@lerna/exec": "file:../../commands/exec",
-    "@lerna/import": "file:../../commands/import",
-    "@lerna/info": "file:../../commands/info",
-    "@lerna/init": "file:../../commands/init",
-    "@lerna/link": "file:../../commands/link",
-    "@lerna/list": "file:../../commands/list",
-    "@lerna/publish": "file:../../commands/publish",
-    "@lerna/run": "file:../../commands/run",
-    "@lerna/version": "file:../../commands/version",
+    "@lerna/add": "6.2.0",
+    "@lerna/bootstrap": "6.2.0",
+    "@lerna/changed": "6.2.0",
+    "@lerna/clean": "6.2.0",
+    "@lerna/cli": "6.2.0",
+    "@lerna/command": "6.2.0",
+    "@lerna/create": "6.2.0",
+    "@lerna/diff": "6.2.0",
+    "@lerna/exec": "6.2.0",
+    "@lerna/import": "6.2.0",
+    "@lerna/info": "6.2.0",
+    "@lerna/init": "6.2.0",
+    "@lerna/link": "6.2.0",
+    "@lerna/list": "6.2.0",
+    "@lerna/publish": "6.2.0",
+    "@lerna/run": "6.2.0",
+    "@wix/lerna-version": "6.2.0",
     "@nrwl/devkit": ">=14.8.6 < 16",
     "import-local": "^3.0.2",
     "inquirer": "^8.2.4",
     "npmlog": "^6.0.2",
     "nx": ">=14.8.6 < 16",
     "typescript": "^3 || ^4"
+  },
+  "wix": {
+    "artifact": {
+      "groupId": "com.wixpress",
+      "artifactId": "lerna"
+    }
+  },
+  "publishConfig": {
+    "registry": "http://npm.dev.wixpress.com/",
+    "versionBumpStrategy": "manual"
   }
 }

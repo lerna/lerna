@@ -3,10 +3,8 @@
   "private": true,
   "description": "lerna dog-fooding lerna",
   "workspaces": [
-    "commands/*",
-    "core/*",
-    "utils/*",
-    "e2e"
+    "commands/version",
+    "core/lerna"
   ],
   "volta": {
     "node": "16.15.0",
@@ -113,7 +111,6 @@
     "yargs": "^16.2.0"
   },
   "devDependencies": {
-    "@lerna-test/helpers": "file:helpers",
     "@nrwl/devkit": "15.2.1",
     "@nrwl/eslint-plugin-nx": "15.2.1",
     "@nrwl/jest": "15.2.1",
