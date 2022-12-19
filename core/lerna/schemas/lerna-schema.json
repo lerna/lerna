@@ -1067,6 +1067,9 @@
             "npmClient": {
               "$ref": "#/$defs/globals/npmClient"
             },
+            "npmClientArgs": {
+              "$ref": "#/$defs/globals/npmClientArgs"
+            },
             "loglevel": {
               "$ref": "#/$defs/globals/loglevel"
             },

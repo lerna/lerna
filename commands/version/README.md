@@ -405,7 +405,13 @@ This option allows arguments to be passed to the `npm install` that `lerna versi
 
 For example:
 
-`lerna version 3.3.3 --npm-client-args=--legacy-peer-deps`
+```sh
+lerna version 3.3.3 --npm-client-args=--legacy-peer-deps
+
+lerna version 3.3.3 --npm-client-args="--legacy-peer-deps,--force"
+
+lerna version 3.3.3 --npm-client-args="--legacy-peer-deps --force"
+```
 
 This can also be set in `lerna.json`:
 
@@ -413,6 +419,19 @@ This can also be set in `lerna.json`:
 {
   ...
   "npmClientArgs": ["--legacy-peer-deps", "--production"]
+}
+```
+
+or specifically for the version command:
+
+```json
+{
+  ...
+  "command": {
+    "version": {
+      "npmClientArgs": ["--legacy-peer-deps", "--production"]
+    }
+  }
 }
 ```
 

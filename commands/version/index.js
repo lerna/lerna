@@ -616,7 +616,8 @@ class VersionCommand extends Command {
       );
     }
 
-    const npmClientArgs = this.options.npmClientArgs || [];
+    const npmClientArgsRaw = this.options.npmClientArgs || [];
+    const npmClientArgs = npmClientArgsRaw.reduce((args, arg) => args.concat(arg.split(/\s|,/)), []);
 
     if (this.options.npmClient === "pnpm") {
       chain = chain.then(() => {

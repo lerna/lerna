@@ -58,4 +58,40 @@ describe("lerna-version-npm-client-args", () => {
 
     `);
   });
+
+  it("should support multiple arguments, comma delimited", async () => {
+    const output = await fixture.lerna('version 3.3.3 -y --npm-client-args="--legacy-peer-deps,--fund"');
+    expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
+
+      Changes:
+       - package-a: 0.0.0 => 3.3.3
+
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
+
+    `);
+  });
+
+  it("should support multiple arguments, space delimited", async () => {
+    const output = await fixture.lerna('version 3.3.3 -y --npm-client-args="--legacy-peer-deps --fund"');
+    expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
+
+      Changes:
+       - package-a: 0.0.0 => 3.3.3
+
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
+
+    `);
+  });
 });
