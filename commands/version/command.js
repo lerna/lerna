@@ -168,6 +168,10 @@ exports.builder = (yargs, composed) => {
       requiresArg: true,
       defaultDescription: "v",
     },
+    "npm-client-args": {
+      describe: "Additional arguments to pass to the npm client when performing 'npm install'.",
+      type: "array",
+    },
     y: {
       describe: "Skip all confirmation prompts.",
       alias: "yes",

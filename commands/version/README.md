@@ -70,6 +70,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--no-granular-pathspec`](#--no-granular-pathspec)
     - [`--no-private`](#--no-private)
     - [`--no-push`](#--no-push)
+    - [`--npm-client-args`](#--npm-client-args)
     - [`--preid`](#--preid)
     - [`--signoff-git-commit`](#--signoff-git-commit)
     - [`--sign-git-commit`](#--sign-git-commit)
@@ -397,6 +398,42 @@ Note that this option does _not_ exclude [private scoped packages](https://docs.
 
 By default, `lerna version` will push the committed and tagged changes to the configured [git remote](#--git-remote-name).
 Pass `--no-push` to disable this behavior.
+
+### `--npm-client-args`
+
+This option allows arguments to be passed to the `npm install` that `lerna version` performs to update the lockfile.
+
+For example:
+
+```sh
+lerna version 3.3.3 --npm-client-args=--legacy-peer-deps
+
+lerna version 3.3.3 --npm-client-args="--legacy-peer-deps,--force"
+
+lerna version 3.3.3 --npm-client-args="--legacy-peer-deps --force"
+```
+
+This can also be set in `lerna.json`:
+
+```json
+{
+  ...
+  "npmClientArgs": ["--legacy-peer-deps", "--production"]
+}
+```
+
+or specifically for the version command:
+
+```json
+{
+  ...
+  "command": {
+    "version": {
+      "npmClientArgs": ["--legacy-peer-deps", "--production"]
+    }
+  }
+}
+```
 
 ### `--preid`
 
