@@ -45,7 +45,6 @@
     "@lerna/add": "file:../../commands/add",
     "@lerna/bootstrap": "file:../../commands/bootstrap",
     "@lerna/changed": "file:../../commands/changed",
-    "@lerna/child-process": "file:../child-process",
     "@lerna/clean": "file:../../commands/clean",
     "@lerna/cli": "file:../cli",
     "@lerna/command": "file:../command",
