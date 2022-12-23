@@ -266,7 +266,7 @@ When run with this flag, `lerna version` will force publish the specified packag
 
 ### `--git-tag-command <cmd>`
 
-Allows users to specify a wrapper command in CD/CI pipelines that have no direct write access.
+Allows users to specify a custom command to be used when applying git tags. For example, this may be useful for providing a wrapper command in CI/CD pipelines that have no direct write access.
 
 ```sh
 lerna version --git-tag-command "git gh-tag %s -m %s"

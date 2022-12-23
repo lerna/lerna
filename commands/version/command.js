@@ -170,7 +170,7 @@ exports.builder = (yargs, composed) => {
     },
     "git-tag-command": {
       describe:
-        "Allows users to specify a wrapper command in CD/CI pipelines that have no direct write access.",
+        "Allows users to specify a custom command to be used when applying git tags. For example, this may be useful for providing a wrapper command in CI/CD pipelines that have no direct write access.",
       type: "string",
     },
     y: {
