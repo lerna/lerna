@@ -10,19 +10,21 @@ module.exports.gitTag = gitTag;
  * @param {{ forceGitTag: boolean; signGitTag: boolean; }} gitOpts
  * @param {import("@lerna/child-process").ExecOpts} opts
  */
-function gitTag(tag, { forceGitTag, signGitTag }, opts) {
-  log.silly("gitTag", tag);
+function gitTag(tag, { forceGitTag, signGitTag }, opts, command = "git tag %s -m %s") {
+  log.silly("gitTag", tag, command);
 
-  const args = ["tag", tag, "-m", tag];
+  const [cmd, ...args] = command.split(" ");
+
+  const interpolatedArgs = args.map((arg) => arg.replace(/%s/, tag));
 
   if (forceGitTag) {
-    args.push("--force");
+    interpolatedArgs.push("--force");
   }
 
   if (signGitTag) {
-    args.push("--sign");
+    interpolatedArgs.push("--sign");
   }
 
-  log.verbose("git", args);
-  return childProcess.exec("git", args, opts);
+  log.verbose(cmd, interpolatedArgs);
+  return childProcess.exec(cmd, interpolatedArgs, opts);
 }
