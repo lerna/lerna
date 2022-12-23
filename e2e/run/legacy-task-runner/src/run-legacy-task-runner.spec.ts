@@ -15,6 +15,7 @@ describe("lerna-run-legacy-task-runner", () => {
 
   beforeAll(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-run-legacy-task-runner",
       packageManager: "npm",
       initializeGit: true,
@@ -294,6 +295,7 @@ describe("--no-bail", () => {
 
   beforeAll(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-run-legacy-task-runner-no-bail",
       packageManager: "npm",
       initializeGit: true,

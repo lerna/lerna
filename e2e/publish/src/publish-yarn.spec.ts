@@ -21,6 +21,7 @@ describe("lerna-publish-yarn", () => {
 
   beforeEach(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-publish",
       packageManager: "yarn",
       initializeGit: true,

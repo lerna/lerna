@@ -18,7 +18,7 @@ describe("lerna-run-nx", () => {
     if (!fixtureRootPath) {
       throw new Error("FIXTURE_ROOT_PATH environment variable is not set");
     }
-    fixture = Fixture.fromExisting(fixtureRootPath);
+    fixture = Fixture.fromExisting(process.env.E2E_ROOT, fixtureRootPath);
   });
 
   afterAll(() => fixture.destroy());
@@ -29,40 +29,37 @@ describe("lerna-run-nx", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
       - package-X
 
-      With additional flags:
-      --silent=true
 
 
-
-      > package-X:print-name --silent
+      > package-X:print-name
 
 
       > package-X@0.0.0 print-name
-      > echo test-package-X "--silent"
+      > echo test-package-X
 
-      test-package-X --silent
+      test-package-X
 
-      > package-X:print-name --silent
-
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X "--silent"
-
-      test-package-X --silent
-
-      > package-X:print-name --silent
+      > package-X:print-name
 
 
       > package-X@0.0.0 print-name
-      > echo test-package-X "--silent"
+      > echo test-package-X
 
-      test-package-X --silent
+      test-package-X
+
+      > package-X:print-name
+
+
+      > package-X@0.0.0 print-name
+      > echo test-package-X
+
+      test-package-X
 
 
 
@@ -80,34 +77,31 @@ describe("lerna-run-nx", () => {
       expect(output).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
 
-        >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+        >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
         - package-X
         - package-X
         - package-X
 
-        With additional flags:
-        --silent=true
 
 
-
-        > package-X:print-name --silent
+        > package-X:print-name
 
         package-X: > package-X@0.0.0 print-name
-        package-X: > echo test-package-X "--silent"
-        package-X: test-package-X --silent
+        package-X: > echo test-package-X
+        package-X: test-package-X
 
-        > package-X:print-name --silent
-
-        package-X: > package-X@0.0.0 print-name
-        package-X: > echo test-package-X "--silent"
-        package-X: test-package-X --silent
-
-        > package-X:print-name --silent
+        > package-X:print-name
 
         package-X: > package-X@0.0.0 print-name
-        package-X: > echo test-package-X "--silent"
-        package-X: test-package-X --silent
+        package-X: > echo test-package-X
+        package-X: test-package-X
+
+        > package-X:print-name
+
+        package-X: > package-X@0.0.0 print-name
+        package-X: > echo test-package-X
+        package-X: test-package-X
 
 
 
@@ -126,40 +120,37 @@ describe("lerna-run-nx", () => {
       expect(output).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
 
-        >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+        >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
         - package-X
         - package-X
         - package-X
 
-        With additional flags:
-        --silent=true
 
 
-
-        > package-X:print-name --silent
+        > package-X:print-name
 
 
         > package-X@0.0.0 print-name
-        > echo test-package-X "--silent"
+        > echo test-package-X
 
-        test-package-X --silent
+        test-package-X
 
-        > package-X:print-name --silent
-
-
-        > package-X@0.0.0 print-name
-        > echo test-package-X "--silent"
-
-        test-package-X --silent
-
-        > package-X:print-name --silent
+        > package-X:print-name
 
 
         > package-X@0.0.0 print-name
-        > echo test-package-X "--silent"
+        > echo test-package-X
 
-        test-package-X --silent
+        test-package-X
+
+        > package-X:print-name
+
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
 
 
 
@@ -180,40 +171,37 @@ describe("lerna-run-nx", () => {
           lerna notice cli v999.9.9-e2e.0
           lerna WARN run "no-prefix" is ignored when not using streaming output.
 
-          >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+          >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
           - package-X
           - package-X
           - package-X
 
-          With additional flags:
-          --silent=true
 
 
-
-          > package-X:print-name --silent
+          > package-X:print-name
 
 
           > package-X@0.0.0 print-name
-          > echo test-package-X "--silent"
+          > echo test-package-X
 
-          test-package-X --silent
+          test-package-X
 
-          > package-X:print-name --silent
-
-
-          > package-X@0.0.0 print-name
-          > echo test-package-X "--silent"
-
-          test-package-X --silent
-
-          > package-X:print-name --silent
+          > package-X:print-name
 
 
           > package-X@0.0.0 print-name
-          > echo test-package-X "--silent"
+          > echo test-package-X
 
-          test-package-X --silent
+          test-package-X
+
+          > package-X:print-name
+
+
+          > package-X@0.0.0 print-name
+          > echo test-package-X
+
+          test-package-X
 
 
 
@@ -232,34 +220,31 @@ describe("lerna-run-nx", () => {
         expect(output).toMatchInlineSnapshot(`
           lerna notice cli v999.9.9-e2e.0
 
-          >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+          >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
           - package-X
           - package-X
           - package-X
 
-          With additional flags:
-          --silent=true
 
 
-
-          > package-X:print-name --silent
+          > package-X:print-name
 
           > package-X@0.0.0 print-name
-          > echo test-package-X "--silent"
-          test-package-X --silent
+          > echo test-package-X
+          test-package-X
 
-          > package-X:print-name --silent
-
-          > package-X@0.0.0 print-name
-          > echo test-package-X "--silent"
-          test-package-X --silent
-
-          > package-X:print-name --silent
+          > package-X:print-name
 
           > package-X@0.0.0 print-name
-          > echo test-package-X "--silent"
-          test-package-X --silent
+          > echo test-package-X
+          test-package-X
+
+          > package-X:print-name
+
+          > package-X@0.0.0 print-name
+          > echo test-package-X
+          test-package-X
 
 
 
@@ -279,40 +264,37 @@ describe("lerna-run-nx", () => {
       expect(output).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
 
-        >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+        >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
         - package-X
         - package-X
         - package-X
 
-        With additional flags:
-        --silent=true
 
 
-
-        > package-X:print-name --silent
+        > package-X:print-name
 
 
         > package-X@0.0.0 print-name
-        > echo test-package-X "--silent"
+        > echo test-package-X
 
-        test-package-X --silent
+        test-package-X
 
-        > package-X:print-name --silent
-
-
-        > package-X@0.0.0 print-name
-        > echo test-package-X "--silent"
-
-        test-package-X --silent
-
-        > package-X:print-name --silent
+        > package-X:print-name
 
 
         > package-X@0.0.0 print-name
-        > echo test-package-X "--silent"
+        > echo test-package-X
 
-        test-package-X --silent
+        test-package-X
+
+        > package-X:print-name
+
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
 
 
 
@@ -323,7 +305,7 @@ describe("lerna-run-nx", () => {
 
       `);
 
-      const lernaProfileFileName = output.split(/\/lerna-e2e\/lerna-run-nx-.+\/lerna-workspace\//)[1].trim();
+      const lernaProfileFileName = output.match(/Performance Profile:.*(Lerna-Profile-\w+\.json)/)[1].trim();
 
       expect(existsSync(fixture.getWorkspacePath(lernaProfileFileName))).toBe(true);
     });
@@ -334,40 +316,37 @@ describe("lerna-run-nx", () => {
       expect(output).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
 
-        >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+        >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
         - package-X
         - package-X
         - package-X
 
-        With additional flags:
-        --silent=true
 
 
-
-        > package-X:print-name --silent
+        > package-X:print-name
 
 
         > package-X@0.0.0 print-name
-        > echo test-package-X "--silent"
+        > echo test-package-X
 
-        test-package-X --silent
+        test-package-X
 
-        > package-X:print-name --silent
-
-
-        > package-X@0.0.0 print-name
-        > echo test-package-X "--silent"
-
-        test-package-X --silent
-
-        > package-X:print-name --silent
+        > package-X:print-name
 
 
         > package-X@0.0.0 print-name
-        > echo test-package-X "--silent"
+        > echo test-package-X
 
-        test-package-X --silent
+        test-package-X
+
+        > package-X:print-name
+
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
 
 
 
@@ -378,7 +357,9 @@ describe("lerna-run-nx", () => {
 
       `);
 
-      const lernaProfileFileName = output.split(/\/lerna-e2e\/lerna-run-nx-.+\/lerna-workspace\//)[1].trim();
+      const lernaProfileFileName = output
+        .match(/Performance Profile:.*(profiles\/Lerna-Profile-\w+\.json)/)[1]
+        .trim();
 
       expect(existsSync(fixture.getWorkspacePath(lernaProfileFileName))).toBe(true);
     });

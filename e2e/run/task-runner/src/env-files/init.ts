@@ -3,6 +3,7 @@ import { writeFile } from "fs-extra";
 
 (async () => {
   const fixture = await Fixture.create({
+    e2eRoot: process.env.E2E_ROOT,
     name: "lerna-run-nx-env-files",
     packageManager: "npm",
     initializeGit: true,

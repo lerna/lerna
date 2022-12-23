@@ -14,6 +14,7 @@ describe("lerna-version-npm-client-args", () => {
 
   beforeEach(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-version-npm-client-args",
       packageManager: "npm",
       initializeGit: true,

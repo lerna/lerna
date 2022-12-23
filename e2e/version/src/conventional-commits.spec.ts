@@ -17,6 +17,7 @@ describe("lerna-version-conventional-commits", () => {
 
     beforeEach(async () => {
       fixture = await Fixture.create({
+        e2eRoot: process.env.E2E_ROOT,
         name: "lerna-version-conventional-commits-single-package",
         packageManager: "npm",
         initializeGit: true,
@@ -109,6 +110,7 @@ describe("lerna-version-conventional-commits", () => {
 
     beforeEach(async () => {
       fixture = await Fixture.create({
+        e2eRoot: process.env.E2E_ROOT,
         name: "lerna-version-conventional-commits-multiple-packages",
         packageManager: "npm",
         initializeGit: true,

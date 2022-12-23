@@ -16,4 +16,4 @@ npx lerna run print-name --no-sort > $OUTPUTS/print-name-no-sort.txt 2>&1
 npx lerna run print-name --include-dependencies > $OUTPUTS/print-name-include-dependencies.txt 2>&1
 
 # Run the assertions
-runAssertions $DIR $FIXTURE_ROOT_PATH $UPDATE_SNAPSHOTS
+runAssertions $DIR $E2E_ROOT $FIXTURE_ROOT_PATH $UPDATE_SNAPSHOTS

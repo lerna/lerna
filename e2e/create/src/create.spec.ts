@@ -20,6 +20,7 @@ describe("lerna-create", () => {
 
   beforeAll(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-create",
       packageManager: "npm",
       initializeGit: true,

@@ -14,6 +14,7 @@ describe("lerna-list-filter-options", () => {
 
   beforeAll(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-list-filter-options",
       packageManager: "npm",
       initializeGit: true,
@@ -116,6 +117,7 @@ describe("lerna list --since", () => {
 
   beforeEach(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-list-filter-options",
       packageManager: "npm",
       initializeGit: true,

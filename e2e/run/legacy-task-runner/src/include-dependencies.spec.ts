@@ -14,6 +14,7 @@ describe("lerna-run-legacy-task-runner-include-dependencies", () => {
 
   beforeEach(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-run-legacy-task-runner-include-dependencies",
       packageManager: "npm",
       initializeGit: true,
