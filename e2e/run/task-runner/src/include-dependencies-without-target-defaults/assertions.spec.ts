@@ -17,7 +17,7 @@ describe("lerna-run-nx-include-dependencies-without-target-defaults", () => {
     if (!fixtureRootPath) {
       throw new Error("FIXTURE_ROOT_PATH environment variable is not set");
     }
-    fixture = Fixture.fromExisting(fixtureRootPath);
+    fixture = Fixture.fromExisting(process.env.E2E_ROOT, fixtureRootPath);
   });
 
   afterAll(() => fixture.destroy());
@@ -32,11 +32,11 @@ describe("lerna-run-nx-include-dependencies-without-target-defaults", () => {
       lerna info filter [ 'package-X' ]
       lerna verb run Nx target configuration was not found. Task dependencies will not be automatically included.
 
-      > package-X:print-name --silent
+      > package-X:print-name
 
       > package-X@0.0.0 print-name
-      > echo test-package-X "--silent"
-      test-package-X --silent
+      > echo test-package-X
+      test-package-X
 
 
 

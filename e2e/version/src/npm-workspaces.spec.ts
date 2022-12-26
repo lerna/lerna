@@ -14,6 +14,7 @@ describe("lerna-version-with-workspaces", () => {
 
   beforeEach(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-version-with-workspaces",
       packageManager: "npm",
       initializeGit: true,

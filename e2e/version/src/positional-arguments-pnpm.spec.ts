@@ -23,6 +23,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
 
   beforeEach(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-version-positional-arguments",
       packageManager: "pnpm",
       initializeGit: true,

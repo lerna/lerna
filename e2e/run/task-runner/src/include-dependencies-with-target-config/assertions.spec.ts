@@ -17,7 +17,7 @@ describe("lerna-run-nx-include-dependencies-with-target-config", () => {
     if (!fixtureRootPath) {
       throw new Error("FIXTURE_ROOT_PATH environment variable is not set");
     }
-    fixture = Fixture.fromExisting(fixtureRootPath);
+    fixture = Fixture.fromExisting(process.env.E2E_ROOT, fixtureRootPath);
   });
 
   afterAll(() => fixture.destroy());
@@ -32,7 +32,7 @@ describe("lerna-run-nx-include-dependencies-with-target-config", () => {
       lerna info filter [ 'package-X' ]
       lerna verb run Nx target configuration was found. Task dependencies will be automatically included.
 
-      >  Lerna (powered by Nx)   Running target print-name for project package-X and 2 task(s) it depends on
+      >  Lerna (powered by Nx)   Running target print-name for project package-X and 2 tasks it depends on:
 
 
 
@@ -52,15 +52,15 @@ describe("lerna-run-nx-include-dependencies-with-target-config", () => {
 
       test-package-X
 
-      > package-X:print-name --silent
+      > package-X:print-name
 
       > package-X@0.0.0 print-name
-      > echo test-package-X "--silent"
-      test-package-X --silent
+      > echo test-package-X
+      test-package-X
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X
+      >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X and 2 tasks it depends on
 
 
 

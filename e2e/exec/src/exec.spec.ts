@@ -15,6 +15,7 @@ describe("lerna-exec", () => {
 
   beforeAll(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-exec",
       packageManager: "npm",
       initializeGit: true,
@@ -212,6 +213,7 @@ describe("lerna exec --no-bail", () => {
 
   beforeAll(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-exec-no-bail",
       packageManager: "npm",
       initializeGit: true,

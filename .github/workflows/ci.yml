@@ -46,9 +46,6 @@ jobs:
       # e2e tests for everything except the primary task runner
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=2
 
-      # Isolated e2e tests for the task runner which become too flaky if nested through further node child processes
-      - run: e2e/run/task-runner/src/run-tests.sh
-
       - name: Stop all running agents for this CI run
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
         if: ${{ always() }}
@@ -79,6 +76,55 @@ jobs:
         run: npx nx-cloud start-agent
         env:
           NX_AGENT_NAME: ${{matrix.agent}}
+
+  # Isolated e2e tests for the task runner which become too flaky if nested through further node child processes
+  task-runner-e2e:
+    name: Task Runner E2E
+    runs-on: ubuntu-latest
+    env:
+      NX_CLOUD_DISTRIBUTED_EXECUTION: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+
+      # TODO: figure out why uses: ./.github/actions/install-node-and-dependencies is causing pnpm to not be available in this job
+      - name: Install dependencies
+        run: npm ci
+        shell: bash
+
+      - name: Check if e2e-run-task-runner is affected
+        id: check_affected
+        run: |
+          IS_AFFECTED_STR=$(npx nx print-affected | jq '.projects | contains(["e2e-run-task-runner"])')
+          IS_AFFECTED=$([[ $IS_AFFECTED_STR == 'true' ]] && echo 'true' || echo '')
+          echo "is_affected=$IS_AFFECTED" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+        shell: bash
+
+      - run: pnpm --version
+        shell: bash
+
+      - name: Prepare e2e tests for task-runner
+        if: ${{ steps.check_affected.outputs.is_affected }}
+        run: npx nx prepare-for-e2e e2e-run-task-runner
+        shell: bash
+
+      - name: Run e2e tests for task-runner
+        if: ${{ steps.check_affected.outputs.is_affected }}
+        run: e2e/run/task-runner/src/run-tests.sh
+        shell: bash
 
   # TODO: migrate to cacheable/distributable targets
   test:

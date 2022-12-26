@@ -3,6 +3,7 @@ import { remove } from "fs-extra";
 
 (async () => {
   const fixture = await Fixture.create({
+    e2eRoot: process.env.E2E_ROOT,
     name: "lerna-run-nx-incompatible-options-without-nx-json",
     packageManager: "npm",
     initializeGit: true,

@@ -17,7 +17,7 @@ describe("lerna-run-nx-env-files", () => {
     if (!fixtureRootPath) {
       throw new Error("FIXTURE_ROOT_PATH environment variable is not set");
     }
-    fixture = Fixture.fromExisting(fixtureRootPath);
+    fixture = Fixture.fromExisting(process.env.E2E_ROOT, fixtureRootPath);
   });
 
   afterAll(() => fixture.destroy());
@@ -28,11 +28,11 @@ describe("lerna-run-nx-env-files", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      > package-X:log-env-var --silent
+      > package-X:log-env-var
 
       > package-X@0.0.0 log-env-var
-      > echo $SOMETHING_IN_ENV_FILE "--silent"
-      some_value_here --silent
+      > echo $SOMETHING_IN_ENV_FILE
+      some_value_here
 
 
 
@@ -49,11 +49,10 @@ describe("lerna-run-nx-env-files", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      > package-X:log-env-var --silent
+      > package-X:log-env-var
 
       > package-X@0.0.0 log-env-var
-      > echo $SOMETHING_IN_ENV_FILE "--silent"
-      --silent
+      > echo $SOMETHING_IN_ENV_FILE
 
 
 

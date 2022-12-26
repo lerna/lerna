@@ -2,6 +2,7 @@ import { Fixture } from "@lerna/e2e-utils";
 
 (async () => {
   const fixture = await Fixture.create({
+    e2eRoot: process.env.E2E_ROOT,
     name: "lerna-run-nx-include-dependencies-with-target-config-in-package-json",
     packageManager: "npm",
     initializeGit: true,

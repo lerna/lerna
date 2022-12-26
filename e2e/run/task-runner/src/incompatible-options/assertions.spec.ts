@@ -17,7 +17,7 @@ describe("lerna-run-nx-incompatible-options", () => {
     if (!fixtureRootPath) {
       throw new Error("FIXTURE_ROOT_PATH environment variable is not set");
     }
-    fixture = Fixture.fromExisting(fixtureRootPath);
+    fixture = Fixture.fromExisting(process.env.E2E_ROOT, fixtureRootPath);
   });
 
   afterAll(() => fixture.destroy());
@@ -28,7 +28,7 @@ describe("lerna-run-nx-incompatible-options", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -76,7 +76,7 @@ describe("lerna-run-nx-incompatible-options", () => {
       lerna notice cli v999.9.9-e2e.0
       lerna WARN run "parallel", "sort", and "no-sort" are ignored when Nx targets are configured. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -124,7 +124,7 @@ describe("lerna-run-nx-incompatible-options", () => {
       lerna notice cli v999.9.9-e2e.0
       lerna WARN run "parallel", "sort", and "no-sort" are ignored when Nx targets are configured. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -172,7 +172,7 @@ describe("lerna-run-nx-incompatible-options", () => {
       lerna notice cli v999.9.9-e2e.0
       lerna WARN run "parallel", "sort", and "no-sort" are ignored when Nx targets are configured. See https://lerna.js.org/docs/lerna6-obsolete-options for details.
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -221,7 +221,7 @@ describe("lerna-run-nx-incompatible-options", () => {
       lerna notice filter including dependencies
       lerna info run Using the "include-dependencies" option when Nx targets are configured will include both task dependencies detected by Nx and project dependencies detected by Lerna. See https://lerna.js.org/docs/lerna6-obsolete-options#--include-dependencies for details.
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X

@@ -17,7 +17,7 @@ describe("lerna-run-nx-include-dependencies-without-nx-json", () => {
     if (!fixtureRootPath) {
       throw new Error("FIXTURE_ROOT_PATH environment variable is not set");
     }
-    fixture = Fixture.fromExisting(fixtureRootPath);
+    fixture = Fixture.fromExisting(process.env.E2E_ROOT, fixtureRootPath);
   });
 
   afterAll(() => fixture.destroy());
@@ -27,16 +27,16 @@ describe("lerna-run-nx-include-dependencies-without-nx-json", () => {
 
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
-      lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies/lerna-workspace
+      lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies-without-nx-json/lerna-workspace
       lerna notice filter including "package-X"
       lerna info filter [ 'package-X' ]
       lerna verb run Nx target configuration was not found. Task dependencies will not be automatically included.
 
-      > package-X:print-name --silent
+      > package-X:print-name
 
       > package-X@0.0.0 print-name
-      > echo test-package-X "--silent"
-      test-package-X --silent
+      > echo test-package-X
+      test-package-X
 
 
 

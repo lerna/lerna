@@ -15,6 +15,7 @@ describe("lerna-changed", () => {
 
     beforeAll(async () => {
       fixture = await Fixture.create({
+        e2eRoot: process.env.E2E_ROOT,
         name: "lerna-changed-with-no-prior-release-tags",
         packageManager: "npm",
         initializeGit: true,
@@ -71,6 +72,7 @@ describe("lerna-changed", () => {
 
     beforeAll(async () => {
       fixture = await Fixture.create({
+        e2eRoot: process.env.E2E_ROOT,
         name: "lerna-changed-with-a-change-to-package-c-since-last-release",
         packageManager: "npm",
         initializeGit: true,
@@ -323,6 +325,7 @@ describe("lerna-changed", () => {
 
     beforeAll(async () => {
       fixture = await Fixture.create({
+        e2eRoot: process.env.E2E_ROOT,
         name: "lerna-changed-include-merged-tags",
         packageManager: "npm",
         initializeGit: true,

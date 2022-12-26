@@ -1,8 +1,12 @@
-import { E2E_ROOT } from "./fixture";
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const E2E_ROOT = process.env.E2E_ROOT!;
 
-const e2eRootWithoutLeadingSlash = E2E_ROOT.replace(/^\//, "");
+function getE2EWithoutLeadingSlash(): string {
+  return E2E_ROOT.replace(/^\//, "");
+}
+
 function containsE2ERootWithNoLeadingSlash(str: string): boolean {
-  return new RegExp(`(?<!/)${e2eRootWithoutLeadingSlash}`).test(str);
+  return new RegExp(`(?<!/)${getE2EWithoutLeadingSlash()}`).test(str);
 }
 
 export function normalizeCommitSHAs(str: string): string {
@@ -20,7 +24,7 @@ export function normalizeCommitSHAs(str: string): string {
  */
 export function normalizeEnvironment(str: string): string {
   const normalized = str
-    .replaceAll(/\/private\/tmp\//g, "/tmp/")
+    .replaceAll(/\/private/g, "")
     .replaceAll(E2E_ROOT, "/tmp/lerna-e2e")
     .replaceAll(/lerna info ci enabled\n/g, "")
     // Replace fixture namespacing
@@ -34,7 +38,7 @@ export function normalizeEnvironment(str: string): string {
     return normalized;
   }
 
-  return normalized.replaceAll(e2eRootWithoutLeadingSlash, "tmp/lerna-e2e");
+  return normalized.replaceAll(getE2EWithoutLeadingSlash(), "tmp/lerna-e2e");
 }
 
 /**

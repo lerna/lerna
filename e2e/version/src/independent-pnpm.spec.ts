@@ -14,6 +14,7 @@ describe("lerna-version-independent-pnpm", () => {
 
   beforeEach(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-version-independent",
       packageManager: "pnpm",
       initializeGit: true,

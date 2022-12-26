@@ -1,9 +1,16 @@
+set -e
+
 DIR=$(dirname "$0")
 ONLY=$1
 
-UPDATE_SNAPSHOTS=$2
-if [ "$UPDATE_SNAPSHOTS" == "--update-snapshots" ] || [ "$UPDATE_SNAPSHOTS" == "-u" ]; then
+if [ "$ONLY" == "--update-snapshots" ] || [ "$ONLY" == "-u" ]; then
+    ONLY=""
     UPDATE_SNAPSHOTS=true
+else
+    UPDATE_SNAPSHOTS=$2
+    if [ "$UPDATE_SNAPSHOTS" == "--update-snapshots" ] || [ "$UPDATE_SNAPSHOTS" == "-u" ]; then
+        UPDATE_SNAPSHOTS=true
+    fi
 fi
 
 for subdir in $DIR/*

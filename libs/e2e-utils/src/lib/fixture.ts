@@ -1,9 +1,7 @@
 import { joinPathFragments, readJsonFile, writeJsonFile } from "@nrwl/devkit";
 import { exec, spawn } from "child_process";
-import { ensureDir, ensureDirSync, existsSync, readFile, remove, writeFile } from "fs-extra";
-import isCI from "is-ci";
+import { ensureDir, existsSync, readFile, remove, writeFile } from "fs-extra";
 import { dump } from "js-yaml";
-import { dirSync } from "tmp";
 
 interface RunCommandOptions {
   silenceError?: boolean;
@@ -20,6 +18,7 @@ interface FixtureCreateOptions {
   runLernaInit: boolean;
   initializeGit: boolean;
   installDependencies: boolean;
+  e2eRoot: string;
   forceDeterministicTerminalOutput?: boolean;
 }
 
@@ -28,12 +27,6 @@ type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string
 const PNPM_STORE = "../.pnpm-store";
 const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4872/";
-
-export const E2E_ROOT = isCI
-  ? dirSync({ prefix: "lerna-e2e-" }).name
-  : joinPathFragments("/tmp", "lerna-e2e");
-
-ensureDirSync(E2E_ROOT);
 
 /**
  * A initialized Fixture creates an entry within /tmp/lerna-e2e for the given fixture name with the following structure:
@@ -44,11 +37,12 @@ ensureDirSync(E2E_ROOT);
  *
  */
 export class Fixture {
-  private readonly fixtureRootPath = joinPathFragments(E2E_ROOT, this.name);
+  private readonly fixtureRootPath = joinPathFragments(this.e2eRoot, this.name);
   private readonly fixtureWorkspacePath = joinPathFragments(this.fixtureRootPath, "lerna-workspace");
   private readonly fixtureOriginPath = joinPathFragments(this.fixtureRootPath, ORIGIN_GIT);
 
   constructor(
+    private readonly e2eRoot: string,
     private readonly name: string,
     private readonly packageManager: PackageManager = "npm",
     private readonly forceDeterministicTerminalOutput: boolean
@@ -60,9 +54,11 @@ export class Fixture {
     runLernaInit,
     initializeGit,
     installDependencies,
+    e2eRoot,
     forceDeterministicTerminalOutput,
   }: FixtureCreateOptions): Promise<Fixture> {
     const fixture = new Fixture(
+      e2eRoot,
       // Make the underlying name include the package manager and be globally unique
       uniq(`${name}-${packageManager}`),
       packageManager,
@@ -94,13 +90,13 @@ export class Fixture {
     return fixture;
   }
 
-  static fromExisting(fixtureRootPath: string, forceDeterministicTerminalOutput = false) {
-    const fixtureName = fixtureRootPath.split(E2E_ROOT).pop();
+  static fromExisting(e2eRoot: string, fixtureRootPath: string, forceDeterministicTerminalOutput = false) {
+    const fixtureName = fixtureRootPath.split(e2eRoot).pop();
     if (!fixtureName) {
       throw new Error(`Could not determine fixture name from path: ${fixtureRootPath}`);
     }
     const packageManager = Fixture.inferPackageManagerFromExistingFixture(fixtureRootPath);
-    return new Fixture(fixtureName, packageManager, forceDeterministicTerminalOutput);
+    return new Fixture(e2eRoot, fixtureName, packageManager, forceDeterministicTerminalOutput);
   }
 
   private static inferPackageManagerFromExistingFixture(fixtureRootPath: string): PackageManager {
