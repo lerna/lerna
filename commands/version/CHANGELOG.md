@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.3.0](https://github.com/lerna/lerna/compare/v6.2.0...v6.3.0) (2022-12-26)
+
+### Features
+
+- **version:** support custom command for git tag ([#2760](https://github.com/lerna/lerna/issues/2760)) ([6eac92f](https://github.com/lerna/lerna/commit/6eac92fe5a899895a530360724723f307cf349f3))
+- **version:** use npmClientArgs in npm install after lerna version ([#3434](https://github.com/lerna/lerna/issues/3434)) ([e019e3f](https://github.com/lerna/lerna/commit/e019e3f7fcb94cbd9da0a4ab69cb38b9c42ffdcd))
+
 # [6.2.0](https://github.com/lerna/lerna/compare/v6.1.0...v6.2.0) (2022-12-13)
 
 ### Features

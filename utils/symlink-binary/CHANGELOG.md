@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.3.0](https://github.com/lerna/lerna/compare/v6.2.0...v6.3.0) (2022-12-26)
+
+**Note:** Version bump only for package @lerna/symlink-binary
+
 # [6.2.0](https://github.com/lerna/lerna/compare/v6.1.0...v6.2.0) (2022-12-13)
 
 **Note:** Version bump only for package @lerna/symlink-binary
