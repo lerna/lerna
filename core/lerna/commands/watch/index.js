@@ -5,7 +5,7 @@
 const { Command } = require("@lerna/command");
 const { getFilteredPackages } = require("@lerna/filter-options");
 const { ValidationError } = require("@lerna/validation-error");
-const { watch } = require("../../../../../nx/build/packages/nx/src/command-line/watch");
+const { watch } = require("nx/src/command-line/watch");
 
 module.exports = factory;
 

@@ -61,11 +61,11 @@
     "@lerna/run": "file:../../commands/run",
     "@lerna/validation-error": "file:../validation-error",
     "@lerna/version": "file:../../commands/version",
-    "@nrwl/devkit": ">=14.8.6 < 16",
+    "@nrwl/devkit": ">=15.4.1 < 16",
     "import-local": "^3.0.2",
     "inquirer": "^8.2.4",
     "npmlog": "^6.0.2",
-    "nx": ">=14.8.6 < 16",
+    "nx": ">=15.4.1 < 16",
     "typescript": "^3 || ^4"
   }
 }
