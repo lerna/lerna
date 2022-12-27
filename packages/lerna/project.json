@@ -2,7 +2,7 @@
   "name": "lerna",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/lerna/src",
-  "projectType": "library",
+  "projectType": "application",
   "targets": {
     "build": {
       "dependsOn": ["compile"],
@@ -10,20 +10,27 @@
       "options": {
         "cwd": "packages/lerna/dist",
         "parallel": false,
-        "commands": [
-          "cp -r src/* .",
-          "rm -rf src package.json"
-        ]
+        "commands": ["rm -rf package.json"]
       }
     },
     "compile": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nrwl/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "packages/lerna/dist",
         "main": "packages/lerna/src/index.ts",
         "tsConfig": "packages/lerna/tsconfig.lib.json",
-        "assets": []
+        "assets": [],
+        "thirdParty": false,
+        "platform": "node",
+        "format": ["cjs"],
+        "additionalEntryPoints": [
+          "packages/lerna/src/cli.ts",
+          "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts"
+        ],
+        "esbuildOptions": {
+          "external": ["*package.json"]
+        }
       }
     },
     "lint": {

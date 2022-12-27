@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
 
+import { core } from '@lerna/core';
+
 const cli = require("@lerna/cli");
 
 const addCmd = require("@lerna/add/command");
@@ -22,11 +24,13 @@ const versionCmd = require("@lerna/version/command");
 const repairCmd = require("./commands/repair");
 const addCachingCmd = require("./commands/add-caching");
 
-const pkg = require("../package.json");
+core();
 
 module.exports = main;
 
 function main(argv: NodeJS.Process["argv"]) {
+  const pkg = require("../package.json");
+
   const context = {
     lernaVersion: pkg.version,
   };
