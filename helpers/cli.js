@@ -83,7 +83,7 @@ exports.cliRunner = function cliRunner(cwd, env) {
   };
 
   // eslint-disable-next-line node/no-unpublished-require, node/no-missing-require
-  const LERNA_BIN = require.resolve("../core/lerna/dist/cli");
+  const LERNA_BIN = require.resolve("../packages/lerna/dist/cli");
 
   return (...args) => execa("node", [LERNA_BIN].concat(args), opts);
 };

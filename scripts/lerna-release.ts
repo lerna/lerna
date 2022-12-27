@@ -58,6 +58,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
   "workspaces": [
     "commands/*",
     "core/*",
+    "packages/*",
     "utils/*"
   ]
 }`;

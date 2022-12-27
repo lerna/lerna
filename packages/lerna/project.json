@@ -1,14 +1,14 @@
 {
   "name": "lerna",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "core/lerna/src",
+  "sourceRoot": "packages/lerna/src",
   "projectType": "library",
   "targets": {
     "build": {
       "dependsOn": ["compile"],
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "core/lerna/dist",
+        "cwd": "packages/lerna/dist",
         "parallel": false,
         "commands": [
           "cp -r src/* .",
@@ -20,9 +20,9 @@
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "core/lerna/dist",
-        "main": "core/lerna/src/index.ts",
-        "tsConfig": "core/lerna/tsconfig.lib.json",
+        "outputPath": "packages/lerna/dist",
+        "main": "packages/lerna/src/index.ts",
+        "tsConfig": "packages/lerna/tsconfig.lib.json",
         "assets": []
       }
     },
@@ -30,14 +30,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["core/lerna/**/*.ts"]
+        "lintFilePatterns": ["packages/lerna/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "core/lerna/jest.config.ts",
+        "jestConfig": "packages/lerna/jest.config.ts",
         "passWithNoTests": true
       }
     }
