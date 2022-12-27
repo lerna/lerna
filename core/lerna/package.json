@@ -14,14 +14,11 @@
     "email": "sebmck@gmail.com"
   },
   "bin": {
-    "lerna": "cli.js"
+    "lerna": "dist/cli.js"
   },
   "files": [
-    "index.js",
-    "cli.js",
+    "dist",
     "schemas/lerna-schema.json",
-    "migrations",
-    "commands",
     "migrations.json"
   ],
   "engines": {
@@ -37,9 +34,6 @@
   },
   "nx-migrations": {
     "migrations": "./migrations.json"
-  },
-  "scripts": {
-    "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
     "@lerna/add": "file:../../commands/add",

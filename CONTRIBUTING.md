@@ -129,7 +129,7 @@ You will need two different terminal windows for this as one of them will contai
 - Run `npm adduser --registry http://localhost:4873` in Terminal 2 (real credentials are not required, you just need to
   be logged in. You can use test/test/test@test.io.)
 - Run `npm run local-registry enable` in Terminal 2
-- Run `npm run local-release 999.9.9 --local` in Terminal 2 - you can choose any nonexistent version number here, but it's recommended to use something which is different from the current major
+- Run `npm run lerna-release 999.9.9 --local` in Terminal 2 - you can choose any nonexistent version number here, but it's recommended to use something which is different from the current major
 
 You can then install your local version of lerna wherever you want by leveraging the `--registry` flag on the npm/npx client.
 

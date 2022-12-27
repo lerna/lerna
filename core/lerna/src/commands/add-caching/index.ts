@@ -1,20 +1,22 @@
-// @ts-check
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
+/* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
 
 const { Command } = require("@lerna/command");
-const { writeJsonFile, readJsonFile, workspaceRoot, joinPathFragments } = require("@nrwl/devkit");
+import { joinPathFragments, readJsonFile, workspaceRoot, writeJsonFile } from "@nrwl/devkit";
 const inquirer = require("inquirer");
 const log = require("npmlog");
 
 module.exports = factory;
 
-function factory(argv) {
+function factory(argv: NodeJS.Process["argv"]) {
   return new AddCachingCommand(argv);
 }
 
 class AddCachingCommand extends Command {
-  constructor(argv) {
+  constructor(argv: NodeJS.Process['argv']) {
     super(argv, { skipValidations: true });
   }
 

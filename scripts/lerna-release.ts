@@ -6,8 +6,8 @@ import { URL } from "url";
 import { join } from "path";
 
 // JH: removed * as from both of these because of different tsconfig settings between lerna and nx
-import version from "@lerna/version/index";
-import publish from "@lerna/publish/index";
+import version from "@lerna/version";
+import publish from "@lerna/publish";
 
 function hideFromGitIndex(uncommittedFiles: string[]) {
   execSync(`git update-index --assume-unchanged ${uncommittedFiles.join(" ")}`);
@@ -148,7 +148,7 @@ async function parseArgs() {
     // JH: refactored to make it compatible with yargs 16, which lerna uses
     await yargs
       // JH: changed to `npm run`
-      .scriptName("npm run local-release")
+      .scriptName("npm run lerna-release")
       .wrap(144)
       // TODO: why is this showing as a type error in lerna but not nx
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

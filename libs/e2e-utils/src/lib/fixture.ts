@@ -76,10 +76,14 @@ export class Fixture {
 
     await fixture.setNpmRegistry();
 
+    console.log('pre init');
+
     if (runLernaInit) {
       const initOptions = packageManager === "pnpm" ? ({ keepDefaultOptions: true } as const) : {};
       await fixture.lernaInit("", initOptions);
     }
+
+    console.log('post init');
 
     await fixture.initializeNpmEnvironment();
 
@@ -182,6 +186,7 @@ export class Fixture {
    */
   async lernaInit(args?: string, options?: { keepDefaultOptions?: true }): Promise<RunCommandResult> {
     let execCommandResult: Promise<RunCommandResult>;
+    console.log(`npx --registry=${REGISTRY} --yes lerna@${getPublishedVersion()} init ${args || ""}`);
     switch (this.packageManager) {
       case "npm":
         execCommandResult = this.exec(
@@ -409,21 +414,25 @@ export class Fixture {
 
       childProcess.stdout.setEncoding("utf8");
       childProcess.stdout.on("data", (chunk) => {
+        console.log({ chunk });
         stdout += chunk;
         combinedOutput += chunk;
       });
 
       childProcess.stderr.setEncoding("utf8");
       childProcess.stderr.on("data", (chunk) => {
+        console.log({ errChunk: chunk });
         stderr += chunk;
         combinedOutput += chunk;
       });
 
       childProcess.on("error", (err) => {
+        console.log({ err });
         error = err;
       });
 
       childProcess.on("close", (code) => {
+        console.log({ code });
         if (!opts.silenceError) {
           if (error) {
             reject(error);

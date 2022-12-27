@@ -5,8 +5,7 @@
   "workspaces": [
     "commands/*",
     "core/*",
-    "utils/*",
-    "e2e"
+    "utils/*"
   ],
   "volta": {
     "node": "16.15.0",
@@ -34,7 +33,7 @@
     "test": "jest && nx run-many --target=test --projects=\"libs-*,nx-*\"",
     "e2e-start-local-registry": "node ./scripts/e2e-start-local-registry.js",
     "e2e-build-package-publish": "ts-node -P ./scripts/tsconfig.e2e.json ./scripts/e2e-build-package-publish.ts",
-    "local-release": "ts-node -P ./scripts/tsconfig.scripts.json ./scripts/local-release",
+    "lerna-release": "ts-node -P ./scripts/tsconfig.scripts.json ./scripts/lerna-release",
     "local-registry": "./scripts/local-registry.sh"
   },
   "repository": {

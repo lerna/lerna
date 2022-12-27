@@ -13,6 +13,9 @@ workspaceRoot=$(pwd)
 # Teardown any old outputs
 rm -rf ./dist
 
+# Build any packages which require a build step
+npx nx run-many --target=build --all --exclude=nx-plugin
+
 # Resolve the packages using lerna itself
 IFS=$'\n' read -d '' -a packageLocations < <((./node_modules/node-jq/bin/jq -c -r '.[].location') <<<"$(npx lerna list --json)")
 
@@ -23,3 +26,4 @@ for packageLocation in "${packageLocations[@]}"; do
 done
 
 echo "Successfully copied all ${#packageLocations[@]} packages to ./dist"
+

@@ -1,20 +1,23 @@
-// @ts-check
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 "use strict";
 
 const { Command } = require("@lerna/command");
 const log = require("npmlog");
 const { repair } = require("nx/src/command-line/repair");
-const migrationsJson = require("../../migrations.json");
+const migrationsJson = require("../../../migrations.json");
 
 module.exports = factory;
 
-function factory(argv) {
+function factory(argv: NodeJS.Process['argv']) {
   return new RepairCommand(argv);
 }
 
 class RepairCommand extends Command {
-  constructor(argv) {
+  constructor(argv: NodeJS.Process['argv']) {
     super(argv, { skipValidations: true });
   }
 

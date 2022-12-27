@@ -1,10 +1,9 @@
-// @ts-check
-const { createTreeWithEmptyWorkspace } = require("@nrwl/devkit/testing");
-const { writeJson, readJson } = require("@nrwl/devkit");
-const { default: removeUnnecessaryUseNxMigration } = require("./remove-unnecessary-use-nx");
+import { readJson, Tree, writeJson } from "@nrwl/devkit";
+import { createTreeWithEmptyWorkspace } from "@nrwl/devkit/testing";
+import removeUnnecessaryUseNxMigration from "./remove-unnecessary-use-nx";
 
 describe("remove-unnecessary-use-nx migration", () => {
-  let tree;
+  let tree: Tree;
 
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();

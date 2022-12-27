@@ -4,9 +4,6 @@ const execa = require("execa");
 const path = require("path");
 const lernaCLI = require("@lerna/cli");
 
-// eslint-disable-next-line node/no-unpublished-require
-const LERNA_BIN = require.resolve("../core/lerna/cli");
-
 /**
  * A higher-order function to help with passing _actual_ yargs-parsed argv
  * into command constructors (instead of artificial direct parameters).
@@ -84,6 +81,9 @@ exports.cliRunner = function cliRunner(cwd, env) {
     // when debugging integration test snapshots, uncomment next line
     // stdio: ["ignore", "inherit", "inherit"],
   };
+
+  // eslint-disable-next-line node/no-unpublished-require, node/no-missing-require
+  const LERNA_BIN = require.resolve("../core/lerna/dist/cli");
 
   return (...args) => execa("node", [LERNA_BIN].concat(args), opts);
 };
