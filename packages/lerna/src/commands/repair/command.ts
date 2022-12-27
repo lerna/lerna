@@ -1,31 +1,59 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 "use strict";
 
-import type { Arguments, Argv } from "yargs";
+const { Command } = require("@lerna/command");
+const log = require("npmlog");
+const { repair } = require("nx/src/command-line/repair");
+const migrationsJson = require("../../../migrations.json");
 
-/**
- * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
- */
-exports.command = "repair";
+module.exports = factory;
 
-exports.describe = "Runs automated migrations to repair the state of a lerna repo";
+function factory(argv: NodeJS.Process['argv']) {
+  return new RepairCommand(argv);
+}
 
-exports.builder = (yargs: Argv) => {
-  yargs.options({
-    /**
-     * equivalent to --loglevel=verbose, but added explicitly here because the repair()
-     * output will potentially contain instructions to run with --verbose
-     */
-    verbose: {
-      hidden: true,
-      type: "boolean",
-    },
-  });
-  return yargs;
-};
+class RepairCommand extends Command {
+  constructor(argv: NodeJS.Process['argv']) {
+    super(argv, { skipValidations: true });
+  }
 
-exports.handler = function handler(argv: Arguments) {
-  // eslint-disable-next-line global-require
-  return require(".")(argv);
-};
+  // eslint-disable-next-line class-methods-use-this
+  initialize() {}
+
+  async execute() {
+    this.configureNxOutput();
+    const verbose = this.options?.verbose ? true : log.level === "verbose";
+
+    const lernaMigrations = Object.entries(migrationsJson.generators).map(([name, migration]) => {
+      return /** @type {const} */ ({
+        package: "lerna",
+        cli: "nx",
+        name,
+        description: migration.description,
+        version: migration.version,
+      });
+    });
+
+    await repair({ verbose }, lernaMigrations);
+  }
+
+  configureNxOutput() {
+    try {
+      // eslint-disable-next-line global-require
+      const nxOutput = require("nx/src/utils/output");
+      nxOutput.output.cliName = "Lerna";
+      nxOutput.output.formatCommand = (taskId) => taskId;
+      return nxOutput;
+    } catch (err) {
+      this.logger.error("There was a critical issue when trying to execute the repair command.");
+      // Rethrow so that the lerna logger can automatically handle the unexpected error
+      throw err;
+    }
+  }
+}
+
+module.exports.RepairCommand = RepairCommand;
