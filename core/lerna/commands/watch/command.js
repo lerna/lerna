@@ -24,6 +24,7 @@ exports.builder = (yargs) => {
     })
     .middleware((args) => {
       const { "--": underscore } = args;
+      // eslint-disable-next-line no-param-reassign
       args.command = underscore?.[0];
     }, true);
 
