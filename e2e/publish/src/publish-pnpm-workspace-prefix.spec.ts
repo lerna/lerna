@@ -20,6 +20,7 @@ describe("lerna-publish-workspace-prefix-pnpm", () => {
 
   beforeEach(async () => {
     fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
       name: "lerna-publish-workspace-prefix",
       packageManager: "pnpm",
       initializeGit: true,
