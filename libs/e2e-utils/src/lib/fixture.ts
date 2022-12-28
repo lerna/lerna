@@ -273,6 +273,68 @@ export class Fixture {
     }
   }
 
+  async lernaWatch(inputArgs: string): Promise<(timeoutMs?: number) => Promise<RunCommandResult>> {
+    return new Promise((resolve, reject) => {
+      const command = `npx --offline --no lerna watch --verbose ${inputArgs}`;
+
+      let stdout = "";
+      let stderr = "";
+      let combinedOutput = "";
+      let error: Error | null = null;
+
+      const createResult = (): RunCommandResult => ({
+        stdout: stripConsoleColors(stdout),
+        stderr: stripConsoleColors(stderr),
+        combinedOutput: stripConsoleColors(combinedOutput),
+      });
+
+      const childProcess = spawn(command, {
+        shell: true,
+        cwd: this.fixtureWorkspacePath,
+        env: {
+          ...process.env,
+          FORCE_COLOR: "false",
+        },
+      });
+
+      childProcess.stdout.setEncoding("utf8");
+      childProcess.stdout.on("data", (chunk) => {
+        stdout += chunk;
+        combinedOutput += chunk;
+
+        if (chunk.toString().trim().includes("watch process waiting")) {
+          resolve(
+            (timeoutMs = 6000) =>
+              new Promise((resolve) => {
+                setTimeout(() => {
+                  childProcess.kill();
+                  resolve(createResult());
+                }, timeoutMs);
+              })
+          );
+        }
+      });
+
+      childProcess.stderr.setEncoding("utf8");
+      childProcess.stderr.on("data", (chunk) => {
+        stderr += chunk;
+        combinedOutput += chunk;
+      });
+
+      childProcess.on("error", (err) => {
+        error = err;
+      });
+
+      childProcess.on("close", () => {
+        if (error) {
+          reject(error);
+        } else if (stderr.includes("lerna ERR!")) {
+          reject(new Error(stderr));
+        }
+      });
+    });
+  }
+
   async addNxJsonToWorkspace(): Promise<void> {
     writeJsonFile(this.getWorkspacePath("nx.json"), {
       extends: "nx/presets/npm.json",
