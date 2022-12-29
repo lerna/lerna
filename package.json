@@ -132,6 +132,7 @@
     "@types/node": "16.11.7",
     "@types/npm-package-arg": "^6.1.1",
     "@types/npmlog": "^4.1.4",
+    "@types/strong-log-transformer": "^1.0.0",
     "@types/tmp": "^0.2.3",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",

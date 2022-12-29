@@ -1,7 +1,7 @@
-import os from "os";
-const chalk = require("chalk");
 import execa from "execa";
-const logTransformer = require("strong-log-transformer");
+import os from "os";
+import logTransformer from "strong-log-transformer";
+import * as chalk from "chalk";
 
 // TODO: Try and confirm if pkg should be of type `Package` from @lerna/package
 type WithLernaPackage<T> = T & { pkg?: any };
@@ -68,7 +68,7 @@ export function spawnStreaming(
   const stderrOpts = {} as any; // mergeMultiline causes escaped newlines :P
 
   if (prefix) {
-    const colorName = colorWheel[currentColor % NUM_COLORS];
+    const colorName = colorWheel[currentColor % NUM_COLORS] as typeof chalk.Color;
     const color = chalk[colorName];
 
     currentColor += 1;
