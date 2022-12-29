@@ -15,8 +15,13 @@ Positionals:
   name  The package name (including scope), which must be locally unique _and_
         publicly available                                   [string] [required]
   loc   A custom package location, defaulting to the first configured package
-        location                                                        [string]
+        location. The location must match a configured packages directory.
+                                                                        [string]
+```
 
+**Note**: For more info on how Lerna package directories are configured, see https://lerna.js.org/docs/faq#how-does-lerna-detect-packages.
+
+```
 Command Options:
   --access        When using a scope, set publishConfig.access value
                              [choices: "public", "restricted"] [default: public]

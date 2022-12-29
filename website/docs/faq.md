@@ -89,3 +89,11 @@ dependencies:
   post:
     - npm run bootstrap
 ```
+
+## How does Lerna detect packages?
+
+By default, Lerna uses the `workspaces` property in `package.json` to search for packages. For details on this property, see the [npm documentation](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#workspaces) or the [Yarn documentation](https://classic.yarnpkg.com/lang/en/docs/workspaces/).
+
+If you are using `pnpm`, you might have set `npmClient` to `pnpm` in `lerna.json`. In this case, Lerna will use the `packages` property in `pnpm-workspace.yaml` to search for packages. For details on this property, see the [pnpm documentation](https://pnpm.io/workspaces).
+
+If you are using an older version of Lerna or have explicitly opted out of using workspaces, then Lerna will use the `packages` property in `lerna.json` to search for packages.
