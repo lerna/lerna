@@ -31,7 +31,6 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/global-options": "file:../global-options",
     "dedent": "^0.7.0",
     "npmlog": "^6.0.2",
     "yargs": "^16.2.0"

@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
 
-import { core } from '@lerna/core';
-
-const cli = require("@lerna/cli");
+import { lernaCLI } from '@lerna/core';
 
 const addCmd = require("@lerna/add/command");
 const bootstrapCmd = require("@lerna/bootstrap/command");
@@ -24,8 +22,6 @@ const versionCmd = require("@lerna/version/command");
 const repairCmd = require("./commands/repair");
 const addCachingCmd = require("./commands/add-caching");
 
-core();
-
 module.exports = main;
 
 function main(argv: NodeJS.Process["argv"]) {
@@ -35,7 +31,7 @@ function main(argv: NodeJS.Process["argv"]) {
     lernaVersion: pkg.version,
   };
 
-  return cli()
+  return lernaCLI()
     .command(addCmd)
     .command(addCachingCmd)
     .command(bootstrapCmd)

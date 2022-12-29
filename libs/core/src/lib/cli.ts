@@ -1,11 +1,7 @@
-"use strict";
-
 const dedent = require("dedent");
-const log = require("npmlog");
+import log from "npmlog";
 const yargs = require("yargs/yargs");
-const os = require("os");
-
-module.exports = lernaCLI;
+import os from "os";
 
 /**
  * A factory that returns a yargs() instance configured with everything except commands.
@@ -14,7 +10,7 @@ module.exports = lernaCLI;
  * @param {Array = []} argv
  * @param {String = process.cwd()} cwd
  */
-function lernaCLI(argv, cwd) {
+export function lernaCLI(argv?: any, cwd?: any) {
   const cli = yargs(argv, cwd);
 
   return globalOptions(cli)
@@ -22,7 +18,7 @@ function lernaCLI(argv, cwd) {
     .demandCommand(1, "A command is required. Pass --help to see all available commands and options.")
     .recommendCommands()
     .strict()
-    .fail((msg, err) => {
+    .fail((msg: any, err: any) => {
       // certain yargs validations throw strings :P
       const actual = err || new Error(msg);
 
@@ -48,7 +44,7 @@ function lernaCLI(argv, cwd) {
     `);
 }
 
-function globalOptions(argv) {
+function globalOptions(argv: any) {
   // the global options applicable to _every_ command
   const opts = {
     loglevel: {
