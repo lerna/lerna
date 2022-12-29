@@ -27,6 +27,10 @@ describe("lerna-create", () => {
       runLernaInit: true,
       installDependencies: true,
     });
+    await fixture.updateJson("lerna.json", (json) => ({
+      ...json,
+      packages: ["packages/*", "apps/*", "libs/react/*"],
+    }));
   });
   afterAll(() => fixture.destroy());
 
@@ -1174,6 +1178,84 @@ describe("lerna-create", () => {
 
         `);
       });
+    });
+
+    describe("and a location", () => {
+      it("one segment long", async () => {
+        const packageName = "one-segment";
+        await fixture.lerna(`create @scope/${packageName} apps -y`);
+
+        const fileExists = await fixture.workspaceFileExists(`apps/${packageName}/README.md`);
+        expect(fileExists).toBe(true);
+      });
+
+      it("two segments long", async () => {
+        const packageName = "two-segments";
+        await fixture.lerna(`create @scope/${packageName} libs/react -y`);
+
+        const fileExists = await fixture.workspaceFileExists(`libs/react/${packageName}/README.md`);
+        expect(fileExists).toBe(true);
+      });
+
+      it("two segments long relative path from the root", async () => {
+        const packageName = "two-segments-relative";
+        await fixture.lerna(`create @scope/${packageName} ./libs/react -y`);
+
+        const fileExists = await fixture.workspaceFileExists(`libs/react/${packageName}/README.md`);
+        expect(fileExists).toBe(true);
+      });
+
+      it("two segments long absolute path", async () => {
+        const packageName = "two-segments-absolute";
+        const absolutePath = fixture.getWorkspacePath("libs/react");
+        await fixture.lerna(`create @scope/${packageName} ${absolutePath} -y`);
+
+        const fileExists = await fixture.workspaceFileExists(`libs/react/${packageName}/README.md`);
+        expect(fileExists).toBe(true);
+      });
+
+      describe("throws an error", () => {
+        it("when the location does not match a configured workspace directory", async () => {
+          const packageName = "invalid-location-with-scope";
+          const result = await fixture.lerna(`create @scope/${packageName} invalid-location -y`, {
+            silenceError: true,
+          });
+
+          expect(result.combinedOutput).toMatchInlineSnapshot(`
+            lerna notice cli v999.9.9-e2e.0
+            lerna ERR! ENOPKGDIR Location "invalid-location" is not configured as a workspace directory.
+
+          `);
+        });
+      });
+    });
+
+    describe("throws an error", () => {
+      it("when the name is invalid and appears to be a path", async () => {
+        const packageName = "apps/@scope/invalid-package-name";
+        const result = await fixture.lerna(`create ${packageName} -y`, { silenceError: true });
+
+        expect(result.combinedOutput).toMatchInlineSnapshot(`
+          lerna notice cli v999.9.9-e2e.0
+          lerna ERR! ENOPKGNAME Invalid package name. Use the <loc> positional to specify package directory.
+          lerna ERR! ENOPKGNAME See https://github.com/lerna/lerna/tree/main/commands/create#usage for details.
+
+        `);
+      });
+    });
+  });
+
+  describe("throws an error", () => {
+    it("when package name appears to be a path", async () => {
+      const packageName = "apps/invalid-package-name";
+      const result = await fixture.lerna(`create ${packageName} -y`, { silenceError: true });
+
+      expect(result.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna ERR! ENOPKGNAME Invalid package name. Use the <loc> positional to specify package directory.
+        lerna ERR! ENOPKGNAME See https://github.com/lerna/lerna/tree/main/commands/create#usage for details.
+
+      `);
     });
   });
 
