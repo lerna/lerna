@@ -151,20 +151,22 @@ class CreateCommand extends Command {
   }
 
   _getPackagesDir(pkgLocation) {
+    const packageParentDirs = this.project.packageParentDirs;
+
     if (!pkgLocation) {
-      return this.project.packageParentDirs[0];
+      return packageParentDirs[0];
     }
 
     const normalizedPkgLocation = path
       .resolve(this.project.rootPath, path.normalize(pkgLocation))
       .toLowerCase();
-    const packageParentDirs = this.project.packageParentDirs.map((p) => p.toLowerCase());
+    const packageParentDirsLower = packageParentDirs.map((p) => p.toLowerCase());
 
     // using indexOf over includes due to platform differences (/private/tmp should match /tmp on macOS)
-    const matchingPath = packageParentDirs.find((p) => p.indexOf(normalizedPkgLocation) > -1);
+    const matchingPathIndex = packageParentDirsLower.findIndex((p) => p.indexOf(normalizedPkgLocation) > -1);
 
-    if (matchingPath) {
-      return matchingPath;
+    if (matchingPathIndex > -1) {
+      return packageParentDirs[matchingPathIndex];
     }
 
     throw new ValidationError(
