@@ -1197,6 +1197,14 @@ describe("lerna-create", () => {
         expect(fileExists).toBe(true);
       });
 
+      it("two segments long with mismatched casing", async () => {
+        const packageName = "two-segments-case-sensitivity";
+        await fixture.lerna(`create @scope/${packageName} Libs/React -y`);
+
+        const fileExists = await fixture.workspaceFileExists(`libs/react/${packageName}/README.md`);
+        expect(fileExists).toBe(true);
+      });
+
       it("two segments long relative path from the root", async () => {
         const packageName = "two-segments-relative";
         await fixture.lerna(`create @scope/${packageName} ./libs/react -y`);
