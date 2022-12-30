@@ -23,6 +23,7 @@
       "@lerna/nx-plugin": ["libs/nx-plugin/src/index.ts"],
       "@lerna/publish": ["commands/publish/index.js"],
       "@lerna/test-helpers": ["libs/test-helpers/src/index.ts"],
+      "@lerna/test-helpers/*": ["libs/test-helpers/*"],
       "@lerna/version": ["commands/version/index.js"]
     }
   },

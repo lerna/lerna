@@ -11,6 +11,7 @@ export default {
   transform: {
     "^.+\\.[tj]sx?$": "ts-jest",
   },
-  moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
+  // Needed to add "json" to avoid issue resolving spdx-license-ids
+  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
   coverageDirectory: "../../coverage/libs/core",
 };

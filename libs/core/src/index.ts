@@ -1,4 +1,4 @@
-export * from "./lib/child-process";
+
 export * from "./lib/cli";
 export * from "./lib/core";
 export { Package } from "./lib/package";

@@ -120,7 +120,8 @@
     "write-file-atomic": "^4.0.1",
     "write-json-file": "^4.3.0",
     "write-pkg": "^4.0.0",
-    "yargs": "^16.2.0"
+    "yargs": "^16.2.0",
+    "yargs-parser": "20.2.4"
   },
   "devDependencies": {
     "@lerna-test/helpers": "file:helpers",
@@ -134,6 +135,8 @@
     "@swc-node/register": "^1.4.2",
     "@swc/cli": "~0.1.55",
     "@swc/core": "^1.2.173",
+    "@types/clone-deep": "^4.0.1",
+    "@types/conventional-recommended-bump": "^6.1.0",
     "@types/dedent": "^0.7.0",
     "@types/fs-extra": "^9.0.13",
     "@types/glob-parent": "^5.1.1",
@@ -145,10 +148,12 @@
     "@types/normalize-path": "^3.0.0",
     "@types/npm-package-arg": "^6.1.1",
     "@types/npmlog": "^4.1.4",
+    "@types/pify": "^5.0.1",
     "@types/strong-log-transformer": "^1.0.0",
     "@types/temp-dir": "^1.0.0",
     "@types/tmp": "^0.2.3",
     "@types/uuid": "^8.3.4",
+    "@types/write-file-atomic": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
     "all-contributors-cli": "^6.20.0",
