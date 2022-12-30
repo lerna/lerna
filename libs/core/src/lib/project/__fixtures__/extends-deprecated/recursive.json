@@ -1,0 +1,14 @@
+{
+  "extends": "./base.json",
+  "packages": [
+    "recursive-pkgs/*"
+  ],
+  "cdVersion": "prerelease",
+  "commands": {
+    "publish": {
+      "ignore": [
+        "ignored-file"
+      ]
+    }
+  }
+}

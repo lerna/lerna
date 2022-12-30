@@ -17,7 +17,8 @@ module.exports = {
   modulePathIgnorePatterns: ["/__fixtures__/"],
   roots: ["<rootDir>/commands", "<rootDir>/core", "<rootDir>/utils"],
   setupFiles: ["@lerna-test/helpers/silence-logging", "@lerna-test/helpers/npm/set-npm-userconfig"],
-  setupFilesAfterEnv: ["@lerna-test/helpers/setup-unit-test-timeout.js"],
+  // allow 45s timeout in an attempt to lessen flakiness of unit tests...
+  testTimeout: 45e3,
   testEnvironment: "node",
   verbose: !!process.env.CI,
   // projects: getJestProjects(),

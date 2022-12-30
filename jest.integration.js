@@ -4,10 +4,11 @@ module.exports = {
   modulePathIgnorePatterns: ["/__fixtures__/"],
   roots: ["<rootDir>/integration"],
   setupFiles: ["@lerna-test/helpers/npm/set-npm-userconfig"],
-  setupFilesAfterEnv: ["@lerna-test/helpers/setup-integration-timeout.js"],
   snapshotSerializers: ["@lerna-test/helpers/serializers/serialize-placeholders"],
   testEnvironment: "node",
   verbose: true,
+  // allow CLI integration tests to run for awhile (300s)
+  testTimeout: 300e3,
 };
 
 // split tests into smaller chunks because windows is agonizingly slow

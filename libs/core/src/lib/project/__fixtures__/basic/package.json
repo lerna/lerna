@@ -1,0 +1,7 @@
+{
+  "name": "test",
+  "devDependencies": {
+    "external": "^1.0.0",
+    "lerna": "500.0.0"
+  }
+}

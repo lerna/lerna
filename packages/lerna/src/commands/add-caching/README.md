@@ -34,7 +34,7 @@ If you mark `build` as needing topological order, the `nx.json` file will look l
 
 ### Which scripts are cacheable?
 
-Each script selected will be cached by Lerna.  Only select scripts that do not depend on any external inputs (like network calls).  `build` and `test` are usually cacheable.  `start` and `serve` are usually not cacheable.  Sometimes `e2e` is cacheable.
+Each script selected will be cached by Lerna. Only select scripts that do not depend on any external inputs (like network calls). `build` and `test` are usually cacheable. `start` and `serve` are usually not cacheable. Sometimes `e2e` is cacheable.
 
 If you mark `build` as cacheable, the `nx.json` file will look like this:
 
@@ -55,7 +55,7 @@ If you mark `build` as cacheable, the `nx.json` file will look like this:
 
 ### Does the "[script_name]" script create any outputs?
 
-For each script selected as cacheable, the wizard will ask for an output path.  For builds this would be the build output.  For tests this would be any coverage reports.  The output path is relative to the project root.
+For each script selected as cacheable, the wizard will ask for an output path. For builds this would be the build output. For tests this would be any coverage reports. The output path is relative to the project root.
 
 If you specify `dist` as the output path for the `build` script, the `nx.json` file will look like this:
 
@@ -63,9 +63,7 @@ If you specify `dist` as the output path for the `build` script, the `nx.json` f
 {
   "targetDefaults": {
     "build": {
-      "outputs": [
-        "{projectRoot}/dist"
-      ]
+      "outputs": ["{projectRoot}/dist"]
     }
   }
 }

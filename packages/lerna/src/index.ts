@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
 
-import { lernaCLI } from '@lerna/core';
+import { lernaCLI } from "@lerna/core";
 
 const addCmd = require("@lerna/add/command");
 const bootstrapCmd = require("@lerna/bootstrap/command");

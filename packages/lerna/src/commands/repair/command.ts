@@ -12,12 +12,12 @@ const migrationsJson = require("../../../migrations.json");
 
 module.exports = factory;
 
-function factory(argv: NodeJS.Process['argv']) {
+function factory(argv: NodeJS.Process["argv"]) {
   return new RepairCommand(argv);
 }
 
 class RepairCommand extends Command {
-  constructor(argv: NodeJS.Process['argv']) {
+  constructor(argv: NodeJS.Process["argv"]) {
     super(argv, { skipValidations: true });
   }
 
@@ -29,13 +29,13 @@ class RepairCommand extends Command {
     const verbose = this.options?.verbose ? true : log.level === "verbose";
 
     const lernaMigrations = Object.entries(migrationsJson.generators).map(([name, migration]) => {
-      return /** @type {const} */ ({
+      return {
         package: "lerna",
         cli: "nx",
         name,
         description: migration.description,
         version: migration.version,
-      });
+      } as const;
     });
 
     await repair({ verbose }, lernaMigrations);

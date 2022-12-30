@@ -26,4 +26,4 @@ type: reference
 
 ## Filter Options
 
-Lerna commands can have filter options applied to control which packages they operate on.  Read more [here](https://github.com/lerna/lerna/tree/main/core/filter-options#readme)
+Lerna commands can have filter options applied to control which packages they operate on. Read more [here](https://github.com/lerna/lerna/tree/main/core/filter-options#readme)

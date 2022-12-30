@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/core/src",
   "projectType": "library",
+  "implicitDependencies": ["!test-helpers"],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",

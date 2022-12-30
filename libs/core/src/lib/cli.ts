@@ -1,7 +1,7 @@
-const dedent = require("dedent");
+import dedent from "dedent";
 import log from "npmlog";
-const yargs = require("yargs/yargs");
 import os from "os";
+import yargs from "yargs/yargs";
 
 /**
  * A factory that returns a yargs() instance configured with everything except commands.
@@ -26,6 +26,9 @@ export function lernaCLI(argv?: any, cwd?: any) {
       if (actual.name !== "ValidationError" && !actual.pkg) {
         // the recommendCommands() message is too terse
         if (/Did you mean/.test(actual.message)) {
+          // TODO: refactor to address type issues
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           log.error("lerna", `Unknown command "${cli.parsed.argv._[0]}"`);
         }
 

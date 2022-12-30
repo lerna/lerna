@@ -16,7 +16,7 @@ function factory(argv: NodeJS.Process["argv"]) {
 }
 
 class AddCachingCommand extends Command {
-  constructor(argv: NodeJS.Process['argv']) {
+  constructor(argv: NodeJS.Process["argv"]) {
     super(argv, { skipValidations: true });
   }
 

@@ -1,14 +1,19 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { initFixtureFactory, loggingOutput } from "@lerna/test-helpers";
+import { lernaCLI } from "./cli";
 import { ValidationError } from "./validation-error";
-const { loggingOutput } = require("@lerna-test/helpers/logging-output");
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
-const { lernaCLI } = require("./cli");
+
+const initFixture = initFixtureFactory(__dirname);
 
 function prepare(cwd: any) {
   // DRY setup for yargs instance
   return lernaCLI([], cwd).exitProcess(false).detectLocale(false).showHelpOnFail(false).wrap(null);
 }
 
-async function parse(instance: { parse: (arg0: any, arg1: (exitError: any, argv: any, output: any) => void) => void; }, args: string[]): Promise<any> {
+async function parse(
+  instance: { parse: (arg0: any, arg1: (exitError: any, argv: any, output: any) => void) => void },
+  args: string[]
+): Promise<any> {
   return new Promise((resolve, reject) => {
     instance.parse(args, (exitError: any, argv: any, output: any) => {
       if (exitError) {
