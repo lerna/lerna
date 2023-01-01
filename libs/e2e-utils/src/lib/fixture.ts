@@ -24,7 +24,7 @@ interface FixtureCreateOptions {
 
 type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string };
 
-const PNPM_STORE = "../.pnpm-store";
+const PNPM_STORE = "pnpm.store";
 const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4872/";
 
@@ -40,6 +40,7 @@ export class Fixture {
   private readonly fixtureRootPath = joinPathFragments(this.e2eRoot, this.name);
   private readonly fixtureWorkspacePath = joinPathFragments(this.fixtureRootPath, "lerna-workspace");
   private readonly fixtureOriginPath = joinPathFragments(this.fixtureRootPath, ORIGIN_GIT);
+  private readonly fixturePnpmStorePath = joinPathFragments(this.fixtureRootPath, PNPM_STORE);
 
   constructor(
     private readonly e2eRoot: string,
@@ -118,9 +119,9 @@ export class Fixture {
 
   private async setNpmRegistry(): Promise<void> {
     if (this.packageManager === "pnpm") {
-      await this.exec(`mkdir ${PNPM_STORE}`);
+      await this.exec(`mkdir ${this.fixturePnpmStorePath}`);
       await this.exec(
-        `echo "registry=${REGISTRY}\nstore-dir = ${PNPM_STORE}\nverify-store-integrity=false" > .npmrc`
+        `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false" > .npmrc`
       );
     }
   }
