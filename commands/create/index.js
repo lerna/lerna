@@ -52,12 +52,18 @@ class CreateCommand extends Command {
     // npm-package-arg handles all the edge-cases with scopes
     const { name, scope } = npa(pkgName);
 
+    if (!name && pkgName.includes("/")) {
+      throw new ValidationError(
+        "ENOPKGNAME",
+        "Invalid package name. Use the <loc> positional to specify package directory.\nSee https://github.com/lerna/lerna/tree/main/commands/create#usage for details."
+      );
+    }
+
     // optional scope is _not_ included in the directory name
     this.dirName = scope ? name.split("/").pop() : name;
     this.pkgName = name;
-    this.pkgsDir =
-      this.project.packageParentDirs.find((pd) => pd.indexOf(pkgLocation) > -1) ||
-      this.project.packageParentDirs[0];
+
+    this.pkgsDir = this._getPackagesDir(pkgLocation);
 
     this.camelName = camelCase(this.dirName);
 
@@ -142,6 +148,31 @@ class CreateCommand extends Command {
     this.setRepository();
 
     return Promise.resolve(this.setDependencies());
+  }
+
+  _getPackagesDir(pkgLocation) {
+    const packageParentDirs = this.project.packageParentDirs;
+
+    if (!pkgLocation) {
+      return packageParentDirs[0];
+    }
+
+    const normalizedPkgLocation = path
+      .resolve(this.project.rootPath, path.normalize(pkgLocation))
+      .toLowerCase();
+    const packageParentDirsLower = packageParentDirs.map((p) => p.toLowerCase());
+
+    // using indexOf over includes due to platform differences (/private/tmp should match /tmp on macOS)
+    const matchingPathIndex = packageParentDirsLower.findIndex((p) => p.indexOf(normalizedPkgLocation) > -1);
+
+    if (matchingPathIndex > -1) {
+      return packageParentDirs[matchingPathIndex];
+    }
+
+    throw new ValidationError(
+      "ENOPKGDIR",
+      `Location "${pkgLocation}" is not configured as a workspace directory.`
+    );
   }
 
   execute() {

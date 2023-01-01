@@ -163,6 +163,13 @@ export class Fixture {
   }
 
   /**
+   * Check if a workspace file exists.
+   */
+  async workspaceFileExists(file: string): Promise<boolean> {
+    return existsSync(this.getWorkspacePath(file));
+  }
+
+  /**
    * Execute a given command in the root of the lerna workspace under test within the fixture.
    * This has been given a terse name to help with readability in the spec files.
    */
