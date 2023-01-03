@@ -6,11 +6,11 @@ const { Command } = require("@lerna/command");
 const { getFilteredPackages } = require("@lerna/filter-options");
 const { ValidationError } = require("@lerna/validation-error");
 const { watch } = require("nx/src/command-line/watch");
+const { readNxJson } = require("nx/src/config/configuration");
 
 module.exports = factory;
 
 const getNxProjectNamesFromLernaPackageNames = (packageNames) => {
-  const { readNxJson } = require("nx/src/config/configuration");
   const nxJson = readNxJson();
   const nxConfiguredNpmScope = nxJson.npmScope;
 
