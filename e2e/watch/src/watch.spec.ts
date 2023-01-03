@@ -26,6 +26,10 @@ describe("lerna-watch", () => {
     await fixture.lerna("create package-a -y");
     await fixture.lerna("create package-b --dependencies package-a -y");
     await fixture.lerna("create package-c -y");
+    await fixture.updateJson("packages/package-c/package.json", (json) => ({
+      ...json,
+      name: "@scope/package-c",
+    }));
 
     await fixture.createInitialGitCommit();
   });
