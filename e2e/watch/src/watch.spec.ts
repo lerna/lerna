@@ -55,7 +55,7 @@ describe("lerna-watch", () => {
       lerna verb rootPath /tmp/lerna-e2e/lerna-watch/lerna-workspace
       lerna info watch Executing command "echo watch triggered" on changes in 3 packages.
 
-       >  NX   running with args: {"command":"echo watch triggered","projectNameEnvName":"LERNA_PACKAGE_NAME","fileChangesEnvName":"LERNA_FILE_CHANGES","includeDependentProjects":false,"projects":["package-a","package-b","package-c"],"verbose":true}
+       >  NX   running with args: {"command":"echo watch triggered","projectNameEnvName":"LERNA_PACKAGE_NAME","fileChangesEnvName":"LERNA_FILE_CHANGES","includeDependentProjects":false,"projects":["package-a","package-b","@scope/package-c"],"verbose":true}
 
 
        >  NX   starting watch process
@@ -98,9 +98,9 @@ describe("lerna-watch", () => {
   });
 
   describe("with --scope", () => {
-    it("should only watch only specified packages", async () => {
+    it("should watch only specified packages", async () => {
       const getWatchResult = await fixture.lernaWatch(
-        '--scope="package-a" --scope="package-c" -- "echo watch triggered"'
+        '--scope="package-a" --scope="@scope/package-c" -- "echo watch triggered"'
       );
 
       await createFile(fixture.getWorkspacePath("packages/package-a/my-file.txt"));
@@ -117,11 +117,11 @@ describe("lerna-watch", () => {
       expect(output.combinedOutput).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
         lerna verb rootPath /tmp/lerna-e2e/lerna-watch/lerna-workspace
-        lerna notice filter including ["package-a","package-c"]
-        lerna info filter [ 'package-a', 'package-c' ]
+        lerna notice filter including ["package-a","@scope/package-c"]
+        lerna info filter [ 'package-a', '@scope/package-c' ]
         lerna info watch Executing command "echo watch triggered" on changes in 2 packages.
 
-         >  NX   running with args: {"command":"echo watch triggered","projectNameEnvName":"LERNA_PACKAGE_NAME","fileChangesEnvName":"LERNA_FILE_CHANGES","includeDependentProjects":false,"projects":["package-a","package-c"],"verbose":true}
+         >  NX   running with args: {"command":"echo watch triggered","projectNameEnvName":"LERNA_PACKAGE_NAME","fileChangesEnvName":"LERNA_FILE_CHANGES","includeDependentProjects":false,"projects":["package-a","@scope/package-c"],"verbose":true}
 
 
          >  NX   starting watch process
@@ -242,7 +242,7 @@ describe("lerna-watch", () => {
       lerna verb rootPath /tmp/lerna-e2e/lerna-watch/lerna-workspace
       lerna info watch Executing command "echo $LERNA_PACKAGE_NAME: $LERNA_FILE_CHANGES" on changes in 3 packages.
 
-       >  NX   running with args: {"command":"echo $LERNA_PACKAGE_NAME: $LERNA_FILE_CHANGES","projectNameEnvName":"LERNA_PACKAGE_NAME","fileChangesEnvName":"LERNA_FILE_CHANGES","includeDependentProjects":false,"projects":["package-a","package-b","package-c"],"verbose":true}
+       >  NX   running with args: {"command":"echo $LERNA_PACKAGE_NAME: $LERNA_FILE_CHANGES","projectNameEnvName":"LERNA_PACKAGE_NAME","fileChangesEnvName":"LERNA_FILE_CHANGES","includeDependentProjects":false,"projects":["package-a","package-b","@scope/package-c"],"verbose":true}
 
 
        >  NX   starting watch process
@@ -271,9 +271,9 @@ describe("lerna-watch", () => {
        >  NX   no more commands to process
 
 
-       >  NX   about to run commands with these environments: [{"LERNA_PACKAGE_NAME":"package-c","LERNA_FILE_CHANGES":"packages/package-c/my-file.txt"}]
+       >  NX   about to run commands with these environments: [{"LERNA_PACKAGE_NAME":"@scope/package-c","LERNA_FILE_CHANGES":"packages/package-c/my-file.txt"}]
 
-      package-c: packages/package-c/my-file.txt
+      @scope/package-c: packages/package-c/my-file.txt
 
        >  NX   running complete, processing the next batch
 
