@@ -69,9 +69,6 @@ export function buildGraph(mapPackages = (pkg: any) => pkg): any {
     .map(mapPackages)
     .map((json) => new Package(json, `/test/packages/${json.name}`, "/test"));
 
-  // TODO: refactor to address type issues
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   return new PackageGraph(packages);
   // require("console").dir(graph, { compact: false })
 }

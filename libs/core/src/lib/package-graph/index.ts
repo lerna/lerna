@@ -19,7 +19,7 @@ export class PackageGraph extends Map<string, PackageGraphNode> {
   constructor(
     packages: Package[],
     graphType: "allDependencies" | "dependencies" = "allDependencies",
-    forceLocal: boolean
+    forceLocal?: boolean
   ) {
     super(packages.map((pkg) => [pkg.name, new PackageGraphNode(pkg)]));
 
@@ -262,7 +262,7 @@ export class PackageGraph extends Map<string, PackageGraphNode> {
    * @param {boolean} rejectCycles Whether or not to reject cycles
    * @returns {Set<CyclicPackageGraphNode>}
    */
-  collapseCycles(rejectCycles: boolean) {
+  collapseCycles(rejectCycles?: boolean): Set<CyclicPackageGraphNode> {
     const cyclePaths: string[] = [];
     const nodeToCycle = new Map<PackageGraphNode, CyclicPackageGraphNode>();
     const cycles = new Set<CyclicPackageGraphNode>();

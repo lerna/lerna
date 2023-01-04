@@ -18,9 +18,6 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../../core
 
 async function buildGraph(cwd: string) {
   const packages = await getPackages(cwd);
-  // TODO: refactor to address type issues
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   return new PackageGraph(packages);
 }
 

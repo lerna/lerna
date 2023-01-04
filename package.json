@@ -137,6 +137,7 @@
     "@swc/core": "^1.2.173",
     "@types/clone-deep": "^4.0.1",
     "@types/cmd-shim": "^5.0.0",
+    "@types/columnify": "^1.5.1",
     "@types/conventional-recommended-bump": "^6.1.0",
     "@types/dedent": "^0.7.0",
     "@types/fs-extra": "^9.0.13",
