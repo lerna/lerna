@@ -35,6 +35,12 @@ function maybeFormatFile(filePath) {
     return;
   }
   const config = resolvedPrettier.resolveConfig.sync(filePath);
+  const ignorePath = path.join(workspaceRoot, ".prettierignore");
+
+  if (resolvedPrettier.getFileInfo.sync(filePath, { ignorePath }).ignored) {
+    log.silly("version", `Skipped applying prettier to ignored file: ${filePath}`);
+    return;
+  }
   try {
     const input = fs.readFileSync(filePath, "utf8");
     fs.writeFileSync(filePath, resolvedPrettier.format(input, { ...config, filepath: filePath }), "utf8");
