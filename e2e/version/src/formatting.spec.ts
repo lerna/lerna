@@ -11,49 +11,48 @@ expect.addSnapshotSerializer({
 });
 
 describe("lerna-version-formatting", () => {
-  describe("npm", () => {
-    let fixture: Fixture;
+  let fixture: Fixture;
 
-    beforeEach(async () => {
-      fixture = await Fixture.create({
-        e2eRoot: process.env.E2E_ROOT,
-        name: "lerna-version-formatting",
-        packageManager: "npm",
-        initializeGit: true,
-        runLernaInit: true,
-        installDependencies: false,
-      });
-
-      await fixture.updateJson("package.json", (json: { devDependencies: Record<string, unknown> }) => ({
-        ...json,
-        devDependencies: {
-          ...json.devDependencies,
-          prettier: "^2.2.1",
-        },
-      }));
-      await fixture.install();
-
-      await writeFile(
-        fixture.getWorkspacePath(".prettierrc"),
-        JSON.stringify({
-          tabWidth: 6,
-        })
-      );
-      await writeFile(fixture.getWorkspacePath(".prettierignore"), "node_modules");
-
-      await fixture.lerna("create package-a -y");
-
-      await fixture.createInitialGitCommit();
-      await fixture.exec("git push origin test-main");
+  beforeEach(async () => {
+    fixture = await Fixture.create({
+      e2eRoot: process.env.E2E_ROOT,
+      name: "lerna-version-formatting",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: false,
     });
-    afterEach(() => fixture.destroy());
 
-    it("should format file if not in .prettierignore.", async () => {
-      await fixture.lerna("version patch -y");
+    await fixture.updateJson("package.json", (json: { devDependencies: Record<string, unknown> }) => ({
+      ...json,
+      devDependencies: {
+        ...json.devDependencies,
+        prettier: "^2.2.1",
+      },
+    }));
+    await fixture.install();
 
-      const packageJson = await fixture.readWorkspaceFile("packages/package-a/package.json");
+    await writeFile(
+      fixture.getWorkspacePath(".prettierrc"),
+      JSON.stringify({
+        tabWidth: 6,
+      })
+    );
+    await writeFile(fixture.getWorkspacePath(".prettierignore"), "node_modules");
 
-      expect(packageJson).toMatchInlineSnapshot(`
+    await fixture.lerna("create package-a -y");
+
+    await fixture.createInitialGitCommit();
+    await fixture.exec("git push origin test-main");
+  });
+  afterEach(() => fixture.destroy());
+
+  it("should format file if not in .prettierignore.", async () => {
+    await fixture.lerna("version patch -y");
+
+    const packageJson = await fixture.readWorkspaceFile("packages/package-a/package.json");
+
+    expect(packageJson).toMatchInlineSnapshot(`
         {
               "name": "package-a",
               "version": "0.0.1",
@@ -79,21 +78,21 @@ describe("lerna-version-formatting", () => {
         }
 
       `);
-    });
+  });
 
-    it("should not format file if is in .prettierignore.", async () => {
-      await writeFile(
-        fixture.getWorkspacePath(".prettierignore"),
-        "node_modules\npackages/package-a/package.json"
-      );
-      await fixture.exec("git add .prettierignore");
-      await fixture.exec("git commit -m 'chore: add package-lock.json to .prettierignore'");
+  it("should not format file if is in .prettierignore.", async () => {
+    await writeFile(
+      fixture.getWorkspacePath(".prettierignore"),
+      "node_modules\npackages/package-a/package.json"
+    );
+    await fixture.exec("git add .prettierignore");
+    await fixture.exec("git commit -m 'chore: add package-lock.json to .prettierignore'");
 
-      await fixture.lerna("version patch -y");
+    await fixture.lerna("version patch -y");
 
-      const packageJson = await fixture.readWorkspaceFile("packages/package-a/package.json");
+    const packageJson = await fixture.readWorkspaceFile("packages/package-a/package.json");
 
-      expect(packageJson).toMatchInlineSnapshot(`
+    expect(packageJson).toMatchInlineSnapshot(`
         {
           "name": "package-a",
           "version": "0.0.1",
@@ -119,6 +118,5 @@ describe("lerna-version-formatting", () => {
         }
 
       `);
-    });
   });
 });

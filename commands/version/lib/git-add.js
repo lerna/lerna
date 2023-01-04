@@ -36,14 +36,19 @@ function maybeFormatFile(filePath) {
   }
   const config = resolvedPrettier.resolveConfig.sync(filePath);
   const ignorePath = path.join(workspaceRoot, ".prettierignore");
+  const fullFilePath = path.join(workspaceRoot, filePath);
 
-  if (resolvedPrettier.getFileInfo.sync(filePath, { ignorePath }).ignored) {
+  if (resolvedPrettier.getFileInfo.sync(fullFilePath, { ignorePath }).ignored) {
     log.silly("version", `Skipped applying prettier to ignored file: ${filePath}`);
     return;
   }
   try {
-    const input = fs.readFileSync(filePath, "utf8");
-    fs.writeFileSync(filePath, resolvedPrettier.format(input, { ...config, filepath: filePath }), "utf8");
+    const input = fs.readFileSync(fullFilePath, "utf8");
+    fs.writeFileSync(
+      fullFilePath,
+      resolvedPrettier.format(input, { ...config, filepath: fullFilePath }),
+      "utf8"
+    );
     log.silly("version", `Successfully applied prettier to updated file: ${filePath}`);
   } catch {
     log.silly("version", `Failed to apply prettier to updated file: ${filePath}`);
