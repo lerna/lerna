@@ -135,6 +135,7 @@
     "@swc-node/register": "^1.4.2",
     "@swc/cli": "~0.1.55",
     "@swc/core": "^1.2.173",
+    "@types/byte-size": "^8.1.0",
     "@types/clone-deep": "^4.0.1",
     "@types/cmd-shim": "^5.0.0",
     "@types/columnify": "^1.5.1",
