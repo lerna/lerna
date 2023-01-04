@@ -3,7 +3,7 @@ import { writeFile } from "fs-extra";
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
-    return normalizeEnvironment(str);
+    return normalizeEnvironment(str).replaceAll(/"author": ".*"/g, 'author: "XXXX"');
   },
   test(val: string) {
     return val != null && typeof val === "string";
@@ -59,7 +59,7 @@ describe("lerna-version-formatting", () => {
               "version": "0.0.1",
               "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
               "keywords": [],
-              "author": "Austin Fahsl <austin@fahsl.io>",
+              author: "XXXX",
               "license": "ISC",
               "main": "lib/package-a.js",
               "directories": {
@@ -69,9 +69,6 @@ describe("lerna-version-formatting", () => {
               "files": [
                     "lib"
               ],
-              "publishConfig": {
-                    "registry": "http://localhost:4872/"
-              },
               "repository": {
                     "type": "git",
                     "url": "/tmp/lerna-e2e/lerna-version-formatting/origin.git"
@@ -102,7 +99,7 @@ describe("lerna-version-formatting", () => {
           "version": "0.0.1",
           "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
           "keywords": [],
-          "author": "Austin Fahsl <austin@fahsl.io>",
+          author: "XXXX",
           "license": "ISC",
           "main": "lib/package-a.js",
           "directories": {
@@ -112,9 +109,6 @@ describe("lerna-version-formatting", () => {
           "files": [
             "lib"
           ],
-          "publishConfig": {
-            "registry": "http://localhost:4872/"
-          },
           "repository": {
             "type": "git",
             "url": "/tmp/lerna-e2e/lerna-version-formatting/origin.git"
