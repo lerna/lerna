@@ -3,7 +3,7 @@ import { PackageGraph } from "./package-graph";
 import { CyclicPackageGraphNode } from "./package-graph/cyclic-package-graph-node";
 import { PackageGraphNode } from "./package-graph/package-graph-node";
 
-interface QueryGraphConfig {
+export interface QueryGraphConfig {
   // "dependencies" excludes devDependencies from graph
   graphType?: "allDependencies" | "dependencies";
   // Whether or not to reject dependency cycles

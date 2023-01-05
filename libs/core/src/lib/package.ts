@@ -40,7 +40,7 @@ function shallowCopy(json: any) {
   }, {});
 }
 
-interface RawManifest {
+export interface RawManifest {
   name: string;
   version: string;
   private?: boolean;

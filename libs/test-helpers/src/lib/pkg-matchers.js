@@ -1,28 +1,27 @@
-import { Package } from "@lerna/core";
-import fs from "fs";
-import path from "path";
-import semver from "semver";
+"use strict";
 
-export const toDependOn = createDependencyMatcher("dependencies");
-export const toDevDependOn = createDependencyMatcher("devDependencies");
-export const toPeerDependOn = createDependencyMatcher("peerDependencies");
+const fs = require("fs");
+const path = require("path");
+const semver = require("semver");
+// eslint-disable-next-line import/no-unresolved, node/no-missing-require
+const { Package } = require("@lerna/core");
 
-function createDependencyMatcher(dependencyType: string) {
+exports.toDependOn = createDependencyMatcher("dependencies");
+exports.toDevDependOn = createDependencyMatcher("devDependencies");
+exports.toPeerDependOn = createDependencyMatcher("peerDependencies");
+exports.toHaveBinaryLinks = toHaveBinaryLinks;
+exports.toHaveExecutables = toHaveExecutables;
+
+function createDependencyMatcher(dependencyType) {
   const verbMap = {
     dependencies: "depend",
     devDependencies: "dev-depend",
     peerDependencies: "peer-depend",
   };
-  // TODO: refactor to address type issues
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const verb = verbMap[dependencyType] || "dev-depend";
 
-  return (received: any, name: string, range: string | semver.SemVer, options: { exact: any }) => {
+  return (received, name, range, options) => {
     const pkg = Package.lazy(received);
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const noDeps = typeof pkg[dependencyType] !== "object";
     const id = [name, range].filter(Boolean).join("@");
     const exact = options && options.exact;
@@ -30,9 +29,6 @@ function createDependencyMatcher(dependencyType: string) {
     const expectedName = `expected ${pkg.name}`;
     const expectedAction = `to ${verb} on ${id}`;
     const expectation = `${expectedName} ${expectedAction}`;
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const json = JSON.stringify(pkg[dependencyType], null, 2);
 
     if (noDeps) {
@@ -42,9 +38,6 @@ function createDependencyMatcher(dependencyType: string) {
       };
     }
 
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const missingDep = !(name in pkg[dependencyType]);
 
     if (missingDep) {
@@ -55,9 +48,6 @@ function createDependencyMatcher(dependencyType: string) {
     }
 
     // replace backslashes because windows sucks
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const version = pkg[dependencyType][name].replace(/[\\]/g, "/");
 
     // we don't care about semver intersection, it's not always a semver range
@@ -94,7 +84,7 @@ function createDependencyMatcher(dependencyType: string) {
   };
 }
 
-export function toHaveBinaryLinks(received: any, ...inputs: any[]) {
+function toHaveBinaryLinks(received, ...inputs) {
   const pkg = Package.lazy(received);
   const links =
     process.platform === "win32"
@@ -114,20 +104,14 @@ export function toHaveBinaryLinks(received: any, ...inputs: any[]) {
   const expectedName = `expected ${pkg.name}`;
   const expectedAction = `to link to ${links.join(", ")}`;
 
-  let found: any[];
+  let found;
 
   try {
     found = fs.readdirSync(pkg.binLocation);
   } catch (err) {
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     if (links.length === 0 && err.code === "ENOENT") {
       return {
         message: () => `${expectedName} not to have binary links`,
-        // TODO: refactor to address type issues
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         pass: !this.isNot,
       };
     }
@@ -135,9 +119,6 @@ export function toHaveBinaryLinks(received: any, ...inputs: any[]) {
     throw err;
   }
 
-  // TODO: refactor to address type issues
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const missing = links.filter((link) => found.indexOf(link) === -1);
   const superfluous = found.filter((link) => links.indexOf(link) === -1);
 
@@ -162,7 +143,7 @@ export function toHaveBinaryLinks(received: any, ...inputs: any[]) {
   };
 }
 
-export function toHaveExecutables(received: any, ...files: any[]) {
+function toHaveExecutables(received, ...files) {
   const pkg = Package.lazy(received);
 
   const expectedFiles = `expected ${files.join(", ")}`;
