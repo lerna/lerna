@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const npmConf = require("./npm-conf");
 
-describe("@lerna/npm-conf", () => {
+describe("npm-conf", () => {
   it("exports default factory", () => {
     expect(npmConf).toBeDefined();
     expect(typeof npmConf).toBe("function");

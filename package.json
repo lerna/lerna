@@ -148,6 +148,7 @@
     "@types/is-ci": "^2.0.0",
     "@types/jest": "28.1.1",
     "@types/js-yaml": "^4.0.5",
+    "@types/libnpmpublish": "^4.0.3",
     "@types/node": "16.11.7",
     "@types/node-fetch": "^2.6.2",
     "@types/normalize-path": "^3.0.0",
