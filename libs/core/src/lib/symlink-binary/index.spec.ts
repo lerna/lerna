@@ -2,7 +2,7 @@ import { Package } from "../package";
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { initFixtureFactory } from "@lerna/test-helpers";
 import path from "path";
-import { symlinkBinary } from "./symlink-binary";
+import { symlinkBinary } from ".";
 
 const initFixture = initFixtureFactory(__dirname);
 
