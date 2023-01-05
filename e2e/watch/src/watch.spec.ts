@@ -212,19 +212,7 @@ describe("lerna-watch", () => {
   });
 
   it("should replace package name and changed file names", async () => {
-    fixture.updateJson("lerna.json", (json) => ({
-      ...json,
-      command: {
-        watch: {
-          // This workaround is necessary to prevent $LERNA_PACKAGE_NAME and $LERNA_FILE_CHANGES
-          // from being replaced by `child_process.spawn`. This is only needed for the e2e tests.
-          // This test case can be reproduced manually by running:
-          // `npx lerna watch -- echo $LERNA_PACKAGE_NAME: $LERNA_FILE_CHANGES`
-          command: "echo $LERNA_PACKAGE_NAME: $LERNA_FILE_CHANGES",
-        },
-      },
-    }));
-    const getWatchResult = await fixture.lernaWatch("");
+    const getWatchResult = await fixture.lernaWatch("-- echo \\$LERNA_PACKAGE_NAME: \\$LERNA_FILE_CHANGES");
 
     await createFile(fixture.getWorkspacePath("packages/package-a/my-file.txt"));
     await wait(200);

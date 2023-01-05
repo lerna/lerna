@@ -275,7 +275,7 @@ export class Fixture {
 
   async lernaWatch(inputArgs: string): Promise<(timeoutMs?: number) => Promise<RunCommandResult>> {
     return new Promise((resolve, reject) => {
-      const command = `npx --offline --no lerna watch --verbose ${inputArgs}`;
+      const command = `npx --offline --no -c 'lerna watch --verbose ${inputArgs}'`;
 
       let stdout = "";
       let stderr = "";
