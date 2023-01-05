@@ -1,9 +1,8 @@
 import { promptTextInput } from "./prompt";
 
-/**
- * @typedef {object} OneTimePasswordCache - Passed between concurrent executions
- * @property {string} [otp] The one-time password, passed as an option or received via prompt
- */
+export interface OneTimePasswordCache {
+  otp: string | null;
+}
 
 // basic single-entry semaphore
 const semaphore = {
@@ -45,7 +44,7 @@ const semaphore = {
 export function otplease<T extends Record<string, unknown>>(
   fn: (opts: T) => Promise<unknown>,
   _opts: T,
-  otpCache: { otp: string | null } | null
+  otpCache?: OneTimePasswordCache | null
 ) {
   // always prefer explicit config (if present) to cache
   const opts = { ...otpCache, ..._opts };
@@ -55,7 +54,7 @@ export function otplease<T extends Record<string, unknown>>(
 function attempt<T extends Record<string, unknown>>(
   fn: (opts: T) => Promise<unknown>,
   opts: T,
-  otpCache: { otp: string | null } | null
+  otpCache?: { otp: string | null } | null
 ): Promise<unknown> {
   return new Promise((resolve) => {
     resolve(fn(opts));

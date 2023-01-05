@@ -152,6 +152,7 @@
     "@types/node-fetch": "^2.6.2",
     "@types/normalize-path": "^3.0.0",
     "@types/npm-package-arg": "^6.1.1",
+    "@types/npm-registry-fetch": "^8.0.4",
     "@types/npmlog": "^4.1.4",
     "@types/pify": "^5.0.1",
     "@types/ssri": "^7.1.1",
