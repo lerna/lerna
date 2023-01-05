@@ -1,6 +1,6 @@
 {
   "name": "@lerna/diff",
-  "version": "6.3.0",
+  "version": "6.4.0",
   "description": "Diff all packages or a single package since the last release",
   "keywords": [
     "lerna",

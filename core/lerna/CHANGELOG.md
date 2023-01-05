@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.4.0](https://github.com/lerna/lerna/compare/v6.3.0...v6.4.0) (2023-01-05)
+
+### Features
+
+- **watch:** Add `lerna watch` command ([#3466](https://github.com/lerna/lerna/issues/3466)) ([008b995](https://github.com/lerna/lerna/commit/008b995caab549c0707068e748e4f429bd729afa))
+
 # [6.3.0](https://github.com/lerna/lerna/compare/v6.2.0...v6.3.0) (2022-12-26)
 
 ### Features

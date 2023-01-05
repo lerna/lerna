@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.4.0](https://github.com/lerna/lerna/compare/v6.3.0...v6.4.0) (2023-01-05)
+
+### Features
+
+- **create:** support relative path from root as lerna create location ([#3478](https://github.com/lerna/lerna/issues/3478)) ([82825ce](https://github.com/lerna/lerna/commit/82825ce98b43720cb7034e98f2b388ab14882bbf))
+
 # [6.3.0](https://github.com/lerna/lerna/compare/v6.2.0...v6.3.0) (2022-12-26)
 
 **Note:** Version bump only for package @lerna/create

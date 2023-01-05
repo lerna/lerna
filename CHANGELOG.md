@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.4.0](https://github.com/lerna/lerna/compare/v6.3.0...v6.4.0) (2023-01-05)
+
+### Bug Fixes
+
+- **run:** add explicit nx dependency ([#3486](https://github.com/lerna/lerna/issues/3486)) ([7e39397](https://github.com/lerna/lerna/commit/7e3939780df597ba6f1f0352299c2b5e77c7e824))
+- **version:** recognize .prettierignore when formatting files ([#3482](https://github.com/lerna/lerna/issues/3482)) ([4e2c7a9](https://github.com/lerna/lerna/commit/4e2c7a9b883d36681474f0998dbe27ba5f8574f4))
+
+### Features
+
+- **create:** support relative path from root as lerna create location ([#3478](https://github.com/lerna/lerna/issues/3478)) ([82825ce](https://github.com/lerna/lerna/commit/82825ce98b43720cb7034e98f2b388ab14882bbf))
+- **watch:** Add `lerna watch` command ([#3466](https://github.com/lerna/lerna/issues/3466)) ([008b995](https://github.com/lerna/lerna/commit/008b995caab549c0707068e748e4f429bd729afa))
+
 # [6.3.0](https://github.com/lerna/lerna/compare/v6.2.0...v6.3.0) (2022-12-26)
 
 ### Features
