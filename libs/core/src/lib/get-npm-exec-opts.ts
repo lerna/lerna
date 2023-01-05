@@ -1,6 +1,6 @@
 import log from "npmlog";
 
-export function getNpmExecOpts(pkg: { name: any; location: string }, registry: any) {
+export function getNpmExecOpts(pkg: { name: any; location: string }, registry?: any) {
   // execa automatically extends process.env
   const env: any = {
     LERNA_PACKAGE_NAME: pkg.name,
