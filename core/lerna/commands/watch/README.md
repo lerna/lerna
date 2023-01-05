@@ -7,10 +7,8 @@ Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` C
 ## Usage
 
 ```sh
-$ lerna watch -- "<command>"
+$ lerna watch -- <command>
 ```
-
-> 💡 The double quotes around the command are required to prevent your shell from interpreting the inner command.
 
 The values `$LERNA_PACKAGE_NAME` and `$LERNA_FILE_CHANGES` will be replaced with the package and the file(s) that changed, respectively. If multiple file changes are detected in one cycle, then `$LERNA_FILE_CHANGES` will list them all, separated by spaces.
 
