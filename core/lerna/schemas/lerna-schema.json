@@ -1120,6 +1120,33 @@
               "$ref": "#/$defs/filters/continueIfNoMatch"
             }
           }
+        },
+        "watch": {
+          "type": "object",
+          "description": "Options for the `watch` command.",
+          "properties": {
+            "scope": {
+              "$ref": "#/$defs/filters/scope"
+            },
+            "ignore": {
+              "$ref": "#/$defs/filters/ignore"
+            },
+            "private": {
+              "$ref": "#/$defs/filters/private"
+            },
+            "since": {
+              "$ref": "#/$defs/filters/since"
+            },
+            "excludeDependents": {
+              "$ref": "#/$defs/filters/excludeDependents"
+            },
+            "includeDependents": {
+              "$ref": "#/$defs/filters/includeDependents"
+            },
+            "includeDependencies": {
+              "$ref": "#/$defs/filters/includeDependencies"
+            }
+          }
         }
       }
     },
