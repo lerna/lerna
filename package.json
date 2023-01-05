@@ -155,6 +155,7 @@
     "@types/npm-registry-fetch": "^8.0.4",
     "@types/npmlog": "^4.1.4",
     "@types/pify": "^5.0.1",
+    "@types/signal-exit": "^3.0.1",
     "@types/ssri": "^7.1.1",
     "@types/strong-log-transformer": "^1.0.0",
     "@types/tar": "^6.1.3",
