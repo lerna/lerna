@@ -23,9 +23,11 @@ exports.builder = (yargs) => {
       description: "Run watch mode in verbose mode, where commands are logged before execution.",
     })
     .middleware((args) => {
-      const { "--": underscore } = args;
-      // eslint-disable-next-line no-param-reassign
-      args.command = underscore?.[0];
+      const { "--": doubleDash } = args;
+      if (doubleDash && Array.isArray(doubleDash)) {
+        // eslint-disable-next-line no-param-reassign
+        args.command = doubleDash.join(" ");
+      }
     }, true);
 
   return filterOptions(yargs);

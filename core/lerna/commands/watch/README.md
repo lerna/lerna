@@ -21,19 +21,25 @@ The values `$LERNA_PACKAGE_NAME` and `$LERNA_FILE_CHANGES` will be replaced with
 Watch all packages and echo the package name and the files that changed:
 
 ```sh
-$ lerna watch -- "echo \$LERNA_PACKAGE_NAME \$LERNA_FILE_CHANGES"
+$ lerna watch -- echo \$LERNA_PACKAGE_NAME \$LERNA_FILE_CHANGES
 ```
 
 Watch only packages "package-1", "package-3" and their dependencies:
 
 ```sh
-$ lerna watch --scope "package-{1,3}" --include-dependencies -- "echo \$LERNA_PACKAGE_NAME \$LERNA_FILE_CHANGES"
+$ lerna watch --scope "package-{1,3}" --include-dependencies -- echo \$LERNA_PACKAGE_NAME \$LERNA_FILE_CHANGES
 ```
 
 Watch only package "package-4" and its dependencies and run the `test` script for the package that changed:
 
 ```sh
-$ lerna watch --scope="package-4" --include-dependencies -- "lerna run test --scope=\$LERNA_PACKAGE_NAME"
+$ lerna watch --scope="package-4" --include-dependencies -- lerna run test --scope=\$LERNA_PACKAGE_NAME
+```
+
+When using `npx`, the `-c` option must be used if also providing variables for substitution:
+
+```sh
+$ npx -c 'lerna watch -- echo \$LERNA_PACKAGE_NAME \$LERNA_FILE_CHANGES'
 ```
 
 ## Options
