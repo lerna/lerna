@@ -22,6 +22,7 @@ const versionCmd = require("@lerna/version/command");
 
 const repairCmd = require("./commands/repair/command");
 const addCachingCmd = require("./commands/add-caching/command");
+const watchCmd = require("./commands/watch/command");
 
 const pkg = require("./package.json");
 
@@ -51,6 +52,7 @@ function main(argv) {
     .command(publishCmd)
     .command(repairCmd)
     .command(runCmd)
+    .command(watchCmd)
     .command(versionCmd)
     .parse(argv, context);
 }

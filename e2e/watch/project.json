@@ -1,0 +1,52 @@
+{
+  "name": "e2e-watch",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "tags": [],
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npm run e2e-start-local-registry"
+          },
+          {
+            "command": "npm run e2e-build-package-publish"
+          },
+          {
+            "command": "E2E_ROOT=$(npx ts-node scripts/set-e2e-root.ts) nx run-e2e-tests e2e-watch"
+          }
+        ],
+        "parallel": false
+      }
+    },
+    "run-e2e-tests-process": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "E2E_ROOT=$(npx ts-node scripts/set-e2e-root.ts) nx run-e2e-tests e2e-watch",
+            "description": "This additional wrapper target exists so that we can ensure that the e2e tests run in a dedicated process with enough memory"
+          }
+        ],
+        "parallel": false
+      }
+    },
+    "run-e2e-tests": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "e2e/watch/jest.config.ts",
+        "passWithNoTests": true,
+        "runInBand": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/e2e/watch"]
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["e2e/watch/**/*.ts"]
+      }
+    }
+  }
+}
