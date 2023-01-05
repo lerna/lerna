@@ -33,6 +33,7 @@ const sidebars = {
         "features/version-and-publish",
         "features/editor-integrations",
         "features/legacy-package-management",
+        "features/workspace-watching",
       ],
       link: {
         type: "generated-index",
