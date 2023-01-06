@@ -28,6 +28,12 @@ Watch all packages and run the "build" script on a package when a file within it
 $ lerna watch -- lerna run build --scope=\$LERNA_PACKAGE_NAME
 ```
 
+Watch all packages and run the "build" script on everything affected by the changes:
+
+```sh
+$ lerna watch -- lerna run build --since
+```
+
 Watch a single package and run the "build" script on it when a file within it changes:
 
 ```sh
