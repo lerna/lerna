@@ -1,14 +1,14 @@
 {
-  "name": "commands-info",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/commands/info",
+  "name": "legacy-structure-commands-info",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/legacy-structure/commands/info",
   "projectType": "application",
   "targets": {
     "build": {
       "dependsOn": ["compile"],
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "packages/commands/info/dist",
+        "cwd": "packages/legacy-structure/commands/info/dist",
         "parallel": false,
         "commands": ["rm -rf package.json"]
       }
@@ -17,9 +17,9 @@
       "executor": "@nrwl/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "packages/commands/info/dist",
-        "main": "packages/commands/info/src/index.ts",
-        "tsConfig": "packages/commands/info/tsconfig.lib.json",
+        "outputPath": "packages/legacy-structure/commands/info/dist",
+        "main": "packages/legacy-structure/commands/info/src/index.ts",
+        "tsConfig": "packages/legacy-structure/commands/info/tsconfig.lib.json",
         "assets": [
           {
             "input": "packages/lerna/src/commands/info",
@@ -30,10 +30,12 @@
         "thirdParty": false,
         "platform": "node",
         "format": ["cjs"],
-        "additionalEntryPoints": ["packages/commands/info/src/command.ts"],
+        "additionalEntryPoints": ["packages/legacy-structure/commands/info/src/command.ts"],
         "esbuildOptions": {
           "external": ["*package.json"],
-          "outExtension": { ".js": ".js" }
+          "outExtension": {
+            ".js": ".js"
+          }
         }
       }
     },
@@ -41,7 +43,7 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/commands/info/**/*.ts"]
+        "lintFilePatterns": ["packages/legacy-structure/commands/info/**/*.ts"]
       }
     }
   },
