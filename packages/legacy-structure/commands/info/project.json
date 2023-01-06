@@ -22,7 +22,7 @@
         "tsConfig": "packages/legacy-structure/commands/info/tsconfig.lib.json",
         "assets": [
           {
-            "input": "packages/lerna/src/commands/info",
+            "input": "libs/commands/info",
             "glob": "README.md",
             "output": "../"
           }

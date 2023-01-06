@@ -21,7 +21,7 @@ const versionCmd = require("@lerna/version/command");
 import * as repairCmd from "./commands/repair/command";
 import * as addCachingCmd from "./commands/add-caching/command";
 import * as watchCmd from "./commands/watch/command";
-import * as infoCmd from "./commands/info/command";
+import * as infoCmd from "@lerna/commands/info/command";
 
 const pkg = require("../package.json");
 
