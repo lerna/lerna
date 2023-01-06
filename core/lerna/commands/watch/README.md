@@ -4,6 +4,8 @@
 
 Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
 
+Check out the [Workspace Watching](https://lerna.js.org/docs/features/workspace-watching#watch-environment-variables) feature overview for more information.
+
 ## Usage
 
 ```sh

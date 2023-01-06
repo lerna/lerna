@@ -23,7 +23,8 @@ type: reference
 - [`lerna info`](https://github.com/lerna/lerna/tree/main/commands/info#readme)
 - [`lerna add-caching`](https://github.com/lerna/lerna/tree/main/core/lerna/commands/add-caching#readme)
 - [`lerna repair`](https://github.com/lerna/lerna/tree/main/core/lerna/commands/repair#readme)
+- [`lerna watch`](https://github.com/lerna/lerna/tree/main/core/lerna/commands/watch#readme)
 
 ## Filter Options
 
-Lerna commands can have filter options applied to control which packages they operate on.  Read more [here](https://github.com/lerna/lerna/tree/main/core/filter-options#readme)
+Lerna commands can have filter options applied to control which packages they operate on. Read more [here](https://github.com/lerna/lerna/tree/main/core/filter-options#readme)
