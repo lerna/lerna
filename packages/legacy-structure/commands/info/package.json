@@ -39,9 +39,6 @@
     "url": "git+https://github.com/lerna/lerna.git",
     "directory": "packages/legacy-structure/commands/info"
   },
-  "scripts": {
-    "test": "echo \"Run tests from root\" && exit 1"
-  },
   "dependencies": {
     "envinfo": "^7.7.4"
   }

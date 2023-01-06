@@ -13,7 +13,6 @@ const execCmd = require("@lerna/exec/command");
 const importCmd = require("@lerna/import/command");
 const initCmd = require("@lerna/init/command");
 const linkCmd = require("@lerna/link/command");
-const listCmd = require("@lerna/list/command");
 const publishCmd = require("@lerna/publish/command");
 const runCmd = require("@lerna/run/command");
 const versionCmd = require("@lerna/version/command");
@@ -22,6 +21,7 @@ import * as repairCmd from "./commands/repair/command";
 import * as addCachingCmd from "./commands/add-caching/command";
 import * as watchCmd from "./commands/watch/command";
 import * as infoCmd from "@lerna/commands/info/command";
+import * as listCmd from "@lerna/commands/list/command";
 
 const pkg = require("../package.json");
 

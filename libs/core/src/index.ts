@@ -1,6 +1,8 @@
 export * from "./lib/cli";
 export { Command } from "./lib/command";
 export { filterOptions, getFilteredPackages } from "./lib/filter-options";
+export { listableFormat } from "./lib/listable/listable-format";
+export { listableOptions } from "./lib/listable/listable-options";
 export { output } from "./lib/output";
 export { Package } from "./lib/package";
 export { Project } from "./lib/project";

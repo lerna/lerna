@@ -28,10 +28,6 @@
       "!{projectRoot}/jest.config.[jt]s"
     ]
   },
-  "workspaceLayout": {
-    "libsDir": "libs",
-    "appsDir": "packages"
-  },
   "targetDefaults": {
     "test": {
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]

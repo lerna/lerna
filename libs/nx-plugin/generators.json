@@ -7,6 +7,11 @@
       "factory": "./src/generators/e2e-project/generator",
       "schema": "./src/generators/e2e-project/schema.json",
       "description": "Create a new lerna e2e project"
+    },
+    "command": {
+      "factory": "./src/generators/command/generator",
+      "schema": "./src/generators/command/schema.json",
+      "description": "command generator"
     }
   }
 }
