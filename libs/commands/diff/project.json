@@ -1,0 +1,16 @@
+{
+  "name": "commands-diff",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/commands/diff/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/commands/diff/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,54 @@
+{
+  "name": "@lerna/diff",
+  "version": "6.4.0",
+  "description": "Diff all packages or a single package since the last release",
+  "keywords": [
+    "lerna",
+    "command"
+  ],
+  "homepage": "https://lerna.js.org",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "main": "./dist/index.js",
+  "engines": {
+    "node": "^14.15.0 || >=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "packages/legacy-structure/commands/diff"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../../core/child-process",
+    "npmlog": "^6.0.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./command": {
+      "import": "./dist/command.js",
+      "require": "./dist/command.js"
+    },
+    "./lib/get-last-commit": {
+      "import": "./dist/lib/get-last-commit.js",
+      "require": "./dist/lib/get-last-commit.js"
+    },
+    "./lib/has-commit": {
+      "import": "./dist/lib/has-commit.js",
+      "require": "./dist/lib/has-commit.js"
+    }
+  }
+}

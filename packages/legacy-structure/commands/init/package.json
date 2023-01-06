@@ -1,0 +1,48 @@
+{
+  "name": "@lerna/init",
+  "version": "6.4.0",
+  "description": "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna",
+  "keywords": [
+    "lerna",
+    "command"
+  ],
+  "homepage": "https://lerna.js.org",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "main": "./dist/index.js",
+  "engines": {
+    "node": "^14.15.0 || >=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "packages/legacy-structure/commands/init"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../../core/child-process",
+    "fs-extra": "^9.1.0",
+    "p-map": "^4.0.0",
+    "write-json-file": "^4.3.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./command": {
+      "import": "./dist/command.js",
+      "require": "./dist/command.js"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "name": "e2e-list",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna", "list"],
+  "implicitDependencies": ["lerna", "commands-list"],
   "tags": [],
   "targets": {
     "e2e": {

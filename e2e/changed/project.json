@@ -1,7 +1,7 @@
 {
   "name": "e2e-changed",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna", "changed"],
+  "implicitDependencies": ["lerna", "commands-changed"],
   "tags": [],
   "targets": {
     "e2e": {

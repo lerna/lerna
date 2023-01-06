@@ -1,0 +1,56 @@
+{
+  "name": "lerna",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/lerna/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "dependsOn": ["compile"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/lerna/dist",
+        "parallel": false,
+        "commands": ["rm -rf package.json"]
+      }
+    },
+    "compile": {
+      "executor": "@nrwl/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/lerna/dist",
+        "main": "packages/lerna/src/index.ts",
+        "tsConfig": "packages/lerna/tsconfig.lib.json",
+        "assets": [],
+        "thirdParty": false,
+        "platform": "node",
+        "format": ["cjs"],
+        "additionalEntryPoints": [
+          "packages/lerna/src/cli.ts",
+          "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts"
+        ],
+        "esbuildOptions": {
+          "external": ["*package.json"],
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/lerna/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/lerna/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

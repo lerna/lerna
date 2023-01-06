@@ -1,7 +1,7 @@
 {
   "name": "e2e-run-task-runner",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna", "run"],
+  "implicitDependencies": ["lerna", "legacy-structure-commands-run"],
   "tags": [],
   "targets": {
     "prepare-for-e2e": {

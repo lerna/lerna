@@ -1,5 +1,5 @@
 {
-  "$schema": "core/lerna/schemas/lerna-schema.json",
+  "$schema": "packages/lerna/schemas/lerna-schema.json",
   "command": {
     "create": {
       "homepage": "https://github.com/lerna/lerna",

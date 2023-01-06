@@ -6,6 +6,7 @@ on:
       - main
       - next
       - "test/*"
+      - build-3
   pull_request:
     types: [assigned, opened, synchronize, reopened, labeled]
 
@@ -17,6 +18,7 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
   NX_BRANCH: ${{ github.event.number || github.ref_name }}
+  NX_VERBOSE_LOGGING: false
 
 jobs:
   main:
@@ -39,9 +41,7 @@ jobs:
           cmd1: npx nx-cloud record -- npx nx format:check
           cmd2: npx nx-cloud record -- npx nx workspace-lint
           cmd3: npx nx-cloud record -- npm run ci:lint
-          cmd4: npx nx run-many --target=lint --all --parallel=3
-          # TODO: update this once project targets are converted
-          cmd5: npx nx run-many --target=test --projects=\"libs-*,nx-*\" --parallel=3
+          cmd4: npx nx run-many -t lint, test --parallel=3
 
       # e2e tests for everything except the primary task runner
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=1
@@ -70,7 +70,7 @@ jobs:
 
       - run: npm run e2e-start-local-registry
 
-      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npm run e2e-build-package-publish
+      - run: NX_VERBOSE_LOGGING=true PUBLISHED_VERSION=999.9.9-e2e.0 npm run e2e-build-package-publish
 
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
@@ -129,6 +129,8 @@ jobs:
   # TODO: migrate to cacheable/distributable targets
   test:
     runs-on: ubuntu-latest
+    env:
+      NX_CLOUD_DISTRIBUTED_EXECUTION: false
     strategy:
       fail-fast: false
       matrix:
@@ -152,6 +154,8 @@ jobs:
   # TODO: migrate to cacheable/distributable targets
   windows:
     runs-on: windows-latest
+    env:
+      NX_CLOUD_DISTRIBUTED_EXECUTION: false
     strategy:
       fail-fast: false
       matrix:
