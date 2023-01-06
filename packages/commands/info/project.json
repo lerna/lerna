@@ -20,7 +20,13 @@
         "outputPath": "packages/commands/info/dist",
         "main": "packages/commands/info/src/index.ts",
         "tsConfig": "packages/commands/info/tsconfig.lib.json",
-        "assets": [],
+        "assets": [
+          {
+            "input": "packages/lerna/src/commands/info",
+            "glob": "README.md",
+            "output": "../"
+          }
+        ],
         "thirdParty": false,
         "platform": "node",
         "format": ["cjs"],
