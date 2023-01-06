@@ -1,14 +1,15 @@
-import { promptSelectOne, promptTextInput } from "@lerna/core";
+import { applyBuildMetadata, promptSelectOne, promptTextInput } from "@lerna/core";
 import semver from "semver";
 
 module.exports.makePromptVersion = makePromptVersion;
 
 /**
  * @param {(existingPreid: string) => string} resolvePrereleaseId
+ * @param {string} buildMetadata
  */
-function makePromptVersion(resolvePrereleaseId) {
+function makePromptVersion(resolvePrereleaseId, buildMetadata) {
   return (/** @type {import("@lerna/package-graph").PackageGraphNode} */ node) =>
-    promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId));
+    promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId), buildMetadata);
 }
 
 /**
@@ -18,14 +19,15 @@ function makePromptVersion(resolvePrereleaseId) {
  * @param {string} currentVersion
  * @param {string} name (Only used in independent mode)
  * @param {string} prereleaseId
+ * @param {string} buildMetadata
  */
-function promptVersion(currentVersion, name, prereleaseId) {
-  const patch = semver.inc(currentVersion, "patch");
-  const minor = semver.inc(currentVersion, "minor");
-  const major = semver.inc(currentVersion, "major");
-  const prepatch = semver.inc(currentVersion, "prepatch", prereleaseId);
-  const preminor = semver.inc(currentVersion, "preminor", prereleaseId);
-  const premajor = semver.inc(currentVersion, "premajor", prereleaseId);
+function promptVersion(currentVersion, name, prereleaseId, buildMetadata) {
+  const patch = applyBuildMetadata(semver.inc(currentVersion, "patch"), buildMetadata);
+  const minor = applyBuildMetadata(semver.inc(currentVersion, "minor"), buildMetadata);
+  const major = applyBuildMetadata(semver.inc(currentVersion, "major"), buildMetadata);
+  const prepatch = applyBuildMetadata(semver.inc(currentVersion, "prepatch", prereleaseId), buildMetadata);
+  const preminor = applyBuildMetadata(semver.inc(currentVersion, "preminor", prereleaseId), buildMetadata);
+  const premajor = applyBuildMetadata(semver.inc(currentVersion, "premajor", prereleaseId), buildMetadata);
 
   const message = `Select a new version ${name ? `for ${name} ` : ""}(currently ${currentVersion})`;
 
@@ -54,7 +56,8 @@ function promptVersion(currentVersion, name, prereleaseId) {
       const prompt = `(default: "${prereleaseId}", yielding ${defaultVersion})`;
 
       return promptTextInput(`Enter a prerelease identifier ${prompt}`, {
-        filter: (v) => semver.inc(currentVersion, "prerelease", v || prereleaseId),
+        filter: (v) =>
+          applyBuildMetadata(semver.inc(currentVersion, "prerelease", v || prereleaseId), buildMetadata),
       });
     }
 

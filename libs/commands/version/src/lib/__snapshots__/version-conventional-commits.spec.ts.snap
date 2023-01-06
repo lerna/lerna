@@ -1,5 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`--conventional-commits accepts --build-metadata option 1`] = `
+"v1.0.1+exp.sha.SHA
+
+HEAD -> main, tag: v1.0.1+exp.sha.SHA
+
+CHANGELOG.md
+lerna.json
+packages/package-1/CHANGELOG.md
+packages/package-1/package.json
+packages/package-2/CHANGELOG.md
+packages/package-2/package.json
+packages/package-3/CHANGELOG.md
+packages/package-3/package.json
+packages/package-4/CHANGELOG.md
+packages/package-4/package.json
+packages/package-5/CHANGELOG.md
+packages/package-5/package.json"
+`;
+
 exports[`--conventional-commits fixed mode should guess prerelease version bumps and generate CHANGELOG 1`] = `
 "v2.0.0-alpha.0
 
@@ -26,6 +45,29 @@ HEAD -> main, tag: v2.0.0
 
 CHANGELOG.md
 lerna.json
+packages/package-1/CHANGELOG.md
+packages/package-1/package.json
+packages/package-2/CHANGELOG.md
+packages/package-2/package.json
+packages/package-3/CHANGELOG.md
+packages/package-3/package.json
+packages/package-4/CHANGELOG.md
+packages/package-4/package.json
+packages/package-5/CHANGELOG.md
+packages/package-5/package.json"
+`;
+
+exports[`--conventional-commits independent accepts --build-metadata option 1`] = `
+"Publish
+
+ - package-1@1.0.1+001
+ - package-2@2.1.0+001
+ - package-3@4.0.0+001
+ - package-4@4.1.0+001
+ - package-5@5.0.1+001
+
+HEAD -> main, tag: package-5@5.0.1+001, tag: package-4@4.1.0+001, tag: package-3@4.0.0+001, tag: package-2@2.1.0+001, tag: package-1@1.0.1+001
+
 packages/package-1/CHANGELOG.md
 packages/package-1/package.json
 packages/package-2/CHANGELOG.md

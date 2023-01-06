@@ -144,7 +144,12 @@ class PublishCommand extends Command {
       return versionCommand(this.argv).then(() => false);
     }
 
-    if (this.options.canary) {
+    if (this.options.buildMetadata && this.options.canary) {
+      throw new ValidationError(
+        "ENOTSATISFIED",
+        "Cannot use --build-metadata in conjunction with --canary option."
+      );
+    } else if (this.options.canary) {
       this.logger.info("canary", "enabled");
     }
 
