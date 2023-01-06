@@ -1,18 +1,24 @@
-import type { CommandModule } from "yargs";
+import { Command, output } from "@lerna/core";
+import envinfo from "envinfo";
 
-/**
- * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
- */
-const command: CommandModule = {
-  command: "info",
-  describe: "Prints debugging information about the local environment",
-  builder(yargs) {
-    return yargs;
-  },
-  handler(argv) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require("./command")(argv);
-  },
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
+  return new InfoCommand(argv);
 };
 
-module.exports = command;
+class InfoCommand extends Command {
+  override initialize() {}
+
+  override execute() {
+    output("\n Environment info:");
+    envinfo
+      .run({
+        System: ["OS", "CPU"],
+        Binaries: ["Node", "Yarn", "npm"],
+        Utilities: ["Git"],
+        npmPackages: ["lerna"],
+      })
+      .then(output);
+  }
+}
+
+module.exports.InfoCommand = InfoCommand;

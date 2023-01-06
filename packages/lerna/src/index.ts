@@ -11,7 +11,6 @@ const createCmd = require("@lerna/create/command");
 const diffCmd = require("@lerna/diff/command");
 const execCmd = require("@lerna/exec/command");
 const importCmd = require("@lerna/import/command");
-const infoCmd = require("@lerna/info/command");
 const initCmd = require("@lerna/init/command");
 const linkCmd = require("@lerna/link/command");
 const listCmd = require("@lerna/list/command");
@@ -19,14 +18,14 @@ const publishCmd = require("@lerna/publish/command");
 const runCmd = require("@lerna/run/command");
 const versionCmd = require("@lerna/version/command");
 
+import * as repairCmd from "./commands/repair/command";
+import * as addCachingCmd from "./commands/add-caching/command";
+import * as watchCmd from "./commands/watch/command";
+import * as infoCmd from "./commands/info/command";
+
 const pkg = require("../package.json");
-const repairCmd = require("./commands/repair");
-const addCachingCmd = require("./commands/add-caching");
-const watchCmd = require("./commands/watch");
 
-module.exports = main;
-
-function main(argv: NodeJS.Process["argv"]) {
+module.exports = function main(argv: NodeJS.Process["argv"]) {
   const context = {
     lernaVersion: pkg.version,
   };
@@ -51,4 +50,4 @@ function main(argv: NodeJS.Process["argv"]) {
     .command(watchCmd)
     .command(versionCmd)
     .parse(argv, context);
-}
+};

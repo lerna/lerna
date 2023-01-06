@@ -21,6 +21,7 @@
     "schemas/lerna-schema.json",
     "migrations.json"
   ],
+  "main": "./src/index.js",
   "engines": {
     "node": "^14.15.0 || >=16.0.0"
   },
@@ -44,7 +45,6 @@
     "@lerna/diff": "file:../../commands/diff",
     "@lerna/exec": "file:../../commands/exec",
     "@lerna/import": "file:../../commands/import",
-    "@lerna/info": "file:../commands/info",
     "@lerna/init": "file:../../commands/init",
     "@lerna/link": "file:../../commands/link",
     "@lerna/list": "file:../../commands/list",
@@ -52,12 +52,11 @@
     "@lerna/run": "file:../../commands/run",
     "@lerna/version": "file:../../commands/version",
     "@nrwl/devkit": ">=15.4.2 < 16",
+    "envinfo": "^7.7.4",
     "import-local": "^3.0.2",
     "inquirer": "^8.2.4",
     "npmlog": "^6.0.2",
     "nx": ">=15.4.2 < 16",
     "typescript": "^3 || ^4"
-  },
-  "main": "./src/index.js",
-  "peerDependencies": {}
+  }
 }
