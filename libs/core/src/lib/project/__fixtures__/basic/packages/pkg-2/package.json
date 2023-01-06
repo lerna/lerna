@@ -1,0 +1,7 @@
+{
+  "name": "pkg-2",
+  "version": "1.0.0",
+  "dependencies": {
+    "pkg-1": "^1.0.0"
+  }
+}

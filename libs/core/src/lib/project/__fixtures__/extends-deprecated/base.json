@@ -1,0 +1,13 @@
+{
+  "packages": [
+    "base-pkgs/*"
+  ],
+  "command": {
+    "publish": {
+      "cdVersion": "major",
+      "npmTag": "ignored",
+      "loglevel": "success"
+    }
+  },
+  "version": "ignored"
+}

@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`conventional-commits updateChangelog() creates files if they do not exist: leaf 1`] = `
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# 1.1.0 (YYYY-MM-DD)
+
+
+### Features
+
+* I should be placed in the CHANGELOG ([SHA](COMMIT_URL))
+
+`;
+
+exports[`conventional-commits updateChangelog() creates files if they do not exist: root 1`] = `
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# 1.1.0 (YYYY-MM-DD)
+
+
+### Features
+
+* I should be placed in the CHANGELOG ([SHA](COMMIT_URL))
+
+`;
+
+exports[`conventional-commits updateChangelog() updates fixed changelogs: leaf 1`] = `
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [1.0.1](/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* A second commit for our CHANGELOG ([SHA](COMMIT_URL))
+
+
+
+
+
+<a name="1.0.0"></a>
+
+# 1.0.0 (YYYY-MM-DD)
+
+### Features
+
+* I should be placed in the CHANGELOG
+
+`;
+
+exports[`conventional-commits updateChangelog() updates fixed changelogs: root 1`] = `
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+## [1.0.1](/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* A second commit for our CHANGELOG ([SHA](COMMIT_URL))
+
+
+
+
+
+<a name="1.0.0"></a>
+
+# 1.0.0 (YYYY-MM-DD)
+
+### Features
+
+* I should be placed in the CHANGELOG
+
+`;

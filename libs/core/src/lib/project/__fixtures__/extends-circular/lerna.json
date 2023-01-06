@@ -1,0 +1,4 @@
+{
+  "extends": "./circular.json",
+  "version": "1.0.0"
+}

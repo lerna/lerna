@@ -1,0 +1,13 @@
+diff --git a/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js b/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
+index a99ac28..cbc6f67 100644
+--- a/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
++++ b/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
+@@ -9,7 +9,7 @@ const CJS_FILE_EXTENSION = '.cjs';
+ function buildEsbuildOptions(format, options, context) {
+     const esbuildOptions = Object.assign(Object.assign({}, options.esbuildOptions), { entryPoints: options.additionalEntryPoints
+             ? [options.main, ...options.additionalEntryPoints]
+-            : [options.main], entryNames: options.outputHashing === 'all' ? '[dir]/[name].[hash]' : '[dir]/[name]', bundle: true, external: options.external, minify: options.minify, platform: options.platform, target: options.target, metafile: options.metafile, tsconfig: options.tsConfig, format, outExtension: {
++            : [options.main], entryNames: options.outputHashing === 'all' ? '[dir]/[name].[hash]' : '[dir]/[name]', bundle: true, external: [...options.external, ...options.esbuildOptions.external], minify: options.minify, platform: options.platform, target: options.target, metafile: options.metafile, tsconfig: options.tsConfig, format, outExtension: {
+             '.js': getOutExtension(format, options),
+         } });
+     if (options.platform === 'browser') {

@@ -1,0 +1,11 @@
+{
+  "packages": [
+    "base-pkgs/*"
+  ],
+  "command": {
+    "list": {
+      "json": true
+    }
+  },
+  "version": "ignored"
+}

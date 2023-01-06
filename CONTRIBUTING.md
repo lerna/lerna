@@ -27,7 +27,7 @@ Currently, the [source](https://github.com/lerna/lerna/tree/main) is split up in
 - [utils](https://github.com/lerna/lerna/tree/main/utils): shared packages to run git, npm, fs, and more.
 - [core](https://github.com/lerna/lerna/tree/main/core): basic building blocks, including Package-related abstractions and the command superclass.
 - [commands](https://github.com/lerna/lerna/tree/main/commands): each command has an `initialize` and `execute` function.
-  - These commands are consumed as yargs subcommands in [core/cli/index.js](https://github.com/lerna/lerna/blob/main/core/cli/index.js), which is required from the executable [`core/lerna/cli.js`](https://github.com/lerna/lerna/blob/main/core/lerna/cli.js).
+  - These commands are consumed as yargs subcommands in [core/cli/index.js](https://github.com/lerna/lerna/blob/main/core/cli/index.js), which is required from the executable [`packages/lerna/cli.js`](https://github.com/lerna/lerna/blob/main/packages/lerna/cli.js).
 
 ## Submission Guidelines
 
@@ -129,7 +129,7 @@ You will need two different terminal windows for this as one of them will contai
 - Run `npm adduser --registry http://localhost:4873` in Terminal 2 (real credentials are not required, you just need to
   be logged in. You can use test/test/test@test.io.)
 - Run `npm run local-registry enable` in Terminal 2
-- Run `npm run local-release 999.9.9 --local` in Terminal 2 - you can choose any nonexistent version number here, but it's recommended to use something which is different from the current major
+- Run `npm run lerna-release 999.9.9 --local` in Terminal 2 - you can choose any nonexistent version number here, but it's recommended to use something which is different from the current major
 
 You can then install your local version of lerna wherever you want by leveraging the `--registry` flag on the npm/npx client.
 

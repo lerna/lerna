@@ -47,7 +47,7 @@ async function updateVersionsAndPublishPackages() {
   console.log(`\n${LERNA_PREFIX} 📦 Publishing packages\n`);
   const isVerbose = process.env.NX_VERBOSE_LOGGING === "true" || process.argv.includes("--verbose");
   // JH: changed to `npm run` and changed version to value of $PUBLISHED_VERSION
-  const response = execSync(`npm run local-release ${process.env.PUBLISHED_VERSION} --local`, {
+  const response = execSync(`npm run lerna-release ${process.env.PUBLISHED_VERSION} --local`, {
     stdio: isVerbose ? "inherit" : "pipe",
     encoding: "utf8",
   });

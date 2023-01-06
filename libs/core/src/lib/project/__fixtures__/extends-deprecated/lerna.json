@@ -1,0 +1,13 @@
+{
+  "extends": "./recursive.json",
+  "commands": {
+    "bootstrap": {
+      "hoist": true
+    },
+    "version": {
+      "githubRelease": true
+    }
+  },
+  "npmTag": "next",
+  "version": "1.0.0"
+}

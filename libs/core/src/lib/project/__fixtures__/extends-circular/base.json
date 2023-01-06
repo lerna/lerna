@@ -1,0 +1,4 @@
+{
+  "extends": "./circular.json",
+  "loglevel": "warn"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "links-3",
+  "version": "1.0.0",
+  "bin": {
+    "links3cli1": "cli1.js",
+    "links3cli2": "cli2.js",
+    "links3cli3": "cli3.js"
+  },
+  "devDependencies": {
+    "@package-utilities/links-1": "^1.0.0",
+    "@package-utilities/links-2": "^1.0.0"
+  }
+}

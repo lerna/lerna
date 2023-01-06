@@ -1,0 +1,13 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+[commit]
+	gpgSign = false
+[init]
+	defaultBranch = main
+[user]
+	email = test@example.com
+	name = Tester McPerson

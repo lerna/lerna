@@ -4,7 +4,7 @@ const normalizeNewline = require("normalize-newline");
 const serializeTempdir = require("./serialize-tempdir");
 const serializeWindowsPaths = require("./serialize-windows-paths");
 // eslint-disable-next-line node/no-unpublished-require
-const LERNA_VERSION = require("../../core/lerna/package.json").version;
+const LERNA_VERSION = require("../../packages/lerna/package.json").version;
 
 const VERSION_REGEX = new RegExp(`^((?:.*?notice cli )|\\^?)v?${LERNA_VERSION}`, "g");
 // TODO: maybe even less naïve regex?
