@@ -106,6 +106,10 @@ function runLifecycle(pkg, stage, options) {
     // we must pass the _actual_ JSON instead of our fancy Package thingy
     // eslint-disable-next-line no-param-reassign
     pkg = pkg.toJSON();
+    if (!pkg.scripts || !pkg.scripts[stage]) {
+      opts.log.info("lifecycle", "No script for internal package %j in %j, continuing", stage, pkg.name);
+      return Promise.resolve();
+    }
   }
 
   // _id is needed by @npmcli/run-script
