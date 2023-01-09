@@ -47,7 +47,6 @@
     "@lerna/import": "file:../../commands/import",
     "@lerna/init": "file:../../commands/init",
     "@lerna/link": "file:../../commands/link",
-    "@lerna/list": "file:../../commands/list",
     "@lerna/publish": "file:../../commands/publish",
     "@lerna/run": "file:../../commands/run",
     "@lerna/version": "file:../../commands/version",

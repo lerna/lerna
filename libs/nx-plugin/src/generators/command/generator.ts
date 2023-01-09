@@ -1,5 +1,6 @@
 import {
   formatFiles,
+  installPackagesTask,
   readProjectConfiguration,
   Tree,
   updateJson,
@@ -196,4 +197,6 @@ module.exports = command;
   });
 
   await formatFiles(tree);
+
+  return installPackagesTask(tree, true);
 }
