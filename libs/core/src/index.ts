@@ -1,4 +1,5 @@
 export * from "./lib/cli";
+export * from "./lib/collect-updates";
 export { Command } from "./lib/command";
 export { filterOptions, getFilteredPackages } from "./lib/filter-options";
 export { listableFormat } from "./lib/listable/listable-format";

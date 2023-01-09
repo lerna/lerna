@@ -31,7 +31,7 @@
     "ci:lint": "eslint . -c .eslintrc.json --no-eslintrc --ignore-path .gitignore",
     "lint": "eslint . -c .eslintrc.json --no-eslintrc --ignore-path .gitignore --ignore-pattern __fixtures__ --cache --cache-location ./node_modules/.cache/eslint && nx run-many --target=lint",
     "pretest": "npm run lint",
-    "test": "nx build lerna && jest && nx run-many --target=test --projects=\"nx-*,core,test-helpers,e2e-utils\"",
+    "test": "nx build lerna && jest && nx run-many --target=test --projects=\"nx-*,core,test-helpers,e2e-utils,legacy-*\"",
     "e2e-start-local-registry": "node ./scripts/e2e-start-local-registry.js",
     "e2e-build-package-publish": "ts-node -P ./scripts/tsconfig.e2e.json ./scripts/e2e-build-package-publish.ts",
     "lerna-release": "ts-node -P ./scripts/tsconfig.scripts.json ./scripts/lerna-release",

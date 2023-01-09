@@ -45,6 +45,14 @@
       "options": {
         "lintFilePatterns": ["packages/legacy-structure/commands/list/**/*.ts"]
       }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/legacy-structure/commands/list/jest.config.ts",
+        "passWithNoTests": true
+      }
     }
   },
   "tags": []

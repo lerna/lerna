@@ -19,7 +19,7 @@ export default async function (tree: Tree, options: CommandGeneratorSchema) {
   await libraryGenerator(tree, {
     name: options.name,
     directory: "packages/legacy-structure/commands",
-    unitTestRunner: "none",
+    unitTestRunner: "jest",
   });
 
   const config = readProjectConfiguration(tree, `legacy-structure-commands-${options.name}`);
@@ -176,6 +176,15 @@ module.exports = command;
         ...tsconfig.compilerOptions,
         types: ["node"],
       },
+    };
+  });
+
+  // Copy and configure legacy tests
+  tree.rename(`commands/${options.name}/__tests__`, `${sourceRoot}/__tests__`);
+  updateJson(tree, `${sourceRoot}/tsconfig.spec.json`, (tsconfig) => {
+    return {
+      ...tsconfig,
+      include: [...tsconfig.include, "__tests__/**/*.ts"],
     };
   });
 
