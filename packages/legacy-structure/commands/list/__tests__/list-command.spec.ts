@@ -35,7 +35,7 @@ expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/se
 
 describe("lerna ls", () => {
   describe("in a basic repo", () => {
-    let testDir;
+    let testDir: string;
 
     beforeAll(async () => {
       testDir = await initFixture("basic");

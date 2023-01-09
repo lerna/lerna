@@ -11,5 +11,5 @@ export default {
     "^.+\\.[tj]s$": "ts-jest",
   },
   moduleFileExtensions: ["ts", "js", "html"],
-  coverageDirectory: "../../../../coverage/packages/legacy-structure/commands/list",
+  coverageDirectory: "../../../../coverage/packages/legacy-structure/commands/info",
 };

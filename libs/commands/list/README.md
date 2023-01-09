@@ -1,4 +1,4 @@
-# `@lerna/list`
+# `lerna list`
 
 > List local packages
 

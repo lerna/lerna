@@ -5,7 +5,8 @@
   "workspaces": [
     "commands/*",
     "core/*",
-    "packages/**/*",
+    "packages/lerna",
+    "packages/legacy-structure/*",
     "utils/*"
   ],
   "volta": {
