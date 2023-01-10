@@ -1,32 +1,40 @@
-/* eslint-disable */
-"use strict";
+// TODO: refactor based on TS feedback
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
-const pMap = require("p-map");
-const path = require("path");
-const { existsSync } = require("fs-extra");
+import {
+  Command,
+  generateProfileOutputPath,
+  getFilteredPackages,
+  npmRunScript,
+  npmRunScriptStreaming,
+  output,
+  Profiler,
+  runTopologically,
+  timer,
+  ValidationError,
+} from "@lerna/core";
+import { existsSync } from "fs-extra";
+import pMap from "p-map";
+import path from "path";
+import { performance } from "perf_hooks";
 
-const { Command } = require("@lerna/command");
-const { npmRunScript, npmRunScriptStreaming } = require("@lerna/npm-run-script");
-const { output } = require("@lerna/output");
-const { Profiler, generateProfileOutputPath } = require("@lerna/profiler");
-const { timer } = require("@lerna/timer");
-const { runTopologically } = require("@lerna/run-topologically");
-const { ValidationError } = require("@lerna/validation-error");
-const { getFilteredPackages } = require("@lerna/filter-options");
-const { performance } = require("perf_hooks");
-
-module.exports = factory;
-
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new RunCommand(argv);
-}
+};
 
 class RunCommand extends Command {
-  get requiresGit() {
+  script: string;
+  args: string[];
+  npmClient: string;
+  bail: boolean;
+  prefix: boolean;
+
+  override get requiresGit() {
     return false;
   }
 
-  initialize() {
+  override initialize() {
     const { script, npmClient = "npm" } = this.options;
 
     this.script = script;
@@ -73,7 +81,7 @@ class RunCommand extends Command {
     });
   }
 
-  execute() {
+  override execute() {
     if (this.options.useNx === false) {
       this.logger.info(
         "",
@@ -202,6 +210,7 @@ class RunCommand extends Command {
     const { targetDependencies, options, extraOptions } = await this.prepNxOptions();
 
     if (this.packagesWithScript.length === 1) {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { runOne } = require("nx/src/command-line/run-one");
       const fullQualifiedTarget =
         this.packagesWithScript.map((p) => p.name)[0] +
@@ -217,6 +226,7 @@ class RunCommand extends Command {
         extraOptions
       );
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { runMany } = require("nx/src/command-line/run-many");
       const projects = this.packagesWithScript.map((p) => p.name).join(",");
       return runMany(
@@ -234,6 +244,7 @@ class RunCommand extends Command {
   async prepNxOptions() {
     const nxJsonExists = existsSync(path.join(this.project.rootPath, "nx.json"));
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { readNxJson } = require("nx/src/config/configuration");
     const nxJson = readNxJson();
     const targetDependenciesAreDefined =
@@ -351,6 +362,7 @@ class RunCommand extends Command {
 
   configureNxOutput() {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const nxOutput = require("nx/src/utils/output");
       nxOutput.output.cliName = "Lerna (powered by Nx)";
       nxOutput.output.formatCommand = (taskId) => taskId;

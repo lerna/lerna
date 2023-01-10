@@ -1,22 +1,28 @@
-"use strict";
+import {
+  npmRunScript as _npmRunScript,
+  npmRunScriptStreaming as _npmRunScriptStreaming,
+  output as _output,
+} from "@lerna/core";
+import { commandRunner, initFixtureFactory, loggingOutput, normalizeRelativeDir } from "@lerna/test-helpers";
+import fs from "fs-extra";
+import globby from "globby";
+import { afterAll, afterEach } from "jest-circus";
+
+const initFixture = initFixtureFactory(__dirname);
+
+// file under test
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaRun = commandRunner(require("../src/command"));
+
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
 
 jest.mock("@lerna/npm-run-script");
 
-const fs = require("fs-extra");
-const globby = require("globby");
-
-// mocked modules
-const { npmRunScript, npmRunScriptStreaming } = require("@lerna/npm-run-script");
-const { output } = require("@lerna/output");
-
-// helpers
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
-const { loggingOutput } = require("@lerna-test/helpers/logging-output");
-const { normalizeRelativeDir } = require("@lerna-test/helpers");
-const { afterEach, afterAll } = require("jest-circus");
-
-// file under test
-const lernaRun = require("@lerna-test/helpers").commandRunner(require("../command"));
+// The mock modifies the exported symbols and therefore types
+const output = _output as any;
+const npmRunScript = _npmRunScript as any;
+const npmRunScriptStreaming = _npmRunScriptStreaming as any;
 
 // assertion helpers
 const ranInPackagesStreaming = (testDir) =>
@@ -115,7 +121,7 @@ describe("RunCommand", () => {
 
     it("reports script errors with early exit", async () => {
       npmRunScript.mockImplementationOnce((script, { pkg }) => {
-        const err = new Error(pkg.name);
+        const err = new Error(pkg.name) as any;
 
         err.failed = true;
         err.exitCode = 123;
@@ -131,7 +137,7 @@ describe("RunCommand", () => {
 
     it("propagates non-zero exit codes with --no-bail", async () => {
       npmRunScript.mockImplementationOnce((script, { pkg }) => {
-        const err = new Error(pkg.name);
+        const err = new Error(pkg.name) as any;
 
         err.failed = true;
         err.exitCode = 456;
@@ -195,6 +201,9 @@ describe("RunCommand", () => {
       await lernaRun(cwd)("--profile", "--profile-location", "foo/bar", "my-script");
 
       const [profileLocation] = await globby("foo/bar/Lerna-Profile-*.json", { cwd, absolute: true });
+      // TODO: refactor based on TS feedback
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const exists = await fs.exists(profileLocation);
 
       expect(exists).toBe(true);
@@ -327,12 +336,18 @@ describe("RunCommand", () => {
     beforeAll(async () => {
       testDir = await initFixture("powered-by-nx");
       process.env.NX_WORKSPACE_ROOT_PATH = testDir;
+      // TODO: refactor based on TS feedback
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       jest.spyOn(process, "exit").mockImplementation((code) => {
         if (code !== 0) {
           throw new Error();
         }
       });
       originalStdout = process.stdout.write;
+      // TODO: refactor based on TS feedback
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       process.stdout.write = (v) => {
         collectedOutput = `${collectedOutput}\n${v}`;
       };

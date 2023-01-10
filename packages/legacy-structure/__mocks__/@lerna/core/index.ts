@@ -8,4 +8,6 @@ module.exports = {
   output,
   ...collectUpdates,
   createSymlink: jest.fn(),
+  npmRunScript: jest.fn(),
+  npmRunScriptStreaming: jest.fn(),
 };
