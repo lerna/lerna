@@ -1,16 +1,18 @@
-"use strict";
+import { output as _output, collectUpdates as _collectUpdates } from "@lerna/core";
+import { initFixtureFactory, commandRunner, updateLernaConfig, loggingOutput } from "@lerna/test-helpers";
 
-// mocked modules
-const { collectUpdates } = require("@lerna/collect-updates");
-const { output } = require("@lerna/output");
-
-// helpers
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
-const { loggingOutput } = require("@lerna-test/helpers/logging-output");
-const { updateLernaConfig } = require("@lerna-test/helpers");
+const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-const lernaChanged = require("@lerna-test/helpers").commandRunner(require("../command"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaChanged = commandRunner(require("../src/command"));
+
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
+
+// The mock modifies the exported symbols and therefore types
+const output = _output as any;
+const collectUpdates = _collectUpdates as any;
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({
@@ -24,7 +26,8 @@ expect.addSnapshotSerializer({
 });
 
 // normalize temp directory paths in snapshots
-expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-tempdir"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-tempdir"));
 
 describe("ChangedCommand", () => {
   let cwd;

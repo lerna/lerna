@@ -1,23 +1,18 @@
-"use strict";
+import { collectUpdates, Command, listableFormat, output } from "@lerna/core";
 
-const { Command } = require("@lerna/command");
-const { collectUpdates } = require("@lerna/collect-updates");
-const listable = require("@lerna/listable");
-const { output } = require("@lerna/output");
-
-module.exports = factory;
-
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new ChangedCommand(argv);
-}
+};
 
 class ChangedCommand extends Command {
+  result: ReturnType<typeof listableFormat>;
+
   get otherCommandConfigs() {
     // back-compat
     return ["version", "publish"];
   }
 
-  initialize() {
+  override initialize() {
     if (this.options.conventionalGraduate) {
       // provide artificial --conventional-commits so --conventional-graduate works
       this.options.conventionalCommits = true;
@@ -34,7 +29,7 @@ class ChangedCommand extends Command {
       this.options
     );
 
-    this.result = listable.format(
+    this.result = listableFormat(
       updates.map((node) => node.pkg),
       this.options
     );
@@ -49,7 +44,7 @@ class ChangedCommand extends Command {
     }
   }
 
-  execute() {
+  override execute() {
     output(this.result.text);
 
     this.logger.success(

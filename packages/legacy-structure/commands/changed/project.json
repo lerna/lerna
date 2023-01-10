@@ -1,14 +1,14 @@
 {
-  "name": "lerna",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/lerna/src",
+  "name": "legacy-structure-commands-changed",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/legacy-structure/commands/changed",
   "projectType": "application",
   "targets": {
     "build": {
       "dependsOn": ["compile"],
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "packages/lerna/dist",
+        "cwd": "packages/legacy-structure/commands/changed/dist",
         "parallel": false,
         "commands": ["rm -rf package.json"]
       }
@@ -17,17 +17,20 @@
       "executor": "@nrwl/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "packages/lerna/dist",
-        "main": "packages/lerna/src/index.ts",
-        "tsConfig": "packages/lerna/tsconfig.lib.json",
-        "assets": [],
+        "outputPath": "packages/legacy-structure/commands/changed/dist",
+        "main": "packages/legacy-structure/commands/changed/src/index.ts",
+        "tsConfig": "packages/legacy-structure/commands/changed/tsconfig.lib.json",
+        "assets": [
+          {
+            "input": "libs/commands/changed",
+            "glob": "README.md",
+            "output": "../"
+          }
+        ],
         "thirdParty": false,
         "platform": "node",
         "format": ["cjs"],
-        "additionalEntryPoints": [
-          "packages/lerna/src/cli.ts",
-          "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts"
-        ],
+        "additionalEntryPoints": ["packages/legacy-structure/commands/changed/src/command.ts"],
         "esbuildOptions": {
           "external": ["*package.json"],
           "outExtension": {
@@ -40,14 +43,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/lerna/**/*.ts"]
+        "lintFilePatterns": ["packages/legacy-structure/commands/changed/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "packages/lerna/jest.config.ts",
+        "jestConfig": "packages/legacy-structure/commands/changed/jest.config.ts",
         "passWithNoTests": true
       }
     }

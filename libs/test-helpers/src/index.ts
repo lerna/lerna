@@ -1,4 +1,3 @@
-import { Project } from "@lerna/core";
 import normalizePath from "normalize-path";
 import path from "path";
 
@@ -16,6 +15,8 @@ export * from "./lib/npm";
  * @param updates mixed into existing JSON via Object.assign
  */
 export function updateLernaConfig(testDir: any, updates: any) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { Project } = require("@lerna/core");
   const project = new Project(testDir);
 
   Object.assign(project.config, updates);

@@ -30,10 +30,12 @@
   },
   "targetDefaults": {
     "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "dependsOn": ["build"]
     },
     "build": {
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production"],
+      "dependsOn": ["^build"]
     },
     "run-e2e-tests": {
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]

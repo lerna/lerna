@@ -1,8 +1,6 @@
-// mocked modules
 import { output as _output, collectUpdates as _collectUpdates } from "@lerna/core";
 import { initFixtureFactory, commandRunner } from "@lerna/test-helpers";
 
-// helpers
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
