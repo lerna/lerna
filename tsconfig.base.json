@@ -18,6 +18,7 @@
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "paths": {
+      "@lerna/bootstrap": ["packages/legacy-structure/commands/bootstrap/src/index.ts"],
       "@lerna/commands/add": ["libs/commands/add/src/index.ts"],
       "@lerna/commands/add/*": ["libs/commands/add/src/*"],
       "@lerna/commands/bootstrap": ["libs/commands/bootstrap/src/index.ts"],
@@ -48,8 +49,7 @@
       "@lerna/publish": ["commands/publish/index.js"],
       "@lerna/test-helpers": ["libs/test-helpers/src/index.ts"],
       "@lerna/test-helpers/*": ["libs/test-helpers/*"],
-      "@lerna/version": ["commands/version/index.js"],
-      "@lerna/boostrap": ["packages/legacy-structure/commands/bootstrap"]
+      "@lerna/version": ["commands/version/index.js"]
     }
   },
   "exclude": ["node_modules", "tmp"]

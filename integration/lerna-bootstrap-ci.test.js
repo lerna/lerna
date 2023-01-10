@@ -3,7 +3,7 @@
 const path = require("path");
 const { cliRunner } = require("@lerna-test/helpers");
 const cloneFixture = require("@lerna-test/helpers").cloneFixtureFactory(
-  path.resolve(__dirname, "../commands/bootstrap/__tests__")
+  path.resolve(__dirname, "../packages/legacy-structure/commands/bootstrap/__tests__")
 );
 
 test("lerna bootstrap --ci", async () => {
