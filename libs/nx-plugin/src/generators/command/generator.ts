@@ -180,8 +180,7 @@ module.exports = command;
     };
   });
 
-  // Copy and configure legacy tests
-  tree.rename(`commands/${options.name}/__tests__`, `${sourceRoot}/__tests__`);
+  // Configure legacy tests
   updateJson(tree, `${sourceRoot}/tsconfig.spec.json`, (tsconfig) => {
     return {
       ...tsconfig,

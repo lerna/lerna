@@ -39,12 +39,12 @@
   "dependencies": {
     "@lerna/add": "file:../../commands/add",
     "@lerna/bootstrap": "file:../../commands/bootstrap",
+    "@lerna/child-process": "file:../../core/child-process",
     "@lerna/clean": "file:../../commands/clean",
     "@lerna/create": "file:../../commands/create",
     "@lerna/diff": "file:../../commands/diff",
     "@lerna/exec": "file:../../commands/exec",
     "@lerna/import": "file:../../commands/import",
-    "@lerna/init": "file:../../commands/init",
     "@lerna/link": "file:../../commands/link",
     "@lerna/publish": "file:../../commands/publish",
     "@lerna/run": "file:../../commands/run",

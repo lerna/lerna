@@ -22,6 +22,8 @@
       "@lerna/commands/changed/*": ["libs/commands/changed/src/*"],
       "@lerna/commands/info": ["libs/commands/info/src/index.ts"],
       "@lerna/commands/info/*": ["libs/commands/info/src/*"],
+      "@lerna/commands/init": ["libs/commands/init/src/index.ts"],
+      "@lerna/commands/init/*": ["libs/commands/init/src/*"],
       "@lerna/commands/list": ["libs/commands/list/src/index.ts"],
       "@lerna/commands/list/*": ["libs/commands/list/src/*"],
       "@lerna/core": ["libs/core/src/index.ts"],

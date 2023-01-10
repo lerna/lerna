@@ -1,16 +1,13 @@
-"use strict";
+import { commandRunner, initFixtureFactory, loggingOutput } from "@lerna/test-helpers";
+import fs from "fs-extra";
+import path from "path";
+import tempy from "tempy";
 
-const fs = require("fs-extra");
-const path = require("path");
-const tempy = require("tempy");
-
-const { loggingOutput } = require("@lerna-test/helpers/logging-output");
-
-// helpers
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-const lernaInit = require("@lerna-test/helpers").commandRunner(require("../command"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaInit = commandRunner(require("../src/command"));
 
 describe("InitCommand", () => {
   const lernaVersion = "__TEST_VERSION__";
@@ -35,7 +32,13 @@ describe("InitCommand", () => {
       const [lernaJson, pkgJson, packagesDirExists, gitDirExists] = await Promise.all([
         fs.readJSON(path.join(testDir, "lerna.json")),
         fs.readJSON(path.join(testDir, "package.json")),
+        // TODO: refactor based on TS feedback
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         fs.exists(path.join(testDir, "packages")),
+        // TODO: refactor based on TS feedback
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         fs.exists(path.join(testDir, ".git")),
       ]);
 
@@ -130,6 +133,9 @@ describe("InitCommand", () => {
       const [lernaJson, pkgJson, packagesDirExists] = await Promise.all([
         fs.readJSON(path.join(testDir, "lerna.json")),
         fs.readJSON(path.join(testDir, "package.json")),
+        // TODO: refactor based on TS feedback
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         fs.exists(path.join(testDir, "packages")),
       ]);
 
@@ -335,6 +341,9 @@ describe("InitCommand", () => {
 
       await lernaInit(testDir)();
 
+      // TODO: refactor based on TS feedback
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       expect(await fs.exists(path.join(testDir, "modules"))).toBe(true);
     });
 

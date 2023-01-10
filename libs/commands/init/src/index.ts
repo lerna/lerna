@@ -1,21 +1,20 @@
-"use strict";
+import { Command, Project } from "@lerna/core";
+import fs from "fs-extra";
+import pMap from "p-map";
+import path from "path";
+import writeJsonFile from "write-json-file";
 
-const fs = require("fs-extra");
-const path = require("path");
-const pMap = require("p-map");
-const writeJsonFile = require("write-json-file");
-
-const { Command } = require("@lerna/command");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
-const { Project } = require("@lerna/project");
 
-module.exports = factory;
-
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new InitCommand(argv);
-}
+};
 
 class InitCommand extends Command {
+  exact: boolean;
+  lernaVersion: string;
+
   get requiresGit() {
     return false;
   }
@@ -24,11 +23,14 @@ class InitCommand extends Command {
     this.logger.verbose(this.name, "skipping validations");
   }
 
+  // TODO: refactor based on TS feedback
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   runPreparations() {
     this.logger.verbose(this.name, "skipping preparations");
   }
 
-  initialize() {
+  override initialize() {
     this.exact = this.options.exact;
     this.lernaVersion = this.options.lernaVersion;
 
@@ -39,11 +41,14 @@ class InitCommand extends Command {
     }
   }
 
-  execute() {
+  override execute() {
     let chain = Promise.resolve();
 
     chain = chain.then(() => this.ensureGitIgnore());
     chain = chain.then(() => this.ensureConfig());
+    // TODO: refactor based on TS feedback
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     chain = chain.then(() => this.ensurePackagesDir());
 
     return chain.then(() => {
@@ -85,6 +90,9 @@ class InitCommand extends Command {
         };
 
         if (useWorkspaces) {
+          // TODO: refactor based on TS feedback
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           pkg.workspaces = [Project.PACKAGE_GLOB];
         }
 
@@ -127,6 +135,9 @@ class InitCommand extends Command {
       return rootPkg.serialize();
     });
 
+    // TODO: refactor based on TS feedback
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     chain = chain.then(() => {
       let version;
 
@@ -150,10 +161,16 @@ class InitCommand extends Command {
         }
       }
 
+      // TODO: refactor based on TS feedback
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       delete this.project.config.lerna; // no longer relevant
 
       if (this.exact) {
         // ensure --exact is preserved for future init commands
+        // TODO: refactor based on TS feedback
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const commandConfig = this.project.config.command || (this.project.config.command = {});
         const initConfig = commandConfig.init || (commandConfig.init = {});
 
@@ -177,6 +194,9 @@ class InitCommand extends Command {
   ensurePackagesDir() {
     this.logger.info("", "Creating packages directory");
 
+    // TODO: refactor based on TS feedback
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return pMap(this.project.packageParentDirs, (dir) => fs.mkdirp(dir));
   }
 }
