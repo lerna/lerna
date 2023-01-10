@@ -11,6 +11,8 @@ export { Package } from "./lib/package";
 export { PackageGraph } from "./lib/package-graph";
 export { generateProfileOutputPath, Profiler } from "./lib/profiler";
 export { Project } from "./lib/project";
+export { promptConfirmation } from "./lib/prompt";
+export { pulseTillDone } from "./lib/pulse-till-done";
 export { runTopologically } from "./lib/run-topologically";
 export { symlinkDependencies } from "./lib/symlink-dependencies";
 export { default as tempWrite } from "./lib/temp-write";

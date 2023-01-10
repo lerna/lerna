@@ -10,4 +10,5 @@ module.exports = {
   createSymlink: jest.fn(),
   npmRunScript: jest.fn(),
   npmRunScriptStreaming: jest.fn(),
+  promptConfirmation: jest.fn(),
 };

@@ -44,7 +44,6 @@
     "@lerna/create": "file:../../commands/create",
     "@lerna/diff": "file:../../commands/diff",
     "@lerna/exec": "file:../../commands/exec",
-    "@lerna/import": "file:../../commands/import",
     "@lerna/publish": "file:../../commands/publish",
     "@lerna/version": "file:../../commands/version",
     "@nrwl/devkit": ">=15.4.2 < 16",

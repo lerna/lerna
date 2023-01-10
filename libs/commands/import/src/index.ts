@@ -1,21 +1,19 @@
-"use strict";
+// TODO: refactor based on TS feedback
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
-const dedent = require("dedent");
-const fs = require("fs-extra");
-const path = require("path");
-const pMapSeries = require("p-map-series");
+import { Command, promptConfirmation, pulseTillDone, ValidationError } from "@lerna/core";
+import dedent from "dedent";
+import fs from "fs-extra";
+import pMapSeries from "p-map-series";
+import path from "path";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
-const { Command } = require("@lerna/command");
-const { promptConfirmation } = require("@lerna/prompt");
-const { ValidationError } = require("@lerna/validation-error");
-const { pulseTillDone } = require("@lerna/pulse-till-done");
 
-module.exports = factory;
-
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new ImportCommand(argv);
-}
+};
 
 class ImportCommand extends Command {
   gitParamsForTargetCommits() {
@@ -26,7 +24,7 @@ class ImportCommand extends Command {
     return params;
   }
 
-  initialize() {
+  override initialize() {
     const inputPath = this.options.dir;
 
     const externalRepoPath = path.resolve(inputPath);
@@ -53,7 +51,7 @@ class ImportCommand extends Command {
     }
 
     const packageJson = path.join(externalRepoPath, "package.json");
-    // eslint-disable-next-line import/no-dynamic-require, global-require
+    // eslint-disable-next-line import/no-dynamic-require, global-require, @typescript-eslint/no-var-requires
     const packageName = require(packageJson).name;
 
     if (!packageName) {
@@ -206,7 +204,7 @@ class ImportCommand extends Command {
     this.execSync("git", ["config", "user.name", `"${name}"`]);
   }
 
-  execute() {
+  override execute() {
     this.enableProgressBar();
 
     const tracker = this.logger.newItem("execute");

@@ -1,24 +1,28 @@
-"use strict";
+import { promptConfirmation as _promptConfirmation } from "@lerna/core";
+import {
+  commandRunner,
+  gitAdd,
+  gitCommit,
+  initFixtureFactory,
+  initNamedFixtureFactory,
+  updateLernaConfig,
+} from "@lerna/test-helpers";
+import execa from "execa";
+import fs from "fs-extra";
+import path from "path";
+import pathExists from "path-exists";
 
-jest.mock("@lerna/prompt");
+const promptConfirmation = jest.mocked(_promptConfirmation);
 
-const execa = require("execa");
-const fs = require("fs-extra");
-const path = require("path");
-const pathExists = require("path-exists");
+const initFixture = initFixtureFactory(__dirname);
+const initNamedFixture = initNamedFixtureFactory(__dirname);
 
-// mocked or stubbed modules
-const { promptConfirmation } = require("@lerna/prompt");
-
-// helpers
-const initNamedFixture = require("@lerna-test/helpers").initNamedFixtureFactory(__dirname);
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
-const { gitAdd } = require("@lerna-test/helpers");
-const { gitCommit } = require("@lerna-test/helpers");
-const { updateLernaConfig } = require("@lerna-test/helpers");
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
 
 // file under test
-const lernaImport = require("@lerna-test/helpers").commandRunner(require("../command"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaImport = commandRunner(require("../src/command"));
 
 // assertion helpers
 const lastCommitInDir = (cwd) =>

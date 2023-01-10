@@ -1,0 +1,59 @@
+{
+  "name": "legacy-structure-commands-import",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/legacy-structure/commands/import",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "dependsOn": ["compile"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/legacy-structure/commands/import/dist",
+        "parallel": false,
+        "commands": ["rm -rf package.json"]
+      }
+    },
+    "compile": {
+      "executor": "@nrwl/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/legacy-structure/commands/import/dist",
+        "main": "packages/legacy-structure/commands/import/src/index.ts",
+        "tsConfig": "packages/legacy-structure/commands/import/tsconfig.lib.json",
+        "assets": [
+          {
+            "input": "libs/commands/import",
+            "glob": "README.md",
+            "output": "../"
+          }
+        ],
+        "thirdParty": false,
+        "platform": "node",
+        "format": ["cjs"],
+        "additionalEntryPoints": ["packages/legacy-structure/commands/import/src/command.ts"],
+        "esbuildOptions": {
+          "external": ["*package.json"],
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/legacy-structure/commands/import/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/legacy-structure/commands/import/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
