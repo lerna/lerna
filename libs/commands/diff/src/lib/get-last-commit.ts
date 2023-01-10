@@ -1,6 +1,6 @@
-"use strict";
+import log from "npmlog";
 
-const log = require("npmlog");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 module.exports.getLastCommit = getLastCommit;
@@ -10,11 +10,17 @@ module.exports.getLastCommit = getLastCommit;
  */
 function getLastCommit(execOpts) {
   if (hasTags(execOpts)) {
+    // TODO: refactor to address type issues
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     log.silly("getLastTagInBranch");
 
     return childProcess.execSync("git", ["describe", "--tags", "--abbrev=0"], execOpts);
   }
 
+  // TODO: refactor to address type issues
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   log.silly("getFirstCommit");
   return childProcess.execSync("git", ["rev-list", "--max-parents=0", "HEAD"], execOpts);
 }
@@ -32,6 +38,9 @@ function hasTags(opts) {
     log.verbose("hasTags error", err);
   }
 
+  // TODO: refactor to address type issues
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   log.verbose("hasTags", result);
 
   return result;

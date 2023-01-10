@@ -6,12 +6,12 @@ import { lernaCLI } from "@lerna/core";
 const addCmd = require("@lerna/add/command");
 const bootstrapCmd = require("@lerna/bootstrap/command");
 const createCmd = require("@lerna/create/command");
-const diffCmd = require("@lerna/diff/command");
 const publishCmd = require("@lerna/publish/command");
 const versionCmd = require("@lerna/version/command");
 
 import * as changedCmd from "@lerna/commands/changed/command";
 import * as cleanCmd from "@lerna/commands/clean/command";
+import * as diffCmd from "@lerna/commands/diff/command";
 import * as execCmd from "@lerna/commands/exec/command";
 import * as importCmd from "@lerna/commands/import/command";
 import * as infoCmd from "@lerna/commands/info/command";

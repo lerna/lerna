@@ -29,12 +29,6 @@
     "url": "git+https://github.com/lerna/lerna.git",
     "directory": "packages/legacy-structure/commands/changed"
   },
-  "dependencies": {
-    "@lerna/collect-updates": "file:../../utils/collect-updates",
-    "@lerna/command": "file:../../core/command",
-    "@lerna/listable": "file:../../utils/listable",
-    "@lerna/output": "file:../../utils/output"
-  },
   "exports": {
     ".": {
       "import": "./dist/index.js",

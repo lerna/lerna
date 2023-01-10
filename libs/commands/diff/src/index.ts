@@ -1,18 +1,20 @@
-"use strict";
+import { Command, ValidationError } from "@lerna/core";
 
-const childProcess = require("@lerna/child-process");
-const { Command } = require("@lerna/command");
-const { ValidationError } = require("@lerna/validation-error");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { getLastCommit } = require("./lib/get-last-commit");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { hasCommit } = require("./lib/has-commit");
 
-module.exports = factory;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const childProcess = require("@lerna/child-process");
 
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new DiffCommand(argv);
-}
+};
 
 class DiffCommand extends Command {
+  private args: string[];
+
   initialize() {
     const packageName = this.options.pkgName;
 

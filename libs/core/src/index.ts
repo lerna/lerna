@@ -10,7 +10,7 @@ export { output } from "./lib/output";
 export { Package } from "./lib/package";
 export { PackageGraph } from "./lib/package-graph";
 export { generateProfileOutputPath, Profiler } from "./lib/profiler";
-export { Project } from "./lib/project";
+export { getPackages, Project } from "./lib/project";
 export { promptConfirmation } from "./lib/prompt";
 export { pulseTillDone } from "./lib/pulse-till-done";
 export { rimrafDir } from "./lib/rimraf-dir";
