@@ -1,26 +1,23 @@
-"use strict";
+// TODO: refactor based on TS feedback
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
-const pMap = require("p-map");
+import { Command, getFilteredPackages, Profiler, runTopologically, ValidationError } from "@lerna/core";
+import pMap from "p-map";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
-const { Command } = require("@lerna/command");
-const { Profiler } = require("@lerna/profiler");
-const { runTopologically } = require("@lerna/run-topologically");
-const { ValidationError } = require("@lerna/validation-error");
-const { getFilteredPackages } = require("@lerna/filter-options");
 
-module.exports = factory;
-
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new ExecCommand(argv);
-}
+};
 
 class ExecCommand extends Command {
   get requiresGit() {
     return false;
   }
 
-  initialize() {
+  override initialize() {
     const dashedArgs = this.options["--"] || [];
 
     this.command = this.options.cmd || dashedArgs.shift();
@@ -52,7 +49,7 @@ class ExecCommand extends Command {
     });
   }
 
-  execute() {
+  override execute() {
     this.logger.info(
       "",
       "Executing command in %d %s: %j",

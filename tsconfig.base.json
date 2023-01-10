@@ -20,6 +20,8 @@
     "paths": {
       "@lerna/commands/changed": ["libs/commands/changed/src/index.ts"],
       "@lerna/commands/changed/*": ["libs/commands/changed/src/*"],
+      "@lerna/commands/exec": ["libs/commands/exec/src/index.ts"],
+      "@lerna/commands/exec/*": ["libs/commands/exec/src/*"],
       "@lerna/commands/import": ["libs/commands/import/src/index.ts"],
       "@lerna/commands/import/*": ["libs/commands/import/src/*"],
       "@lerna/commands/info": ["libs/commands/info/src/index.ts"],

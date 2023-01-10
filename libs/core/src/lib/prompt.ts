@@ -57,7 +57,7 @@ export function promptSelectOne(
     .then((answers) => {
       log.resume();
 
-      return answers.prompt;
+      return answers["prompt"];
     });
 }
 

@@ -1,19 +1,17 @@
-"use strict";
+import { commandRunner, initFixtureFactory, loggingOutput, normalizeRelativeDir } from "@lerna/test-helpers";
+import fs from "fs-extra";
+import globby from "globby";
+import path from "path";
 
-const path = require("path");
-const fs = require("fs-extra");
-const globby = require("globby");
+const initFixture = initFixtureFactory(__dirname);
 
 // mocked modules
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-// helpers
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
-const { loggingOutput } = require("@lerna-test/helpers/logging-output");
-const { normalizeRelativeDir } = require("@lerna-test/helpers");
-
 // file under test
-const lernaExec = require("@lerna-test/helpers").commandRunner(require("../command"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaExec = commandRunner(require("../src/command"));
 
 // assertion helpers
 const calledInPackages = () => childProcess.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));
@@ -50,7 +48,7 @@ describe("ExecCommand", () => {
 
     it("rejects with execution error", async () => {
       childProcess.spawn.mockImplementationOnce((cmd, args) => {
-        const boom = new Error("execution error");
+        const boom = new Error("execution error") as any;
 
         boom.failed = true;
         boom.exitCode = 123;
@@ -72,7 +70,7 @@ describe("ExecCommand", () => {
 
     it("should ignore execution errors with --no-bail", async () => {
       childProcess.spawn.mockImplementationOnce((cmd, args, { pkg }) => {
-        const boom = new Error(pkg.name);
+        const boom = new Error(pkg.name) as any;
 
         boom.failed = true;
         boom.exitCode = 456;
@@ -222,6 +220,10 @@ describe("ExecCommand", () => {
       await lernaExec(cwd)("--profile", "--profile-location", "foo/bar", "--", "ls");
 
       const [profileLocation] = await globby("foo/bar/Lerna-Profile-*.json", { cwd, absolute: true });
+      // check if dependency is already installed
+      // TODO: refactor based on TS feedback
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const exists = await fs.exists(profileLocation);
 
       expect(exists).toBe(true);

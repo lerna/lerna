@@ -10,7 +10,7 @@ function pulseStart(prefix: any) {
     return;
   }
 
-  pulse = setInterval(() => log.gauge.pulse(prefix), 150);
+  pulse = setInterval(() => log["gauge"].pulse(prefix), 150);
 }
 
 function pulseStop() {

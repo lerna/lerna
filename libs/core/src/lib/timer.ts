@@ -1,6 +1,6 @@
 export function timer() {
   /* istanbul ignore if */
-  if (process.env.LERNA_INTEGRATION) {
+  if (process.env["LERNA_INTEGRATION"]) {
     return () => 0;
   }
 
