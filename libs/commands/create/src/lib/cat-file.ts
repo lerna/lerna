@@ -1,7 +1,5 @@
-"use strict";
-
-const fs = require("fs-extra");
-const path = require("path");
+import fs from "fs-extra";
+import path from "path";
 
 module.exports.catFile = catFile;
 

@@ -13,11 +13,11 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "command.js",
-    "index.js",
-    "lib"
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
   ],
-  "main": "index.js",
+  "main": "./dist/index.js",
   "engines": {
     "node": "^14.15.0 || >=16.0.0"
   },
@@ -27,16 +27,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git",
-    "directory": "commands/create"
-  },
-  "scripts": {
-    "test": "echo \"Run tests from root\" && exit 1"
+    "directory": "packages/legacy-structure/commands/create"
   },
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
-    "@lerna/command": "file:../../core/command",
-    "@lerna/npm-conf": "file:../../utils/npm-conf",
-    "@lerna/validation-error": "file:../../core/validation-error",
     "dedent": "^0.7.0",
     "fs-extra": "^9.1.0",
     "init-package-json": "^3.0.2",
@@ -49,5 +43,27 @@
     "validate-npm-package-license": "^3.0.4",
     "validate-npm-package-name": "^4.0.0",
     "yargs-parser": "20.2.4"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./command": {
+      "import": "./dist/command.js",
+      "require": "./dist/command.js"
+    },
+    "./lib/builtin-npmrc": {
+      "import": "./dist/lib/builtin-npmrc.js",
+      "require": "./dist/lib/builtin-npmrc.js"
+    },
+    "./lib/cat-file": {
+      "import": "./dist/lib/cat-file.js",
+      "require": "./dist/lib/cat-file.js"
+    },
+    "./lib/lerna-module-data": {
+      "import": "./dist/lib/lerna-module-data.js",
+      "require": "./dist/lib/lerna-module-data.js"
+    }
   }
 }

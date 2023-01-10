@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
-    "@lerna/create": "file:../../commands/create",
     "@lerna/publish": "file:../../commands/publish",
     "@lerna/version": "file:../../commands/version",
     "@npmcli/arborist": "5.3.0",

@@ -1,24 +1,31 @@
-"use strict";
+// TODO: refactor based on TS feedback
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
-const fs = require("fs-extra");
-const path = require("path");
-const os = require("os");
-const { camelCase } = require("yargs-parser");
-const dedent = require("dedent");
-const initPackageJson = require("pify")(require("init-package-json"));
-const pacote = require("pacote");
-const npa = require("npm-package-arg");
-const pReduce = require("p-reduce");
-const slash = require("slash");
+import { Command, npmConf, ValidationError } from "@lerna/core";
+import dedent from "dedent";
+import fs from "fs-extra";
+import npa from "npm-package-arg";
+import os from "os";
+import pReduce from "p-reduce";
+import pacote from "pacote";
+import path from "path";
+import slash from "slash";
+import { URL } from "url";
+import { camelCase } from "yargs-parser";
 
-const { Command } = require("@lerna/command");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
-const npmConf = require("@lerna/npm-conf");
-const { ValidationError } = require("@lerna/validation-error");
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const initPackageJson = require("pify")(require("init-package-json"));
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { builtinNpmrc } = require("./lib/builtin-npmrc");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { catFile } = require("./lib/cat-file");
 
-const LERNA_MODULE_DATA = require.resolve("./lib/lerna-module-data.js");
+const LERNA_MODULE_DATA = require.resolve(path.join(__dirname, "./lib/lerna-module-data.js"));
 const DEFAULT_DESCRIPTION = [
   "Now I’m the model of a modern major general",
   "The venerated Virginian veteran whose men are all",
@@ -30,11 +37,9 @@ const DEFAULT_DESCRIPTION = [
   "BOOM",
 ].join(" / ");
 
-module.exports = factory;
-
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new CreateCommand(argv);
-}
+};
 
 class CreateCommand extends Command {
   initialize() {

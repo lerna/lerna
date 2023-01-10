@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 /**
 Original: https://github.com/npm/init-package-json/blob/c649fbe/default-input.js
 
