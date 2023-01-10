@@ -1,11 +1,14 @@
 export * from "./lib/cli";
 export * from "./lib/collect-updates";
 export { Command } from "./lib/command";
+export { createSymlink } from "./lib/create-symlink";
 export { filterOptions, getFilteredPackages } from "./lib/filter-options";
 export { listableFormat } from "./lib/listable/listable-format";
 export { listableOptions } from "./lib/listable/listable-options";
 export { output } from "./lib/output";
 export { Package } from "./lib/package";
+export { PackageGraph } from "./lib/package-graph";
 export { Project } from "./lib/project";
+export { symlinkDependencies } from "./lib/symlink-dependencies";
 export { default as tempWrite } from "./lib/temp-write";
 export { ValidationError } from "./lib/validation-error";

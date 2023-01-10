@@ -1,25 +1,21 @@
-"use strict";
+import { Command, Package, PackageGraph, symlinkDependencies, ValidationError } from "@lerna/core";
+import pMap from "p-map";
+import path from "path";
+import slash from "slash";
 
-const path = require("path");
-const pMap = require("p-map");
-const slash = require("slash");
-const { Command } = require("@lerna/command");
-const { PackageGraph } = require("@lerna/package-graph");
-const { symlinkDependencies } = require("@lerna/symlink-dependencies");
-const { ValidationError } = require("@lerna/validation-error");
-
-module.exports = factory;
-
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new LinkCommand(argv);
-}
+};
 
 class LinkCommand extends Command {
-  get requiresGit() {
+  allPackages: Package[];
+  targetGraph: PackageGraph;
+
+  override get requiresGit() {
     return false;
   }
 
-  initialize() {
+  override initialize() {
     if (this.options.npmClient === "pnpm") {
       throw new ValidationError(
         "EWORKSPACES",
@@ -37,11 +33,14 @@ class LinkCommand extends Command {
     }
 
     this.targetGraph = this.options.forceLocal
-      ? new PackageGraph(this.allPackages, "allDependencies", "forceLocal")
+      ? // TODO: refactor based on TS feedback
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        new PackageGraph(this.allPackages, "allDependencies", "forceLocal")
       : this.packageGraph;
   }
 
-  execute() {
+  override execute() {
     if (this.options._.pop() === "convert") {
       return this.convertLinksToFileSpecs();
     }
@@ -66,6 +65,9 @@ class LinkCommand extends Command {
         const depVersion = slash(path.relative(depNode.pkg.location, targetNode.pkg.location));
         // console.log("\n%s\n  %j: %j", depNode.name, name, `${savePrefix}${depVersion}`);
 
+        // TODO: refactor based on TS feedback
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         depNode.pkg.updateLocalDependency(resolved, depVersion, savePrefix);
         changed.add(depNode);
       }
@@ -82,6 +84,9 @@ class LinkCommand extends Command {
     rootPkg.set("dependencies", rootDependencies);
     rootPkg.set("devDependencies", Object.assign(rootPkg.get("devDependencies") || {}, hoisted));
 
+    // TODO: refactor based on TS feedback
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return pMap(changed, (node) => node.pkg.serialize()).then(() => rootPkg.serialize());
   }
 }

@@ -13,10 +13,11 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "command.js",
-    "index.js"
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
   ],
-  "main": "index.js",
+  "main": "./dist/index.js",
   "engines": {
     "node": "^14.15.0 || >=16.0.0"
   },
@@ -26,10 +27,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git",
-    "directory": "commands/link"
-  },
-  "scripts": {
-    "test": "echo \"Run tests from root\" && exit 1"
+    "directory": "packages/legacy-structure/commands/link"
   },
   "dependencies": {
     "@lerna/command": "file:../../core/command",
@@ -38,5 +36,15 @@
     "@lerna/validation-error": "file:../../core/validation-error",
     "p-map": "^4.0.0",
     "slash": "^3.0.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./command": {
+      "import": "./dist/command.js",
+      "require": "./dist/command.js"
+    }
   }
 }

@@ -155,16 +155,19 @@ module.exports = command;
   );
 
   // Update the relevant e2e project's implicit dependencies
-  const e2eConfig = readProjectConfiguration(tree, `e2e-${options.name}`);
-  updateProjectConfiguration(tree, `e2e-${options.name}`, {
-    ...e2eConfig,
-    implicitDependencies: e2eConfig.implicitDependencies.map((dep) => {
-      if (dep === options.name) {
-        return `commands-${options.name}`;
-      }
-      return dep;
-    }),
-  });
+  try {
+    const e2eConfig = readProjectConfiguration(tree, `e2e-${options.name}`);
+    updateProjectConfiguration(tree, `e2e-${options.name}`, {
+      ...e2eConfig,
+      implicitDependencies: e2eConfig.implicitDependencies.map((dep) => {
+        if (dep === options.name) {
+          return `commands-${options.name}`;
+        }
+        return dep;
+      }),
+    });
+    // eslint-disable-next-line no-empty
+  } catch {}
 
   tree.rename(`commands/${options.name}/index.js`, `libs/commands/${options.name}/src/index.ts`);
   tree.rename(`commands/${options.name}/command.js`, `libs/commands/${options.name}/src/command.ts`);

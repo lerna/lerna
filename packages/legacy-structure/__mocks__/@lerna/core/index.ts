@@ -7,4 +7,5 @@ module.exports = {
   ...jest.requireActual("@lerna/core"),
   output,
   ...collectUpdates,
+  createSymlink: jest.fn(),
 };
