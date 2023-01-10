@@ -11,4 +11,5 @@ module.exports = {
   npmRunScript: jest.fn(),
   npmRunScriptStreaming: jest.fn(),
   promptConfirmation: jest.fn(),
+  rimrafDir: jest.fn(),
 };

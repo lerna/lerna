@@ -1,21 +1,19 @@
-"use strict";
+import { promptConfirmation as _promptConfirmation, rimrafDir as _rimrafDir } from "@lerna/core";
+import { commandRunner, initFixtureFactory, normalizeRelativeDir } from "@lerna/test-helpers";
+import fs from "fs-extra";
+import path from "path";
 
-jest.mock("@lerna/rimraf-dir");
-jest.mock("@lerna/prompt");
-
-const fs = require("fs-extra");
-const path = require("path");
-
-// mocked or stubbed modules
-const { rimrafDir } = require("@lerna/rimraf-dir");
-const { promptConfirmation } = require("@lerna/prompt");
-
-// helpers
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
-const { normalizeRelativeDir } = require("@lerna-test/helpers");
+const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-const lernaClean = require("@lerna-test/helpers").commandRunner(require("../command"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaClean = commandRunner(require("../src/command"));
+
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
+
+const promptConfirmation = jest.mocked(_promptConfirmation);
+const rimrafDir = jest.mocked(_rimrafDir);
 
 // assertion helpers
 const removedDirectories = (testDir) =>

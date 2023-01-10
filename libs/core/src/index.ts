@@ -13,6 +13,7 @@ export { generateProfileOutputPath, Profiler } from "./lib/profiler";
 export { Project } from "./lib/project";
 export { promptConfirmation } from "./lib/prompt";
 export { pulseTillDone } from "./lib/pulse-till-done";
+export { rimrafDir } from "./lib/rimraf-dir";
 export { runTopologically } from "./lib/run-topologically";
 export { symlinkDependencies } from "./lib/symlink-dependencies";
 export { default as tempWrite } from "./lib/temp-write";

@@ -1,26 +1,21 @@
-"use strict";
+// TODO: refactor based on TS feedback
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
-const path = require("path");
-const pMap = require("p-map");
+import { Command, getFilteredPackages, promptConfirmation, pulseTillDone, rimrafDir } from "@lerna/core";
+import pMap from "p-map";
+import path from "path";
 
-const { Command } = require("@lerna/command");
-const { rimrafDir } = require("@lerna/rimraf-dir");
-const { promptConfirmation } = require("@lerna/prompt");
-const { getFilteredPackages } = require("@lerna/filter-options");
-const { pulseTillDone } = require("@lerna/pulse-till-done");
-
-module.exports = factory;
-
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new CleanCommand(argv);
-}
+};
 
 class CleanCommand extends Command {
   get requiresGit() {
     return false;
   }
 
-  initialize() {
+  override initialize() {
     let chain = Promise.resolve();
 
     chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
@@ -43,7 +38,7 @@ class CleanCommand extends Command {
     });
   }
 
-  execute() {
+  override execute() {
     this.enableProgressBar();
 
     const tracker = this.logger.newItem("clean");

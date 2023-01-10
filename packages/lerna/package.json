@@ -40,7 +40,6 @@
     "@lerna/add": "file:../../commands/add",
     "@lerna/bootstrap": "file:../../commands/bootstrap",
     "@lerna/child-process": "file:../../core/child-process",
-    "@lerna/clean": "file:../../commands/clean",
     "@lerna/create": "file:../../commands/create",
     "@lerna/diff": "file:../../commands/diff",
     "@lerna/publish": "file:../../commands/publish",
