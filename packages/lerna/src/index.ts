@@ -11,17 +11,17 @@ const createCmd = require("@lerna/create/command");
 const diffCmd = require("@lerna/diff/command");
 const execCmd = require("@lerna/exec/command");
 const importCmd = require("@lerna/import/command");
-const initCmd = require("@lerna/init/command");
-const linkCmd = require("@lerna/link/command");
 const publishCmd = require("@lerna/publish/command");
-const runCmd = require("@lerna/run/command");
 const versionCmd = require("@lerna/version/command");
 
-import * as repairCmd from "./commands/repair/command";
-import * as addCachingCmd from "./commands/add-caching/command";
-import * as watchCmd from "./commands/watch/command";
 import * as infoCmd from "@lerna/commands/info/command";
+import * as initCmd from "@lerna/commands/init/command";
+import * as linkCmd from "@lerna/commands/link/command";
 import * as listCmd from "@lerna/commands/list/command";
+import * as runCmd from "@lerna/commands/run/command";
+import * as addCachingCmd from "./commands/add-caching/command";
+import * as repairCmd from "./commands/repair/command";
+import * as watchCmd from "./commands/watch/command";
 
 const pkg = require("../package.json");
 
