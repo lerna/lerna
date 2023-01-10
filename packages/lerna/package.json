@@ -50,6 +50,7 @@
     "inquirer": "^8.2.4",
     "npmlog": "^6.0.2",
     "nx": ">=15.4.2 < 16",
-    "typescript": "^3 || ^4"
+    "typescript": "^3 || ^4",
+    "upath": "^2.0.1"
   }
 }
