@@ -34,29 +34,29 @@ function npmConf(opts?: any) {
   conf.addEnv();
   conf.loadPrefix();
 
-  const projectConf = path.resolve(conf.localPrefix, ".npmrc");
-  const userConf = conf.get("userconfig");
+  const projectConf = path.resolve(conf["localPrefix"], ".npmrc");
+  const userConf = conf["get"]("userconfig");
 
   /* istanbul ignore else */
-  if (!conf.get("global") && projectConf !== userConf) {
+  if (!conf["get"]("global") && projectConf !== userConf) {
     conf.addFile(projectConf, "project");
   } else {
     conf.add({}, "project");
   }
 
-  conf.addFile(conf.get("userconfig"), "user");
+  conf.addFile(conf["get"]("userconfig"), "user");
 
   /* istanbul ignore else */
-  if (conf.get("prefix")) {
-    const etc = path.resolve(conf.get("prefix"), "etc");
+  if (conf["get"]("prefix")) {
+    const etc = path.resolve(conf["get"]("prefix"), "etc");
     conf.root.globalconfig = path.resolve(etc, "npmrc");
     conf.root.globalignorefile = path.resolve(etc, "npmignore");
   }
 
-  conf.addFile(conf.get("globalconfig"), "global");
+  conf.addFile(conf["get"]("globalconfig"), "global");
   conf.loadUser();
 
-  const caFile = conf.get("cafile");
+  const caFile = conf["get"]("cafile");
 
   /* istanbul ignore if */
   if (caFile) {

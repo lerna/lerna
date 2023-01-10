@@ -1,24 +1,22 @@
-"use strict";
+// TODO: refactor based on TS feedback
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
-const dedent = require("dedent");
-const npa = require("npm-package-arg");
-const pMap = require("p-map");
-const path = require("path");
-const pacote = require("pacote");
-const semver = require("semver");
+import bootstrap from "@lerna/bootstrap";
+import { Command, getFilteredPackages, ValidationError, npmConf } from "@lerna/core";
+import dedent from "dedent";
+import npa from "npm-package-arg";
+import pMap from "p-map";
+import pacote from "pacote";
+import path from "path";
+import semver from "semver";
 
-const { Command } = require("@lerna/command");
-const npmConf = require("@lerna/npm-conf");
-const bootstrap = require("@lerna/bootstrap");
-const { ValidationError } = require("@lerna/validation-error");
-const { getFilteredPackages } = require("@lerna/filter-options");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { getRangeToReference } = require("./lib/get-range-to-reference");
 
-module.exports = factory;
-
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new AddCommand(argv);
-}
+};
 
 class AddCommand extends Command {
   get requiresGit() {

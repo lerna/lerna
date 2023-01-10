@@ -55,8 +55,8 @@ export function parseField(input: any, key: string | number) {
   if (isPath) {
     const regex = process.platform === "win32" ? /^~(\/|\\)/ : /^~\//;
 
-    if (regex.test(field) && process.env.HOME) {
-      field = path.resolve(process.env.HOME, field.substr(2));
+    if (regex.test(field) && process.env["HOME"]) {
+      field = path.resolve(process.env["HOME"], field.substr(2));
     }
 
     field = path.resolve(field);

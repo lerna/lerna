@@ -18,6 +18,8 @@
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "paths": {
+      "@lerna/commands/add": ["libs/commands/add/src/index.ts"],
+      "@lerna/commands/add/*": ["libs/commands/add/src/*"],
       "@lerna/commands/changed": ["libs/commands/changed/src/index.ts"],
       "@lerna/commands/changed/*": ["libs/commands/changed/src/*"],
       "@lerna/commands/clean": ["libs/commands/clean/src/index.ts"],

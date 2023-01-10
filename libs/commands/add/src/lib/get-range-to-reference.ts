@@ -1,8 +1,6 @@
-"use strict";
-
-const npa = require("npm-package-arg");
-const path = require("path");
-const semver = require("semver");
+import npa from "npm-package-arg";
+import path from "path";
+import semver from "semver";
 
 module.exports.getRangeToReference = getRangeToReference;
 

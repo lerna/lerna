@@ -11,8 +11,8 @@ const hasUnicode = () => true;
 const isWindows = process.platform === "win32";
 
 const osenv = {
-  editor: () => process.env.EDITOR || process.env.VISUAL || (isWindows ? "notepad.exe" : "vi"),
-  shell: () => (isWindows ? process.env.COMSPEC || "cmd.exe" : process.env.SHELL || "/bin/bash"),
+  editor: () => process.env["EDITOR"] || process.env["VISUAL"] || (isWindows ? "notepad.exe" : "vi"),
+  shell: () => (isWindows ? process.env["COMSPEC"] || "cmd.exe" : process.env["SHELL"] || "/bin/bash"),
 };
 
 const umask = {
@@ -22,13 +22,13 @@ const umask = {
 let home = os.homedir();
 
 if (home) {
-  process.env.HOME = home;
+  process.env["HOME"] = home;
 } else {
   home = path.resolve(temp, `npm-${uidOrPid}`);
 }
 
 const cacheExtra = process.platform === "win32" ? "npm-cache" : ".npm";
-const cacheRoot = (process.platform === "win32" && process.env.APPDATA) || home;
+const cacheRoot = (process.platform === "win32" && process.env["APPDATA"]) || home;
 const cache = path.resolve(cacheRoot, cacheExtra);
 
 let defaults: any;
@@ -40,8 +40,8 @@ Object.defineProperty(exports, "defaults", {
       return defaults;
     }
 
-    if (process.env.PREFIX) {
-      globalPrefix = process.env.PREFIX;
+    if (process.env["PREFIX"]) {
+      globalPrefix = process.env["PREFIX"];
     } else if (process.platform === "win32") {
       // c:\node\node.exe --> prefix=c:\node\
       globalPrefix = path.dirname(process.execPath);
@@ -49,8 +49,8 @@ Object.defineProperty(exports, "defaults", {
       // /usr/local/bin/node --> prefix=/usr/local
       globalPrefix = path.dirname(path.dirname(process.execPath)); // destdir only is respected on Unix
 
-      if (process.env.DESTDIR) {
-        globalPrefix = path.join(process.env.DESTDIR, globalPrefix);
+      if (process.env["DESTDIR"]) {
+        globalPrefix = path.join(process.env["DESTDIR"], globalPrefix);
       }
     }
 
@@ -74,7 +74,7 @@ Object.defineProperty(exports, "defaults", {
       "cache-min": 10,
       cert: null,
       cidr: null,
-      color: process.env.NO_COLOR == null,
+      color: process.env["NO_COLOR"] == null,
       depth: Infinity,
       description: true,
       dev: false,
@@ -92,7 +92,8 @@ Object.defineProperty(exports, "defaults", {
       global: false,
       globalconfig: path.resolve(globalPrefix, "etc", "npmrc"),
       "global-style": false,
-      group: process.platform === "win32" ? 0 : process.env.SUDO_GID || (process.getgid && process.getgid()),
+      group:
+        process.platform === "win32" ? 0 : process.env["SUDO_GID"] || (process.getgid && process.getgid()),
       "ham-it-up": false,
       heading: "npm",
       "if-present": false,
@@ -130,8 +131,8 @@ Object.defineProperty(exports, "defaults", {
       "prefer-online": false,
       prefix: globalPrefix,
       preid: "",
-      production: process.env.NODE_ENV === "production",
-      progress: !process.env.TRAVIS && !process.env.CI,
+      production: process.env["NODE_ENV"] === "production",
+      progress: !process.env["TRAVIS"] && !process.env["CI"],
       proxy: null,
       "https-proxy": null,
       noproxy: null,
