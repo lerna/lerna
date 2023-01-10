@@ -2,7 +2,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import bootstrap from "@lerna/bootstrap";
 import { Command, getFilteredPackages, ValidationError, npmConf } from "@lerna/core";
 import dedent from "dedent";
 import npa from "npm-package-arg";
@@ -11,6 +10,8 @@ import pacote from "pacote";
 import path from "path";
 import semver from "semver";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const bootstrap = require("@lerna/bootstrap");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { getRangeToReference } = require("./lib/get-range-to-reference");
 

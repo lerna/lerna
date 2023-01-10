@@ -126,6 +126,7 @@
     "yargs-parser": "20.2.4"
   },
   "devDependencies": {
+    "@lerna/bootstrap": "file:packages/legacy-structure/commands/bootstrap",
     "@lerna-test/helpers": "file:helpers",
     "@nrwl/devkit": "15.4.2",
     "@nrwl/esbuild": "15.4.2",

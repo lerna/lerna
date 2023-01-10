@@ -61,11 +61,13 @@ Note: `--hoist` is [incompatible with `file:` specifiers](https://github.com/ler
 Note: `--hoist` [no longer accepts multiple string values](https://github.com/lerna/lerna/issues/2307) since [v3.18.0](https://github.com/lerna/lerna/releases/tag/v3.18.0). Use the following instead:
 
 a. Wrap string values by quotes:
+
 ```
 $ lerna bootstrap --hoist "{rollup,postcss-cli,webpack-cli,babel-loader,npm-run-all}"
 ```
 
 b. Specify the list of values in `lerna.json`:
+
 ```json
 {
   "command": {
@@ -82,7 +84,6 @@ b. Specify the list of values in `lerna.json`:
   ...
 }
 ```
-
 
 ### --strict
 

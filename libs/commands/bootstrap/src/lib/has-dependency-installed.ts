@@ -1,8 +1,6 @@
-"use strict";
-
-const log = require("npmlog");
-const Arborist = require("@npmcli/arborist");
-const semver = require("semver");
+import log from "npmlog";
+import Arborist from "@npmcli/arborist";
+import semver from "semver";
 
 /** @typedef {Map<string, string>} InstalledDependencies dependency name -> installed version */
 
@@ -42,6 +40,9 @@ function getInstalled(pkg) {
     const deps = new Map();
 
     for (const [dependencyName, node] of tree.children.entries()) {
+      // TODO: refactor to address type issues
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       deps.set(dependencyName, node.version);
     }
     cache.set(pkg, deps);

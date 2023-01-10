@@ -37,7 +37,6 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@lerna/bootstrap": "file:../../commands/bootstrap",
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/create": "file:../../commands/create",
     "@lerna/publish": "file:../../commands/publish",

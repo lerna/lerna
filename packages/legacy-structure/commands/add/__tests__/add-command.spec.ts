@@ -1,12 +1,13 @@
 import { getPackages } from "@lerna/core";
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 
-jest.mock("@lerna/bootstrap");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const bootstrap = require("@lerna/bootstrap");
+
+jest.mock("@lerna/bootstrap", () => jest.fn());
 jest.mock("pacote");
 
 // mocked or stubbed modules
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const bootstrap = require("@lerna/bootstrap");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pacote = require("pacote");
 

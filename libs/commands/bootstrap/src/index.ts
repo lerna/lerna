@@ -1,41 +1,45 @@
-"use strict";
+// TODO: refactor based on TS feedback
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
-const dedent = require("dedent");
-const getPort = require("get-port");
-const npa = require("npm-package-arg");
-const path = require("path");
-const pMap = require("p-map");
-const pMapSeries = require("p-map-series");
-const pWaterfall = require("p-waterfall");
+import {
+  Command,
+  createRunner,
+  getFilteredPackages,
+  hasNpmVersion,
+  npmInstall,
+  npmInstallDependencies,
+  PackageGraph,
+  pulseTillDone,
+  rimrafDir,
+  runTopologically,
+  symlinkBinary,
+  symlinkDependencies,
+  ValidationError,
+} from "@lerna/core";
+import dedent from "dedent";
+import getPort from "get-port";
+import npa from "npm-package-arg";
+import pMap from "p-map";
+import pMapSeries from "p-map-series";
+import pWaterfall from "p-waterfall";
+import path from "path";
 
-const { Command } = require("@lerna/command");
-const { rimrafDir } = require("@lerna/rimraf-dir");
-const { hasNpmVersion } = require("@lerna/has-npm-version");
-const { npmInstall, npmInstallDependencies } = require("@lerna/npm-install");
-const { createRunner } = require("@lerna/run-lifecycle");
-const { runTopologically } = require("@lerna/run-topologically");
-const { symlinkBinary } = require("@lerna/symlink-binary");
-const { symlinkDependencies } = require("@lerna/symlink-dependencies");
-const { ValidationError } = require("@lerna/validation-error");
-const { getFilteredPackages } = require("@lerna/filter-options");
-const { PackageGraph } = require("@lerna/package-graph");
-const { pulseTillDone } = require("@lerna/pulse-till-done");
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { hasDependencyInstalled } = require("./lib/has-dependency-installed");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { isHoistedPackage } = require("./lib/is-hoisted-package");
 
-module.exports = factory;
-
-function factory(argv) {
+module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new BootstrapCommand(argv);
-}
+};
 
 class BootstrapCommand extends Command {
-  get requiresGit() {
+  override get requiresGit() {
     return false;
   }
 
-  initialize() {
+  override initialize() {
     const { registry, npmClient = "npm", npmClientArgs = [], mutex, hoist, nohoist } = this.options;
 
     if (npmClient === "pnpm") {
@@ -183,7 +187,7 @@ class BootstrapCommand extends Command {
     return chain;
   }
 
-  execute() {
+  override execute() {
     if (this.options.useWorkspaces || this.rootHasLocalFileDependencies()) {
       if (this.options.rejectCycles) {
         this.packageGraph.collapseCycles({ rejectCycles: this.options.rejectCycles });

@@ -1,6 +1,4 @@
-"use strict";
-
-const multimatch = require("multimatch");
+import multimatch from "multimatch";
 
 module.exports.isHoistedPackage = isHoistedPackage;
 

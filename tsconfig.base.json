@@ -20,6 +20,8 @@
     "paths": {
       "@lerna/commands/add": ["libs/commands/add/src/index.ts"],
       "@lerna/commands/add/*": ["libs/commands/add/src/*"],
+      "@lerna/commands/bootstrap": ["libs/commands/bootstrap/src/index.ts"],
+      "@lerna/commands/bootstrap/*": ["libs/commands/bootstrap/src/*"],
       "@lerna/commands/changed": ["libs/commands/changed/src/index.ts"],
       "@lerna/commands/changed/*": ["libs/commands/changed/src/*"],
       "@lerna/commands/clean": ["libs/commands/clean/src/index.ts"],
@@ -46,7 +48,8 @@
       "@lerna/publish": ["commands/publish/index.js"],
       "@lerna/test-helpers": ["libs/test-helpers/src/index.ts"],
       "@lerna/test-helpers/*": ["libs/test-helpers/*"],
-      "@lerna/version": ["commands/version/index.js"]
+      "@lerna/version": ["commands/version/index.js"],
+      "@lerna/boostrap": ["packages/legacy-structure/commands/bootstrap"]
     }
   },
   "exclude": ["node_modules", "tmp"]
