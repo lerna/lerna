@@ -56,10 +56,9 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
   "private": true,
   "description": "This package.json exists to facilitate local registry (verdaccio) publishing for e2e tests and local testing",
   "workspaces": [
-    "commands/*",
     "core/*",
     "packages/**/*",
-    "utils/*"
+    "packages/legacy-structure/*"
   ]
 }`;
     writeFileSync("./lerna.json", distLernaJson);
