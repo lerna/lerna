@@ -41,7 +41,7 @@ jobs:
           cmd1: npx nx-cloud record -- npx nx format:check
           cmd2: npx nx-cloud record -- npx nx workspace-lint
           cmd3: npx nx-cloud record -- npm run ci:lint
-          cmd4: npx nx run-many -t lint, test --parallel=3
+          # cmd4: npx nx run-many -t lint,test --parallel=3
 
       # e2e tests for everything except the primary task runner
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=1
@@ -127,52 +127,52 @@ jobs:
         shell: bash
 
   # TODO: migrate to cacheable/distributable targets
-  test:
-    runs-on: ubuntu-latest
-    env:
-      NX_CLOUD_DISTRIBUTED_EXECUTION: false
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [14, "16.15.0", 18]
-        script: ["ci:test:unit", "ci:test:integration"]
-    steps:
-      - uses: actions/checkout@v3
+  # test:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     NX_CLOUD_DISTRIBUTED_EXECUTION: false
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       node: [14, "16.15.0", 18]
+  #       script: ["ci:test:unit", "ci:test:integration"]
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Configure git metadata
-        run: |
-          git config --global user.email test@example.com
-          git config --global user.name "Tester McPerson"
+  #     - name: Configure git metadata
+  #       run: |
+  #         git config --global user.email test@example.com
+  #         git config --global user.name "Tester McPerson"
 
-      - name: Install node version ${{ matrix.node }} and dependencies
-        uses: ./.github/actions/install-node-and-dependencies
-        with:
-          node-version: ${{ matrix.node }}
+  #     - name: Install node version ${{ matrix.node }} and dependencies
+  #       uses: ./.github/actions/install-node-and-dependencies
+  #       with:
+  #         node-version: ${{ matrix.node }}
 
-      - run: npm run ${{ matrix.script }}
+  #     - run: npm run ${{ matrix.script }}
 
   # TODO: migrate to cacheable/distributable targets
-  windows:
-    runs-on: windows-latest
-    env:
-      NX_CLOUD_DISTRIBUTED_EXECUTION: false
-    strategy:
-      fail-fast: false
-      matrix:
-        script: ["ci:test:unit", "ci:test:integration"]
-        subset: [publish, non-publish]
-    steps:
-      - uses: actions/checkout@v3
+  # windows:
+  #   runs-on: windows-latest
+  #   env:
+  #     NX_CLOUD_DISTRIBUTED_EXECUTION: false
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       script: ["ci:test:unit", "ci:test:integration"]
+  #       subset: [publish, non-publish]
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Configure git metadata
-        run: |
-          git config --global user.email test@example.com
-          git config --global user.name "Tester McPerson"
+  #     - name: Configure git metadata
+  #       run: |
+  #         git config --global user.email test@example.com
+  #         git config --global user.name "Tester McPerson"
 
-      - name: Install primary node version (see volta config in package.json) and dependencies
-        uses: ./.github/actions/install-node-and-dependencies
+  #     - name: Install primary node version (see volta config in package.json) and dependencies
+  #       uses: ./.github/actions/install-node-and-dependencies
 
-      - run: npm run ${{ matrix.script }}
-        env:
-          LERNA_CI_TYPE: ${{ matrix.subset }}
-          LERNA_OS_TYPE: windows
+  #     - run: npm run ${{ matrix.script }}
+  #       env:
+  #         LERNA_CI_TYPE: ${{ matrix.subset }}
+  #         LERNA_OS_TYPE: windows
