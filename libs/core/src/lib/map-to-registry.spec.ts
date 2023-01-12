@@ -3,7 +3,7 @@ import { mapToRegistry } from "./map-to-registry";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const npmConf = require("./npm-conf");
 
-// override value provided by @lerna-test/helpers/npm/set-npm-userconfig, ensuring blank slate
+// override value provided by @lerna/test-helpers/src/lib/npm/set-npm-userconfig, ensuring blank slate
 process.env.npm_config_userconfig = __dirname;
 
 describe("@lerna/map-to-registry", () => {

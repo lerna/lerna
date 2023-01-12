@@ -2,7 +2,8 @@ import _fetch from "npm-registry-fetch";
 import * as npmDistTag from "./npm-dist-tag";
 
 jest.mock("npm-registry-fetch");
-jest.mock("@lerna/otplease", () => ({
+jest.mock("@lerna/core", () => ({
+  ...jest.requireActual("@lerna/core"),
   otplease: (cb: (arg0: any) => any, opts: any) => Promise.resolve(cb(opts)),
 }));
 

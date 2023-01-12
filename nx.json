@@ -39,6 +39,9 @@
     },
     "run-e2e-tests": {
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "integration": {
+      "dependsOn": ["^build"]
     }
   }
 }

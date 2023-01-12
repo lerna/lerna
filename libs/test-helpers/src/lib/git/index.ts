@@ -43,7 +43,7 @@ export function gitMerge(cwd: string, args: any) {
   return execa("git", ["merge", ...args], { cwd });
 }
 
-export function gitStatus(cwd: string) {
+export function gitStatus(cwd?: string) {
   return cp.spawnSync("git", ["status", "--porcelain"], { cwd, encoding: "utf8" });
 }
 

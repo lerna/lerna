@@ -1,6 +1,0 @@
-{
-  "name": "test",
-  "devDependencies": {
-    "lerna": "500.0.0",
-  }
-}

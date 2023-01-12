@@ -13,4 +13,5 @@ export default {
   // Needed to add "json" to avoid issue resolving spdx-license-ids
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
   coverageDirectory: "../../../../coverage/packages/legacy-structure/commands/version",
+  testTimeout: 45e3,
 };

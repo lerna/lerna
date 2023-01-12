@@ -4,7 +4,7 @@ import type { CommandModule } from "yargs";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const versionCommand = require("@lerna/commands/version/command");
 
-function composeVersionOptions(yargs) {
+function composeVersionOptions(yargs: any) {
   versionCommand.addBumpPositional(yargs, ["from-git", "from-package"]);
   versionCommand.builder(yargs, "publish");
   return yargs;
@@ -140,7 +140,7 @@ const command: CommandModule = {
 
     for (const sharedKey of sharedKeys) {
       hiddenOptions.splice(
-        hiddenOptions.findIndex((k) => k === sharedKey),
+        hiddenOptions.findIndex((k: any) => k === sharedKey),
         1
       );
     }
@@ -168,10 +168,10 @@ const command: CommandModule = {
       })
       .check((argv) => {
         /* eslint-disable no-param-reassign */
-        if (argv.npmTag) {
-          argv.distTag = argv.npmTag;
-          argv["dist-tag"] = argv.npmTag;
-          delete argv.npmTag;
+        if (argv["npmTag"]) {
+          argv["distTag"] = argv["npmTag"];
+          argv["dist-tag"] = argv["npmTag"];
+          delete argv["npmTag"];
           delete argv["npm-tag"];
           log.warn("deprecated", "--npm-tag has been renamed --dist-tag");
         }

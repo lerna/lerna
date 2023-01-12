@@ -2,7 +2,7 @@ import log from "npmlog";
 import semver from "semver";
 import type { CommandModule } from "yargs";
 
-function addBumpPositional(yargs, additionalKeywords = []) {
+function addBumpPositional(yargs: any, additionalKeywords = []) {
   const semverKeywords = ["major", "minor", "patch", "premajor", "preminor", "prepatch", "prerelease"].concat(
     additionalKeywords
   );
@@ -13,7 +13,7 @@ function addBumpPositional(yargs, additionalKeywords = []) {
   yargs.positional("bump", {
     describe: `Increment version(s) by explicit version _or_ semver keyword,\n${bumpOptionList}`,
     type: "string",
-    coerce: (choice) => {
+    coerce: (choice: string) => {
       if (!semver.valid(choice) && semverKeywords.indexOf(choice) === -1) {
         throw new Error(`bump must be an explicit version string _or_ one of: ${bumpOptionList}`);
       }
@@ -209,7 +209,7 @@ const command: CommandModule = {
     if (composed) {
       // hide options from composed command's help output
       Object.keys(opts).forEach((key) => {
-        opts[key].hidden = true;
+        (opts as any)[key].hidden = true;
       });
 
       // set argv.composed for wrapped execution logic
@@ -262,7 +262,7 @@ const command: CommandModule = {
         hidden: true,
         type: "boolean",
       })
-      .check((argv) => {
+      .check((argv: any) => {
         /* eslint-disable no-param-reassign */
         if (argv.ignore) {
           argv.ignoreChanges = argv.ignore;

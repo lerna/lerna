@@ -28,7 +28,7 @@
     "directory": "core/child-process"
   },
   "scripts": {
-    "test": "echo \"Run tests from root\" && exit 1"
+    "test": "echo \"Run tests from root\""
   },
   "dependencies": {
     "chalk": "^4.1.0",

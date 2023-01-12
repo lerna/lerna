@@ -14,7 +14,7 @@ const collectUpdates = _collectUpdates as typeof _collectUpdates & {
   setUpdated: (updated: string, ...names: string[]) => void;
 };
 
-const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../../core/command"));
+const initFixture = initFixtureFactory(path.resolve(__dirname, "../../"));
 
 async function buildGraph(cwd: string) {
   const packages = await getPackages(cwd);

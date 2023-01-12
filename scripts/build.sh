@@ -14,7 +14,7 @@ workspaceRoot=$(pwd)
 rm -rf ./dist
 
 # Build any packages which require a build step
-npx nx run-many --target=build --all --exclude=nx-plugin
+npx nx run-many -t build
 
 # Resolve the packages using lerna itself
 IFS=$'\n' read -d '' -a packageLocations < <((./node_modules/node-jq/bin/jq -c -r '.[].location') <<<"$(npx lerna list --json)")

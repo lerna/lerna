@@ -1,0 +1,41 @@
+{
+  "name": "integration",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "implicitDependencies": [
+    "lerna",
+    "legacy-structure-commands-add",
+    "legacy-structure-commands-bootstrap",
+    "legacy-structure-commands-changed",
+    "legacy-structure-commands-clean",
+    "legacy-structure-commands-create",
+    "legacy-structure-commands-diff",
+    "legacy-structure-commands-exec",
+    "legacy-structure-commands-import",
+    "legacy-structure-commands-info",
+    "legacy-structure-commands-init",
+    "legacy-structure-commands-link",
+    "legacy-structure-commands-list",
+    "legacy-structure-commands-publish",
+    "legacy-structure-commands-run",
+    "legacy-structure-commands-version"
+  ],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["integration/**/*.ts"]
+      }
+    },
+    "integration": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "integration/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

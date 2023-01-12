@@ -17,8 +17,6 @@ const lernaRun = commandRunner(require("../src/command"));
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
 
-jest.mock("@lerna/npm-run-script");
-
 // The mock modifies the exported symbols and therefore types
 const output = _output as any;
 const npmRunScript = _npmRunScript as any;
@@ -323,88 +321,6 @@ describe("RunCommand", () => {
       await lernaRun(testDir)("my-script", "--scope", "package-1");
 
       expect(output.logged()).toMatchInlineSnapshot(`"package-1"`);
-    });
-  });
-
-  // this is a temporary set of tests, which will be replaced by verdacio-driven tests
-  // once the required setup is fully set up
-  describe("in a repo powered by Nx", () => {
-    let testDir;
-    let collectedOutput = "";
-    let originalStdout;
-
-    beforeAll(async () => {
-      testDir = await initFixture("powered-by-nx");
-      process.env.NX_WORKSPACE_ROOT_PATH = testDir;
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      jest.spyOn(process, "exit").mockImplementation((code) => {
-        if (code !== 0) {
-          throw new Error();
-        }
-      });
-      originalStdout = process.stdout.write;
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      process.stdout.write = (v) => {
-        collectedOutput = `${collectedOutput}\n${v}`;
-      };
-    });
-
-    afterAll(() => {
-      process.stdout.write = originalStdout;
-    });
-
-    it("runs a script in packages", async () => {
-      collectedOutput = "";
-      await lernaRun(testDir)("my-script");
-      expect(collectedOutput).toContain("package-1");
-      expect(collectedOutput).toContain("package-3");
-      expect(collectedOutput).toContain("Successfully ran target");
-    });
-
-    it("runs a script with a colon in the script name", async () => {
-      collectedOutput = "";
-      await lernaRun(testDir)("another-script:but-with-colons");
-      expect(collectedOutput).toContain("package-1-script-with-colons");
-      expect(collectedOutput).toContain("Successfully ran target");
-    });
-
-    it("runs a script only in scoped packages", async () => {
-      collectedOutput = "";
-      await lernaRun(testDir)("my-script", "--scope", "package-1");
-      expect(collectedOutput).toContain("package-1");
-      expect(collectedOutput).not.toContain("package-3");
-    });
-
-    it("does not run a script in ignored packages", async () => {
-      collectedOutput = "";
-      await lernaRun(testDir)("my-script", "--ignore", "package-@(2|3|4)");
-      expect(collectedOutput).toContain("package-1");
-      expect(collectedOutput).not.toContain("package-3");
-    });
-
-    it("runs a script in packages with --stream", async () => {
-      collectedOutput = "";
-      await lernaRun(testDir)("my-script", "--stream");
-      expect(collectedOutput).toContain("package-1: package-1");
-      expect(collectedOutput).toContain("package-3: package-3");
-    });
-
-    it("runs a cacheable script", async () => {
-      collectedOutput = "";
-      await lernaRun(testDir)("my-cacheable-script");
-      expect(collectedOutput).not.toContain("Nx read the output from the cache");
-
-      collectedOutput = "";
-      await lernaRun(testDir)("my-cacheable-script");
-      expect(collectedOutput).toContain("Nx read the output from the cache");
-
-      collectedOutput = "";
-      await lernaRun(testDir)("my-cacheable-script", "--skip-nx-cache");
-      expect(collectedOutput).not.toContain("Nx read the output from the cache");
     });
   });
 });

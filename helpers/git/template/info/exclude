@@ -1,2 +1,0 @@
-# git ls-files --others --exclude-from=.git/info/exclude
-node_modules

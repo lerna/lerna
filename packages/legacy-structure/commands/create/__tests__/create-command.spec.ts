@@ -54,7 +54,7 @@ describe("CreateCommand", () => {
   // @ts-ignore
   pacote.manifest.mockImplementation(() => Promise.resolve({ version: "1.0.0-mocked" }));
 
-  // preserve value from @lerna-test/helpers/npm/set-npm-userconfig
+  // preserve value from @lerna/test-helpers/src/lib/npm/set-npm-userconfig
   const userconfig = process.env.npm_config_userconfig;
 
   afterEach(() => {

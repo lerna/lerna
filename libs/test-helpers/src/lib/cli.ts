@@ -1,5 +1,6 @@
+import { workspaceRoot } from "@nrwl/devkit";
 import execa from "execa";
-import path from "path";
+import path, { join } from "path";
 import yargs from "yargs";
 
 /**
@@ -73,7 +74,7 @@ export function commandRunner(commandModule: yargs.CommandModule) {
   };
 }
 
-export function cliRunner(cwd: any, env: any) {
+export function cliRunner(cwd: any, env?: any) {
   const opts = {
     cwd,
     env: Object.assign(
@@ -89,7 +90,7 @@ export function cliRunner(cwd: any, env: any) {
   };
 
   // eslint-disable-next-line node/no-unpublished-require, node/no-missing-require
-  const LERNA_BIN = require.resolve("../packages/lerna/dist/cli");
+  const LERNA_BIN = require.resolve(join(workspaceRoot, "packages/lerna/dist/cli"));
 
   return (...args: any[]) => execa("node", [LERNA_BIN].concat(args), opts);
 }
