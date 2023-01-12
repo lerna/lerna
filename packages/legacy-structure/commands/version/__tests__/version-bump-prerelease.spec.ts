@@ -1,38 +1,55 @@
-"use strict";
+import { promptSelectOne as _promptSelectOne, promptTextInput as _promtTextInput } from "@lerna/core";
+import {
+  commandRunner,
+  getCommitMessage,
+  gitAdd,
+  gitCommit,
+  gitInit,
+  gitTag,
+  initFixtureFactory,
+  showCommit,
+} from "@lerna/test-helpers";
+import fs from "fs-extra";
+import path from "path";
+import Tacks from "tacks";
+import tempy from "tempy";
 
-// we're actually testing integration with git
-jest.unmock("@lerna/collect-updates");
-jest.unmock("@lerna/conventional-commits");
+jest.mock("@lerna/commands/version/lib/git-push");
+jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
+  isAnythingCommitted: jest.fn().mockReturnValue(true),
+}));
+jest.mock("@lerna/commands/version/lib/is-behind-upstream", () => ({
+  isBehindUpstream: jest.fn().mockReturnValue(false),
+}));
+jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
+  remoteBranchExists: jest.fn().mockResolvedValue(true),
+}));
 
-// local modules _must_ be explicitly mocked
-jest.mock("../src/lib/git-push");
-jest.mock("../src/lib/is-anything-committed");
-jest.mock("../src/lib/is-behind-upstream");
-jest.mock("../src/lib/remote-branch-exists");
+jest.mock("@lerna/core", () => {
+  const realCore = jest.requireActual("@lerna/core");
+  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
+  const mockCore = require("../../__mocks__/@lerna/core");
+  return {
+    ...mockCore,
+    recommendVersion: realCore.recommendVersion,
+    updateChangelog: realCore.updateChangelog,
+    // we're actually testing integration with git
+    collectUpdates: realCore.collectUpdates,
+  };
+});
 
-const fs = require("fs-extra");
-const path = require("path");
+const promptTextInput = jest.mocked(_promtTextInput, true);
 
-// mocked modules
-const { promptTextInput, promptSelectOne } = require("@lerna/prompt");
+// The mocked version isn't the same as the real one
+const promptSelectOne = _promptSelectOne as any;
 
-// helpers
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(
-  path.resolve(__dirname, "../../publish/__tests__")
-);
-const { showCommit } = require("@lerna-test/helpers");
-const { gitInit } = require("@lerna-test/helpers");
-const { gitAdd } = require("@lerna-test/helpers");
-const { gitTag } = require("@lerna-test/helpers");
-const { gitCommit } = require("@lerna-test/helpers");
-const { getCommitMessage } = require("@lerna-test/helpers");
-const Tacks = require("tacks");
-const tempy = require("tempy");
+const initFixture = initFixtureFactory(path.resolve(__dirname, "../../publish/__tests__"));
 
 const { File, Dir } = Tacks;
 
 // test command
-const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaVersion = commandRunner(require("../src/command"));
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({
@@ -46,7 +63,8 @@ expect.addSnapshotSerializer({
 });
 
 // stabilize commit SHA
-expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-changelog"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-changelog"));
 
 const setupChanges = async (cwd) => {
   await gitTag(cwd, "v1.0.1-beta.3");
@@ -158,6 +176,9 @@ test("independent version prerelease does not bump on every unrelated change", a
   promptSelectOne.chooseBump("PRERELEASE");
   promptTextInput.mockImplementationOnce((msg, cfg) =>
     // the _existing_ "bumps" prerelease ID should be preserved
+    // TODO: refactor based on TS feedback
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     Promise.resolve(cfg.filter())
   );
 

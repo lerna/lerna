@@ -1,24 +1,34 @@
-"use strict";
+import { output as _output } from "@lerna/core";
+import {
+  commandRunner,
+  gitAdd,
+  gitCheckout,
+  gitCommit,
+  gitMerge,
+  gitTag,
+  initFixtureFactory,
+} from "@lerna/test-helpers";
+import fs from "fs";
+import path from "path";
 
-// we're actually testing integration with git
-jest.unmock("@lerna/collect-updates");
+jest.mock("@lerna/core", () => {
+  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
+  const mockCore = require("../../__mocks__/@lerna/core");
+  return {
+    ...mockCore,
+    // we're actually testing integration with git
+    collectUpdates: jest.requireActual("@lerna/core").collectUpdates,
+  };
+});
 
-const path = require("path");
-const fs = require("fs");
+// The mocked version isn't the same as the real one
+const output = _output as any;
 
-// mocked modules
-const { output } = require("@lerna/output");
-
-// helpers
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
-const { gitAdd } = require("@lerna-test/helpers");
-const { gitCommit } = require("@lerna-test/helpers");
-const { gitTag } = require("@lerna-test/helpers");
-const { gitCheckout } = require("@lerna-test/helpers");
-const { gitMerge } = require("@lerna-test/helpers");
+const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaVersion = commandRunner(require("../src/command"));
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({
@@ -32,8 +42,10 @@ expect.addSnapshotSerializer({
 });
 
 // normalize temp directory paths in snapshots
-expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-windows-paths"));
-expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-tempdir"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-windows-paths"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-tempdir"));
 
 describe("version --include-merged-tags", () => {
   const setupGitChangesWithBranch = async (cwd, mainPaths, branchPaths) => {

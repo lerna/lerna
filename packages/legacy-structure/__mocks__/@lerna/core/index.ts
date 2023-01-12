@@ -12,6 +12,8 @@ const { hasNpmVersion } = require("./has-npm-version");
 const { packDirectory } = require("./pack-directory");
 const { npmPublish } = require("./npm-publish");
 const { runLifecycle, createRunner } = require("./run-lifecycle");
+const { createGitLabClient } = require("./gitlab-client");
+const { createGitHubClient, parseGitRepo } = require("./github-client");
 
 module.exports = {
   ...jest.requireActual("@lerna/core"),
@@ -20,6 +22,9 @@ module.exports = {
   ...prompt,
   ...checkWorkingTree,
   ...conventionalCommits,
+  createGitLabClient,
+  createGitHubClient,
+  parseGitRepo,
   npmDistTag,
   hasNpmVersion,
   runLifecycle,

@@ -2,6 +2,27 @@ import log from "npmlog";
 import semver from "semver";
 import type { CommandModule } from "yargs";
 
+function addBumpPositional(yargs, additionalKeywords = []) {
+  const semverKeywords = ["major", "minor", "patch", "premajor", "preminor", "prepatch", "prerelease"].concat(
+    additionalKeywords
+  );
+  const bumpOptionList = `'${semverKeywords.slice(0, -1).join("', '")}', or '${
+    semverKeywords[semverKeywords.length - 1]
+  }'.`;
+
+  yargs.positional("bump", {
+    describe: `Increment version(s) by explicit version _or_ semver keyword,\n${bumpOptionList}`,
+    type: "string",
+    coerce: (choice) => {
+      if (!semver.valid(choice) && semverKeywords.indexOf(choice) === -1) {
+        throw new Error(`bump must be an explicit version string _or_ one of: ${bumpOptionList}`);
+      }
+
+      return choice;
+    },
+  });
+}
+
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
  */
@@ -194,7 +215,7 @@ const command: CommandModule = {
       // set argv.composed for wrapped execution logic
       yargs.default("composed", composed).hide("composed");
     } else {
-      exports.addBumpPositional(yargs);
+      addBumpPositional(yargs);
     }
 
     yargs.options(opts);
@@ -291,32 +312,7 @@ const command: CommandModule = {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require(".")(argv);
   },
-  addBumpPositional(yargs, additionalKeywords = []) {
-    const semverKeywords = [
-      "major",
-      "minor",
-      "patch",
-      "premajor",
-      "preminor",
-      "prepatch",
-      "prerelease",
-    ].concat(additionalKeywords);
-    const bumpOptionList = `'${semverKeywords.slice(0, -1).join("', '")}', or '${
-      semverKeywords[semverKeywords.length - 1]
-    }'.`;
-
-    yargs.positional("bump", {
-      describe: `Increment version(s) by explicit version _or_ semver keyword,\n${bumpOptionList}`,
-      type: "string",
-      coerce: (choice) => {
-        if (!semver.valid(choice) && semverKeywords.indexOf(choice) === -1) {
-          throw new Error(`bump must be an explicit version string _or_ one of: ${bumpOptionList}`);
-        }
-
-        return choice;
-      },
-    });
-  },
+  addBumpPositional,
 };
 
 module.exports = command;

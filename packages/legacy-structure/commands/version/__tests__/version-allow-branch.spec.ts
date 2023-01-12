@@ -2,11 +2,19 @@ import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 import execa from "execa";
 import path from "path";
 
-// local modules _must_ be explicitly mocked
-jest.mock("../src/lib/git-push");
-jest.mock("../src/lib/is-anything-committed");
-jest.mock("../src/lib/is-behind-upstream");
-jest.mock("../src/lib/remote-branch-exists");
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
+
+jest.mock("@lerna/commands/version/lib/git-push");
+jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
+  isAnythingCommitted: jest.fn().mockReturnValue(true),
+}));
+jest.mock("@lerna/commands/version/lib/is-behind-upstream", () => ({
+  isBehindUpstream: jest.fn().mockReturnValue(false),
+}));
+jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
+  remoteBranchExists: jest.fn().mockResolvedValue(true),
+}));
 
 // helpers
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../publish/__tests__"));
@@ -36,7 +44,7 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("normal");
 
       await changeBranch(testDir, "exact-match");
-      const result = await lernaVersion(testDir)("--allow-branch", "exact-match");
+      const result = (await lernaVersion(testDir)("--allow-branch", "exact-match")) as any;
 
       expect(result.updates).toHaveLength(5);
     });
@@ -45,7 +53,7 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("normal");
 
       await changeBranch(testDir, "feature/awesome");
-      const result = await lernaVersion(testDir)("--allow-branch", "feature/*");
+      const result = (await lernaVersion(testDir)("--allow-branch", "feature/*")) as any;
 
       expect(result.updates).toHaveLength(5);
     });
@@ -54,7 +62,7 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("normal");
 
       await changeBranch(testDir, "feature/awesome");
-      const result = await lernaVersion(testDir)("--allow-branch", "main", "feature/*");
+      const result = (await lernaVersion(testDir)("--allow-branch", "main", "feature/*")) as any;
 
       expect(result.updates).toHaveLength(5);
     });
@@ -74,7 +82,7 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("allow-branch-lerna");
 
       await changeBranch(testDir, "lerna");
-      const result = await lernaVersion(testDir)();
+      const result = (await lernaVersion(testDir)()) as any;
 
       expect(result.updates).toHaveLength(1);
     });
@@ -83,7 +91,7 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("allow-branch-lerna");
 
       await changeBranch(testDir, "cli-override");
-      const result = await lernaVersion(testDir)("--allow-branch", "cli-override");
+      const result = (await lernaVersion(testDir)("--allow-branch", "cli-override")) as any;
 
       expect(result.updates).toHaveLength(1);
     });

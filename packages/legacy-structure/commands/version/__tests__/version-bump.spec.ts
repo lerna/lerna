@@ -1,24 +1,30 @@
-"use strict";
+import { promptSelectOne as _promptSelectOne } from "@lerna/core";
+import { commandRunner, getCommitMessage, initFixtureFactory } from "@lerna/test-helpers";
+import path from "path";
 
-// local modules _must_ be explicitly mocked
-jest.mock("../src/lib/git-push");
-jest.mock("../src/lib/is-anything-committed");
-jest.mock("../src/lib/is-behind-upstream");
-jest.mock("../src/lib/remote-branch-exists");
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
 
-const path = require("path");
-
-// mocked modules
-const { promptSelectOne } = require("@lerna/prompt");
+jest.mock("@lerna/commands/version/lib/git-push");
+jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
+  isAnythingCommitted: jest.fn().mockReturnValue(true),
+}));
+jest.mock("@lerna/commands/version/lib/is-behind-upstream", () => ({
+  isBehindUpstream: jest.fn().mockReturnValue(false),
+}));
+jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
+  remoteBranchExists: jest.fn().mockResolvedValue(true),
+}));
 
 // helpers
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(
-  path.resolve(__dirname, "../../publish/__tests__")
-);
-const { getCommitMessage } = require("@lerna-test/helpers");
+const initFixture = initFixtureFactory(path.resolve(__dirname, "../../publish/__tests__"));
+
+// The mocked version isn't the same as the real one
+const promptSelectOne = _promptSelectOne as any;
 
 // test command
-const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaVersion = commandRunner(require("../src/command"));
 
 describe("version bump", () => {
   it("accepts explicit versions", async () => {

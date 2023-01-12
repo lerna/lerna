@@ -1,42 +1,69 @@
-"use strict";
+import {
+  checkWorkingTree as _checkWorkingTree,
+  collectUpdates as _collectUpdates,
+  promptConfirmation,
+  promptSelectOne as _promptSelectOne,
+  throwIfUncommitted as _throwIfUncommitted,
+  output as _output,
+} from "@lerna/core";
+import {
+  commandRunner,
+  getCommitMessage,
+  gitAdd,
+  gitCommit,
+  gitTag,
+  initFixtureFactory,
+  loggingOutput,
+  showCommit,
+} from "@lerna/test-helpers";
+import execa from "execa";
+import fs from "fs-extra";
+import path from "path";
+import _writePkg from "write-pkg";
 
-// local modules _must_ be explicitly mocked
-jest.mock("../src/lib/git-push");
-jest.mock("../src/lib/is-anything-committed");
-jest.mock("../src/lib/is-behind-upstream");
-jest.mock("../src/lib/remote-branch-exists");
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("write-pkg", () => require("../../__mocks__/write-pkg"));
 
-const fs = require("fs-extra");
-const path = require("path");
-const execa = require("execa");
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
 
-// mocked or stubbed modules
-const writePkg = require("write-pkg");
-const { promptConfirmation, promptSelectOne } = require("@lerna/prompt");
-const { collectUpdates } = require("@lerna/collect-updates");
-const { output } = require("@lerna/output");
-const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
+jest.mock("@lerna/commands/version/lib/git-push");
+jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
+  isAnythingCommitted: jest.fn().mockReturnValue(true),
+}));
+jest.mock("@lerna/commands/version/lib/is-behind-upstream", () => ({
+  isBehindUpstream: jest.fn().mockReturnValue(false),
+}));
+jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
+  remoteBranchExists: jest.fn().mockResolvedValue(true),
+}));
+
+const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
+const checkWorkingTree = jest.mocked(_checkWorkingTree);
+
+// The mocked version isn't the same as the real one
+const promptSelectOne = _promptSelectOne as any;
+const collectUpdates = _collectUpdates as any;
+const writePkg = _writePkg as any;
+const output = _output as any;
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { gitPush: libPush } = require("../src/lib/git-push");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { isAnythingCommitted } = require("../src/lib/is-anything-committed");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { isBehindUpstream } = require("../src/lib/is-behind-upstream");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { remoteBranchExists } = require("../src/lib/remote-branch-exists");
 
-// helpers
-const { loggingOutput } = require("@lerna-test/helpers/logging-output");
-const { gitAdd } = require("@lerna-test/helpers");
-const { gitTag } = require("@lerna-test/helpers");
-const { gitCommit } = require("@lerna-test/helpers");
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(
-  path.resolve(__dirname, "../../publish/__tests__")
-);
-const { showCommit } = require("@lerna-test/helpers");
-const { getCommitMessage } = require("@lerna-test/helpers");
-
-// file under test
-const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
+const initFixture = initFixtureFactory(path.resolve(__dirname, "../../publish/__tests__"));
 
 // certain tests need to use the real thing
-const collectUpdatesActual = jest.requireActual("@lerna/collect-updates").collectUpdates;
+const collectUpdatesActual = jest.requireActual("@lerna/core").collectUpdates;
+
+// file under test
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaVersion = commandRunner(require("../src/command"));
 
 // assertion helpers
 const listDirty = (cwd) =>
@@ -46,7 +73,8 @@ const listDirty = (cwd) =>
   );
 
 // stabilize commit SHA
-expect.addSnapshotSerializer(require("@lerna-test/helpers/serializers/serialize-git-sha"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-git-sha"));
 
 describe("VersionCommand", () => {
   describe("normal mode", () => {

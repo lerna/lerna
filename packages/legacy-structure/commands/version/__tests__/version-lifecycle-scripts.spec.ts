@@ -1,20 +1,33 @@
-"use strict";
+import { runLifecycle as _runLifecycle } from "@lerna/core";
+import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
+import _loadJsonFile from "load-json-file";
 
-// local modules _must_ be explicitly mocked
-jest.mock("../src/lib/git-push");
-jest.mock("../src/lib/is-anything-committed");
-jest.mock("../src/lib/is-behind-upstream");
-jest.mock("../src/lib/remote-branch-exists");
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("load-json-file", () => require("../../__mocks__/load-json-file"));
 
-// mocked modules
-const { runLifecycle } = require("@lerna/run-lifecycle");
-const loadJsonFile = require("load-json-file");
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
 
-// helpers
-const initFixture = require("@lerna-test/helpers").initFixtureFactory(__dirname);
+jest.mock("@lerna/commands/version/lib/git-push");
+jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
+  isAnythingCommitted: jest.fn().mockReturnValue(true),
+}));
+jest.mock("@lerna/commands/version/lib/is-behind-upstream", () => ({
+  isBehindUpstream: jest.fn().mockReturnValue(false),
+}));
+jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
+  remoteBranchExists: jest.fn().mockResolvedValue(true),
+}));
+
+// The mocked version isn't the same as the real one
+const loadJsonFile = _loadJsonFile as any;
+const runLifecycle = _runLifecycle as any;
+
+const initFixture = initFixtureFactory(__dirname);
 
 // test command
-const lernaVersion = require("@lerna-test/helpers").commandRunner(require("../command"));
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaVersion = commandRunner(require("../src/command"));
 
 describe("lifecycle scripts", () => {
   const npmLifecycleEvent = process.env.npm_lifecycle_event;
