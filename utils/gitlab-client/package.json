@@ -1,6 +1,6 @@
 {
   "name": "@lerna/gitlab-client",
-  "version": "6.4.0",
+  "version": "6.4.1",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",

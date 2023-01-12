@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.4.1](https://github.com/lerna/lerna/compare/v6.4.0...v6.4.1) (2023-01-12)
+
+### Bug Fixes
+
+- **run:** resolve erroneous failures ([#3495](https://github.com/lerna/lerna/issues/3495)) ([24d0d5c](https://github.com/lerna/lerna/commit/24d0d5c43b857f8da0d2e06b76bb3ee79fda51ff))
+
 # [6.4.0](https://github.com/lerna/lerna/compare/v6.3.0...v6.4.0) (2023-01-05)
 
 ### Features
