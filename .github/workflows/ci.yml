@@ -6,7 +6,7 @@ on:
       - main
       - next
       - "test/*"
-      - build-2
+      - build-3
   pull_request:
     types: [assigned, opened, synchronize, reopened, labeled]
 
