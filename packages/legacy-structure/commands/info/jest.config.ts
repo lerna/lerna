@@ -10,6 +10,7 @@ export default {
   transform: {
     "^.+\\.[tj]s$": "ts-jest",
   },
-  moduleFileExtensions: ["ts", "js", "html"],
+  // Needed to add "json" to avoid issue resolving spdx-license-ids
+  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
   coverageDirectory: "../../../../coverage/packages/legacy-structure/commands/info",
 };

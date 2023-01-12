@@ -38,8 +38,6 @@
   },
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
-    "@lerna/publish": "file:../../commands/publish",
-    "@lerna/version": "file:../../commands/version",
     "@npmcli/arborist": "5.3.0",
     "@npmcli/run-script": "4.1.7",
     "@nrwl/devkit": ">=15.4.2 < 16",

@@ -43,7 +43,7 @@ export function copyFixture(targetDir: string, fixtureName: string, cwd: any) {
 }
 
 export function initFixtureFactory(startDir: any) {
-  return (fixtureName: string, commitMessage = "Init commit") => {
+  return (fixtureName: string, commitMessage: string | false = "Init commit") => {
     const cwd = directory();
     let chain = Promise.resolve();
 

@@ -146,7 +146,7 @@ function fetchTags(opts: Omit<fetch.FetchOptions, "spec"> & { spec: npa.Result }
     .then((data) => {
       if (data && typeof data === "object") {
         // eslint-disable-next-line no-param-reassign, no-underscore-dangle
-        delete data._etag;
+        delete data["_etag"];
       }
 
       return data || {};

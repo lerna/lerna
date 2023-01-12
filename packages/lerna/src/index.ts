@@ -3,9 +3,6 @@
 
 import { lernaCLI } from "@lerna/core";
 
-const publishCmd = require("@lerna/publish/command");
-const versionCmd = require("@lerna/version/command");
-
 import * as addCmd from "@lerna/commands/add/command";
 import * as bootstrapCmd from "@lerna/commands/bootstrap/command";
 import * as changedCmd from "@lerna/commands/changed/command";
@@ -18,7 +15,10 @@ import * as infoCmd from "@lerna/commands/info/command";
 import * as initCmd from "@lerna/commands/init/command";
 import * as linkCmd from "@lerna/commands/link/command";
 import * as listCmd from "@lerna/commands/list/command";
+import * as publishCmd from "@lerna/commands/publish/command";
 import * as runCmd from "@lerna/commands/run/command";
+import * as versionCmd from "@lerna/commands/version/command";
+
 import * as addCachingCmd from "./commands/add-caching/command";
 import * as repairCmd from "./commands/repair/command";
 import * as watchCmd from "./commands/watch/command";
