@@ -35,13 +35,7 @@ class RepairCommand extends Command {
       });
     });
 
-    // await repair({ verbose }, lernaMigrations);
-
-    // fake the success case until nx repair no longer depends on nx.json's existence
-    // eslint-disable-next-line global-require
-    require("nx/src/utils/output").output.success({
-      title: `No changes were necessary. This workspace is up to date!`,
-    });
+    await repair({ verbose }, lernaMigrations);
   }
 
   configureNxOutput() {
