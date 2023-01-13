@@ -42,7 +42,7 @@
     "@lerna/timer": "file:../../utils/timer",
     "@lerna/validation-error": "file:../../core/validation-error",
     "fs-extra": "^9.1.0",
-    "nx": ">=15.4.2 < 16",
+    "nx": ">=15.5.1 < 16",
     "p-map": "^4.0.0"
   }
 }
