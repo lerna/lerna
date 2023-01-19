@@ -169,8 +169,6 @@ export class Conf extends ConfigChain {
       return;
     }
 
-    console.log(this["get"]("prefix"));
-
     const prefix = path.resolve(this["get"]("prefix"));
 
     try {

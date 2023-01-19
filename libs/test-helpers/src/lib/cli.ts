@@ -1,4 +1,3 @@
-import { workspaceRoot } from "@nrwl/devkit";
 import execa from "execa";
 import path, { join } from "path";
 import yargs from "yargs";
@@ -90,7 +89,7 @@ export function cliRunner(cwd: any, env?: any) {
   };
 
   // eslint-disable-next-line node/no-unpublished-require, node/no-missing-require
-  const LERNA_BIN = require.resolve(join(workspaceRoot, "packages/lerna/dist/cli"));
+  const LERNA_BIN = require.resolve(join(__dirname, "../../../../", "packages/lerna/dist/cli"));
 
   return (...args: any[]) => execa("node", [LERNA_BIN].concat(args), opts);
 }

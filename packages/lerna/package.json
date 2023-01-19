@@ -81,7 +81,7 @@
     "npm-packlist": "5.1.1",
     "npm-registry-fetch": "13.3.0",
     "npmlog": "^6.0.2",
-    "nx": ">=15.4.2 < 16",
+    "nx": ">=15.5.2 < 16",
     "p-map-series": "2.1.0",
     "p-map": "4.0.0",
     "p-pipe": "3.1.0",

@@ -1,12 +1,11 @@
 "use strict";
 
 const path = require("path");
-const { workspaceRoot } = require("@nrwl/devkit");
 const normalizeNewline = require("normalize-newline");
 const serializeTempdir = require("./serialize-tempdir");
 const serializeWindowsPaths = require("./serialize-windows-paths");
 // eslint-disable-next-line node/no-unpublished-require, import/no-unresolved, node/no-missing-require, import/no-dynamic-require
-const LERNA_VERSION = require(path.join(workspaceRoot, "packages/lerna/package.json")).version;
+const LERNA_VERSION = require(path.join(__dirname, "../../../../../", "packages/lerna/package.json")).version;
 
 const VERSION_REGEX = new RegExp(`^((?:.*?notice cli )|\\^?)v?${LERNA_VERSION}`, "g");
 // TODO: maybe even less naïve regex?
