@@ -3,9 +3,10 @@
   "private": true,
   "description": "lerna dog-fooding lerna",
   "workspaces": [
+    "commands/*",
     "core/*",
     "packages/lerna",
-    "packages/legacy-structure/commands/*"
+    "utils/*"
   ],
   "volta": {
     "node": "16.15.0",
@@ -46,7 +47,7 @@
   "dependencies": {
     "@npmcli/arborist": "5.3.0",
     "@npmcli/run-script": "^4.1.7",
-    "@nrwl/devkit": "15.4.5",
+    "@nrwl/devkit": "15.4.2",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
     "@octokit/rest": "^19.0.3",
     "@swc/helpers": "~0.4.11",
@@ -125,12 +126,12 @@
     "yargs-parser": "20.2.4"
   },
   "devDependencies": {
-    "@nrwl/esbuild": "15.4.5",
-    "@nrwl/eslint-plugin-nx": "15.4.5",
-    "@nrwl/jest": "15.4.5",
-    "@nrwl/js": "15.4.5",
+    "@nrwl/esbuild": "15.4.2",
+    "@nrwl/eslint-plugin-nx": "15.4.2",
+    "@nrwl/jest": "15.4.2",
+    "@nrwl/js": "15.4.2",
     "@nrwl/nx-cloud": "15.0.2",
-    "@nrwl/nx-plugin": "15.4.5",
+    "@nrwl/nx-plugin": "15.4.2",
     "@swc-node/register": "^1.4.2",
     "@swc/cli": "~0.1.55",
     "@swc/core": "^1.2.173",
@@ -187,7 +188,7 @@
     "node-jq": "^2.3.3",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
-    "nx": "15.4.5",
+    "nx": "15.4.2",
     "patch-package": "6.5.0",
     "path-key": "^3.1.1",
     "prettier": "^2.2.1",
@@ -200,4 +201,3 @@
     "verdaccio": "^5.19.0"
   }
 }
-
