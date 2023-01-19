@@ -58,7 +58,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
   "workspaces": [
     "core/*",
     "packages/**/*",
-    "packages/legacy-structure/*"
+    "packages/legacy-structure/commands/*"
   ]
 }`;
     writeFileSync("./lerna.json", distLernaJson);

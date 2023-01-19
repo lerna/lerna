@@ -1,4 +1,5 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+// nx-ignore-next-line
 import { loggingOutput } from "@lerna/test-helpers";
 import { logPacked } from "./log-packed";
 

@@ -15,6 +15,8 @@ const os = require("os");
 jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
 
 // helpers
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+// nx-ignore-next-line
 const { loggingOutput, updateLernaConfig, initFixtureFactory } = require("@lerna/test-helpers");
 const initFixture = initFixtureFactory(__dirname);
 

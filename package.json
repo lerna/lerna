@@ -5,7 +5,7 @@
   "workspaces": [
     "core/*",
     "packages/lerna",
-    "packages/legacy-structure/*"
+    "packages/legacy-structure/commands/*"
   ],
   "volta": {
     "node": "16.15.0",

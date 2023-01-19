@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Package } from "../package";
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+// nx-ignore-next-line
 import { initFixtureFactory } from "@lerna/test-helpers";
 import path from "path";
 import { symlinkBinary } from ".";
 
 const initFixture = initFixtureFactory(__dirname);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// nx-ignore-next-line
 expect.extend(require("@lerna/test-helpers/src/lib/pkg-matchers"));
 
 declare global {

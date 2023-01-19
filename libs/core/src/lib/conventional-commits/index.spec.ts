@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // TODO: refactor to address type issues
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+// nx-ignore-next-line
 import { gitAdd, gitCommit, gitTag, initFixtureFactory } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import path from "path";
@@ -16,7 +18,7 @@ import { recommendVersion } from "./recommend-version";
 import { updateChangelog } from "./update-changelog";
 
 // stabilize changelog commit SHA and datestamp
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// nx-ignore-next-line
 expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-changelog"));
 
 describe("conventional-commits", () => {

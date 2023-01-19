@@ -1,4 +1,6 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+// nx-ignore-next-line
 import { loggingOutput } from "@lerna/test-helpers";
 import chalk from "chalk";
 // tacks does not have any types
@@ -28,9 +30,9 @@ expect.addSnapshotSerializer({
 });
 
 // normalize temp directory paths in snapshots
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// nx-ignore-next-line
 expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-windows-paths"));
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// nx-ignore-next-line
 expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-tempdir"));
 
 describe("listable.format()", () => {
