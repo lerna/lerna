@@ -58,7 +58,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
   "description": "This package.json exists to facilitate local registry (verdaccio) publishing for e2e tests and local testing",
   "workspaces": [
     "core/*",
-    "packages/**/*",
+    "packages/lerna",
     "packages/legacy-structure/commands/*"
   ]
 }`;
