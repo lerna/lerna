@@ -1,0 +1,69 @@
+{
+  "name": "@lerna/create",
+  "version": "6.4.1",
+  "description": "Create a new lerna-managed package",
+  "keywords": [
+    "lerna",
+    "command"
+  ],
+  "homepage": "https://lerna.js.org",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "main": "./dist/index.js",
+  "engines": {
+    "node": "^14.15.0 || >=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "packages/legacy-structure/commands/create"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../../../child-process",
+    "dedent": "^0.7.0",
+    "fs-extra": "^9.1.0",
+    "init-package-json": "^3.0.2",
+    "npm-package-arg": "8.1.1",
+    "p-reduce": "^2.1.0",
+    "pacote": "^13.6.1",
+    "pify": "^5.0.0",
+    "semver": "^7.3.4",
+    "slash": "^3.0.0",
+    "validate-npm-package-license": "^3.0.4",
+    "validate-npm-package-name": "^4.0.0",
+    "yargs-parser": "20.2.4"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./command": {
+      "import": "./dist/command.js",
+      "require": "./dist/command.js"
+    },
+    "./lib/builtin-npmrc": {
+      "import": "./dist/lib/builtin-npmrc.js",
+      "require": "./dist/lib/builtin-npmrc.js"
+    },
+    "./lib/cat-file": {
+      "import": "./dist/lib/cat-file.js",
+      "require": "./dist/lib/cat-file.js"
+    },
+    "./lib/lerna-module-data": {
+      "import": "./dist/lib/lerna-module-data.js",
+      "require": "./dist/lib/lerna-module-data.js"
+    }
+  }
+}

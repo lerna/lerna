@@ -1,0 +1,26 @@
+diff --git a/node_modules/@nrwl/esbuild/src/executors/esbuild/esbuild.impl.js b/node_modules/@nrwl/esbuild/src/executors/esbuild/esbuild.impl.js
+index a2cd30e..c47a77b 100644
+--- a/node_modules/@nrwl/esbuild/src/executors/esbuild/esbuild.impl.js
++++ b/node_modules/@nrwl/esbuild/src/executors/esbuild/esbuild.impl.js
+@@ -140,7 +140,7 @@ function esbuildExecutor(_options, context) {
+                 yield yield tslib_1.__await({
+                     success: buildResult.errors.length === 0,
+                     // Need to call getOutfile directly in the case of bundle=false and outfile is not set for esbuild.
+-                    outfile: (0, path_1.join)(context.root, (0, build_esbuild_options_1.getOutfile)(format, options, context)),
++                    outfile: options.bundle === false ? (0, path_1.join)(context.root, (0, build_esbuild_options_1.getOutfile)(format, options, context)) : '',
+                 });
+             }
+         }
+diff --git a/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js b/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
+index 424925b..570f889 100644
+--- a/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
++++ b/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
+@@ -11,7 +11,7 @@ const ESM_FILE_EXTENSION = '.js';
+ const CJS_FILE_EXTENSION = '.cjs';
+ function buildEsbuildOptions(format, options, context) {
+     var _a, _b;
+-    const esbuildOptions = Object.assign(Object.assign({}, options.esbuildOptions), { entryNames: options.outputHashing === 'all' ? '[dir]/[name].[hash]' : '[dir]/[name]', bundle: options.bundle, external: options.external, minify: options.minify, platform: options.platform, target: options.target, metafile: options.metafile, tsconfig: options.tsConfig, format, outExtension: {
++    const esbuildOptions = Object.assign(Object.assign({}, options.esbuildOptions), { entryNames: options.outputHashing === 'all' ? '[dir]/[name].[hash]' : '[dir]/[name]', bundle: options.bundle, external: options.bundle === false ? undefined : [...options.external, ...options.esbuildOptions?.external ?? []], minify: options.minify, platform: options.platform, target: options.target, metafile: options.metafile, tsconfig: options.tsConfig, format, outExtension: {
+             '.js': getOutExtension(format, options),
+         } });
+     if (options.platform === 'browser') {

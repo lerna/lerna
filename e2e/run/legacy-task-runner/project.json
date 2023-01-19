@@ -1,7 +1,7 @@
 {
   "name": "e2e-run-legacy-task-runner",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna", "run"],
+  "implicitDependencies": ["lerna", "legacy-structure-commands-run"],
   "tags": [],
   "targets": {
     "e2e": {
@@ -15,7 +15,7 @@
             "command": "npm run e2e-build-package-publish"
           },
           {
-            "command": "E2E_ROOT=$(npx ts-node scripts/set-e2e-root.ts) nx run-e2e-tests e2e-run-legacy-task-runner"
+            "command": "E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts) nx run-e2e-tests e2e-run-legacy-task-runner"
           }
         ],
         "parallel": false
@@ -26,7 +26,7 @@
       "options": {
         "commands": [
           {
-            "command": "E2E_ROOT=$(npx ts-node scripts/set-e2e-root.ts) nx run-e2e-tests e2e-run-legacy-task-runner",
+            "command": "E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts) nx run-e2e-tests e2e-run-legacy-task-runner",
             "description": "This additional wrapper target exists so that we can ensure that the e2e tests run in a dedicated process with enough memory"
           }
         ],

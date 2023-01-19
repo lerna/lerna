@@ -6,7 +6,7 @@ function initializeFixture {
   echo "⌛️ Initializing Fixture for $SUITE...\n"
 
   # Initialize the E2E_ROOT and capture the generated path
-  E2E_ROOT=$(npx ts-node scripts/set-e2e-root.ts)
+  E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts)
 
   # Initialize the Fixture and capture the generated fixture root path
   FIXTURE_ROOT_PATH=$(E2E_ROOT=$E2E_ROOT npx ts-node --project $DIR/../../tsconfig.lib.json -r tsconfig-paths/register $DIR/init.ts)

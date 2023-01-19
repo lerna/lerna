@@ -1,0 +1,47 @@
+{
+  "name": "legacy-structure-commands-link",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/legacy-structure/commands/link",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "dependsOn": ["compile"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/legacy-structure/commands/link/dist",
+        "parallel": false,
+        "commands": ["rm -rf package.json"]
+      }
+    },
+    "compile": {
+      "executor": "@nrwl/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/legacy-structure/commands/link/dist",
+        "main": "packages/legacy-structure/commands/link/src/index.ts",
+        "tsConfig": "packages/legacy-structure/commands/link/tsconfig.lib.json",
+        "assets": [
+          {
+            "input": "libs/commands/link",
+            "glob": "README.md",
+            "output": "../"
+          }
+        ],
+        "thirdParty": false,
+        "platform": "node",
+        "format": ["cjs"],
+        "esbuildOptions": {
+          "external": ["*package.json"],
+          "outExtension": {
+            ".js": ".js"
+          },
+          "logOverride": {
+            "commonjs-variable-in-esm": "silent"
+          }
+        },
+        "bundle": false
+      }
+    }
+  },
+  "tags": []
+}

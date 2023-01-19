@@ -1,0 +1,40 @@
+{
+  "name": "@lerna/version",
+  "version": "6.4.1",
+  "description": "Bump version of packages changed since the last release",
+  "keywords": [
+    "lerna",
+    "command"
+  ],
+  "homepage": "https://lerna.js.org",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "main": "./dist/index.js",
+  "engines": {
+    "node": "^14.15.0 || >=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "packages/legacy-structure/commands/version"
+  },
+  "dependencies": {
+    "lerna": "file:../../../lerna"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./command": "./dist/command.js",
+    "./lib/*": "./dist/lib/*.js"
+  }
+}

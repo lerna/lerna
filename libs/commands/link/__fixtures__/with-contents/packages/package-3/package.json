@@ -1,0 +1,15 @@
+{
+  "name": "package-3",
+  "version": "1.0.0",
+  "publishConfig": {
+    "directory": "dist"
+  },
+  "bin": {
+    "package3cli1": "cli1.js",
+    "package3cli2": "cli2.js"
+  },
+  "devDependencies": {
+    "@test/package-1": "^1.0.0",
+    "@test/package-2": "^1.0.0"
+  }
+}

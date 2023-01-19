@@ -1,0 +1,118 @@
+{
+  "name": "lerna",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/lerna/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "dependsOn": ["compile"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/lerna/dist",
+        "parallel": false,
+        "commands": ["rm -rf package.json"]
+      }
+    },
+    "compile": {
+      "executor": "@nrwl/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/lerna/dist",
+        "main": "packages/lerna/src/index.ts",
+        "tsConfig": "packages/lerna/tsconfig.lib.json",
+        "assets": [],
+        "thirdParty": false,
+        "platform": "node",
+        "format": ["cjs"],
+        "additionalEntryPoints": [
+          "packages/lerna/src/cli.ts",
+          "packages/lerna/src/commands/add/command.ts",
+          "packages/lerna/src/commands/add/index.ts",
+          "packages/lerna/src/commands/add/lib/get-range-to-reference.ts",
+          "packages/lerna/src/commands/bootstrap/command.ts",
+          "packages/lerna/src/commands/bootstrap/index.ts",
+          "packages/lerna/src/commands/bootstrap/lib/has-dependency-installed.ts",
+          "packages/lerna/src/commands/bootstrap/lib/is-hoisted-package.ts",
+          "packages/lerna/src/commands/changed/command.ts",
+          "packages/lerna/src/commands/changed/index.ts",
+          "packages/lerna/src/commands/clean/command.ts",
+          "packages/lerna/src/commands/clean/index.ts",
+          "packages/lerna/src/commands/diff/command.ts",
+          "packages/lerna/src/commands/diff/index.ts",
+          "packages/lerna/src/commands/diff/lib/get-last-commit.ts",
+          "packages/lerna/src/commands/diff/lib/has-commit.ts",
+          "packages/lerna/src/commands/exec/command.ts",
+          "packages/lerna/src/commands/exec/index.ts",
+          "packages/lerna/src/commands/import/command.ts",
+          "packages/lerna/src/commands/import/index.ts",
+          "packages/lerna/src/commands/info/command.ts",
+          "packages/lerna/src/commands/info/index.ts",
+          "packages/lerna/src/commands/init/command.ts",
+          "packages/lerna/src/commands/init/index.ts",
+          "packages/lerna/src/commands/link/command.ts",
+          "packages/lerna/src/commands/link/index.ts",
+          "packages/lerna/src/commands/list/command.ts",
+          "packages/lerna/src/commands/list/index.ts",
+          "packages/lerna/src/commands/publish/command.ts",
+          "packages/lerna/src/commands/publish/index.ts",
+          "packages/lerna/src/commands/publish/lib/create-temp-licenses.ts",
+          "packages/lerna/src/commands/publish/lib/fetch-config.ts",
+          "packages/lerna/src/commands/publish/lib/get-current-sha.ts",
+          "packages/lerna/src/commands/publish/lib/get-current-tags.ts",
+          "packages/lerna/src/commands/publish/lib/get-npm-username.ts",
+          "packages/lerna/src/commands/publish/lib/get-packages-without-license.ts",
+          "packages/lerna/src/commands/publish/lib/get-profile-data.ts",
+          "packages/lerna/src/commands/publish/lib/get-tagged-packages.ts",
+          "packages/lerna/src/commands/publish/lib/get-two-factor-auth-required.ts",
+          "packages/lerna/src/commands/publish/lib/get-unpublished-packages.ts",
+          "packages/lerna/src/commands/publish/lib/get-whoami.ts",
+          "packages/lerna/src/commands/publish/lib/git-checkout.ts",
+          "packages/lerna/src/commands/publish/lib/remove-temp-licenses.ts",
+          "packages/lerna/src/commands/publish/lib/verify-npm-package-access.ts",
+          "packages/lerna/src/commands/run/command.ts",
+          "packages/lerna/src/commands/run/index.ts",
+          "packages/lerna/src/commands/version/command.ts",
+          "packages/lerna/src/commands/version/index.ts",
+          "packages/lerna/src/commands/version/lib/create-release.ts",
+          "packages/lerna/src/commands/version/lib/get-current-branch.ts",
+          "packages/lerna/src/commands/version/lib/git-add.ts",
+          "packages/lerna/src/commands/version/lib/git-commit.ts",
+          "packages/lerna/src/commands/version/lib/git-push.ts",
+          "packages/lerna/src/commands/version/lib/git-tag.ts",
+          "packages/lerna/src/commands/version/lib/is-anything-committed.ts",
+          "packages/lerna/src/commands/version/lib/is-behind-upstream.ts",
+          "packages/lerna/src/commands/version/lib/is-breaking-change.ts",
+          "packages/lerna/src/commands/version/lib/prompt-version.ts",
+          "packages/lerna/src/commands/version/lib/remote-branch-exists.ts",
+          "packages/lerna/src/commands/version/lib/update-lockfile-version.ts",
+          "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts"
+        ],
+        "esbuildOptions": {
+          "external": ["*package.json"],
+          "outExtension": {
+            ".js": ".js"
+          },
+          "logOverride": {
+            "commonjs-variable-in-esm": "silent"
+          }
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/lerna/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/lerna/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
