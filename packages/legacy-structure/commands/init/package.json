@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/init"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../core/child-process",
+    "@lerna/child-process": "file:../../../../core/child-process",
     "fs-extra": "^9.1.0",
     "p-map": "^4.0.0",
     "write-json-file": "^4.3.0"

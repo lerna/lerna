@@ -2,3 +2,6 @@
 # the compile target in project.json by copying the README.md from the relevant library.
 # This is done to ensure that the README.md in that library is the source of truth.
 README.md
+
+# These dist folders are part of the fixtures
+!__tests__/**/dist

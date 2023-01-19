@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/version"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../core/child-process",
+    "@lerna/child-process": "file:../../../../core/child-process",
     "@nrwl/devkit": ">=15.4.2 < 16",
     "chalk": "^4.1.0",
     "dedent": "^0.7.0",

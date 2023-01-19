@@ -3,10 +3,9 @@
   "private": true,
   "description": "lerna dog-fooding lerna",
   "workspaces": [
-    "commands/*",
     "core/*",
     "packages/lerna",
-    "utils/*"
+    "packages/legacy-structure/commands/*"
   ],
   "volta": {
     "node": "16.15.0",
