@@ -31,8 +31,8 @@
     "pretest": "npm run lint",
     "test": "nx run-many -t test",
     "e2e-start-local-registry": "node ./scripts/e2e-start-local-registry.js",
-    "e2e-build-package-publish": "ts-node -P ./scripts/tsconfig.e2e.json ./scripts/e2e-build-package-publish.ts",
-    "lerna-release": "ts-node -P ./scripts/tsconfig.scripts.json ./scripts/lerna-release",
+    "e2e-build-package-publish": "ts-node -P ./scripts/tsconfig.e2e.json ./scripts/e2e-build-package-publish",
+    "lerna-release": "nx run-many -t build --projects=legacy-structure-commands-version,legacy-structure-commands-publish && ts-node -P ./scripts/tsconfig.scripts.json ./scripts/lerna-release",
     "local-registry": "./scripts/local-registry.sh",
     "postinstall": "patch-package"
   },
