@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
 
-import { lernaCLI } from "@lerna/core";
+// Currently external until the usage of LERNA_MODULE_DATA can be refactored
+const createCmd = require("@lerna/create/command");
 
+// Bundled
+import { lernaCLI } from "@lerna/core";
 import * as addCmd from "@lerna/commands/add/command";
 import * as bootstrapCmd from "@lerna/commands/bootstrap/command";
 import * as changedCmd from "@lerna/commands/changed/command";
 import * as cleanCmd from "@lerna/commands/clean/command";
-import * as createCmd from "@lerna/commands/create/command";
 import * as diffCmd from "@lerna/commands/diff/command";
 import * as execCmd from "@lerna/commands/exec/command";
 import * as importCmd from "@lerna/commands/import/command";

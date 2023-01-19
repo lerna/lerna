@@ -40,7 +40,8 @@ jobs:
         with:
           cmd1: npx nx-cloud record -- npx nx format:check
           cmd2: npx nx-cloud record -- npx nx workspace-lint
-          cmd3: npx nx run-many -t lint,build,test --parallel=3
+          cmd3: npx nx run-many -t lint --parallel=3
+          cmd4: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
 
       # e2e tests for everything except the primary task runner
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=1

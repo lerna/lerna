@@ -25,6 +25,11 @@
             "input": "libs/commands/create",
             "glob": "README.md",
             "output": "../"
+          },
+          {
+            "input": "packages/legacy-structure/commands/create/src/lib",
+            "glob": "lerna-module-data.js",
+            "output": "./lib"
           }
         ],
         "thirdParty": false,
@@ -33,8 +38,7 @@
         "additionalEntryPoints": [
           "packages/legacy-structure/commands/create/src/command.ts",
           "packages/legacy-structure/commands/create/src/lib/builtin-npmrc.ts",
-          "packages/legacy-structure/commands/create/src/lib/cat-file.ts",
-          "packages/legacy-structure/commands/create/src/lib/lerna-module-data.ts"
+          "packages/legacy-structure/commands/create/src/lib/cat-file.ts"
         ],
         "esbuildOptions": {
           "external": ["*package.json"],
