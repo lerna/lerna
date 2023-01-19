@@ -1,0 +1,16 @@
+{
+  "name": "commands-run",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/commands/run/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/commands/run/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

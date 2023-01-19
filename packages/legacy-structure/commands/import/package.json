@@ -1,0 +1,48 @@
+{
+  "name": "@lerna/import",
+  "version": "6.4.1",
+  "description": "Import a package into the monorepo with commit history",
+  "keywords": [
+    "lerna",
+    "command"
+  ],
+  "homepage": "https://lerna.js.org",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "main": "./dist/index.js",
+  "engines": {
+    "node": "^14.15.0 || >=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "packages/legacy-structure/commands/import"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../../../child-process",
+    "dedent": "^0.7.0",
+    "fs-extra": "^9.1.0",
+    "p-map-series": "^2.1.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./command": {
+      "import": "./dist/command.js",
+      "require": "./dist/command.js"
+    }
+  }
+}

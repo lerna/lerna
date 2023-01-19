@@ -1,7 +1,7 @@
 {
   "name": "e2e-create",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna", "create"],
+  "implicitDependencies": ["lerna", "commands-create"],
   "tags": [],
   "targets": {
     "e2e": {

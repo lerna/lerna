@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: "libs-e2e-utils",
+  displayName: "e2e-utils",
   preset: "../../jest.preset.js",
   globals: {
     "ts-jest": {

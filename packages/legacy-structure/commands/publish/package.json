@@ -1,0 +1,110 @@
+{
+  "name": "@lerna/publish",
+  "version": "6.4.1",
+  "description": "Publish packages in the current project",
+  "keywords": [
+    "lerna",
+    "command"
+  ],
+  "homepage": "https://lerna.js.org",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "main": "./dist/index.js",
+  "engines": {
+    "node": "^14.15.0 || >=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "packages/legacy-structure/commands/publish"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../../../child-process",
+    "fs-extra": "^9.1.0",
+    "libnpmaccess": "^6.0.3",
+    "npm-package-arg": "8.1.1",
+    "npm-registry-fetch": "^13.3.0",
+    "npmlog": "^6.0.2",
+    "p-map": "^4.0.0",
+    "p-pipe": "^3.1.0",
+    "pacote": "^13.6.1",
+    "semver": "^7.3.4"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./command": {
+      "import": "./dist/command.js",
+      "require": "./dist/command.js"
+    },
+    "./lib/create-temp-licenses": {
+      "import": "./dist/lib/create-temp-licenses.js",
+      "require": "./dist/lib/create-temp-licenses.js"
+    },
+    "./lib/fetch-config": {
+      "import": "./dist/lib/fetch-config.js",
+      "require": "./dist/lib/fetch-config.js"
+    },
+    "./lib/get-current-sha": {
+      "import": "./dist/lib/get-current-sha.js",
+      "require": "./dist/lib/get-current-sha.js"
+    },
+    "./lib/get-current-tags": {
+      "import": "./dist/lib/get-current-tags.js",
+      "require": "./dist/lib/get-current-tags.js"
+    },
+    "./lib/get-npm-username": {
+      "import": "./dist/lib/get-npm-username.js",
+      "require": "./dist/lib/get-npm-username.js"
+    },
+    "./lib/get-packages-without-license": {
+      "import": "./dist/lib/get-packages-without-license.js",
+      "require": "./dist/lib/get-packages-without-license.js"
+    },
+    "./lib/get-profile-data": {
+      "import": "./dist/lib/get-profile-data.js",
+      "require": "./dist/lib/get-profile-data.js"
+    },
+    "./lib/get-tagged-packages": {
+      "import": "./dist/lib/get-tagged-packages.js",
+      "require": "./dist/lib/get-tagged-packages.js"
+    },
+    "./lib/get-two-factor-auth-required": {
+      "import": "./dist/lib/get-two-factor-auth-required.js",
+      "require": "./dist/lib/get-two-factor-auth-required.js"
+    },
+    "./lib/get-unpublished-packages": {
+      "import": "./dist/lib/get-unpublished-packages.js",
+      "require": "./dist/lib/get-unpublished-packages.js"
+    },
+    "./lib/get-whoami": {
+      "import": "./dist/lib/get-whoami.js",
+      "require": "./dist/lib/get-whoami.js"
+    },
+    "./lib/git-checkout": {
+      "import": "./dist/lib/git-checkout.js",
+      "require": "./dist/lib/git-checkout.js"
+    },
+    "./lib/remove-temp-licenses": {
+      "import": "./dist/lib/remove-temp-licenses.js",
+      "require": "./dist/lib/remove-temp-licenses.js"
+    },
+    "./lib/verify-npm-package-access": {
+      "import": "./dist/lib/verify-npm-package-access.js",
+      "require": "./dist/lib/verify-npm-package-access.js"
+    }
+  }
+}
