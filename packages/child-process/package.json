@@ -1,0 +1,38 @@
+{
+  "name": "@lerna/child-process",
+  "version": "6.4.1",
+  "description": "Lerna's internal child_process wrapper",
+  "keywords": [
+    "lerna",
+    "utils"
+  ],
+  "homepage": "https://lerna.js.org",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": "^14.15.0 || >=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "core/child-process"
+  },
+  "scripts": {
+    "test": "jest __tests__"
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "execa": "^5.0.0",
+    "strong-log-transformer": "^2.1.0"
+  }
+}

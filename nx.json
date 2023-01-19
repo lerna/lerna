@@ -6,7 +6,16 @@
       "runner": "@nrwl/nx-cloud",
       "options": {
         "accessToken": "MGQ4ZjkyMWYtYTVhNi00ZWQ4LWE0OTctNTkxM2U0ZDUzYWQ1fHJlYWQ=",
-        "cacheableOperations": ["build", "lint", "e2e", "test", "run-e2e-tests-process", "run-e2e-tests"]
+        "cacheableOperations": [
+          "build",
+          "compile",
+          "lint",
+          "e2e",
+          "test",
+          "run-e2e-tests-process",
+          "run-e2e-tests",
+          "integration"
+        ]
       }
     }
   },
@@ -20,19 +29,20 @@
       "!{projectRoot}/jest.config.[jt]s"
     ]
   },
-  "workspaceLayout": {
-    "libsDir": "libs",
-    "appsDir": "packages"
-  },
   "targetDefaults": {
     "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "dependsOn": ["build"]
     },
     "build": {
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production"],
+      "dependsOn": ["^build"]
     },
     "run-e2e-tests": {
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "integration": {
+      "dependsOn": ["^build"]
     }
   }
 }

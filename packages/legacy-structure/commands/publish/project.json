@@ -1,0 +1,75 @@
+{
+  "name": "legacy-structure-commands-publish",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/legacy-structure/commands/publish",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "dependsOn": ["compile"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/legacy-structure/commands/publish/dist",
+        "parallel": false,
+        "commands": ["rm -rf package.json"]
+      }
+    },
+    "compile": {
+      "executor": "@nrwl/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/legacy-structure/commands/publish/dist",
+        "main": "packages/legacy-structure/commands/publish/src/index.ts",
+        "tsConfig": "packages/legacy-structure/commands/publish/tsconfig.lib.json",
+        "assets": [
+          {
+            "input": "libs/commands/publish",
+            "glob": "README.md",
+            "output": "../"
+          }
+        ],
+        "thirdParty": false,
+        "platform": "node",
+        "format": ["cjs"],
+        "additionalEntryPoints": [
+          "packages/legacy-structure/commands/publish/src/command.ts",
+          "packages/legacy-structure/commands/publish/src/lib/create-temp-licenses.ts",
+          "packages/legacy-structure/commands/publish/src/lib/fetch-config.ts",
+          "packages/legacy-structure/commands/publish/src/lib/get-current-sha.ts",
+          "packages/legacy-structure/commands/publish/src/lib/get-current-tags.ts",
+          "packages/legacy-structure/commands/publish/src/lib/get-npm-username.ts",
+          "packages/legacy-structure/commands/publish/src/lib/get-packages-without-license.ts",
+          "packages/legacy-structure/commands/publish/src/lib/get-profile-data.ts",
+          "packages/legacy-structure/commands/publish/src/lib/get-tagged-packages.ts",
+          "packages/legacy-structure/commands/publish/src/lib/get-two-factor-auth-required.ts",
+          "packages/legacy-structure/commands/publish/src/lib/get-unpublished-packages.ts",
+          "packages/legacy-structure/commands/publish/src/lib/get-whoami.ts",
+          "packages/legacy-structure/commands/publish/src/lib/git-checkout.ts",
+          "packages/legacy-structure/commands/publish/src/lib/remove-temp-licenses.ts",
+          "packages/legacy-structure/commands/publish/src/lib/verify-npm-package-access.ts"
+        ],
+        "esbuildOptions": {
+          "external": ["*package.json", "@lerna/version"],
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/legacy-structure/commands/publish/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/legacy-structure/commands/publish/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

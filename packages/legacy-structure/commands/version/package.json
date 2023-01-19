@@ -1,0 +1,106 @@
+{
+  "name": "@lerna/version",
+  "version": "6.4.1",
+  "description": "Bump version of packages changed since the last release",
+  "keywords": [
+    "lerna",
+    "command"
+  ],
+  "homepage": "https://lerna.js.org",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "main": "./dist/index.js",
+  "engines": {
+    "node": "^14.15.0 || >=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "packages/legacy-structure/commands/version"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../../../child-process",
+    "@nrwl/devkit": ">=15.5.2 < 16",
+    "chalk": "^4.1.0",
+    "dedent": "^0.7.0",
+    "load-json-file": "^6.2.0",
+    "minimatch": "^3.0.4",
+    "npmlog": "^6.0.2",
+    "p-map": "^4.0.0",
+    "p-pipe": "^3.1.0",
+    "p-reduce": "^2.1.0",
+    "p-waterfall": "^2.1.1",
+    "semver": "^7.3.4",
+    "slash": "^3.0.0",
+    "write-json-file": "^4.3.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./command": {
+      "import": "./dist/command.js",
+      "require": "./dist/command.js"
+    },
+    "./lib/create-release": {
+      "import": "./dist/lib/create-release.js",
+      "require": "./dist/lib/create-release.js"
+    },
+    "./lib/get-current-branch": {
+      "import": "./dist/lib/get-current-branch.js",
+      "require": "./dist/lib/get-current-branch.js"
+    },
+    "./lib/git-add": {
+      "import": "./dist/lib/git-add.js",
+      "require": "./dist/lib/git-add.js"
+    },
+    "./lib/git-commit": {
+      "import": "./dist/lib/git-commit.js",
+      "require": "./dist/lib/git-commit.js"
+    },
+    "./lib/git-push": {
+      "import": "./dist/lib/git-push.js",
+      "require": "./dist/lib/git-push.js"
+    },
+    "./lib/git-tag": {
+      "import": "./dist/lib/git-tag.js",
+      "require": "./dist/lib/git-tag.js"
+    },
+    "./lib/is-anything-committed": {
+      "import": "./dist/lib/is-anything-committed.js",
+      "require": "./dist/lib/is-anything-committed.js"
+    },
+    "./lib/is-behind-upstream": {
+      "import": "./dist/lib/is-behind-upstream.js",
+      "require": "./dist/lib/is-behind-upstream.js"
+    },
+    "./lib/is-breaking-change": {
+      "import": "./dist/lib/is-breaking-change.js",
+      "require": "./dist/lib/is-breaking-change.js"
+    },
+    "./lib/prompt-version": {
+      "import": "./dist/lib/prompt-version.js",
+      "require": "./dist/lib/prompt-version.js"
+    },
+    "./lib/remote-branch-exists": {
+      "import": "./dist/lib/remote-branch-exists.js",
+      "require": "./dist/lib/remote-branch-exists.js"
+    },
+    "./lib/update-lockfile-version": {
+      "import": "./dist/lib/update-lockfile-version.js",
+      "require": "./dist/lib/update-lockfile-version.js"
+    }
+  }
+}
