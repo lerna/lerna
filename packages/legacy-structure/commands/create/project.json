@@ -1,0 +1,71 @@
+{
+  "name": "legacy-structure-commands-create",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/legacy-structure/commands/create",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "dependsOn": ["compile"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/legacy-structure/commands/create/dist",
+        "parallel": false,
+        "commands": ["rm -rf package.json"]
+      }
+    },
+    "compile": {
+      "executor": "@nrwl/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/legacy-structure/commands/create/dist",
+        "main": "packages/legacy-structure/commands/create/src/index.ts",
+        "tsConfig": "packages/legacy-structure/commands/create/tsconfig.lib.json",
+        "assets": [
+          {
+            "input": "libs/commands/create",
+            "glob": "README.md",
+            "output": "../"
+          },
+          {
+            "input": "packages/legacy-structure/commands/create/src/lib",
+            "glob": "lerna-module-data.js",
+            "output": "./lib"
+          }
+        ],
+        "thirdParty": false,
+        "platform": "node",
+        "format": ["cjs"],
+        "additionalEntryPoints": [
+          "packages/legacy-structure/commands/create/src/command.ts",
+          "packages/legacy-structure/commands/create/src/lib/builtin-npmrc.ts",
+          "packages/legacy-structure/commands/create/src/lib/cat-file.ts"
+        ],
+        "esbuildOptions": {
+          "external": ["*package.json"],
+          "outExtension": {
+            ".js": ".js"
+          },
+          "logOverride": {
+            "commonjs-variable-in-esm": "silent"
+          }
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/legacy-structure/commands/create/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/legacy-structure/commands/create/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

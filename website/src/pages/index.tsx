@@ -12,7 +12,7 @@ export default function Home(): JSX.Element {
   return (
     <Layout
       title="Documentation"
-      description="Lerna is a fast modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository."
+      description="Lerna is a fast, modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository."
     >
       <main>
         <HeroLerna />

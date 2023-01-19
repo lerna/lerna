@@ -85,7 +85,7 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
               command: "npm run e2e-build-package-publish",
             },
             {
-              command: `E2E_ROOT=$(npx ts-node scripts/set-e2e-root.ts) nx run-e2e-tests ${normalizedOptions.projectName}`,
+              command: `E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts) nx run-e2e-tests ${normalizedOptions.projectName}`,
             },
           ],
           parallel: false,
@@ -96,7 +96,7 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
         options: {
           commands: [
             {
-              command: `E2E_ROOT=$(npx ts-node scripts/set-e2e-root.ts) nx run-e2e-tests ${normalizedOptions.projectName}`,
+              command: `E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts) nx run-e2e-tests ${normalizedOptions.projectName}`,
               description:
                 "This additional wrapper target exists so that we can ensure that the e2e tests run in a dedicated process with enough memory",
             },

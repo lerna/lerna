@@ -24,10 +24,12 @@ npm ci # given this is a clean install on an existing project, npm ci can be use
 
 Currently, the [source](https://github.com/lerna/lerna/tree/main) is split up into a few categories:
 
-- [utils](https://github.com/lerna/lerna/tree/main/utils): shared packages to run git, npm, fs, and more.
-- [core](https://github.com/lerna/lerna/tree/main/core): basic building blocks, including Package-related abstractions and the command superclass.
-- [commands](https://github.com/lerna/lerna/tree/main/commands): each command has an `initialize` and `execute` function.
-  - These commands are consumed as yargs subcommands in [core/cli/index.js](https://github.com/lerna/lerna/blob/main/core/cli/index.js), which is required from the executable [`core/lerna/cli.js`](https://github.com/lerna/lerna/blob/main/core/lerna/cli.js).
+- [e2e](https://github.com/lerna/lerna/tree/main/e2e): latest test code which runs the `lerna` CLI as close to how a user does as possible
+- [integration](https://github.com/lerna/lerna/tree/main/integration): legacy test code which exists somewhere between unit and e2e testing in terms of abstraction. New e2e tests should be preferred over new tests here because they are higher value.
+- [libs](https://github.com/lerna/lerna/tree/main/libs): source code which gets composed into packages for publishing, or which assists with other things such as unit and e2e testing
+- [packages](https://github.com/lerna/lerna/tree/main/packages): the packages which get published to npm
+- [tools](https://github.com/lerna/lerna/tree/main/tools): utility scripts, node_module patches etc which help with maintaining the repository
+- [website](https://github.com/lerna/lerna/tree/main/website): source code for https://lerna.js.org, which ultimately gets published to Github pages from https://github.com/lerna/website for historical reasons
 
 ## Submission Guidelines
 
@@ -56,67 +58,50 @@ This project follows [GitHub's standard forking model](https://guides.github.com
 ### Run Unit Tests
 
 ```sh
-$ npm test
+# Run all unit tests
+npm test
 
-# watch for changes
-$ npm test -- --watch
+# Watch all unit tests for changes
+npm test -- --watch
 
-# For a specific file (e.g., in core/command/__tests__/command.test.js)
-$ npm test -- --watch core/command
-```
-
-By default, `npm test` also runs the linter.
-You can skip this by calling `jest` directly:
-
-```sh
-$ npx jest
-$ npx jest --watch
-$ npx jest --config jest.integration.js
+# Test a specific project or package
+npx nx test core
+npx nx test lerna
 # etc
-```
 
-### Coverage
-
-If you would like to check test coverage, run the coverage script, then open
-`coverage/lcov-report/index.html` in your favorite browser.
-
-```sh
-$ npm test -- --coverage
-
-# OS X
-$ open coverage/lcov-report/index.html
-
-# Linux
-$ xdg-open coverage/lcov-report/index.html
+# Watch a specific project or package's tests
+npx nx test core --watch
+npx nx test lerna --watch
+# etc
 ```
 
 ### Run Integration Tests
 
 ```sh
-$ npm run integration
+npm run integration
 
 # test a specific file
-$ npm run integration -- lerna-publish
+npm run integration -- --testFile lerna-add.spec.ts
 
 # watch for changes
-$ npm run integration -- --watch
+npm run integration -- --watch
 
 # watch a specific file
-$ npm run integration -- --watch lerna-publish
+npm run integration -- --testFile lerna-add.spec.ts --watch
 ```
 
 ### Linting
 
 ```sh
-$ npm run lint
+npm run lint
 ```
 
-It's also a good idea to hook up your editor to an eslint plugin.
+It's also a good idea to hook up your editor to an ESLint extension (such as `vscode-eslint`).
 
 To fix lint errors from the command line:
 
 ```sh
-$ npm run lint -- --fix
+npm run lint -- --fix
 ```
 
 ### Local CLI Testing
@@ -129,7 +114,7 @@ You will need two different terminal windows for this as one of them will contai
 - Run `npm adduser --registry http://localhost:4873` in Terminal 2 (real credentials are not required, you just need to
   be logged in. You can use test/test/test@test.io.)
 - Run `npm run local-registry enable` in Terminal 2
-- Run `npm run local-release 999.9.9 --local` in Terminal 2 - you can choose any nonexistent version number here, but it's recommended to use something which is different from the current major
+- Run `npm run lerna-release 999.9.9 --local` in Terminal 2 - you can choose any nonexistent version number here, but it's recommended to use something which is different from the current major
 
 You can then install your local version of lerna wherever you want by leveraging the `--registry` flag on the npm/npx client.
 
@@ -217,5 +202,5 @@ The root `.env` file is _never_ placed under version control.
 Once that's done, run the release script and await glory:
 
 ```sh
-npm run release
+npx env-cmd npm run lerna-release -- --local false
 ```

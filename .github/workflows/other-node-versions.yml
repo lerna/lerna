@@ -1,0 +1,146 @@
+name: Other Node Versions
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Every day at 7:30am UTC
+    - cron: "30 7 * * *"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_CLOUD_DISTRIBUTED_EXECUTION: true
+  NX_BRANCH: ${{ github.event.number || github.ref_name }}
+  NX_VERBOSE_LOGGING: true
+
+jobs:
+  set-node-versions:
+    name: Set Node Versions
+    runs-on: ubuntu-latest
+    outputs:
+      node-versions: ${{ steps.node-matrix.outputs.node-versions }}
+    steps:
+      - name: Set node matrix
+        id: node-matrix
+        # These versions intentionally do not contain our primary major version because that has already been tested by ci.yml
+        # 19 is included so that we can test npm v9
+        #
+        # TODO: Investigate unit test failure on v19
+        # TODO: ^14.15.0 is currently failing e2e because of later JS usage in our e2e-utils, so we need to address that
+        run: |
+          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['18']));")
+          echo $NODE_VERSIONS_JSON_ARRAY
+          echo "node-versions=$NODE_VERSIONS_JSON_ARRAY" >> $GITHUB_OUTPUT
+
+  main:
+    name: Nx Cloud - Main Job - node-${{ matrix.node }}
+    needs: set-node-versions
+    runs-on: ubuntu-latest
+    strategy:
+      # Do not kill all versions of node just because one version failed
+      fail-fast: false
+      matrix:
+        node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v3
+
+      - name: Set NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-node-${{ matrix.node }}" >> $GITHUB_ENV
+
+      - name: Log NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+
+      - name: Install node v${{ matrix.node }} and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+        shell: bash
+
+      - run: pnpm --version
+        shell: bash
+
+      - name: Run parallel distributed tests on each node version
+        uses: jameshenry/parallel-bash-commands@v1
+        with:
+          cmd1: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
+          cmd2: npx nx run integration:integration --ci --maxWorkers=2
+
+      # e2e tests for everything except the primary task runner
+      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=1
+
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+
+      - name: Prepare e2e tests for task-runner
+        run: npx nx prepare-for-e2e e2e-run-task-runner
+        shell: bash
+        env:
+          NX_CLOUD_DISTRIBUTED_EXECUTION: false
+
+      - name: Run e2e tests for task-runner
+        run: e2e/run/task-runner/src/run-tests.sh
+        shell: bash
+        env:
+          NX_CLOUD_DISTRIBUTED_EXECUTION: false
+
+      - name: Stop all running agents for Nx Run Group ${{ env.NX_RUN_GROUP }}
+        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+        if: ${{ always() }}
+        run: npx nx-cloud stop-all-agents
+
+  agents:
+    name: Nx Cloud - Agent - node-${{ matrix.node }}-agent-${{ matrix.agent }}
+    needs: set-node-versions
+    runs-on: ubuntu-latest
+    strategy:
+      # Do not kill all versions of node just because one version failed
+      fail-fast: false
+      matrix:
+        node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
+        # Create 2 agents per node version
+        agent: [1, 2]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+
+      - name: Set NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-node-${{ matrix.node }}" >> $GITHUB_ENV
+
+      - name: Log NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+
+      - name: Install node v${{ matrix.node }} and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+        with:
+          node-version: ${{ matrix.node }}
+
+      - run: npm run e2e-start-local-registry
+
+      - run: NX_VERBOSE_LOGGING=true PUBLISHED_VERSION=999.9.9-e2e.0 npm run e2e-build-package-publish
+
+      - name: Start Nx Agent node-${{ matrix.node }}-agent-${{ matrix.agent }}
+        run: npx nx-cloud start-agent
+        env:
+          NX_AGENT_NAME: node-${{ matrix.node }}-agent-${{ matrix.agent }}
+          NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
