@@ -5,9 +5,10 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import { URL } from "url";
 import { join } from "path";
 
-// JH: removed * as from both of these because of different tsconfig settings between lerna and nx
-import version from "@lerna/version";
-import publish from "@lerna/publish";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const version = require("@lerna/version");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const publish = require("@lerna/publish");
 
 function hideFromGitIndex(uncommittedFiles: string[]) {
   execSync(`git update-index --assume-unchanged ${uncommittedFiles.join(" ")}`);

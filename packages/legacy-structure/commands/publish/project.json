@@ -48,7 +48,7 @@
           "packages/legacy-structure/commands/publish/src/lib/verify-npm-package-access.ts"
         ],
         "esbuildOptions": {
-          "external": ["*package.json"],
+          "external": ["*package.json", "@lerna/version"],
           "outExtension": {
             ".js": ".js"
           }

@@ -43,6 +43,8 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org",
   "dependencies": {
+    "@lerna/version": "file:packages/legacy-structure/commands/version",
+    "@lerna/publish": "file:packages/legacy-structure/commands/publish",
     "@npmcli/arborist": "5.3.0",
     "@npmcli/run-script": "^4.1.7",
     "@nrwl/devkit": "15.5.2",
