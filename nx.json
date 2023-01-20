@@ -21,7 +21,14 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "sharedGlobals": [],
+    "sharedGlobals": [
+      {
+        "runtime": "node -e 'console.log(`${process.platform}-${process.arch}`)'"
+      },
+      {
+        "runtime": "node --version"
+      }
+    ],
     "production": [
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
@@ -42,6 +49,7 @@
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
     },
     "integration": {
+      "inputs": ["default"],
       "dependsOn": ["^build"]
     }
   }
