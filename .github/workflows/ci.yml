@@ -97,10 +97,18 @@ jobs:
         uses: ./.github/actions/install-node-and-dependencies
 
       - name: Run distributed unit and integration tests on windows
-        uses: jameshenry/parallel-bash-commands@v1
-        with:
-          cmd1: npx nx integration integration --ci --maxWorkers=2
-          cmd2: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
+        shell: bash
+        run: |
+          pids=()
+          npx nx integration integration --ci --maxWorkers=2 &
+          pids+=($!)
+
+          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2  &
+          pids+=($!)
+
+          for pid in "${pids[@]}"; do
+            wait "$pid"
+          done
 
       - name: Stop all running agents for this Nx Run Group
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
