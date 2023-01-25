@@ -90,13 +90,13 @@ jobs:
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
 
-      # - name: Set NX_RUN_GROUP
-      #   shell: bash
-      #   run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
+      - name: Set NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
 
-      # - name: Log NX_RUN_GROUP
-      #   shell: bash
-      #   run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+      - name: Log NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
