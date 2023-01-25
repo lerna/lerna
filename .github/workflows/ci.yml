@@ -91,22 +91,27 @@ jobs:
         uses: nrwl/nx-set-shas@v3
 
       - name: Set Nx Run Group
+        shell: bash
         run: |
           echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
           echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
       - name: Set the value
         id: step_one
+        shell: bash
         run: |
           echo "action_state=yellow" >> $GITHUB_ENV
       - name: Use the value
         id: step_two
+        shell: bash
         run: |
           echo "${{ env.action_state }}" # This will output 'yellow'
 
       - run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+        shell: bash
 
       - run: echo "NX_RUN_GROUP is $NX_RUN_GROUP"
+        shell: bash
 
       # - name: Install primary node version (see volta config in package.json) and dependencies
       #   uses: ./.github/actions/install-node-and-dependencies
