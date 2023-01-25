@@ -122,38 +122,38 @@ jobs:
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
 
-  # windows-agents:
-  #   name: Nx Cloud - Windows Agent ${{ matrix.agent }}
-  #   runs-on: windows-latest
-  #   strategy:
-  #     matrix:
-  #       agent: [1, 2, 3, 4]
-  #   env:
-  #     LERNA_OS_TYPE: windows
-  #   steps:
-  #     - uses: actions/checkout@v3
+  windows-agents:
+    name: Nx Cloud - Windows Agent ${{ matrix.agent }}
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        agent: [1]
+    env:
+      LERNA_OS_TYPE: windows
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - name: Set NX_RUN_GROUP
-  #       shell: bash
-  #       run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
+      - name: Set NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
 
-  #     - name: Log NX_RUN_GROUP
-  #       shell: bash
-  #       run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+      - name: Log NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
-  #     - name: Configure git metadata
-  #       run: |
-  #         git config --global user.email test@example.com
-  #         git config --global user.name "Tester McPerson"
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
 
-  #     - name: Install primary node version (see volta config in package.json) and dependencies
-  #       uses: ./.github/actions/install-node-and-dependencies
+      - name: Install primary node version (see volta config in package.json) and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
 
-  #     - name: Start Nx Agent ${{ matrix.agent }}
-  #       run: npx nx-cloud start-agent
-  #       env:
-  #         NX_AGENT_NAME: ${{ matrix.agent }}
-  #         NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
+      - name: Start Nx Agent ${{ matrix.agent }}
+        run: npx nx-cloud start-agent
+        env:
+          NX_AGENT_NAME: ${{ matrix.agent }}
+          NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
 
   # Isolated e2e tests for the task runner which become too flaky if nested through further node child processes
   # task-runner-e2e:
