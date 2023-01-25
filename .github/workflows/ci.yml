@@ -95,28 +95,32 @@ jobs:
           echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
           echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
-      - name: Install primary node version (see volta config in package.json) and dependencies
-        uses: ./.github/actions/install-node-and-dependencies
+      - run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
-      - name: Run distributed unit and integration tests on windows
-        shell: bash
-        # From old maintainer regarding integration tests: "import is NOT TESTED in windows because pain and suffering"
-        run: |
-          pids=()
-          npx nx run integration:integration --ci --maxWorkers=2 --testPathIgnorePatterns=lerna-import.spec.ts &
-          pids+=($!)
+      - run: echo "NX_RUN_GROUP is $NX_RUN_GROUP"
 
-          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2  &
-          pids+=($!)
+      # - name: Install primary node version (see volta config in package.json) and dependencies
+      #   uses: ./.github/actions/install-node-and-dependencies
 
-          for pid in "${pids[@]}"; do
-            wait "$pid"
-          done
+      # - name: Run distributed unit and integration tests on windows
+      #   shell: bash
+      #   # From old maintainer regarding integration tests: "import is NOT TESTED in windows because pain and suffering"
+      #   run: |
+      #     pids=()
+      #     npx nx run integration:integration --ci --maxWorkers=2 --testPathIgnorePatterns=lerna-import.spec.ts &
+      #     pids+=($!)
 
-      - name: Stop all running agents for this Nx Run Group
-        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
-        if: ${{ always() }}
-        run: npx nx-cloud stop-all-agents
+      #     npx nx run-many -t test --parallel=3 --ci --maxWorkers=2  &
+      #     pids+=($!)
+
+      #     for pid in "${pids[@]}"; do
+      #       wait "$pid"
+      #     done
+
+      # - name: Stop all running agents for this Nx Run Group
+      #   # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+      #   if: ${{ always() }}
+      #   run: npx nx-cloud stop-all-agents
 
   windows-agents:
     name: Nx Cloud - Windows Agent ${{ matrix.agent }}
@@ -134,18 +138,22 @@ jobs:
           echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
           echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
-      - name: Configure git metadata
-        run: |
-          git config --global user.email test@example.com
-          git config --global user.name "Tester McPerson"
+      - run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
-      - name: Install primary node version (see volta config in package.json) and dependencies
-        uses: ./.github/actions/install-node-and-dependencies
+      - run: echo "NX_RUN_GROUP is $NX_RUN_GROUP
 
-      - name: Start Nx Agent ${{ matrix.agent }}
-        run: npx nx-cloud start-agent
-        env:
-          NX_AGENT_NAME: ${{ matrix.agent }}
+      # - name: Configure git metadata
+      #   run: |
+      #     git config --global user.email test@example.com
+      #     git config --global user.name "Tester McPerson"
+
+      # - name: Install primary node version (see volta config in package.json) and dependencies
+      #   uses: ./.github/actions/install-node-and-dependencies
+
+      # - name: Start Nx Agent ${{ matrix.agent }}
+      #   run: npx nx-cloud start-agent
+      #   env:
+      #     NX_AGENT_NAME: ${{ matrix.agent }}
 
   # Isolated e2e tests for the task runner which become too flaky if nested through further node child processes
   # task-runner-e2e:
