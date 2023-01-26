@@ -19,7 +19,6 @@ env:
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
   NX_BRANCH: ${{ github.event.number || github.ref_name }}
   NX_VERBOSE_LOGGING: true
-  NX_SKIP_NX_CACHE: true
 
 jobs:
   main:
@@ -41,11 +40,11 @@ jobs:
         with:
           cmd1: npx nx-cloud record -- npx nx format:check
           cmd2: npx nx-cloud record -- npx nx workspace-lint
-          cmd3: npx nx run-many -t lint --parallel=3
-          cmd4: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
+          cmd3: npx nx run-many -t lint --parallel=3 --skip-nx-cache
+          cmd4: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --skip-nx-cache
 
       # e2e tests for everything except the primary task runner
-      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=1
+      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=1 --skip-nx-cache
 
       - name: Stop all running agents for this CI run
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
@@ -107,12 +106,12 @@ jobs:
         # From old maintainer regarding integration tests: "import is NOT TESTED in windows because pain and suffering"
         run: |
           pids=()
-          npx nx run integration:integration --ci --maxWorkers=2 --testPathIgnorePatterns=lerna-import.spec.ts &
+          npx nx run integration:integration --ci --maxWorkers=2 --skip-nx-cache --testPathIgnorePatterns=lerna-import.spec.ts &
           pids+=($!)
 
           # Ignored specs currently failing on windows
           # TODO: investigate why
-          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --testTimeout=45000 --testPathIgnorePatterns=create-symlink.spec.ts --testPathIgnorePatterns=get-two-factor-auth-required.spec.ts --testPathIgnorePatterns=version-lifecycle-scripts.spec.ts --testPathIgnorePatterns=version-allow-branch.spec.ts --testPathIgnorePatterns=version-message.spec.ts --testPathIgnorePatterns=version-conventional-commits.spec.ts --testPathIgnorePatterns=version-bump-prerelease.spec.ts --testPathIgnorePatterns=version-bump.spec.ts --testPathIgnorePatterns=version-git-hosted-siblings.spec.ts --testPathIgnorePatterns=version-command.spec.ts  --testPathIgnorePatterns=bootstrap-command.spec.ts --testPathIgnorePatterns=import-command.spec.ts &
+          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --skip-nx-cache --testTimeout=45000 --testPathIgnorePatterns=create-symlink.spec.ts --testPathIgnorePatterns=get-two-factor-auth-required.spec.ts --testPathIgnorePatterns=version-lifecycle-scripts.spec.ts --testPathIgnorePatterns=version-allow-branch.spec.ts --testPathIgnorePatterns=version-message.spec.ts --testPathIgnorePatterns=version-conventional-commits.spec.ts --testPathIgnorePatterns=version-bump-prerelease.spec.ts --testPathIgnorePatterns=version-bump.spec.ts --testPathIgnorePatterns=version-git-hosted-siblings.spec.ts --testPathIgnorePatterns=version-command.spec.ts  --testPathIgnorePatterns=bootstrap-command.spec.ts --testPathIgnorePatterns=import-command.spec.ts &
 
           pids+=($!)
 
