@@ -19,6 +19,7 @@ env:
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
   NX_BRANCH: ${{ github.event.number || github.ref_name }}
   NX_VERBOSE_LOGGING: true
+  NX_SKIP_NX_CACHE: true
 
 jobs:
   main:
