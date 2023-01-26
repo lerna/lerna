@@ -30,7 +30,7 @@ import path from "path";
 import semver from "semver";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const versionCommand = require("@lerna/version");
+const versionCommand = require("@lerna/commands/version");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { createTempLicenses } = require("./lib/create-temp-licenses");

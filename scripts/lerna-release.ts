@@ -44,7 +44,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
     // JH: added alternate package.json and lerna.json in dist
     const distLernaJson = `{
   "useWorkspaces": true,
-  "description": "This lerna.json exists to facilitate local registry (verdaccio) publishing for e2e tests and local testing",
+  "description": "This lerna.json exists to facilitate publish built packages via scripts/lerna-release.ts",
   "version": "0.0.0",
   "ignoreChanges": [
     "**/__fixtures__/**",
@@ -55,7 +55,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
 `;
     const distPackageJson = `{
   "private": true,
-  "description": "This package.json exists to facilitate local registry (verdaccio) publishing for e2e tests and local testing",
+  "description": "This package.json exists to facilitate publish built packages via scripts/lerna-release.ts",
   "workspaces": [
     "packages/*",
     "packages/legacy-structure/commands/*"

@@ -29,7 +29,7 @@
           "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts"
         ],
         "esbuildOptions": {
-          "external": ["*package.json", "@lerna/version"],
+          "external": ["*package.json"],
           "outExtension": {
             ".js": ".js"
           }
