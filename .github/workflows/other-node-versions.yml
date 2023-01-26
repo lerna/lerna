@@ -80,10 +80,14 @@ jobs:
       - name: Prepare e2e tests for task-runner
         run: npx nx prepare-for-e2e e2e-run-task-runner
         shell: bash
+        env:
+          NX_CLOUD_DISTRIBUTED_EXECUTION: false
 
       - name: Run e2e tests for task-runner
         run: e2e/run/task-runner/src/run-tests.sh
         shell: bash
+        env:
+          NX_CLOUD_DISTRIBUTED_EXECUTION: false
 
       - name: Stop all running agents for Nx Run Group ${{ env.NX_RUN_GROUP }}
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
