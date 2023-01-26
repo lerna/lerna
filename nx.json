@@ -38,15 +38,29 @@
   },
   "targetDefaults": {
     "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js",
+        "{workspaceRoot}/jest.config.ts"
+      ],
       "dependsOn": ["build"]
+    },
+    "lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json", "{workspaceRoot}/.eslintignore"]
     },
     "build": {
       "inputs": ["production", "^production"],
       "dependsOn": ["^build"]
     },
+    "compile": {
+      "inputs": ["production", "^production"]
+    },
     "run-e2e-tests": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js", "{workspaceRoot}/jest.config.ts"]
+    },
+    "run-e2e-tests-process": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js", "{workspaceRoot}/jest.config.ts"]
     },
     "integration": {
       "inputs": ["default"],
