@@ -20,7 +20,7 @@ jobs:
     name: Set Node Versions
     runs-on: ubuntu-latest
     outputs:
-      node-versions: ${{ steps.set-node-versions.outputs.node-versions }}
+      node-versions: ${{ steps.node-matrix.outputs.node-versions }}
     steps:
       - name: Set node matrix
         id: node-matrix
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ${{ needs.set-node-versions.outputs.node-versions }}
+        node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ${{ needs.set-node-versions.outputs.node-versions }}
+        node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
         # Create 2 agents per node version
         agent: [1, 2]
     steps:
