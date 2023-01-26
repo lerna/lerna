@@ -28,7 +28,7 @@ jobs:
         # 19 is included so that we can test npm v9
         run: |
           $jsonArrayString = "[\"^14.15.0\",\"18\",\"19\"]"
-          echo "node-versions=${jsonArrayString}" >> $GITHUB_OUTPUT
+          echo "node-versions=$jsonArrayString" >> $GITHUB_OUTPUT
 
   main:
     name: Nx Cloud - Main Job - node-${{ matrix.node }}
