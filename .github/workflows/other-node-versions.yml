@@ -77,6 +77,11 @@ jobs:
       # e2e tests for everything except the primary task runner
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=1
 
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+
       - name: Prepare e2e tests for task-runner
         run: npx nx prepare-for-e2e e2e-run-task-runner
         shell: bash
