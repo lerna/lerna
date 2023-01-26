@@ -46,6 +46,12 @@ Watch a single package and its dependencies, running the "build" script on any o
 $ lerna watch --scope="my-package-1" --include-dependencies -- lerna run build --scope=\$LERNA_PACKAGE_NAME
 ```
 
+Watch all packages and run the `build` script for the package that changed and all packages that depend on it:
+
+```sh
+$ lerna watch -- lerna run build --scope=\$LERNA_PACKAGE_NAME --include-dependents
+```
+
 For more advanced filtering, see the [filter options](https://github.com/lerna/lerna/tree/main/core/filter-options#lernafilter-options) documentation. For more available options, see the [`lerna watch`](https://github.com/lerna/lerna/tree/main/core/lerna/commands/watch#lerna-watch) documentation.
 
 ## Watch Environment Variables
