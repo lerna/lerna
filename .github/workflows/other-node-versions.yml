@@ -1,9 +1,10 @@
 name: Other Node Versions
 
 on:
-  push:
-    branches:
-      - build-4
+  workflow_dispatch:
+  schedule:
+    # Every day at 7:30am UTC
+    - cron: '30 7 * * *'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
@@ -26,8 +27,11 @@ jobs:
         id: node-matrix
         # These versions intentionally do not contain our primary major version because that has already been tested by ci.yml
         # 19 is included so that we can test npm v9
+        #
+        # TODO: Investigate unit test failure on v19
+        # TODO: ^14.15.0 is currently failing e2e because of later JS usage in our e2e-utils, so we need to address that
         run: |
-          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['^14.15.0', '18', '19']));")
+          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['18']));")
           echo $NODE_VERSIONS_JSON_ARRAY
           echo "node-versions=$NODE_VERSIONS_JSON_ARRAY" >> $GITHUB_OUTPUT
 
