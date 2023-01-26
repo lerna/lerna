@@ -36,6 +36,8 @@ jobs:
     needs: set-node-versions
     runs-on: ubuntu-latest
     strategy:
+      # Do not kill all versions of node just because one version failed
+      fail-fast: false
       matrix:
         node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
     steps:
@@ -93,6 +95,8 @@ jobs:
     needs: set-node-versions
     runs-on: ubuntu-latest
     strategy:
+      # Do not kill all versions of node just because one version failed
+      fail-fast: false
       matrix:
         node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
         # Create 2 agents per node version

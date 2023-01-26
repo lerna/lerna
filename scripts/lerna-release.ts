@@ -242,7 +242,10 @@ async function parseArgs() {
       })
       .parse();
 
-  parsedArgs.tag ??= parsedArgs.local ? "latest" : "next";
+  // JH: made compatible with node v14
+  if (parsedArgs.tag === undefined || parsedArgs.tag === null) {
+    parsedArgs.tag = parsedArgs.local ? "latest" : "next";
+  }
 
   return parsedArgs;
 }
