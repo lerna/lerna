@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # Every day at 7:30am UTC
-    - cron: '30 7 * * *'
+    - cron: "30 7 * * *"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
