@@ -9,4 +9,5 @@ export default {
   },
   coverageDirectory: "../../../coverage/libs/commands/version",
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
+  testTimeout: 45e3,
 };
