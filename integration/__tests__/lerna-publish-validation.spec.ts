@@ -4,9 +4,7 @@ import fs from "fs-extra";
 import path from "path";
 import tempy from "tempy";
 
-const cloneFixture = cloneFixtureFactory(
-  path.resolve(__dirname, "../../packages/legacy-structure/commands/publish/__tests__")
-);
+const cloneFixture = cloneFixtureFactory(path.resolve(__dirname, "../../libs/commands/publish"));
 
 // stabilize changelog commit SHA and datestamp
 // eslint-disable-next-line @typescript-eslint/no-var-requires

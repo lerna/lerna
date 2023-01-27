@@ -1,9 +1,7 @@
 import { cliRunner, cloneFixtureFactory } from "@lerna/test-helpers";
 import path from "path";
 
-const cloneFixture = cloneFixtureFactory(
-  path.resolve(__dirname, "../../packages/legacy-structure/commands/publish/__tests__")
-);
+const cloneFixture = cloneFixtureFactory(path.resolve(__dirname, "../../libs/commands/publish"));
 
 test("lerna publish sets correct exit code when libnpmpublish fails", async () => {
   const { cwd } = await cloneFixture("normal");

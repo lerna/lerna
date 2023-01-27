@@ -37,13 +37,6 @@
           }
         }
       }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["packages/legacy-structure/commands/publish/**/*.ts"]
-      }
     }
   },
   "tags": []
