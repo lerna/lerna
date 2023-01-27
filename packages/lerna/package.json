@@ -122,6 +122,7 @@
     "./commands/*": "./dist/commands/*/index.js",
     "./commands/*/command": "./dist/commands/*/command.js",
     "./commands/publish/lib/*": "./dist/commands/publish/lib/*.js",
-    "./commands/version/lib/*": "./dist/commands/version/lib/*.js"
+    "./commands/version/lib/*": "./dist/commands/version/lib/*.js",
+    "./migrations/**/*": "./dist/migrations/**/*"
   }
 }
