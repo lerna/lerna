@@ -22,19 +22,19 @@ import path from "path";
 import _writePkg from "write-pkg";
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("write-pkg", () => require("../../__mocks__/write-pkg"));
+jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
+jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
-jest.mock("@lerna/commands/version/lib/git-push");
-jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
+jest.mock("./git-push");
+jest.mock("./is-anything-committed", () => ({
   isAnythingCommitted: jest.fn().mockReturnValue(true),
 }));
-jest.mock("@lerna/commands/version/lib/is-behind-upstream", () => ({
+jest.mock("./is-behind-upstream", () => ({
   isBehindUpstream: jest.fn().mockReturnValue(false),
 }));
-jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
+jest.mock("./remote-branch-exists", () => ({
   remoteBranchExists: jest.fn().mockResolvedValue(true),
 }));
 
@@ -48,22 +48,22 @@ const writePkg = _writePkg as any;
 const output = _output as any;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitPush: libPush } = require("../src/lib/git-push");
+const { gitPush: libPush } = require("./git-push");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { isAnythingCommitted } = require("../src/lib/is-anything-committed");
+const { isAnythingCommitted } = require("./is-anything-committed");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { isBehindUpstream } = require("../src/lib/is-behind-upstream");
+const { isBehindUpstream } = require("./is-behind-upstream");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { remoteBranchExists } = require("../src/lib/remote-branch-exists");
+const { remoteBranchExists } = require("./remote-branch-exists");
 
-const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../../../libs/commands/publish"));
+const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
 
 // certain tests need to use the real thing
 const collectUpdatesActual = jest.requireActual("@lerna/core").collectUpdates;
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaVersion = commandRunner(require("../src/command"));
+const lernaVersion = commandRunner(require("../command"));
 
 // assertion helpers
 const listDirty = (cwd) =>

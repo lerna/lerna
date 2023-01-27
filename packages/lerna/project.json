@@ -44,7 +44,18 @@
           "packages/lerna/src/commands/publish/lib/verify-npm-package-access.ts",
           "packages/lerna/src/commands/version/command.ts",
           "packages/lerna/src/commands/version/index.ts",
-          "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts"
+          "packages/lerna/src/commands/version/lib/create-release.ts",
+          "packages/lerna/src/commands/version/lib/get-current-branch.ts",
+          "packages/lerna/src/commands/version/lib/git-add.ts",
+          "packages/lerna/src/commands/version/lib/git-commit.ts",
+          "packages/lerna/src/commands/version/lib/git-push.ts",
+          "packages/lerna/src/commands/version/lib/git-tag.ts",
+          "packages/lerna/src/commands/version/lib/is-anything-committed.ts",
+          "packages/lerna/src/commands/version/lib/is-behind-upstream.ts",
+          "packages/lerna/src/commands/version/lib/is-breaking-change.ts",
+          "packages/lerna/src/commands/version/lib/prompt-version.ts",
+          "packages/lerna/src/commands/version/lib/remote-branch-exists.ts",
+          "packages/lerna/src/commands/version/lib/update-lockfile-version.ts"
         ],
         "esbuildOptions": {
           "external": ["*package.json"],

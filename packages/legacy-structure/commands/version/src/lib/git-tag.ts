@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/version/lib/git-tag");
+module.exports = require("lerna/commands/version/lib/git-tag");

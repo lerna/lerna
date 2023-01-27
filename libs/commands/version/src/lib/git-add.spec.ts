@@ -7,7 +7,7 @@ import slash from "slash";
 const initFixture = initFixtureFactory(__dirname);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitAdd } = require("../src/lib/git-add");
+const { gitAdd } = require("./git-add");
 
 const getStagedFile = async (cwd) =>
   execa("git", ["diff", "--cached", "--name-only"], { cwd }).then((result) => slash(result.stdout));

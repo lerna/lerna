@@ -5,7 +5,7 @@ import _loadJsonFile from "load-json-file";
 import path from "path";
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("load-json-file", () => require("../../__mocks__/load-json-file"));
+jest.mock("load-json-file", () => require("@lerna/test-helpers/__mocks__/load-json-file"));
 
 // The mocked version isn't the same as the real one
 const loadJsonFile = _loadJsonFile as any;
@@ -13,7 +13,7 @@ const loadJsonFile = _loadJsonFile as any;
 const initFixture = initFixtureFactory(__dirname);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { updateLockfileVersion } = require("../src/lib/update-lockfile-version");
+const { updateLockfileVersion } = require("./update-lockfile-version");
 
 test("updateLockfileVersion with lockfile v1", async () => {
   const cwd = await initFixture("lockfile-leaf");

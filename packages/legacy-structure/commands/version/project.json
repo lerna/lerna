@@ -30,42 +30,13 @@
         "thirdParty": false,
         "platform": "node",
         "format": ["cjs"],
-        "additionalEntryPoints": [
-          "packages/legacy-structure/commands/version/src/command.ts",
-          "packages/legacy-structure/commands/version/src/lib/create-release.ts",
-          "packages/legacy-structure/commands/version/src/lib/get-current-branch.ts",
-          "packages/legacy-structure/commands/version/src/lib/git-add.ts",
-          "packages/legacy-structure/commands/version/src/lib/git-commit.ts",
-          "packages/legacy-structure/commands/version/src/lib/git-push.ts",
-          "packages/legacy-structure/commands/version/src/lib/git-tag.ts",
-          "packages/legacy-structure/commands/version/src/lib/is-anything-committed.ts",
-          "packages/legacy-structure/commands/version/src/lib/is-behind-upstream.ts",
-          "packages/legacy-structure/commands/version/src/lib/is-breaking-change.ts",
-          "packages/legacy-structure/commands/version/src/lib/prompt-version.ts",
-          "packages/legacy-structure/commands/version/src/lib/remote-branch-exists.ts",
-          "packages/legacy-structure/commands/version/src/lib/update-lockfile-version.ts"
-        ],
         "esbuildOptions": {
           "external": ["*package.json"],
           "outExtension": {
             ".js": ".js"
           }
-        }
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["packages/legacy-structure/commands/version/**/*.ts"]
-      }
-    },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "options": {
-        "jestConfig": "packages/legacy-structure/commands/version/jest.config.ts",
-        "passWithNoTests": true
+        },
+        "bundle": false
       }
     }
   },

@@ -6,7 +6,7 @@ import {
 import semver from "semver";
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
+jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 const promptTextInput = jest.mocked(_promtTextInput, true);
 
@@ -14,7 +14,7 @@ const promptTextInput = jest.mocked(_promtTextInput, true);
 const promptSelectOne = _promptSelectOne as any;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { makePromptVersion } = require("../src/lib/prompt-version");
+const { makePromptVersion } = require("./prompt-version");
 
 const resolvePrereleaseId = jest.fn(() => "alpha");
 const versionPrompt = makePromptVersion(resolvePrereleaseId);

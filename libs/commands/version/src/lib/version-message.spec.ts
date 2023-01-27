@@ -2,24 +2,24 @@ import { commandRunner, getCommitMessage, initFixtureFactory } from "@lerna/test
 import path from "path";
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
+jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
-jest.mock("@lerna/commands/version/lib/git-push");
-jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
+jest.mock("./git-push");
+jest.mock("./is-anything-committed", () => ({
   isAnythingCommitted: jest.fn().mockReturnValue(true),
 }));
-jest.mock("@lerna/commands/version/lib/is-behind-upstream", () => ({
+jest.mock("./is-behind-upstream", () => ({
   isBehindUpstream: jest.fn().mockReturnValue(false),
 }));
-jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
+jest.mock("./remote-branch-exists", () => ({
   remoteBranchExists: jest.fn().mockResolvedValue(true),
 }));
 
-const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../../../libs/commands/publish"));
+const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
 
 // test command
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaVersion = commandRunner(require("../src/command"));
+const lernaVersion = commandRunner(require("../command"));
 
 // stabilize commit SHA
 // eslint-disable-next-line @typescript-eslint/no-var-requires

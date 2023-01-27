@@ -30,12 +30,12 @@
         "thirdParty": false,
         "platform": "node",
         "format": ["cjs"],
-        "bundle": false,
         "esbuildOptions": {
           "outExtension": {
             ".js": ".js"
           }
-        }
+        },
+        "bundle": false
       }
     }
   },

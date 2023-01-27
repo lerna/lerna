@@ -4,7 +4,7 @@ import execa from "execa";
 const cloneFixture = cloneFixtureFactory(__dirname);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { isBehindUpstream } = require("../src/lib/is-behind-upstream");
+const { isBehindUpstream } = require("./is-behind-upstream");
 
 test("isBehindUpstream", async () => {
   const { cwd } = await cloneFixture("root-manifest-only");

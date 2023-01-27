@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/version/lib/git-add");
+module.exports = require("lerna/commands/version/lib/git-add");

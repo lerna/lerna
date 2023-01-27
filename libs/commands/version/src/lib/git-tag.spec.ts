@@ -8,7 +8,7 @@ jest.mock("@lerna/child-process");
 const childProcess = require("@lerna/child-process");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitTag } = require("../src/lib/git-tag");
+const { gitTag } = require("./git-tag");
 
 describe("gitTag", () => {
   childProcess.exec.mockResolvedValue();

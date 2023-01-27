@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/version/lib/create-release");
+module.exports = require("lerna/commands/version/lib/create-release");

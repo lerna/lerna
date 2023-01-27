@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const index = require("@lerna/commands/version");
+const versionIndex = require("lerna/commands/version");
 
-module.exports = index;
-module.exports.VersionCommand = index.VersionCommand;
+module.exports = versionIndex;
+module.exports.VersionCommand = versionIndex.VersionCommand;

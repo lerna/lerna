@@ -15,7 +15,7 @@ const tempWrite = jest.mocked(_tempWrite, true);
 const childProcess = require("@lerna/child-process");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitCommit } = require("../src/lib/git-commit");
+const { gitCommit } = require("./git-commit");
 
 describe("git commit", () => {
   childProcess.exec.mockResolvedValue();

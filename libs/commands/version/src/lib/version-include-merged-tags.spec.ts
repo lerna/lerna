@@ -13,7 +13,7 @@ import path from "path";
 
 jest.mock("@lerna/core", () => {
   // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
-  const mockCore = require("../../__mocks__/@lerna/core");
+  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
     // we're actually testing integration with git
@@ -28,7 +28,7 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaVersion = commandRunner(require("../src/command"));
+const lernaVersion = commandRunner(require("../command"));
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({

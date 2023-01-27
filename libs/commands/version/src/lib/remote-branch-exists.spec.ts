@@ -4,7 +4,7 @@ import execa from "execa";
 const cloneFixture = cloneFixtureFactory(__dirname);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { remoteBranchExists } = require("../src/lib/remote-branch-exists");
+const { remoteBranchExists } = require("./remote-branch-exists");
 
 test("remoteBranchExists", async () => {
   const { cwd } = await cloneFixture("root-manifest-only");
