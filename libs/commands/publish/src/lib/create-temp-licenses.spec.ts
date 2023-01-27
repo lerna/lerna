@@ -4,7 +4,7 @@ import fs from "fs-extra";
 import path from "path";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { createTempLicenses } = require("../src/lib/create-temp-licenses");
+const { createTempLicenses } = require("./create-temp-licenses");
 
 const initFixture = initFixtureFactory(__dirname);
 

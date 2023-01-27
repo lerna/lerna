@@ -4,11 +4,11 @@ import path from "path";
 import _writePkg from "write-pkg";
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("write-pkg", () => require("../../__mocks__/write-pkg"));
+jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
 jest.mock("@lerna/core", () => {
   // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
-  const mockCore = require("../../__mocks__/@lerna/core");
+  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
     // we're actually testing integration with git
@@ -17,10 +17,14 @@ jest.mock("@lerna/core", () => {
 });
 
 // lerna publish mocks
-jest.mock("../src/lib/get-packages-without-license");
-jest.mock("../src/lib/verify-npm-package-access");
-jest.mock("../src/lib/get-npm-username");
-jest.mock("../src/lib/get-two-factor-auth-required");
+jest.mock("./get-packages-without-license", () => {
+  return {
+    getPackagesWithoutLicense: jest.fn().mockResolvedValue([]),
+  };
+});
+jest.mock("./verify-npm-package-access");
+jest.mock("./get-npm-username");
+jest.mock("./get-two-factor-auth-required");
 
 // lerna version mocks
 jest.mock("@lerna/commands/version/lib/git-push");
@@ -39,10 +43,9 @@ const initFixture = initFixtureFactory(__dirname);
 
 // test command
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaPublish = commandRunner(require("../src/command"));
+const lernaPublish = commandRunner(require("../command"));
 
-// TODO: Figure out a way to refactor and extract value from these tests now that the mocking of `lerna version` functions is no longer working because of the new package bundling strategy
-describe.skip("relative 'file:' specifiers", () => {
+describe("relative 'file:' specifiers", () => {
   const setupChanges = async (cwd, pkgRoot = "packages") => {
     await fs.outputFile(path.join(cwd, `${pkgRoot}/package-1/hello.js`), "world");
     await gitAdd(cwd, ".");

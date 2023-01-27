@@ -4,16 +4,20 @@ import _loadJsonFile from "load-json-file";
 import path from "path";
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("load-json-file", () => require("../../__mocks__/load-json-file"));
+jest.mock("load-json-file", () => require("@lerna/test-helpers/__mocks__/load-json-file"));
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
+jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 // lerna publish mocks
-jest.mock("../src/lib/get-packages-without-license");
-jest.mock("../src/lib/verify-npm-package-access");
-jest.mock("../src/lib/get-npm-username");
-jest.mock("../src/lib/get-two-factor-auth-required");
+jest.mock("./get-packages-without-license", () => {
+  return {
+    getPackagesWithoutLicense: jest.fn().mockResolvedValue([]),
+  };
+});
+jest.mock("./verify-npm-package-access");
+jest.mock("./get-npm-username");
+jest.mock("./get-two-factor-auth-required");
 
 // lerna version mocks
 jest.mock("@lerna/commands/version/lib/git-push");
@@ -34,10 +38,9 @@ const initFixture = initFixtureFactory(__dirname);
 
 // test command
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaPublish = commandRunner(require("../src/command"));
+const lernaPublish = commandRunner(require("../command"));
 
-// TODO: Figure out a way to refactor and extract value from these tests now that the mocking of `lerna version` functions is no longer working because of the new package bundling strategy
-describe.skip("lifecycle scripts", () => {
+describe("lifecycle scripts", () => {
   const npmLifecycleEvent = process.env.npm_lifecycle_event;
 
   afterEach(() => {

@@ -1,11 +1,11 @@
 import { loggingOutput } from "@lerna/test-helpers";
 
-jest.mock("@lerna/commands/publish/lib/get-profile-data");
+jest.mock("./get-profile-data");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getProfileData } = require("../src/lib/get-profile-data");
+const { getProfileData } = require("./get-profile-data");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getTwoFactorAuthRequired } = require("../src/lib/get-two-factor-auth-required");
+const { getTwoFactorAuthRequired } = require("./get-two-factor-auth-required");
 
 getProfileData.mockImplementation(() => Promise.resolve({ tfa: {} }));
 

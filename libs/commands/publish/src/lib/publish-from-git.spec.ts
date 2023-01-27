@@ -8,7 +8,7 @@ import { commandRunner, gitTag, initFixtureFactory, loggingOutput } from "@lerna
 
 jest.mock("@lerna/core", () => {
   // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
-  const mockCore = require("../../__mocks__/@lerna/core");
+  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
     // we're actually testing integration with git
@@ -17,11 +17,15 @@ jest.mock("@lerna/core", () => {
 });
 
 // lerna publish mocks
-jest.mock("../src/lib/get-packages-without-license");
-jest.mock("../src/lib/verify-npm-package-access");
-jest.mock("../src/lib/get-npm-username");
-jest.mock("../src/lib/get-two-factor-auth-required");
-jest.mock("../src/lib/get-unpublished-packages");
+jest.mock("./get-packages-without-license", () => {
+  return {
+    getPackagesWithoutLicense: jest.fn().mockResolvedValue([]),
+  };
+});
+jest.mock("./verify-npm-package-access");
+jest.mock("./get-npm-username");
+jest.mock("./get-two-factor-auth-required");
+jest.mock("./get-unpublished-packages");
 
 // lerna version mocks
 jest.mock("@lerna/commands/version/lib/git-push");
@@ -44,7 +48,7 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaPublish = commandRunner(require("../src/command"));
+const lernaPublish = commandRunner(require("../command"));
 
 describe("publish from-git", () => {
   it("publishes tagged packages", async () => {

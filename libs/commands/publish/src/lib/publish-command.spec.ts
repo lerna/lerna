@@ -12,23 +12,23 @@ import fs from "fs-extra";
 import path from "path";
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
+jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 // lerna publish mocks
-jest.mock("@lerna/commands/publish/lib/get-packages-without-license", () => ({
+jest.mock("./get-packages-without-license", () => ({
   getPackagesWithoutLicense: jest.fn().mockResolvedValue([]),
 }));
-jest.mock("@lerna/commands/publish/lib/verify-npm-package-access", () => ({
+jest.mock("./verify-npm-package-access", () => ({
   verifyNpmPackageAccess: jest.fn(() => Promise.resolve()),
 }));
-jest.mock("@lerna/commands/publish/lib/get-npm-username", () => ({
+jest.mock("./get-npm-username", () => ({
   getNpmUsername: jest.fn(() => Promise.resolve("lerna-test")),
 }));
-jest.mock("@lerna/commands/publish/lib/get-two-factor-auth-required");
-jest.mock("@lerna/commands/publish/lib/get-unpublished-packages", () => ({
+jest.mock("./get-two-factor-auth-required");
+jest.mock("./get-unpublished-packages", () => ({
   getUnpublishedPackages: jest.fn(() => Promise.resolve([])),
 }));
-jest.mock("@lerna/commands/publish/lib/git-checkout");
+jest.mock("./git-checkout");
 
 // lerna version mocks
 jest.mock("@lerna/commands/version/lib/git-push");
@@ -50,27 +50,23 @@ const collectUpdates = _collectUpdates as any;
 const packDirectory = _packDirectory as any;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getNpmUsername } = require("../src/lib/get-npm-username");
+const { getNpmUsername } = require("./get-npm-username");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { verifyNpmPackageAccess } = require("../src/lib/verify-npm-package-access");
+const { verifyNpmPackageAccess } = require("./verify-npm-package-access");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getTwoFactorAuthRequired } = require("../src/lib/get-two-factor-auth-required");
+const { getTwoFactorAuthRequired } = require("./get-two-factor-auth-required");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitCheckout } = require("../src/lib/git-checkout");
+const { gitCheckout } = require("./git-checkout");
 
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaPublish = commandRunner(require("../src/command"));
+const lernaPublish = commandRunner(require("../command"));
 
 gitCheckout.mockImplementation(() => Promise.resolve());
 
-/**
- * Legacy tests related to behavior provided by `lerna version` behind the scenes are now failing here, because our new bundling stops the mocks from working
- * TODO: Figure out a way to refactor and extract value from these tests now that the mocking of `lerna version` functions is no longer working because of the new package bundling strategy
- */
-describe.skip("PublishCommand", () => {
+describe("PublishCommand", () => {
   describe("cli validation", () => {
     let cwd;
 

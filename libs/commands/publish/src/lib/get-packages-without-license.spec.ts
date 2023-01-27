@@ -4,7 +4,7 @@ import { initFixtureFactory } from "@lerna/test-helpers";
 const initFixture = initFixtureFactory(__dirname);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getPackagesWithoutLicense } = require("../src/lib/get-packages-without-license");
+const { getPackagesWithoutLicense } = require("./get-packages-without-license");
 
 test("getPackagesWithoutLicense", async () => {
   const cwd = await initFixture("licenses");

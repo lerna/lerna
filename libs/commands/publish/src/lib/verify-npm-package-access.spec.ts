@@ -7,7 +7,7 @@ jest.mock("libnpmaccess");
 const initFixture = initFixtureFactory(__dirname);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { verifyNpmPackageAccess } = require("../src/lib/verify-npm-package-access");
+const { verifyNpmPackageAccess } = require("./verify-npm-package-access");
 
 access.lsPackages.mockImplementation(() =>
   Promise.resolve({

@@ -1,17 +1,13 @@
 /* eslint-disable */
 export default {
-  displayName: "legacy-structure-commands-publish",
-  preset: "../../../../jest.preset.js",
+  displayName: "commands-publish",
+  preset: "../../../jest.preset.js",
   globals: {
     "ts-jest": {
       tsconfig: "<rootDir>/tsconfig.spec.json",
     },
   },
-  transform: {
-    "^.+\\.[tj]sx?$": "ts-jest",
-  },
+  coverageDirectory: "../../../coverage/libs/commands/publish",
   // Needed to add "json" to avoid issue resolving spdx-license-ids
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
-  coverageDirectory: "../../../../coverage/packages/legacy-structure/commands/publish",
-  testTimeout: 45e3,
 };

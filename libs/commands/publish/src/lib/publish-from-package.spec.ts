@@ -10,23 +10,23 @@ import path from "path";
 import _writePkg from "write-pkg";
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("write-pkg", () => require("../../__mocks__/write-pkg"));
+jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
+jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 // lerna publish mocks
-jest.mock("@lerna/commands/publish/lib/get-packages-without-license", () => ({
+jest.mock("./get-packages-without-license", () => ({
   getPackagesWithoutLicense: jest.fn().mockResolvedValue([]),
 }));
-jest.mock("@lerna/commands/publish/lib/verify-npm-package-access", () => ({
+jest.mock("./verify-npm-package-access", () => ({
   verifyNpmPackageAccess: jest.fn(() => Promise.resolve()),
 }));
-jest.mock("@lerna/commands/publish/lib/get-npm-username", () => ({
+jest.mock("./get-npm-username", () => ({
   getNpmUsername: jest.fn(() => Promise.resolve("lerna-test")),
 }));
-jest.mock("@lerna/commands/publish/lib/get-two-factor-auth-required");
-jest.mock("@lerna/commands/publish/lib/get-unpublished-packages", () => ({
+jest.mock("./get-two-factor-auth-required");
+jest.mock("./get-unpublished-packages", () => ({
   getUnpublishedPackages: jest.fn(() => Promise.resolve([])),
 }));
 
@@ -41,7 +41,7 @@ jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getUnpublishedPackages } = require("@lerna/commands/publish/lib/get-unpublished-packages");
+const { getUnpublishedPackages } = require("./get-unpublished-packages");
 
 const promptConfirmation = jest.mocked(_promptConfirmation);
 const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
@@ -55,10 +55,9 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaPublish = commandRunner(require("../src/command"));
+const lernaPublish = commandRunner(require("../command"));
 
-// TODO: figure out why these tests can't run with the mocks but others can
-describe.skip("publish from-package", () => {
+describe("publish from-package", () => {
   it("publishes unpublished packages", async () => {
     const cwd = await initFixture("normal");
 

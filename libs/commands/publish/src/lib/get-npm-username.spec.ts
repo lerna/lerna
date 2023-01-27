@@ -4,7 +4,7 @@ import _fetch from "npm-registry-fetch";
 jest.mock("npm-registry-fetch");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getNpmUsername } = require("../src/lib/get-npm-username");
+const { getNpmUsername } = require("./get-npm-username");
 
 const fetch = jest.mocked(_fetch, true);
 

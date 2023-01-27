@@ -8,7 +8,7 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getUnpublishedPackages } = require("../src/lib/get-unpublished-packages");
+const { getUnpublishedPackages } = require("./get-unpublished-packages");
 
 const pacote = jest.mocked(_pacote);
 
