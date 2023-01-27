@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/publish/lib/verify-npm-package-access");
+module.exports = require("lerna/commands/publish/lib/verify-npm-package-access");

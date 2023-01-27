@@ -30,7 +30,7 @@
     "test": "nx run-many -t test",
     "e2e-start-local-registry": "node ./scripts/e2e-start-local-registry.js",
     "e2e-build-package-publish": "ts-node -P ./scripts/tsconfig.e2e.json ./scripts/e2e-build-package-publish",
-    "lerna-release": "nx run-many -t build --no-dte --projects=legacy-structure-commands-version,legacy-structure-commands-publish && ts-node -P ./scripts/tsconfig.scripts.json ./scripts/lerna-release",
+    "lerna-release": "nx build lerna --no-dte && ts-node -P ./scripts/tsconfig.scripts.json ./scripts/lerna-release",
     "local-registry": "./scripts/local-registry.sh",
     "postinstall": "patch-package"
   },
@@ -41,8 +41,6 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org",
   "dependencies": {
-    "@lerna/version": "file:packages/legacy-structure/commands/version",
-    "@lerna/publish": "file:packages/legacy-structure/commands/publish",
     "@npmcli/arborist": "5.3.0",
     "@npmcli/run-script": "^4.1.7",
     "@nrwl/devkit": "15.5.2",
@@ -184,6 +182,7 @@
     "jest-matcher-utils": "^28.1.1",
     "js-yaml": "^4.1.0",
     "jsonc-eslint-parser": "^2.1.0",
+    "lerna": "file:packages/lerna",
     "node-jq": "^2.3.3",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",

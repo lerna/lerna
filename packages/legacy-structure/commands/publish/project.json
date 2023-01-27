@@ -30,25 +30,8 @@
         "thirdParty": false,
         "platform": "node",
         "format": ["cjs"],
-        "additionalEntryPoints": [
-          "packages/legacy-structure/commands/publish/src/command.ts",
-          "packages/legacy-structure/commands/publish/src/lib/create-temp-licenses.ts",
-          "packages/legacy-structure/commands/publish/src/lib/fetch-config.ts",
-          "packages/legacy-structure/commands/publish/src/lib/get-current-sha.ts",
-          "packages/legacy-structure/commands/publish/src/lib/get-current-tags.ts",
-          "packages/legacy-structure/commands/publish/src/lib/get-npm-username.ts",
-          "packages/legacy-structure/commands/publish/src/lib/get-packages-without-license.ts",
-          "packages/legacy-structure/commands/publish/src/lib/get-profile-data.ts",
-          "packages/legacy-structure/commands/publish/src/lib/get-tagged-packages.ts",
-          "packages/legacy-structure/commands/publish/src/lib/get-two-factor-auth-required.ts",
-          "packages/legacy-structure/commands/publish/src/lib/get-unpublished-packages.ts",
-          "packages/legacy-structure/commands/publish/src/lib/get-whoami.ts",
-          "packages/legacy-structure/commands/publish/src/lib/git-checkout.ts",
-          "packages/legacy-structure/commands/publish/src/lib/remove-temp-licenses.ts",
-          "packages/legacy-structure/commands/publish/src/lib/verify-npm-package-access.ts"
-        ],
+        "bundle": false,
         "esbuildOptions": {
-          "external": ["*package.json", "@lerna/version"],
           "outExtension": {
             ".js": ".js"
           }

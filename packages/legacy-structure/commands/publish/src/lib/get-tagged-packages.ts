@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/publish/lib/get-tagged-packages");
+module.exports = require("lerna/commands/publish/lib/get-tagged-packages");

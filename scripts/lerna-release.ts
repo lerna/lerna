@@ -6,9 +6,9 @@ import { URL } from "url";
 import { join } from "path";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const version = require("@lerna/version");
+const version = require("lerna/commands/version");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const publish = require("@lerna/publish");
+const publish = require("lerna/commands/publish");
 
 function hideFromGitIndex(uncommittedFiles: string[]) {
   execSync(`git update-index --assume-unchanged ${uncommittedFiles.join(" ")}`);
