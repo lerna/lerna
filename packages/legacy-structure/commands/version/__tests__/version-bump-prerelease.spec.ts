@@ -43,7 +43,7 @@ const promptTextInput = jest.mocked(_promtTextInput, true);
 // The mocked version isn't the same as the real one
 const promptSelectOne = _promptSelectOne as any;
 
-const initFixture = initFixtureFactory(path.resolve(__dirname, "../../publish/__tests__"));
+const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../../../libs/commands/publish"));
 
 const { File, Dir } = Tacks;
 

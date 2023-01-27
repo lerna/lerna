@@ -31,7 +31,7 @@ const collectUpdates = _collectUpdates as any;
 const recommendVersion = _recommendVersion as any;
 const writePkg = _writePkg as any;
 
-const initFixture = initFixtureFactory(path.resolve(__dirname, "../../publish/__tests__"));
+const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../../../libs/commands/publish"));
 
 // test command
 // eslint-disable-next-line @typescript-eslint/no-var-requires

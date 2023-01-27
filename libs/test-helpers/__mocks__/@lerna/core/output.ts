@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { multiLineTrimRight } from "@lerna/test-helpers";
+import { multiLineTrimRight } from "../../../src/lib/multi-line-trim-right";
 import chalk from "chalk";
 
 // keep snapshots stable cross-platform

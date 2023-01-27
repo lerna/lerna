@@ -17,7 +17,7 @@ jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
 }));
 
 // helpers
-const initFixture = initFixtureFactory(path.resolve(__dirname, "../../publish/__tests__"));
+const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../../../libs/commands/publish"));
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires

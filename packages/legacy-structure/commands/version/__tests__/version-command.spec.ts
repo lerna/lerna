@@ -56,7 +56,7 @@ const { isBehindUpstream } = require("../src/lib/is-behind-upstream");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { remoteBranchExists } = require("../src/lib/remote-branch-exists");
 
-const initFixture = initFixtureFactory(path.resolve(__dirname, "../../publish/__tests__"));
+const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../../../libs/commands/publish"));
 
 // certain tests need to use the real thing
 const collectUpdatesActual = jest.requireActual("@lerna/core").collectUpdates;
