@@ -500,7 +500,7 @@ describe("PackageGraph", () => {
   });
 
   describe(".rawPackageList", () => {
-    it("retuns an array of Package instances", () => {
+    it("returns an array of Package instances", () => {
       const pkgs = [
         new Package({ name: "pkg-1", version: "1.0.0" }, "/test/pkg-1", "/test"),
         new Package({ name: "pkg-2", version: "2.0.0" }, "/test/pkg-2", "/test"),

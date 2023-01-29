@@ -360,7 +360,7 @@ describe("lerna-version-conventional-commits", () => {
         // Initial versioning with two packages created
         const output1 = await fixture.lerna("version --conventional-commits -y", { silenceError: true });
 
-        // NOTE: In the independent case, lerna started with verion 1.0.0 as its assumed baseline (not 0.0.0 as in the fixed mode case)
+        // NOTE: In the independent case, lerna started with version 1.0.0 as its assumed baseline (not 0.0.0 as in the fixed mode case)
         expect(output1.combinedOutput).toMatchInlineSnapshot(`
           lerna notice cli v999.9.9-e2e.0
           lerna info versioning independent

@@ -66,7 +66,7 @@ function attempt(fn, opts, otpCache) {
         return attempt(fn, { ...opts, ...otpCache }, otpCache);
       }
       // only allow one getOneTimePassword attempt at a time to reuse the value
-      // from the preceeding prompt
+      // from the preceding prompt
       return semaphore.wait().then(() => {
         // check the cache again in case a previous waiter already updated it.
         if (otpCache != null && otpCache.otp != null && otpCache.otp !== opts.otp) {

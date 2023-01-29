@@ -78,7 +78,7 @@ As of version 6.0.0, Lerna will now delegate the implementation details of the `
 
 If for some reason you wish to opt in to the legacy task-runner implementation details (powered by `p-map` and `p-queue`), you can do so by setting `"useNx": false` in your lerna.json. (Please let us know via a Github issue if you feel the need to do that, however, as in general the new task-runner should just work how you expect it to as a lerna user).
 
-### Interactive configurtion for `lerna run` caching and task pipelines via the new `lerna add-caching` command
+### Interactive configuration for `lerna run` caching and task pipelines via the new `lerna add-caching` command
 
 When using the modern task-runner implementation described above, the way to get the most out of it is to tell it about the outputs of your various scripts, and also any relationships that exist between them (such as needing to run the `build` script before the `test`, for example).
 
@@ -92,9 +92,9 @@ By default the modern task runner powered by Nx will automatically load `.env` f
 
 For more details about what `.env` files will be loaded by default please see: https://nx.dev/recipes/environment-variables/define-environment-variables
 
-### Obselete options in `lerna run` with the new task-runner implementation
+### Obsolete options in `lerna run` with the new task-runner implementation
 
-There are certain legacy options for `lerna run` which are no longer applicable to the modern task-runner. Please see full details about those flags, and the reason behind their obselence, here:
+There are certain legacy options for `lerna run` which are no longer applicable to the modern task-runner. Please see full details about those flags, and the reason behind their obsolescence, here:
 
 https://lerna.js.org/docs/lerna6-obsolete-options
 
