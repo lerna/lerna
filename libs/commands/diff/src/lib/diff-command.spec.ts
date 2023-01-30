@@ -12,7 +12,7 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaDiff = commandRunner(require("../src/command"));
+const lernaDiff = commandRunner(require("../command"));
 
 // stabilize commit SHA
 // eslint-disable-next-line @typescript-eslint/no-var-requires

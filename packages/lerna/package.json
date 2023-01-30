@@ -125,6 +125,7 @@
     "./commands/bootstrap/lib/*": "./dist/commands/bootstrap/lib/*.js",
     "./commands/publish/lib/*": "./dist/commands/publish/lib/*.js",
     "./commands/version/lib/*": "./dist/commands/version/lib/*.js",
-    "./migrations/**/*": "./dist/migrations/**/*"
+    "./migrations/**/*": "./dist/migrations/**/*",
+    "./commands/diff/lib/*": "./dist/commands/diff/lib/*.js"
   }
 }

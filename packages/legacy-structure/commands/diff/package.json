@@ -30,25 +30,11 @@
     "directory": "packages/legacy-structure/commands/diff"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../../child-process",
-    "npmlog": "^6.0.2"
+    "lerna": "file:../../../lerna"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
-    },
-    "./command": {
-      "import": "./dist/command.js",
-      "require": "./dist/command.js"
-    },
-    "./lib/get-last-commit": {
-      "import": "./dist/lib/get-last-commit.js",
-      "require": "./dist/lib/get-last-commit.js"
-    },
-    "./lib/has-commit": {
-      "import": "./dist/lib/has-commit.js",
-      "require": "./dist/lib/has-commit.js"
-    }
+    ".": "./dist/index.js",
+    "./command": "./dist/command.js",
+    "./lib/*": "./dist/lib/*.js"
   }
 }
