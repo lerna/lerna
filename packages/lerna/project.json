@@ -33,6 +33,8 @@
           "packages/lerna/src/commands/bootstrap/index.ts",
           "packages/lerna/src/commands/bootstrap/lib/has-dependency-installed.ts",
           "packages/lerna/src/commands/bootstrap/lib/is-hoisted-package.ts",
+          "packages/lerna/src/commands/changed/command.ts",
+          "packages/lerna/src/commands/changed/index.ts",
           "packages/lerna/src/commands/publish/command.ts",
           "packages/lerna/src/commands/publish/index.ts",
           "packages/lerna/src/commands/publish/lib/create-temp-licenses.ts",
