@@ -67,6 +67,8 @@
           "packages/lerna/src/commands/publish/lib/git-checkout.ts",
           "packages/lerna/src/commands/publish/lib/remove-temp-licenses.ts",
           "packages/lerna/src/commands/publish/lib/verify-npm-package-access.ts",
+          "packages/lerna/src/commands/run/command.ts",
+          "packages/lerna/src/commands/run/index.ts",
           "packages/lerna/src/commands/version/command.ts",
           "packages/lerna/src/commands/version/index.ts",
           "packages/lerna/src/commands/version/lib/create-release.ts",
