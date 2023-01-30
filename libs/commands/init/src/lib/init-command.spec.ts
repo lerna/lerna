@@ -7,7 +7,7 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaInit = commandRunner(require("../src/command"));
+const lernaInit = commandRunner(require("../command"));
 
 describe("InitCommand", () => {
   const lernaVersion = "__TEST_VERSION__";
