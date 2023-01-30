@@ -15,20 +15,20 @@ import {
 import fs from "fs-extra";
 import path from "path";
 
-const initFixture = initFixtureFactory(__dirname);
-
-// file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaBootstrap = commandRunner(require("../src/command"));
-
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/core", () => require("../../__mocks__/@lerna/core"));
+jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 const npmInstall = jest.mocked(_npmInstall);
 const npmInstallDependencies = jest.mocked(_npmInstallDependencies);
 const rimrafDir = jest.mocked(_rimrafDir);
 const createSymlink = jest.mocked(_createSymlink);
 const hasNpmVersion = jest.mocked(_hasNpmVersion);
+
+const initFixture = initFixtureFactory(__dirname);
+
+// file under test
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const lernaBootstrap = commandRunner(require("../command"));
 
 // The mocked runLifecycle is a little different than the real thing
 const runLifecycle = _runLifecycle as any;

@@ -30,33 +30,11 @@
     "directory": "packages/legacy-structure/commands/bootstrap"
   },
   "dependencies": {
-    "@npmcli/arborist": "5.3.0",
-    "dedent": "^0.7.0",
-    "get-port": "^5.1.1",
-    "multimatch": "^5.0.0",
-    "npm-package-arg": "8.1.1",
-    "npmlog": "^6.0.2",
-    "p-map": "^4.0.0",
-    "p-map-series": "^2.1.0",
-    "p-waterfall": "^2.1.1",
-    "semver": "^7.3.4"
+    "lerna": "file:../../../lerna"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
-    },
-    "./command": {
-      "import": "./dist/command.js",
-      "require": "./dist/command.js"
-    },
-    "./lib/has-dependency-installed": {
-      "import": "./dist/lib/has-dependency-installed.js",
-      "require": "./dist/lib/has-dependency-installed.js"
-    },
-    "./lib/is-hoisted-package": {
-      "import": "./dist/lib/is-hoisted-package.js",
-      "require": "./dist/lib/is-hoisted-package.js"
-    }
+    ".": "./dist/index.js",
+    "./command": "./dist/command.js",
+    "./lib/*": "./dist/lib/*.js"
   }
 }

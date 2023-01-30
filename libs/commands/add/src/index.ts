@@ -11,7 +11,7 @@ import path from "path";
 import semver from "semver";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const bootstrap = require("@lerna/bootstrap");
+const bootstrap = require("@lerna/commands/bootstrap");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { getRangeToReference } = require("./lib/get-range-to-reference");
 
