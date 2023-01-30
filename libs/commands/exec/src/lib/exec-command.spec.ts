@@ -11,7 +11,7 @@ const childProcess = require("@lerna/child-process");
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaExec = commandRunner(require("../src/command"));
+const lernaExec = commandRunner(require("../command"));
 
 // assertion helpers
 const calledInPackages = () => childProcess.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));
