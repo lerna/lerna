@@ -18,6 +18,14 @@ $ lerna run --parallel watch
 Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that contains that script. A double-dash (`--`)
 is necessary to pass dashed arguments to the script execution.
 
+> **Note for when using Yarn:**
+>
+> ```sh
+> $ yarn lerna <script> -- [..args]
+> ```
+>
+> The double dash (`--`) will be stripped by `yarn`. This results in the inability for Lerna to pass additional args to child scripts through the command line alone. To get around this, either globally install Lerna and run it directly, or create a script in `package.json` with your `lerna run` command and use `yarn` to directly run that instead.
+
 ## Options
 
 `lerna run` accepts all [filter flags](https://www.npmjs.com/package/@lerna/filter-options).
