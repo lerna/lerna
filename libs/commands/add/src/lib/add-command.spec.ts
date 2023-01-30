@@ -15,7 +15,7 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const lernaAdd = commandRunner(require("../src/command"));
+const lernaAdd = commandRunner(require("../command"));
 
 // assertion helpers
 // eslint-disable-next-line @typescript-eslint/no-var-requires

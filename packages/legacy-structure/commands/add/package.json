@@ -30,25 +30,11 @@
     "directory": "packages/legacy-structure/commands/add"
   },
   "dependencies": {
-    "@lerna/bootstrap": "file:../bootstrap",
-    "dedent": "^0.7.0",
-    "npm-package-arg": "8.1.1",
-    "p-map": "^4.0.0",
-    "pacote": "^13.6.1",
-    "semver": "^7.3.4"
+    "lerna": "file:../../../lerna"
   },
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
-    },
-    "./command": {
-      "import": "./dist/command.js",
-      "require": "./dist/command.js"
-    },
-    "./lib/get-range-to-reference": {
-      "import": "./dist/lib/get-range-to-reference.js",
-      "require": "./dist/lib/get-range-to-reference.js"
-    }
+    ".": "./dist/index.js",
+    "./command": "./dist/command.js",
+    "./lib/*": "./dist/lib/*.js"
   }
 }

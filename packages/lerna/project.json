@@ -26,6 +26,9 @@
         "format": ["cjs"],
         "additionalEntryPoints": [
           "packages/lerna/src/cli.ts",
+          "packages/lerna/src/commands/add/command.ts",
+          "packages/lerna/src/commands/add/index.ts",
+          "packages/lerna/src/commands/add/lib/get-range-to-reference.ts",
           "packages/lerna/src/commands/publish/command.ts",
           "packages/lerna/src/commands/publish/index.ts",
           "packages/lerna/src/commands/publish/lib/create-temp-licenses.ts",
