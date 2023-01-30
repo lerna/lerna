@@ -43,6 +43,8 @@
           "packages/lerna/src/commands/diff/lib/has-commit.ts",
           "packages/lerna/src/commands/exec/command.ts",
           "packages/lerna/src/commands/exec/index.ts",
+          "packages/lerna/src/commands/import/command.ts",
+          "packages/lerna/src/commands/import/index.ts",
           "packages/lerna/src/commands/publish/command.ts",
           "packages/lerna/src/commands/publish/index.ts",
           "packages/lerna/src/commands/publish/lib/create-temp-licenses.ts",
