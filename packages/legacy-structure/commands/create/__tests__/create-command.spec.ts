@@ -82,6 +82,7 @@ describe("CreateCommand", () => {
     await expect(command).rejects.toThrow("Do not use git dependencies");
   });
 
+  // TODO: troubleshoot and reenable
   it.skip("creates a stub package", async () => {
     const cwd = await initRemoteFixture("basic");
 
@@ -101,6 +102,7 @@ describe("CreateCommand", () => {
     expect(result).toContain("packages/my-pkg/lib/my-pkg.js");
   });
 
+  // TODO: troubleshoot and reenable
   it.skip("creates a stub package with transpiled output", async () => {
     const cwd = await initRemoteFixture("basic");
 
@@ -111,6 +113,7 @@ describe("CreateCommand", () => {
     expect(result).toMatchSnapshot();
   });
 
+  // TODO: troubleshoot and reenable
   it.skip("creates a stub cli", async () => {
     const cwd = await initRemoteFixture("basic");
 
@@ -148,6 +151,7 @@ describe("CreateCommand", () => {
     expect(result).toContain("packages/my-cli/bin/yay");
   });
 
+  // TODO: troubleshoot and reenable
   it.skip("creates a stub cli with transpiled output", async () => {
     const cwd = await initRemoteFixture("basic");
 

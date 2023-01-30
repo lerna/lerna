@@ -301,6 +301,7 @@ describe("AddCommand", () => {
     );
   });
 
+  // TODO: troubleshoot and reenable
   it.skip("should not pass filter options to bootstrap", async () => {
     const testDir = await initFixture("existing");
 

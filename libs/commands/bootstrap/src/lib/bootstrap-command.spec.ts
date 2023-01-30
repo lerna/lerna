@@ -305,7 +305,9 @@ describe("BootstrapCommand", () => {
     });
   });
 
+  // TODO: troubleshoot and reenable
   describe.skip("with local package dependencies", () => {
+    // TODO: troubleshoot and reenable
     it.skip("should bootstrap packages", async () => {
       const testDir = await initFixture("basic");
 
@@ -411,6 +413,7 @@ describe("BootstrapCommand", () => {
   });
 
   describe("with multiple package locations", () => {
+    // TODO: troubleshoot and reenable
     it.skip("should bootstrap packages", async () => {
       const testDir = await initFixture("extra");
 
@@ -451,6 +454,7 @@ describe("BootstrapCommand", () => {
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });
 
+    // TODO: troubleshoot and reenable
     it.skip("hoists appropriately", async () => {
       const testDir = await initFixture("extra");
 
@@ -492,6 +496,7 @@ describe("BootstrapCommand", () => {
       });
     });
 
+    // TODO: troubleshoot and reenable
     it.skip("hoists appropriately", async () => {
       const testDir = await initFixture("cold");
 
@@ -514,6 +519,7 @@ describe("BootstrapCommand", () => {
       expect(npmInstallDependencies).not.toHaveBeenCalled();
     });
 
+    // TODO: troubleshoot and reenable
     it.skip("hoists appropriately", async () => {
       const testDir = await initFixture("warm");
 
@@ -705,6 +711,7 @@ describe("BootstrapCommand", () => {
   });
 
   describe("with force-local", () => {
+    // TODO: troubleshoot and reenable
     it.skip("links all packages", async () => {
       const testDir = await initFixture("force-local");
 

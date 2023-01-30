@@ -32,8 +32,7 @@ const initFixture = initFixtureFactory(__dirname);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lernaVersion = commandRunner(require("../command"));
 
-// TODO: figure out why these tests can't run with the mocks but others can
-describe.skip.each([
+describe.each([
   ["github", createGitHubClient],
   ["gitlab", createGitLabClient],
 ])("--create-release %s", (type, client) => {
@@ -144,8 +143,7 @@ describe.skip.each([
   });
 });
 
-// TODO: figure out why these tests can't run with the mocks but others can
-describe.skip("legacy option --github-release", () => {
+describe("legacy option --github-release", () => {
   it("is translated into --create-release=github", async () => {
     const cwd = await initFixture("normal");
 

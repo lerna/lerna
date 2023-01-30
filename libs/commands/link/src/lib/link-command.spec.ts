@@ -36,6 +36,7 @@ const symlinkedDirectories = (testDir) =>
       type,
     }));
 
+// TODO: troubleshoot and reenable
 describe.skip("LinkCommand", () => {
   // the underlying implementation of symlinkDependencies
   createSymlink.mockResolvedValue();
