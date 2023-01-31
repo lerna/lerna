@@ -26,6 +26,8 @@ During all publish operations, appropriate [lifecycle scripts](#lifecycle-script
 
 Check out [Per-Package Configuration](#per-package-configuration) for more details about publishing scoped packages, custom registries, and custom dist-tags.
 
+> Note: See the [FAQ](https://lerna.js.org/docs/faq#how-do-i-retry-publishing-if-publish-fails) for information on how to recover from a failed publish.
+
 ## Positionals
 
 ### bump `from-git`

@@ -39,6 +39,12 @@ If the `lerna.json` has not yet been updated, simply try `lerna publish` again.
 
 If it has been updated, you can force re-publish. `lerna publish --force-publish $(ls packages/)`
 
+### Recovering from a network error
+
+In the case that some packages were successfully published and others were not, `lerna publish` may have left the repository in an inconsistent state with some changed files. To recover from this, reset any extraneous local changes from the failed run to get back to a clean working tree. Then, retry the same `lerna publish` command. Lerna will attempt to publish all of the packages again, but will recognize those that have already been published and skip over them with a warning.
+
+If you used the `lerna publish` command without positional arguments to select a new version for the packages, then you can run `lerna publish from-git` to retry publishing that same already-tagged version instead of having to bump the version again while retrying.
+
 ## The bootstrap process is really slow, what can I do?
 
 Projects having many packages inside them could take a very long time to bootstrap.

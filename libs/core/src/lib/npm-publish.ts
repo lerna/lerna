@@ -102,19 +102,7 @@ export function npmPublish(
       // TODO: refactor based on TS feedback
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      return otplease((innerOpts) => publish(manifest, tarData, innerOpts), opts, otpCache).catch((err) => {
-        opts.log.silly("", err);
-        opts.log.error(err.code, (err.body && err.body.error) || err.message);
-
-        // avoid dumping logs, this isn't a lerna problem
-        err.name = "ValidationError";
-
-        // ensure process exits non-zero
-        process.exitCode = "errno" in err ? err.errno : 1;
-
-        // re-throw to break chain upstream
-        throw err;
-      });
+      return otplease((innerOpts) => publish(manifest, tarData, innerOpts), opts, otpCache);
     });
   }
 

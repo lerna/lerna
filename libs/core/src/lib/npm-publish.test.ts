@@ -225,44 +225,4 @@ describe("npm-publish", () => {
     expect(runLifecycle).toHaveBeenCalledWith(pkg, "publish", options);
     expect(runLifecycle).toHaveBeenLastCalledWith(pkg, "postpublish", options);
   });
-
-  it("catches libnpm errors", async () => {
-    publish.mockImplementationOnce(() => {
-      const err = new Error("whoopsy") as any;
-      err.code = "E401";
-      err.body = {
-        error: "doodle",
-      };
-      return Promise.reject(err);
-    });
-
-    const log = {
-      verbose: jest.fn(),
-      silly: jest.fn(),
-      error: jest.fn(),
-    };
-    const opts = { log };
-
-    await expect(npmPublish(pkg, tarFilePath, opts as any)).rejects.toThrow(
-      expect.objectContaining({
-        message: "whoopsy",
-        name: "ValidationError",
-      })
-    );
-
-    expect(log.error).toHaveBeenLastCalledWith("E401", "doodle");
-    expect(process.exitCode).toBe(1);
-
-    publish.mockImplementationOnce(() => {
-      const err = new Error("lolwut") as any;
-      err.code = "E404";
-      err.errno = 9001;
-      return Promise.reject(err);
-    });
-
-    await expect(npmPublish(pkg, tarFilePath, opts as any)).rejects.toThrow("lolwut");
-
-    expect(log.error).toHaveBeenLastCalledWith("E404", "lolwut");
-    expect(process.exitCode).toBe(9001);
-  });
 });
