@@ -1,0 +1,46 @@
+{
+  "name": "legacy-structure-commands-publish",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/legacy-structure/commands/publish",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "dependsOn": ["compile"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/legacy-structure/commands/publish/dist",
+        "parallel": false,
+        "commands": ["rm -rf package.json"]
+      }
+    },
+    "compile": {
+      "executor": "@nrwl/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/legacy-structure/commands/publish/dist",
+        "main": "packages/legacy-structure/commands/publish/src/index.ts",
+        "tsConfig": "packages/legacy-structure/commands/publish/tsconfig.lib.json",
+        "assets": [
+          {
+            "input": "libs/commands/publish",
+            "glob": "README.md",
+            "output": "../"
+          }
+        ],
+        "thirdParty": false,
+        "platform": "node",
+        "format": ["cjs"],
+        "esbuildOptions": {
+          "outExtension": {
+            ".js": ".js"
+          },
+          "logOverride": {
+            "commonjs-variable-in-esm": "silent"
+          }
+        },
+        "bundle": false
+      }
+    }
+  },
+  "tags": []
+}

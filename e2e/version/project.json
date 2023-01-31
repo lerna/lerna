@@ -1,7 +1,7 @@
 {
   "name": "e2e-version",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna", "version"],
+  "implicitDependencies": ["lerna", "commands-version"],
   "tags": [],
   "targets": {
     "e2e": {
@@ -15,7 +15,7 @@
             "command": "npm run e2e-build-package-publish"
           },
           {
-            "command": "E2E_ROOT=$(npx ts-node scripts/set-e2e-root.ts) nx run-e2e-tests e2e-version"
+            "command": "E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts) nx run-e2e-tests e2e-version"
           }
         ],
         "parallel": false
@@ -26,7 +26,7 @@
       "options": {
         "commands": [
           {
-            "command": "E2E_ROOT=$(npx ts-node scripts/set-e2e-root.ts) nx run-e2e-tests e2e-version"
+            "command": "E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts) nx run-e2e-tests e2e-version"
           }
         ],
         "parallel": false

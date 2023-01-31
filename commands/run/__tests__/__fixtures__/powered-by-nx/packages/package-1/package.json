@@ -1,9 +1,0 @@
-{
-  "name": "package-1",
-  "version": "1.0.0",
-  "scripts": {
-    "fail": "exit 1",
-    "my-script": "echo package-1",
-    "another-script:but-with-colons": "echo package-1-script-with-colons"
-  }
-}

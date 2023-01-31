@@ -41,7 +41,7 @@ export default function HeroLerna(): JSX.Element {
               <span className={styles.slogan__highlight}>JavaScript Monorepos</span>
             </h1>
             <p className={styles.description}>
-              Lerna is a fast modern build system for managing and publishing multiple JavaScript/TypeScript
+              Lerna is a fast, modern build system for managing and publishing multiple JavaScript/TypeScript
               packages from the same repository.
             </p>
             <div className="padding-vert--md row">

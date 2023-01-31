@@ -1,5 +1,5 @@
 {
-  "name": "libs-e2e-utils",
+  "name": "e2e-utils",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/e2e-utils/src",
   "projectType": "library",
