@@ -1,4 +1,4 @@
-# `@lerna/changed`
+# `lerna changed`
 
 > List local packages that have changed since the last tagged release
 
