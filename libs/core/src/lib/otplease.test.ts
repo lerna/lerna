@@ -94,7 +94,7 @@ describe("otplease", () => {
       otpCache.otp = "654321";
     });
 
-    // start intial otplease call, 'catch' will happen in next turn *after* the cache is set.
+    // start initial otplease call, 'catch' will happen in next turn *after* the cache is set.
     const result = await otplease(fn, {}, otpCache);
     expect(fn).toHaveBeenCalledTimes(2);
     expect(promptTextInput).not.toHaveBeenCalled();

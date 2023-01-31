@@ -56,7 +56,7 @@ export class Command {
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureProperties());
       chain = chain.then(() => this.configureLogging());
-      // For the special "repair" command we want to intitialize everything but don't want to run validations as that will end up becoming cyclical
+      // For the special "repair" command we want to initialize everything but don't want to run validations as that will end up becoming cyclical
       if (!skipValidations) {
         chain = chain.then(() => this.runValidations());
       }

@@ -146,7 +146,7 @@ describe("collectUpdates()", () => {
     ]);
   });
 
-  it("skips change detection when current revison is already released", () => {
+  it("skips change detection when current revision is already released", () => {
     changedPackages.add("package-dag-1");
 
     describeRefSync.mockReturnValueOnce({
