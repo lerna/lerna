@@ -1,4 +1,4 @@
-# `@lerna/add`
+# `lerna add`
 
 > Add a dependency to matched packages
 

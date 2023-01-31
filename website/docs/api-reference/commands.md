@@ -21,9 +21,9 @@ type: reference
 - [`lerna link`](https://github.com/lerna/lerna/tree/main/libs/commands/link#readme)
 - [`lerna create`](https://github.com/lerna/lerna/tree/main/libs/commands/create#readme)
 - [`lerna info`](https://github.com/lerna/lerna/tree/main/libs/commands/info#readme)
-- [`lerna add-caching`](https://github.com/lerna/lerna/tree/main/packages/lerna/commands/add-caching#readme)
-- [`lerna repair`](https://github.com/lerna/lerna/tree/main/packages/lerna/commands/repair#readme)
-- [`lerna watch`](https://github.com/lerna/lerna/tree/main/packages/lerna/commands/watch#readme)
+- [`lerna add-caching`](https://github.com/lerna/lerna/tree/main/packages/lerna/src/commands/add-caching#readme)
+- [`lerna repair`](https://github.com/lerna/lerna/tree/main/packages/lerna/src/commands/repair#readme)
+- [`lerna watch`](https://github.com/lerna/lerna/tree/main/packages/lerna/src/commands/watch#readme)
 
 ## Filter Options
 
