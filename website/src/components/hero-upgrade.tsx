@@ -108,7 +108,7 @@ export default function HeroUpgrade(): JSX.Element {
               <div className={styles.reaching_out}>
                 <h4>Stuck? Need some help?</h4>
                 <p>
-                  Reach out to us! We help open source respositories with their upgrade to make sure they get
+                  Reach out to us! We help open source repositories with their upgrade to make sure they get
                   most out of their Lerna setup.
                 </p>
                 <div className={styles.reaching_out__link_container}>
