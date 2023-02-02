@@ -16,7 +16,7 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
   NX_BRANCH: ${{ github.event.number || github.ref_name }}
-  NX_VERBOSE_LOGGING: false
+  NX_VERBOSE_LOGGING: true
 
 jobs:
   main:
@@ -27,23 +27,33 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
+      - uses: nrwl/nx-set-shas@v3
+
+      - name: Set NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-linux" >> $GITHUB_ENV
+
+      - name: Log NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
+
+      - run: npx nx run-many -t build --parallel=3 --no-dte --skip-nx-cache
 
       - name: Run parallel distributed tasks
         uses: jameshenry/parallel-bash-commands@v1
         with:
           cmd1: npx nx-cloud record -- npx nx format:check
           cmd2: npx nx-cloud record -- npx nx workspace-lint
+          # cmd3: npx nx run-many -t build --parallel=3
           cmd3: npx nx run-many -t lint --parallel=3
           cmd4: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
           cmd5: npx nx run integration:integration --ci --maxWorkers=2
 
       # e2e tests for everything except the primary task runner
-      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=1
+      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
 
       - name: Stop all running agents for Nx Run Group ${{ env.NX_RUN_GROUP }}
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
@@ -59,6 +69,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Set NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-linux" >> $GITHUB_ENV
+
+      - name: Log NX_RUN_GROUP
+        shell: bash
+        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+
       - name: Configure git metadata
         run: |
           git config --global user.email test@example.com
@@ -67,14 +85,11 @@ jobs:
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
 
-      - run: npm run e2e-start-local-registry
-
-      - run: NX_VERBOSE_LOGGING=true PUBLISHED_VERSION=999.9.9-e2e.0 npm run e2e-build-package-publish
-
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
         env:
           NX_AGENT_NAME: ${{ matrix.agent }}
+          NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
 
   windows-main:
     name: Nx Cloud - Windows Main Job
@@ -83,11 +98,6 @@ jobs:
       LERNA_OS_TYPE: windows
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
 
       - name: Set NX_RUN_GROUP
         shell: bash
@@ -149,6 +159,8 @@ jobs:
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
+
+      - run: npx nx reset
 
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
