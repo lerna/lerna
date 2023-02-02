@@ -18,7 +18,7 @@ $ lerna run --parallel watch
 Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that contains that script. A double-dash (`--`)
 is necessary to pass dashed arguments to the script execution.
 
-> **Note for using Yarn:**
+> **Note for using yarn:**
 >
 > ```sh
 > $ yarn lerna <script> -- [..args]
