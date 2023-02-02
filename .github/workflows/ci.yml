@@ -40,6 +40,8 @@ jobs:
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
 
+      - run: npx nx reset
+
       - name: Run parallel distributed tasks
         uses: jameshenry/parallel-bash-commands@v1
         with:
@@ -83,6 +85,8 @@ jobs:
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
 
+      - run: npx nx reset
+
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
         env:
@@ -107,6 +111,8 @@ jobs:
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
+
+      - run: npx nx reset
 
       - name: Run parallel distributed unit and integration tests on windows
         shell: bash
@@ -157,6 +163,8 @@ jobs:
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
+
+      - run: npx nx reset
 
       - name: Start Nx Agent ${{ matrix.agent }}
         run: npx nx-cloud start-agent
