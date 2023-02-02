@@ -14,7 +14,8 @@
           "test",
           "run-e2e-tests-process",
           "run-e2e-tests",
-          "integration"
+          "integration",
+          "foo"
         ]
       }
     }
@@ -27,6 +28,9 @@
       },
       {
         "runtime": "node --version"
+      },
+      {
+        "runtime": "npm --version"
       }
     ],
     "production": [
@@ -56,11 +60,55 @@
     "compile": {
       "inputs": ["production", "^production"]
     },
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "npm run e2e-start-local-registry"
+          },
+          {
+            "command": "npm run e2e-build-package-publish"
+          },
+          {
+            "command": "E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts) nx run-e2e-tests {projectName}"
+          }
+        ],
+        "parallel": false
+      }
+    },
     "run-e2e-tests": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js", "{workspaceRoot}/jest.config.ts"]
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js",
+        "{workspaceRoot}/jest.config.ts"
+      ],
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "passWithNoTests": true,
+        "runInBand": true
+      },
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"]
     },
     "run-e2e-tests-process": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js", "{workspaceRoot}/jest.config.ts"]
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js",
+        "{workspaceRoot}/jest.config.ts"
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts) nx run-e2e-tests {projectName}",
+            "description": "This additional wrapper target exists so that we can ensure that the e2e tests run in a dedicated process with enough memory"
+          }
+        ],
+        "parallel": false
+      }
     },
     "integration": {
       "inputs": ["default"],

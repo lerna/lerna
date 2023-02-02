@@ -1,4 +1,4 @@
-# `@lerna/version`
+# `lerna version`
 
 > Bump version of packages changed since the last release
 

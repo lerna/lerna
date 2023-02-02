@@ -1,4 +1,4 @@
-# `@lerna/run`
+# `lerna run`
 
 > Run an npm script in each package that contains that script
 

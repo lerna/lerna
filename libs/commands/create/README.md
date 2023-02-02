@@ -1,4 +1,4 @@
-# `@lerna/create`
+# `lerna create`
 
 > Create a new lerna-managed package
 

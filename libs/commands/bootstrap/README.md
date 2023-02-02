@@ -1,4 +1,4 @@
-# `@lerna/bootstrap`
+# `lerna bootstrap`
 
 > Link local packages together and install remaining package dependencies
 

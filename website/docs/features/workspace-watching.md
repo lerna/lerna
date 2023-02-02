@@ -52,7 +52,7 @@ Watch all packages and run the `build` script for the package that changed and a
 $ lerna watch -- lerna run build --scope=\$LERNA_PACKAGE_NAME --include-dependents
 ```
 
-For more advanced filtering, see the [filter options](https://github.com/lerna/lerna/tree/main/core/filter-options#lernafilter-options) documentation. For more available options, see the [`lerna watch`](https://github.com/lerna/lerna/tree/main/core/lerna/commands/watch#lerna-watch) documentation.
+For more advanced filtering, see the [filter options](https://lerna.js.org/docs/api-reference/commands#filter-options) documentation. For more available options, see the [`lerna watch`](https://github.com/lerna/lerna/tree/main/packages/lerna/src/commands/watch#lerna-watch) documentation.
 
 ## Watch Environment Variables
 

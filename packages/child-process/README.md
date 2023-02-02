@@ -1,4 +1,4 @@
-# `@lerna/child-process`
+# `lerna child-process`
 
 > Lerna's internal child_process wrapper
 

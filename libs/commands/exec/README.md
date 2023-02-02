@@ -1,4 +1,4 @@
-# `@lerna/exec`
+# `lerna exec`
 
 > Execute an arbitrary command in each package
 
