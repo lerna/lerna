@@ -36,6 +36,12 @@ Watch only package "package-4" and its dependencies and run the `test` script fo
 $ lerna watch --scope="package-4" --include-dependencies -- lerna run test --scope=\$LERNA_PACKAGE_NAME
 ```
 
+Watch all packages and run the `build` script for the package that changed and all packages that depend on it:
+
+```sh
+$ lerna watch -- lerna run build --scope=\$LERNA_PACKAGE_NAME --include-dependents
+```
+
 When using `npx`, the `-c` option must be used if also providing variables for substitution:
 
 ```sh
