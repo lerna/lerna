@@ -13,8 +13,8 @@ workspaceRoot=$(pwd)
 # Teardown any old outputs
 rm -rf ./dist
 
-# Build any packages which require a build step (ensure no DTE to avoid looping agents)
-npx nx run-many -t build --no-dte
+# Build any packages which require a build step
+npx nx run-many -t build
 
 # Resolve the packages using lerna itself
 IFS=$'\n' read -d '' -a packageLocations < <((./node_modules/node-jq/bin/jq -c -r '.[].location') <<<"$(npx lerna list --json)")
