@@ -54,7 +54,7 @@ You can pass a comma-delimited list of targets you wish to trigger to run concur
 npx lerna run test,build,lint
 ```
 
-If, for example, there is dependencies between your tasks, such as `build` needing to run before `test` for particular packages, the task-runner will coordinate that for you as long as you have configured an appropriate [Task Pipeline Configuration](../concepts/task-pipeline-configuration).
+If, for example, there are dependencies between your tasks, such as `build` needing to run before `test` for particular packages, the task-runner will coordinate that for you as long as you have configured an appropriate [Task Pipeline Configuration](../concepts/task-pipeline-configuration).
 
 ## Run a Task for a single Package
 
