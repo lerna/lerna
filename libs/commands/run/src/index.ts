@@ -24,7 +24,7 @@ module.exports = function factory(argv: NodeJS.Process["argv"]) {
 };
 
 class RunCommand extends Command {
-  script: string;
+  script: string | string[];
   args: string[];
   npmClient: string;
   bail: boolean;
@@ -41,7 +41,7 @@ class RunCommand extends Command {
     this.args = this.options["--"] || [];
     this.npmClient = npmClient;
 
-    if (!script) {
+    if (!this.script) {
       throw new ValidationError("ENOSCRIPT", "You must specify a lifecycle script to run");
     }
 
@@ -50,6 +50,14 @@ class RunCommand extends Command {
       throw new ValidationError(
         "run",
         "The legacy task runner option `--npm-client` is not currently supported. Please open an issue on https://github.com/lerna/lerna if you require this feature."
+      );
+    }
+
+    // Only the modern task runner supports multiple targets concurrently
+    if (Array.isArray(this.script) && this.options.useNx === false) {
+      throw new ValidationError(
+        "run",
+        "The legacy task runner does not support running multiple scripts concurrently. Please update to the latest version of lerna and ensure you do not have useNx set to false in your lerna.json."
       );
     }
 
@@ -64,7 +72,12 @@ class RunCommand extends Command {
       this.packagesWithScript =
         script === "env"
           ? filteredPackages
-          : filteredPackages.filter((pkg) => pkg.scripts && pkg.scripts[script]);
+          : filteredPackages.filter((pkg) => {
+              if (Array.isArray(this.script)) {
+                return this.script.some((scriptName) => pkg.scripts && pkg.scripts[scriptName]);
+              }
+              return pkg.scripts && pkg.scripts[script];
+            });
     });
 
     return chain.then(() => {
@@ -232,7 +245,7 @@ class RunCommand extends Command {
       return runMany(
         {
           projects,
-          target: this.script,
+          targets: Array.isArray(this.script) ? this.script : [this.script],
           ...options,
         },
         targetDependencies,

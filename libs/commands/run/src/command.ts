@@ -16,6 +16,16 @@ const command: CommandModule = {
       .positional("script", {
         describe: "The npm script to run. Pass flags to send to the npm client after --",
         type: "string",
+        coerce: (script) => {
+          // Allow passing multiple scripts to run concurrently by comma-separating them
+          if (script.includes(",")) {
+            return script
+              .split(",")
+              .filter(Boolean)
+              .map((s: string) => s.trim());
+          }
+          return script;
+        },
       })
       .options({
         "npm-client": {

@@ -53,6 +53,14 @@ describe("RunCommand", () => {
       await expect(command).rejects.toThrow("You must specify a lifecycle script to run");
     });
 
+    it("should error if invoked with multiple targets as that is only supported with the modern task-runner", async () => {
+      const command = lernaRun(testDir)("foo,bar");
+
+      await expect(command).rejects.toThrow(
+        "The legacy task runner does not support running multiple scripts concurrently. Please update to the latest version of lerna and ensure you do not have useNx set to false in your lerna.json."
+      );
+    });
+
     it("runs a script in packages", async () => {
       await lernaRun(testDir)("my-script");
 
