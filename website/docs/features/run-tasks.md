@@ -46,7 +46,17 @@ This will build the projects in the right order: `footer` and `header` and then 
 Note that Lerna doesn't care what each of the build scripts does. The name `build` is also **not** special: it's simply
 the name of the npm script.
 
-## Run a Single Task
+## Run a Multiple Tasks concurrently
+
+You can pass a comma-delimited list of targets you wish to trigger to run concurrently.
+
+```bash
+npx lerna run test,build,lint
+```
+
+If, for example, there is dependencies between your tasks, such as `build` needing to run before `test` for particular packages, the task-runner will coordinate that for you as long as you have configured an appropriate [Task Pipeline Configuration](../concepts/task-pipeline-configuration).
+
+## Run a Task for a single Package
 
 While developing you rarely run all the builds or all the tests. Instead, you often run things only against the projects
 you are changing. For instance, you can run the `header` tests like this:
