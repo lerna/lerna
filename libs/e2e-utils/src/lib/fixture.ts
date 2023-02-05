@@ -176,12 +176,12 @@ export class Fixture {
    */
   async exec(
     command: string,
-    opts: Exclude<RunCommandOptions, "cwd"> = {
+    opts: RunCommandOptions = {
       silenceError: false,
       env: undefined,
     }
   ): Promise<RunCommandResult> {
-    return this.execImpl(command, { ...opts, cwd: this.fixtureWorkspacePath });
+    return this.execImpl(command, { ...opts, cwd: opts.cwd ?? this.fixtureWorkspacePath });
   }
 
   /**

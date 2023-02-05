@@ -270,7 +270,13 @@ class PublishCommand extends Command {
     }
 
     return chain.then(() => {
-      const count = this.packagesToPublish.length;
+      const count = this.publishedPackages.length;
+      const publishedPackagesSorted = this.publishedPackages.sort((a, b) => a.name.localeCompare(b.name));
+
+      if (!count) {
+        this.logger.success("All packages have already been published.");
+        return;
+      }
 
       output("Successfully published:");
 
@@ -279,7 +285,7 @@ class PublishCommand extends Command {
         const filePath = this.options.summaryFile
           ? `${this.options.summaryFile}/lerna-publish-summary.json`
           : "./lerna-publish-summary.json";
-        const jsonObject = this.packagesToPublish.map((pkg) => {
+        const jsonObject = publishedPackagesSorted.map((pkg) => {
           return {
             packageName: pkg.name,
             version: pkg.version,
@@ -293,7 +299,7 @@ class PublishCommand extends Command {
           output("Failed to create the summary report", error);
         }
       } else {
-        const message = this.packagesToPublish.map((pkg) => ` - ${pkg.name}@${pkg.version}`);
+        const message = publishedPackagesSorted.map((pkg) => ` - ${pkg.name}@${pkg.version}`);
         output(message.join(os.EOL));
       }
 
@@ -805,6 +811,8 @@ class PublishCommand extends Command {
   }
 
   publishPacked() {
+    this.publishedPackages = [];
+
     const tracker = this.logger.newItem("publish");
 
     tracker.addWork(this.packagesToPublish.length);
@@ -829,14 +837,35 @@ class PublishCommand extends Command {
           const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
           const pkgOpts = Object.assign({}, opts, { tag });
 
-          return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache)).then(() => {
-            tracker.success("published", pkg.name, pkg.version);
-            tracker.completeWork(1);
+          return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache))
+            .then(() => {
+              this.publishedPackages.push(pkg);
 
-            logPacked(pkg.packed);
+              tracker.success("published", pkg.name, pkg.version);
+              tracker.completeWork(1);
 
-            return pkg;
-          });
+              logPacked(pkg.packed);
+
+              return pkg;
+            })
+            .catch((err) => {
+              if (err.code === "EPUBLISHCONFLICT") {
+                tracker.warn("publish", `Package is already published: ${pkg.name}@${pkg.version}`);
+                tracker.completeWork(1);
+
+                return pkg;
+              }
+
+              this.logger.silly("", err);
+              this.logger.error(err.code, (err.body && err.body.error) || err.message);
+
+              // avoid dumping logs, this isn't a lerna problem
+              err.name = "ValidationError";
+              // ensure process exits non-zero
+              process.exitCode = "errno" in err ? err.errno : 1;
+
+              throw err;
+            });
         },
 
         this.options.requireScripts && ((pkg) => this.execScript(pkg, "postpublish")),
