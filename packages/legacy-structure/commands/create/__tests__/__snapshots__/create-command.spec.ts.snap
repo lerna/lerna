@@ -102,7 +102,7 @@ index SHA..SHA
 +module.exports = myCli;
 +
 +function myCli() {
-+  return 'Hello myCli';
++  return 'Hello from myCli';
 +}
 diff --git a/packages/my-cli/package.json b/packages/my-cli/package.json
 new file mode 100644
@@ -280,7 +280,7 @@ index SHA..SHA
 +++ b/packages/my-es-cli/src/my-es-cli.js
 @@ -0,0 +1,3 @@
 +export default function myEsCli() {
-+  return 'Hello myEsCli';
++  return 'Hello from myEsCli';
 +}
 `;
 
@@ -326,7 +326,7 @@ index SHA..SHA
 +module.exports = myPkg;
 +
 +function myPkg() {
-+  return 'Hello myPkg';
++  return 'Hello from myPkg';
 +}
 diff --git a/packages/my-pkg/package.json b/packages/my-pkg/package.json
 new file mode 100644
@@ -434,6 +434,6 @@ index SHA..SHA
 +++ b/packages/my-pkg/src/my-pkg.js
 @@ -0,0 +1,3 @@
 +export default function myPkg() {
-+  return 'Hello myPkg';
++  return 'Hello from myPkg';
 +}
 `;

@@ -434,7 +434,7 @@ class CreateCommand extends Command {
     const libContent = this.options.esModule
       ? dedent`
         export default function ${this.camelName}() {
-          return 'Hello ${this.camelName}';
+          return 'Hello from ${this.camelName}';
         }
       `
       : dedent`
@@ -443,7 +443,7 @@ class CreateCommand extends Command {
         module.exports = ${this.camelName};
 
         function ${this.camelName}() {
-          return 'Hello ${this.camelName}';
+          return 'Hello from ${this.camelName}';
         }
     `;
 

@@ -95,7 +95,7 @@ describe("lerna-create", () => {
         module.exports = noOptions;
 
         function noOptions() {
-          return 'Hello noOptions';
+          return 'Hello from noOptions';
         }
 
       `);
@@ -188,7 +188,7 @@ describe("lerna-create", () => {
         module.exports = optionBin;
 
         function optionBin() {
-          return 'Hello optionBin';
+          return 'Hello from optionBin';
         }
 
       `);
@@ -274,7 +274,7 @@ describe("lerna-create", () => {
         module.exports = optionDescription;
 
         function optionDescription() {
-          return 'Hello optionDescription';
+          return 'Hello from optionDescription';
         }
 
       `);
@@ -367,7 +367,7 @@ describe("lerna-create", () => {
         module.exports = optionDependencies;
 
         function optionDependencies() {
-          return 'Hello optionDependencies';
+          return 'Hello from optionDependencies';
         }
 
       `);
@@ -451,7 +451,7 @@ describe("lerna-create", () => {
       const file = await fixture.readWorkspaceFile(`packages/${packageName}/src/${packageName}.js`);
       expect(file).toMatchInlineSnapshot(`
         export default function optionEsModule() {
-          return 'Hello optionEsModule';
+          return 'Hello from optionEsModule';
         }
 
       `);
@@ -536,7 +536,7 @@ describe("lerna-create", () => {
         module.exports = optionHomepage;
 
         function optionHomepage() {
-          return 'Hello optionHomepage';
+          return 'Hello from optionHomepage';
         }
 
       `);
@@ -626,7 +626,7 @@ describe("lerna-create", () => {
         module.exports = optionKeywords;
 
         function optionKeywords() {
-          return 'Hello optionKeywords';
+          return 'Hello from optionKeywords';
         }
 
       `);
@@ -712,7 +712,7 @@ describe("lerna-create", () => {
         module.exports = optionLicense;
 
         function optionLicense() {
-          return 'Hello optionLicense';
+          return 'Hello from optionLicense';
         }
 
       `);
@@ -799,7 +799,7 @@ describe("lerna-create", () => {
         module.exports = optionPrivate;
 
         function optionPrivate() {
-          return 'Hello optionPrivate';
+          return 'Hello from optionPrivate';
         }
 
       `);
@@ -889,7 +889,7 @@ describe("lerna-create", () => {
           module.exports = withScope;
 
           function withScope() {
-            return 'Hello withScope';
+            return 'Hello from withScope';
           }
 
         `);
@@ -978,7 +978,7 @@ describe("lerna-create", () => {
           module.exports = withScopeAndAccess;
 
           function withScopeAndAccess() {
-            return 'Hello withScopeAndAccess';
+            return 'Hello from withScopeAndAccess';
           }
 
         `);
@@ -1067,7 +1067,7 @@ describe("lerna-create", () => {
           module.exports = withScopeAndRegistry;
 
           function withScopeAndRegistry() {
-            return 'Hello withScopeAndRegistry';
+            return 'Hello from withScopeAndRegistry';
           }
 
         `);
@@ -1157,7 +1157,7 @@ describe("lerna-create", () => {
           module.exports = withScopeAndTag;
 
           function withScopeAndTag() {
-            return 'Hello withScopeAndTag';
+            return 'Hello from withScopeAndTag';
           }
 
         `);
