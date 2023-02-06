@@ -95,7 +95,7 @@ describe("lerna-create", () => {
         module.exports = noOptions;
 
         function noOptions() {
-            return "Hello from noOptions";
+          return 'Hello noOptions';
         }
 
       `);
@@ -110,7 +110,7 @@ describe("lerna-create", () => {
         const assert = require('assert').strict;
 
         assert.strictEqual(noOptions(), 'Hello from noOptions');
-        console.info("noOptions tests passed");
+        console.info('noOptions tests passed');
 
       `);
     });
@@ -188,7 +188,7 @@ describe("lerna-create", () => {
         module.exports = optionBin;
 
         function optionBin() {
-            return "Hello from optionBin";
+          return 'Hello optionBin';
         }
 
       `);
@@ -205,7 +205,7 @@ describe("lerna-create", () => {
         const assert = require('assert').strict;
 
         assert.strictEqual(optionBin(), 'Hello from optionBin');
-        console.info("optionBin tests passed");
+        console.info('optionBin tests passed');
 
       `);
     });
@@ -274,7 +274,7 @@ describe("lerna-create", () => {
         module.exports = optionDescription;
 
         function optionDescription() {
-            return "Hello from optionDescription";
+          return 'Hello optionDescription';
         }
 
       `);
@@ -291,7 +291,7 @@ describe("lerna-create", () => {
         const assert = require('assert').strict;
 
         assert.strictEqual(optionDescription(), 'Hello from optionDescription');
-        console.info("optionDescription tests passed");
+        console.info('optionDescription tests passed');
 
       `);
     });
@@ -367,7 +367,7 @@ describe("lerna-create", () => {
         module.exports = optionDependencies;
 
         function optionDependencies() {
-            return "Hello from optionDependencies";
+          return 'Hello optionDependencies';
         }
 
       `);
@@ -384,7 +384,7 @@ describe("lerna-create", () => {
         const assert = require('assert').strict;
 
         assert.strictEqual(optionDependencies(), 'Hello from optionDependencies');
-        console.info("optionDependencies tests passed");
+        console.info('optionDependencies tests passed');
 
       `);
     });
@@ -451,7 +451,7 @@ describe("lerna-create", () => {
       const file = await fixture.readWorkspaceFile(`packages/${packageName}/src/${packageName}.js`);
       expect(file).toMatchInlineSnapshot(`
         export default function optionEsModule() {
-            return "Hello from optionEsModule";
+          return 'Hello optionEsModule';
         }
 
       `);
@@ -466,7 +466,7 @@ describe("lerna-create", () => {
         import { strict as assert } from 'assert';
 
         assert.strictEqual(optionEsModule(), 'Hello from optionEsModule');
-        console.info("optionEsModule tests passed");
+        console.info('optionEsModule tests passed');
 
       `);
     });
@@ -536,7 +536,7 @@ describe("lerna-create", () => {
         module.exports = optionHomepage;
 
         function optionHomepage() {
-            return "Hello from optionHomepage";
+          return 'Hello optionHomepage';
         }
 
       `);
@@ -553,7 +553,7 @@ describe("lerna-create", () => {
         const assert = require('assert').strict;
 
         assert.strictEqual(optionHomepage(), 'Hello from optionHomepage');
-        console.info("optionHomepage tests passed");
+        console.info('optionHomepage tests passed');
 
       `);
     });
@@ -626,7 +626,7 @@ describe("lerna-create", () => {
         module.exports = optionKeywords;
 
         function optionKeywords() {
-            return "Hello from optionKeywords";
+          return 'Hello optionKeywords';
         }
 
       `);
@@ -643,7 +643,7 @@ describe("lerna-create", () => {
         const assert = require('assert').strict;
 
         assert.strictEqual(optionKeywords(), 'Hello from optionKeywords');
-        console.info("optionKeywords tests passed");
+        console.info('optionKeywords tests passed');
 
       `);
     });
@@ -712,7 +712,7 @@ describe("lerna-create", () => {
         module.exports = optionLicense;
 
         function optionLicense() {
-            return "Hello from optionLicense";
+          return 'Hello optionLicense';
         }
 
       `);
@@ -729,7 +729,7 @@ describe("lerna-create", () => {
         const assert = require('assert').strict;
 
         assert.strictEqual(optionLicense(), 'Hello from optionLicense');
-        console.info("optionLicense tests passed");
+        console.info('optionLicense tests passed');
 
       `);
     });
@@ -799,7 +799,7 @@ describe("lerna-create", () => {
         module.exports = optionPrivate;
 
         function optionPrivate() {
-            return "Hello from optionPrivate";
+          return 'Hello optionPrivate';
         }
 
       `);
@@ -816,7 +816,7 @@ describe("lerna-create", () => {
         const assert = require('assert').strict;
 
         assert.strictEqual(optionPrivate(), 'Hello from optionPrivate');
-        console.info("optionPrivate tests passed");
+        console.info('optionPrivate tests passed');
 
       `);
     });
@@ -889,7 +889,7 @@ describe("lerna-create", () => {
           module.exports = withScope;
 
           function withScope() {
-              return "Hello from withScope";
+            return 'Hello withScope';
           }
 
         `);
@@ -906,7 +906,7 @@ describe("lerna-create", () => {
           const assert = require('assert').strict;
 
           assert.strictEqual(withScope(), 'Hello from withScope');
-          console.info("withScope tests passed");
+          console.info('withScope tests passed');
 
         `);
       });
@@ -978,7 +978,7 @@ describe("lerna-create", () => {
           module.exports = withScopeAndAccess;
 
           function withScopeAndAccess() {
-              return "Hello from withScopeAndAccess";
+            return 'Hello withScopeAndAccess';
           }
 
         `);
@@ -995,7 +995,7 @@ describe("lerna-create", () => {
           const assert = require('assert').strict;
 
           assert.strictEqual(withScopeAndAccess(), 'Hello from withScopeAndAccess');
-          console.info("withScopeAndAccess tests passed");
+          console.info('withScopeAndAccess tests passed');
 
         `);
       });
@@ -1067,7 +1067,7 @@ describe("lerna-create", () => {
           module.exports = withScopeAndRegistry;
 
           function withScopeAndRegistry() {
-              return "Hello from withScopeAndRegistry";
+            return 'Hello withScopeAndRegistry';
           }
 
         `);
@@ -1084,7 +1084,7 @@ describe("lerna-create", () => {
           const assert = require('assert').strict;
 
           assert.strictEqual(withScopeAndRegistry(), 'Hello from withScopeAndRegistry');
-          console.info("withScopeAndRegistry tests passed");
+          console.info('withScopeAndRegistry tests passed');
 
         `);
       });
@@ -1157,7 +1157,7 @@ describe("lerna-create", () => {
           module.exports = withScopeAndTag;
 
           function withScopeAndTag() {
-              return "Hello from withScopeAndTag";
+            return 'Hello withScopeAndTag';
           }
 
         `);
@@ -1174,7 +1174,7 @@ describe("lerna-create", () => {
           const assert = require('assert').strict;
 
           assert.strictEqual(withScopeAndTag(), 'Hello from withScopeAndTag');
-          console.info("withScopeAndTag tests passed");
+          console.info('withScopeAndTag tests passed');
 
         `);
       });

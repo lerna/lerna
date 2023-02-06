@@ -434,7 +434,7 @@ class CreateCommand extends Command {
     const libContent = this.options.esModule
       ? dedent`
         export default function ${this.camelName}() {
-            return "Hello from ${this.camelName}";
+          return 'Hello ${this.camelName}';
         }
       `
       : dedent`
@@ -443,7 +443,7 @@ class CreateCommand extends Command {
         module.exports = ${this.camelName};
 
         function ${this.camelName}() {
-            return "Hello from ${this.camelName}";
+          return 'Hello ${this.camelName}';
         }
     `;
 
@@ -457,7 +457,7 @@ class CreateCommand extends Command {
         import { strict as assert } from 'assert';
 
         assert.strictEqual(${this.camelName}(), 'Hello from ${this.camelName}');
-        console.info("${this.camelName} tests passed");
+        console.info('${this.camelName} tests passed');
       `
       : dedent`
         'use strict';
@@ -466,7 +466,7 @@ class CreateCommand extends Command {
         const assert = require('assert').strict;
 
         assert.strictEqual(${this.camelName}(), 'Hello from ${this.camelName}');
-        console.info("${this.camelName} tests passed");
+        console.info('${this.camelName} tests passed');
       `;
 
     return catFile(this.testDir, this.testFileName, testContent);
