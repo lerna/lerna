@@ -64,7 +64,7 @@ describe("lerna-publish-npm", () => {
         lerna notice 
         lerna notice 📦  test-1@XX.XX.XX
         lerna notice === Tarball Contents === 
-        lerna notice 92B  lib/test-1.js
+        lerna notice 90B  lib/test-1.js
         lerna notice XXXB package.json 
         lerna notice 110B README.md    
         lerna notice === Tarball Details === 
@@ -127,7 +127,7 @@ describe("lerna-publish-npm", () => {
           lerna notice 
           lerna notice 📦  test-1@XX.XX.XX
           lerna notice === Tarball Contents === 
-          lerna notice 92B  lib/test-1.js
+          lerna notice 90B  lib/test-1.js
           lerna notice XXXB package.json 
           lerna notice 110B README.md    
           lerna notice === Tarball Details === 
