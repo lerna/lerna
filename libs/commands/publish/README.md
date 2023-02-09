@@ -197,7 +197,6 @@ lerna publish --include-private "*"
 
 Quotes must be placed around "\*" to prevent the shell from prematurely expanding it.
 
-
 ### `--legacy-auth`
 
 When publishing packages that require authentication but you are working with an internally hosted NPM Registry that only uses the legacy Base64 version of username:password. This is the same as the NPM publish `_auth` flag.
@@ -383,7 +382,6 @@ To publish packages with a scope (e.g., `@mycompany/rocks`), you must set [`acce
 - If you _want_ your scoped package to remain private (i.e., `"restricted"`), there is no need to set this value.
 
   Note that this is **not** the same as setting `"private": true` in a leaf package; if the `private` field is set, that package will not be published. For more information, see the [`--include-private` option](#--include-private).
-
 
 ### `publishConfig.registry`
 
