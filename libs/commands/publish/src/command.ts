@@ -122,6 +122,11 @@ const command: CommandModule = {
           "Generate a json summary report after all packages have been successfully published, you can pass an optional path for where to save the file.",
         type: "string",
       },
+      "include-private": {
+        describe:
+          "Include specified private packages when publishing by temporarily removing the private property from the package manifest. This should only be used for testing private packages that will become public. Private packages should not usually be published. See the npm docs for details (https://docs.npmjs.com/cli/v9/configuring-npm/package-json#private).",
+        type: "array",
+      },
     };
 
     composeVersionOptions(yargs);
@@ -178,7 +183,14 @@ const command: CommandModule = {
         /* eslint-enable no-param-reassign */
 
         return argv;
-      });
+      })
+      .middleware((args) => {
+        const { includePrivate } = args;
+        if (includePrivate && Array.isArray(includePrivate)) {
+          // eslint-disable-next-line no-param-reassign
+          args["includePrivate"] = includePrivate.reduce((acc, pkg) => [...acc, ...pkg.split(/[\s,]/)], []);
+        }
+      }, true);
   },
   handler(argv) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires

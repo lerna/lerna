@@ -20,7 +20,7 @@ When run, this command does one of the following things:
 - Publish packages in the latest commit where the version is not present in the registry (`from-package`).
 - Publish an unversioned "canary" release of packages (and their dependents) updated in the previous commit.
 
-> Lerna will never publish packages which are marked as private (`"private": true` in the `package.json`).
+> Lerna will not publish packages which are marked as private (`"private": true` in the `package.json`). This is consistent with the behavior of `npm publish`. See the [package.json docs](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#private) for more information. To override this behavior, see the [`--include-private` option](#--include-private).
 
 During all publish operations, appropriate [lifecycle scripts](#lifecycle-scripts) are called in the root and per-package (unless disabled by [`--ignore-scripts](#--ignore-scripts)).
 
@@ -56,6 +56,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--graph-type <all|dependencies>`](#--graph-type-alldependencies)
 - [`--ignore-scripts`](#--ignore-scripts)
 - [`--ignore-prepublish`](#--ignore-prepublish)
+- [`--include-private`](#--include-private)
 - [`--legacy-auth`](#--legacy-auth)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-granular-pathspec`](#--no-granular-pathspec)
@@ -172,6 +173,30 @@ When passed, this flag will disable running [lifecycle scripts](#lifecycle-scrip
 ### `--ignore-prepublish`
 
 When passed, this flag will disable running [deprecated](https://docs.npmjs.com/misc/scripts#prepublish-and-prepare) [`prepublish` scripts](#lifecycle-scripts) during `lerna publish`.
+
+### `--include-private`
+
+Indicates a list of packages marked with `"private": true` that should be published. Since `npm publish` refuses to publish any packages with `"private": true`, Lerna removes the property before publishing.
+
+Note that this is different than [private scoped packages](https://docs.npmjs.com/about-private-packages), which do not have `"private": true` in their `package.json`, are intended to be published, and are included by `lerna publish` by default. See the [npm docs](https://docs.npmjs.com/about-private-packages) for more information about these kind of packages.
+
+> ⚠️ CAUTION ⚠️: Packages marked with `"private": true` are not intended to be published, as detailed in the [npm package.json docs](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#private). The intended use of this option is to allow publishing packages that _will be public in the future_ to a local registry for testing purposes.
+
+Examples:
+
+```sh
+lerna publish --include-private my-private-package
+lerna publish --include-private my-private-package my-other-private-package
+```
+
+The wildcard "\*" may also be provided in place of a list of packages. In this case, all private packages will be published.
+
+```sh
+lerna publish --include-private "*"
+```
+
+Quotes must be placed around "\*" to prevent the shell from prematurely expanding it.
+
 
 ### `--legacy-auth`
 
@@ -357,7 +382,8 @@ To publish packages with a scope (e.g., `@mycompany/rocks`), you must set [`acce
 - If this field is set for a package _without_ a scope, it **will** fail.
 - If you _want_ your scoped package to remain private (i.e., `"restricted"`), there is no need to set this value.
 
-  Note that this is **not** the same as setting `"private": true` in a leaf package; if the `private` field is set, that package will _never_ be published under any circumstances.
+  Note that this is **not** the same as setting `"private": true` in a leaf package; if the `private` field is set, that package will not be published. For more information, see the [`--include-private` option](#--include-private).
+
 
 ### `publishConfig.registry`
 
