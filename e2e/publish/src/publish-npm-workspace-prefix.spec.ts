@@ -217,7 +217,7 @@ describe("lerna-publish-workspace-prefix", () => {
         lerna notice 
         lerna notice 📦  test-main@XX.XX.XX
         lerna notice === Tarball Contents === 
-        lerna notice XXXB  lib/test-main.js
+        lerna notice XXXB   lib/test-main.js
         lerna notice XXXB package.json    
         lerna notice XXXB  README.md       
         lerna notice === Tarball Details === 
