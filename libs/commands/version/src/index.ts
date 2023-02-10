@@ -628,7 +628,7 @@ class VersionCommand extends Command {
       }
 
       chain = chain.then(() =>
-        this.project.serializeConfig().then((lernaConfigLocation) => {
+        Promise.resolve(this.project.serializeConfig()).then((lernaConfigLocation) => {
           // commit the version update
           changedFiles.add(lernaConfigLocation);
         })

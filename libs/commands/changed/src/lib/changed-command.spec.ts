@@ -76,7 +76,7 @@ package-4
   });
 
   it("reads durable ignoreChanges config from version namespace", async () => {
-    await updateLernaConfig(cwd, {
+    updateLernaConfig(cwd, {
       command: {
         version: {
           ignoreChanges: ["**/durable-ignore"],

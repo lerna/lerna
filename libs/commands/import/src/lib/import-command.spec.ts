@@ -286,7 +286,7 @@ describe("ImportCommand", () => {
 
       await fs.ensureDir(targetDir);
 
-      await updateLernaConfig(testDir, {
+      updateLernaConfig(testDir, {
         packages: ["pkg/*"],
       });
 

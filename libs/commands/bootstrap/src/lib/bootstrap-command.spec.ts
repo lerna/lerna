@@ -207,7 +207,7 @@ describe("BootstrapCommand", () => {
     it("should not hoist when disallowed from lerna.json", async () => {
       const testDir = await initFixture("basic");
 
-      await updateLernaConfig(testDir, {
+      updateLernaConfig(testDir, {
         hoist: true,
         nohoist: ["@test/package-1"],
       });
@@ -285,7 +285,7 @@ describe("BootstrapCommand", () => {
     it("respects config file { ci: false }", async () => {
       const testDir = await initFixture("ci");
 
-      await updateLernaConfig(testDir, {
+      updateLernaConfig(testDir, {
         command: {
           bootstrap: {
             ci: false,
@@ -500,7 +500,7 @@ describe("BootstrapCommand", () => {
     it.skip("hoists appropriately", async () => {
       const testDir = await initFixture("cold");
 
-      await updateLernaConfig(testDir, {
+      updateLernaConfig(testDir, {
         hoist: true,
       });
       await lernaBootstrap(testDir)();
@@ -523,7 +523,7 @@ describe("BootstrapCommand", () => {
     it.skip("hoists appropriately", async () => {
       const testDir = await initFixture("warm");
 
-      await updateLernaConfig(testDir, {
+      updateLernaConfig(testDir, {
         command: {
           bootstrap: {
             hoist: true,
