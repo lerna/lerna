@@ -127,6 +127,16 @@ class PublishCommand extends Command {
       );
     }
 
+    if (this.options.includePrivate) {
+      if (this.options.includePrivate.length === 0) {
+        throw new ValidationError(
+          "EINCLPRIV",
+          "Must specify at least one private package to include with --include-private."
+        );
+      }
+      this.logger.info("publish", `Including private packages %j`, this.options.includePrivate);
+    }
+
     if (this.options.skipNpm) {
       // TODO: remove in next major release
       this.logger.warn("deprecated", "Instead of --skip-npm, call `lerna version` directly");
@@ -218,7 +228,7 @@ class PublishCommand extends Command {
       }
 
       // (occasionally) redundant private filtering necessary to handle nested VersionCommand
-      this.updates = result.updates.filter((node) => !node.pkg.private);
+      this.updates = this.filterPrivatePkgUpdates(result.updates);
       this.updatesVersions = new Map(result.updatesVersions);
 
       this.packagesToPublish = this.updates.map((node) => node.pkg);
@@ -249,6 +259,7 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => this.prepareRegistryActions());
     chain = chain.then(() => this.prepareLicenseActions());
+    chain = chain.then(() => this.preparePrivatePackages());
 
     if (this.options.canary) {
       chain = chain.then(() => this.updateCanaryVersions());
@@ -260,6 +271,10 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.serializeChanges());
     chain = chain.then(() => this.packUpdated());
     chain = chain.then(() => this.publishPacked());
+
+    // restore private: true to published private packages
+    chain = chain.then(() => this.restorePrivatePackages());
+    chain = chain.then(() => this.serializeChanges());
 
     if (this.gitReset) {
       chain = chain.then(() => this.resetChanges());
@@ -346,8 +361,7 @@ class PublishCommand extends Command {
       return getTaggedPackages(this.packageGraph, this.project.rootPath, this.execOpts);
     });
 
-    // private packages are never published, full stop.
-    chain = chain.then((updates) => updates.filter((node) => !node.pkg.private));
+    chain = chain.then((updates) => this.filterPrivatePkgUpdates(updates));
 
     return chain.then((updates) => {
       const updatesVersions = updates.map((node) => [node.name, node.version]);
@@ -378,8 +392,8 @@ class PublishCommand extends Command {
         }
       });
 
-    // private packages are already omitted by getUnpublishedPackages()
     chain = chain.then(() => getUnpublishedPackages(this.packageGraph, this.conf.snapshot));
+    chain = chain.then((updates) => this.filterPrivatePkgUpdates(updates));
     chain = chain.then((unpublished) => {
       if (!unpublished.length) {
         this.logger.notice("from-package", "No unpublished release found");
@@ -430,14 +444,15 @@ class PublishCommand extends Command {
 
     // find changed packages since last release, if any
     chain = chain.then(() =>
-      collectUpdates(this.packageGraph.rawPackageList, this.packageGraph, this.execOpts, {
-        bump: "prerelease",
-        canary: true,
-        ignoreChanges,
-        forcePublish,
-        includeMergedTags,
-        // private packages are never published, don't bother describing their refs.
-      }).filter((node) => !node.pkg.private)
+      this.filterPrivatePkgUpdates(
+        collectUpdates(this.packageGraph.rawPackageList, this.packageGraph, this.execOpts, {
+          bump: "prerelease",
+          canary: true,
+          ignoreChanges,
+          forcePublish,
+          includeMergedTags,
+        })
+      )
     );
 
     const makeVersion =
@@ -500,7 +515,7 @@ class PublishCommand extends Command {
   confirmPublish() {
     const count = this.packagesToPublish.length;
     const message = this.packagesToPublish.map(
-      (pkg) => ` - ${pkg.name} => ${this.updatesVersions.get(pkg.name)}`
+      (pkg) => ` - ${pkg.name} => ${this.updatesVersions.get(pkg.name)}${pkg.private ? " (private!)" : ""}`
     );
 
     output("");
@@ -514,6 +529,26 @@ class PublishCommand extends Command {
     }
 
     return promptConfirmation("Are you sure you want to publish these packages?");
+  }
+
+  preparePrivatePackages() {
+    return Promise.resolve().then(() => {
+      this.privatePackagesToPublish = [];
+      this.packagesToPublish.forEach((pkg) => {
+        if (pkg.private) {
+          pkg.removePrivate();
+          this.privatePackagesToPublish.push(pkg);
+        }
+      });
+    });
+  }
+
+  restorePrivatePackages() {
+    return Promise.resolve().then(() => {
+      this.privatePackagesToPublish.forEach((pkg) => {
+        pkg.private = true;
+      });
+    });
   }
 
   prepareLicenseActions() {
@@ -950,6 +985,15 @@ class PublishCommand extends Command {
     if (isPrerelease) {
       return this.options.preDistTag;
     }
+  }
+
+  // filter out private packages, respecting the --include-private option
+  filterPrivatePkgUpdates(updates) {
+    const privatePackagesToInclude = new Set(this.options.includePrivate || []);
+    return updates.filter(
+      (node) =>
+        !node.pkg.private || privatePackagesToInclude.has("*") || privatePackagesToInclude.has(node.pkg.name)
+    );
   }
 }
 

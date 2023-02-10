@@ -118,6 +118,10 @@ export class Package {
     return Boolean(this[PKG].private);
   }
 
+  set private(isPrivate) {
+    this[PKG].private = isPrivate;
+  }
+
   get resolved() {
     return this[_resolved];
   }
@@ -325,5 +329,12 @@ export class Package {
       // @ts-ignore
       depCollection[depName] = hosted.toString({ noGitPlus: false, noCommittish: false });
     }
+  }
+
+  /**
+   * Remove the private property, effectively making the package public.
+   */
+  removePrivate() {
+    delete this[PKG].private;
   }
 }

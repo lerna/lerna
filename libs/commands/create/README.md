@@ -34,7 +34,8 @@ Command Options:
                   pkg.homepage                                          [string]
   --keywords      A list of package keywords                             [array]
   --license       The desired package license (SPDX identifier)   [default: ISC]
-  --private       Make the new package private, never published
+  --private       Make the new package private, indicating that it
+                  should not be published.
   --registry      Configure the package's publishConfig.registry        [string]
   --tag           Configure the package's publishConfig.tag             [string]
   --yes           Skip all prompts, accepting default values

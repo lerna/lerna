@@ -77,7 +77,6 @@ describe("lerna-publish-from-git-recover-from-error", () => {
         lerna WARN ENOLICENSE Packages test-1 and test-2 are missing a license.
         lerna WARN ENOLICENSE One way to fix this is to add a LICENSE.md file to the root of this repository.
         lerna WARN ENOLICENSE See https://choosealicense.com for additional guidance.
-        lerna WARN publish Package is already published: test-1@XX.XX.XX
         lerna success published test-2 XX.XX.XX
         lerna notice 
         lerna notice 📦  test-2@XX.XX.XX
@@ -95,6 +94,7 @@ describe("lerna-publish-from-git-recover-from-error", () => {
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         lerna notice total files:   3                                       
         lerna notice 
+        lerna WARN publish Package is already published: test-1@XX.XX.XX
         Successfully published:
          - test-2@XX.XX.XX
         lerna success published 1 package

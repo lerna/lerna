@@ -822,6 +822,9 @@
             "verifyAccess": {
               "$ref": "#/$defs/commandOptions/publish/verifyAccess"
             },
+            "includePrivate": {
+              "$ref": "#/$defs/commandOptions/publish/includePrivate"
+            },
 
             "npmClient": {
               "$ref": "#/$defs/globals/npmClient"
@@ -1694,6 +1697,13 @@
         "verifyAccess": {
           "type": "boolean",
           "description": "During `lerna publish`, when true, verify package read-write access for current npm user."
+        },
+        "includePrivate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "During `lerna publish`, include specified private packages when publishing by temporarily removing the private property from the package manifest. This should only be used for testing private packages that will become public. The value \"*\" will include all private packages."
         }
       },
       "run": {
