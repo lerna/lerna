@@ -2,10 +2,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
+import { writeJsonFile } from "@nrwl/devkit";
 import loadJsonFile from "load-json-file";
 import log from "npmlog";
 import path from "path";
-import writeJsonFile from "write-json-file";
 
 module.exports.updateLockfileVersion = updateLockfileVersion;
 
@@ -42,10 +42,11 @@ function updateLockfileVersion(pkg) {
         }
       }
 
-      return writeJsonFile(lockfilePath, obj, {
-        detectIndent: true,
-        indent: 2,
-      }).then(() => lockfilePath);
+      writeJsonFile(lockfilePath, obj, {
+        spaces: 2,
+      });
+
+      return lockfilePath;
     }
   });
 

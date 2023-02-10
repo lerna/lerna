@@ -1,8 +1,8 @@
 import { Command, Project } from "@lerna/core";
+import { writeJsonFile } from "@nrwl/devkit";
 import fs from "fs-extra";
 import pMap from "p-map";
 import path from "path";
-import writeJsonFile from "write-json-file";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
@@ -96,7 +96,9 @@ class InitCommand extends Command {
           pkg.workspaces = [Project.PACKAGE_GLOB];
         }
 
-        return writeJsonFile(path.join(this.project.rootPath, "package.json"), pkg, { indent: 2 });
+        return writeJsonFile(path.join(this.project.rootPath, "package.json"), pkg, {
+          spaces: 2,
+        });
       });
     } else {
       this.logger.info("", "Updating package.json");
@@ -185,7 +187,7 @@ class InitCommand extends Command {
         useNx: useNx === false ? false : undefined,
       });
 
-      return this.project.serializeConfig();
+      return Promise.resolve(this.project.serializeConfig());
     });
 
     return chain;

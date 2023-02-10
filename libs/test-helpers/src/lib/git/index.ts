@@ -5,7 +5,7 @@ import execa from "execa";
 import loadJsonFile from "load-json-file";
 import os from "os";
 import path from "path";
-import writeJsonFile from "write-json-file";
+import { writeJsonFile } from "@nrwl/devkit";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const gitSHA = require("../serializers/serialize-git-sha");

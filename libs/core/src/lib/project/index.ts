@@ -1,3 +1,4 @@
+import { writeJsonFile } from "@nrwl/devkit";
 import { cosmiconfigSync } from "cosmiconfig";
 import dedent from "dedent";
 import fs from "fs";
@@ -8,7 +9,6 @@ import loadJsonFile from "load-json-file";
 import log from "npmlog";
 import pMap from "p-map";
 import path from "path";
-import writeJsonFile from "write-json-file";
 import { Package } from "../package";
 import { ValidationError } from "../validation-error";
 import { applyExtends } from "./apply-extends";
@@ -363,11 +363,10 @@ export class Project {
     return this.version === "independent";
   }
 
-  serializeConfig() {
+  serializeConfig(): string {
     // TODO: might be package.json prop
-    return writeJsonFile(this.rootConfigLocation, this.config, { indent: 2, detectIndent: true }).then(
-      () => this.rootConfigLocation
-    );
+    writeJsonFile(this.rootConfigLocation, this.config, { spaces: 2 });
+    return this.rootConfigLocation;
   }
 }
 

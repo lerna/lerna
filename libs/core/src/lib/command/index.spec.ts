@@ -248,7 +248,7 @@ describe("command", () => {
     it("is set from lerna.json config", async () => {
       const cwd = await initFixture("basic");
 
-      await updateLernaConfig(cwd, { loglevel: "warn" });
+      updateLernaConfig(cwd, { loglevel: "warn" });
       await testFactory({ cwd, onRejected });
 
       expect(log.level).toBe("warn");
