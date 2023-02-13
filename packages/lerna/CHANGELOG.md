@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.5.0](https://github.com/lerna/lerna/compare/v6.4.1...6.5.0) (2023-02-13)
+
+### Features
+
+- **publish:** add --include-private option for testing private packages ([#3503](https://github.com/lerna/lerna/issues/3503)) ([fa1f490](https://github.com/lerna/lerna/commit/fa1f4900a658982d87888c1c7c5eef3697c5b31b))
+
 ## [6.4.1](https://github.com/lerna/lerna/compare/v6.4.0...v6.4.1) (2023-01-12)
 
 ### Bug Fixes

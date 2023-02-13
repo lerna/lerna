@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.5.0](https://github.com/lerna/lerna/compare/v6.4.1...6.5.0) (2023-02-13)
+
+### Bug Fixes
+
+- **create:** normalize quotes and indents in generated test and lib files ([#3529](https://github.com/lerna/lerna/issues/3529)) ([ad39fe2](https://github.com/lerna/lerna/commit/ad39fe2e4ca4e76cb7be6af83e8fbbc60d0935ce))
+
 ## [6.4.1](https://github.com/lerna/lerna/compare/v6.4.0...v6.4.1) (2023-01-12)
 
 **Note:** Version bump only for package @lerna/create

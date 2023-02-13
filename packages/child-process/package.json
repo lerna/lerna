@@ -1,6 +1,6 @@
 {
   "name": "@lerna/child-process",
-  "version": "6.4.1",
+  "version": "6.5.0",
   "description": "Lerna's internal child_process wrapper",
   "keywords": [
     "lerna",
@@ -34,5 +34,6 @@
     "chalk": "^4.1.0",
     "execa": "^5.0.0",
     "strong-log-transformer": "^2.1.0"
-  }
+  },
+  "gitHead": "02c534e3796150ac564c57aa5a248c7bdf7835ab"
 }

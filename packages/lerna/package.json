@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "6.4.1",
+  "version": "6.5.0",
   "description": "Lerna is a fast, modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository",
   "keywords": [
     "lerna",
@@ -37,8 +37,8 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../child-process",
-    "@lerna/create": "file:../legacy-structure/commands/create",
+    "@lerna/child-process": "6.5.0",
+    "@lerna/create": "6.5.0",
     "@npmcli/arborist": "5.3.0",
     "@npmcli/run-script": "4.1.7",
     "@nrwl/devkit": ">=15.5.2 < 16",
@@ -83,8 +83,8 @@
     "npm-registry-fetch": "13.3.0",
     "npmlog": "^6.0.2",
     "nx": ">=15.5.2 < 16",
-    "p-map-series": "2.1.0",
     "p-map": "4.0.0",
+    "p-map-series": "2.1.0",
     "p-pipe": "3.1.0",
     "p-queue": "6.6.2",
     "p-reduce": "2.1.0",
@@ -110,8 +110,8 @@
     "validate-npm-package-name": "4.0.0",
     "write-file-atomic": "4.0.1",
     "write-pkg": "4.0.0",
-    "yargs-parser": "20.2.4",
-    "yargs": "16.2.0"
+    "yargs": "16.2.0",
+    "yargs-parser": "20.2.4"
   },
   "exports": {
     ".": "./dist/index.js",
@@ -124,5 +124,6 @@
     "./commands/version/lib/*": "./dist/commands/version/lib/*.js",
     "./migrations/**/*": "./dist/migrations/**/*",
     "./commands/diff/lib/*": "./dist/commands/diff/lib/*.js"
-  }
+  },
+  "gitHead": "02c534e3796150ac564c57aa5a248c7bdf7835ab"
 }
