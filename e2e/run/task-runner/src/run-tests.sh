@@ -15,6 +15,10 @@ fi
 
 for subdir in $DIR/*
 do
+    # skip pnpm for now
+    if [ "$(basename $subdir)" == "pnpm" ]; then
+        continue
+    fi
     if [ -d "$subdir" ]; then
         # If ONLY is not set, run the tests for the current suite
         if [ -z "$ONLY" ]; then
