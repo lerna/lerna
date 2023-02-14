@@ -206,7 +206,7 @@ jobs:
 
       - name: Prepare e2e tests for task-runner
         if: ${{ steps.check_affected.outputs.is_affected }}
-        run: npx nx prepare-for-e2e e2e-run-task-runner --skip-nx-cache
+        run: npx nx prepare-for-e2e e2e-run-task-runner
         shell: bash
 
       - name: Run e2e tests for task-runner
