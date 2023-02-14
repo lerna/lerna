@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.5.1](https://github.com/lerna/lerna/compare/6.5.0...6.5.1) (2023-02-14)
+
+### Bug Fixes
+
+- add missing dependency on js-yaml ([187f480](https://github.com/lerna/lerna/commit/187f4804b8406a6472425de21dd89482c382b1b4))
+
 # [6.5.0](https://github.com/lerna/lerna/compare/v6.4.1...6.5.0) (2023-02-13)
 
 ### Features
