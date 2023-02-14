@@ -35,7 +35,7 @@
     "directory": "packages/legacy-structure/commands/info"
   },
   "dependencies": {
-    "lerna": "6.5.0"
+    "lerna": "file:../../../lerna"
   },
   "gitHead": "02c534e3796150ac564c57aa5a248c7bdf7835ab"
 }

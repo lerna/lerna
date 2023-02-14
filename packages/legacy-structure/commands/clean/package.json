@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/clean"
   },
   "dependencies": {
-    "lerna": "6.5.0"
+    "lerna": "file:../../../lerna"
   },
   "exports": {
     ".": "./dist/index.js",

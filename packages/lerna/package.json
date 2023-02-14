@@ -37,8 +37,8 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@lerna/child-process": "6.5.0",
-    "@lerna/create": "6.5.0",
+    "@lerna/child-process": "file:../child-process",
+    "@lerna/create": "file:../legacy-structure/commands/create",
     "@npmcli/arborist": "5.3.0",
     "@npmcli/run-script": "4.1.7",
     "@nrwl/devkit": ">=15.5.2 < 16",
@@ -71,6 +71,7 @@
     "inquirer": "^8.2.4",
     "is-ci": "2.0.0",
     "is-stream": "2.0.0",
+    "js-yaml": "^4.1.0",
     "libnpmaccess": "6.0.3",
     "libnpmpublish": "6.0.4",
     "load-json-file": "6.2.0",
