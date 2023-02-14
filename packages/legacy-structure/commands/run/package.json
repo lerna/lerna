@@ -1,6 +1,6 @@
 {
   "name": "@lerna/run",
-  "version": "6.5.0",
+  "version": "6.5.1",
   "description": "Run an npm script in each package that contains that script",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/run"
   },
   "dependencies": {
-    "lerna": "6.5.0"
+    "lerna": "6.5.1"
   },
   "exports": {
     ".": "./dist/index.js",

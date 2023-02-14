@@ -1,6 +1,6 @@
 {
   "name": "@lerna/init",
-  "version": "6.5.0",
+  "version": "6.5.1",
   "description": "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/init"
   },
   "dependencies": {
-    "lerna": "6.5.0"
+    "lerna": "6.5.1"
   },
   "exports": {
     ".": "./dist/index.js",
