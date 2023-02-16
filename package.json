@@ -118,7 +118,7 @@
     "@nrwl/eslint-plugin-nx": "15.5.2",
     "@nrwl/jest": "15.5.2",
     "@nrwl/js": "15.5.2",
-    "@nrwl/nx-cloud": "15.0.4-beta.3",
+    "@nrwl/nx-cloud": "15.1.0-beta.3",
     "@nrwl/nx-plugin": "15.5.2",
     "@nrwl/web": "15.5.2",
     "@swc-node/register": "^1.4.2",
