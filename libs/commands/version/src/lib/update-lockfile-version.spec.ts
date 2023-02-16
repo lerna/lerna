@@ -82,3 +82,16 @@ test("updateLockfileVersion with lockfile v2 - local dependency should not be ad
   expect(updatedLockfile).toHaveProperty(["packages", "", "devDependencies", "typescript"], "^4.0.0");
   expect(updatedLockfile).not.toHaveProperty(["packages", "", "devDependencies", "package-3"]);
 });
+
+test("updateLockfileVersion with outdated lockfile v2 - should not fail", async () => {
+  // the package-lock file for package-2 was not updated when
+  // the deps and devDeps were removed from package-2's package.json file.
+  const cwd = await initFixture("lockfile-v2-outdated-package-lock");
+  const pkg2 = (await getPackages(cwd))[1];
+
+  const returnedLockfilePath = await updateLockfileVersion(pkg2);
+  const updatedLockfile = fs.readJSONSync(returnedLockfilePath);
+
+  expect(updatedLockfile.packages[""].dependencies).toEqual({});
+  expect(updatedLockfile.packages[""].devDependencies).toEqual({});
+});
