@@ -1,0 +1,16 @@
+{
+  "name": "commands-create-alt",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/commands/create-alt/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/commands/create-alt/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}
