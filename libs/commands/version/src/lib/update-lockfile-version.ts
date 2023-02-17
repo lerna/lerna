@@ -28,14 +28,14 @@ function updateLockfileVersion(pkg) {
 
         if (obj.packages[""].dependencies) {
           const updatedPkgDependencies = Object.keys(obj.packages[""].dependencies).reduce(
-            (prev, next) => ({ ...prev, [next]: pkg.dependencies[next] }),
+            (prev, next) => ({ ...prev, [next]: pkg.dependencies?.[next] }),
             {}
           );
           obj.packages[""].dependencies = updatedPkgDependencies;
         }
         if (obj.packages[""].devDependencies) {
           const updatedPkgDevDependencies = Object.keys(obj.packages[""].devDependencies).reduce(
-            (prev, next) => ({ ...prev, [next]: pkg.devDependencies[next] }),
+            (prev, next) => ({ ...prev, [next]: pkg.devDependencies?.[next] }),
             {}
           );
           obj.packages[""].devDependencies = updatedPkgDevDependencies;
