@@ -1,4 +1,4 @@
-import { Command, Project } from "@lerna/core";
+import { Command, CommandConfigOptions, Project } from "@lerna/core";
 import { writeJsonFile } from "@nrwl/devkit";
 import fs from "fs-extra";
 import pMap from "p-map";
@@ -11,7 +11,12 @@ module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new InitCommand(argv);
 };
 
-class InitCommand extends Command {
+interface InitCommandOptions extends CommandConfigOptions {
+  exact: boolean;
+  lernaVersion: string;
+}
+
+class InitCommand extends Command<InitCommandOptions> {
   exact: boolean;
   lernaVersion: string;
 
@@ -170,12 +175,12 @@ class InitCommand extends Command {
 
       if (this.exact) {
         // ensure --exact is preserved for future init commands
-        // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         const commandConfig = this.project.config.command || (this.project.config.command = {});
         const initConfig = commandConfig.init || (commandConfig.init = {});
 
+        // TODO: refactor based on TS feedback
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         initConfig.exact = true;
       }
 
@@ -195,11 +200,7 @@ class InitCommand extends Command {
 
   ensurePackagesDir() {
     this.logger.info("", "Creating packages directory");
-
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return pMap(this.project.packageParentDirs, (dir) => fs.mkdirp(dir));
+    return pMap(this.project.packageParentDirs, (dir: string) => fs.mkdirp(dir));
   }
 }
 
