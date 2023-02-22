@@ -1,0 +1,7 @@
+'use strict';
+
+const <%= packageNameCamelCase %> = require('..');
+const assert = require('assert').strict;
+
+assert.strictEqual(<%= packageNameCamelCase %>(), 'Hello from <%= packageNameDashCase %>');
+console.info('<%= packageNameDashCase %> tests passed');

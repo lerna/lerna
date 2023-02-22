@@ -27,6 +27,7 @@ export { rimrafDir } from "./lib/rimraf-dir";
 export { createRunner, runLifecycle } from "./lib/run-lifecycle";
 export { runTopologically } from "./lib/run-topologically";
 export { createGitHubClient, createGitLabClient, parseGitRepo } from "./lib/scm-clients";
+export * as stringUtils from "./lib/strings";
 export { symlinkBinary } from "./lib/symlink-binary";
 export { symlinkDependencies } from "./lib/symlink-dependencies";
 export { default as tempWrite } from "./lib/temp-write";

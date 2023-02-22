@@ -1,0 +1,11 @@
+# `<%= packageNameDashCase %>`
+
+> TODO: description
+
+## Usage
+
+```
+const <%= packageNameCamelCase %> = require('<%= packageNameDashCase %>');
+
+// TODO: DEMONSTRATE API
+```

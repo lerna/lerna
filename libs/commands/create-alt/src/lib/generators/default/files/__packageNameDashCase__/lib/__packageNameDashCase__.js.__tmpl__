@@ -1,0 +1,7 @@
+'use strict';
+
+module.exports = <%= packageNameCamelCase %>;
+
+function <%= packageNameCamelCase %>() {
+  return 'Hello from <%= packageNameDashCase %>';
+}

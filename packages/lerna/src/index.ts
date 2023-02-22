@@ -27,6 +27,8 @@ import * as watchCmd from "./commands/watch/command";
 
 const pkg = require("../package.json");
 
+import * as createAltCmd from "@lerna/commands/create-alt/command";
+
 module.exports = function main(argv: NodeJS.Process["argv"]) {
   const context = {
     lernaVersion: pkg.version,
@@ -39,6 +41,7 @@ module.exports = function main(argv: NodeJS.Process["argv"]) {
     .command(changedCmd)
     .command(cleanCmd)
     .command(createCmd)
+    .command(createAltCmd)
     .command(diffCmd)
     .command(execCmd)
     .command(importCmd)

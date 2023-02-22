@@ -20,7 +20,13 @@
         "outputPath": "packages/lerna/dist",
         "main": "packages/lerna/src/index.ts",
         "tsConfig": "packages/lerna/tsconfig.lib.json",
-        "assets": [],
+        "assets": [
+          {
+            "input": "libs/commands/create-alt/src/lib/generators/default/files",
+            "glob": "**/*",
+            "output": "commands/create/lib/generators/default/files"
+          }
+        ],
         "thirdParty": false,
         "platform": "node",
         "format": ["cjs"],
@@ -37,6 +43,9 @@
           "packages/lerna/src/commands/changed/index.ts",
           "packages/lerna/src/commands/clean/command.ts",
           "packages/lerna/src/commands/clean/index.ts",
+          "packages/lerna/src/commands/create/command.ts",
+          "packages/lerna/src/commands/create/index.ts",
+          "packages/lerna/src/commands/create/lib/generators/default/generator.ts",
           "packages/lerna/src/commands/diff/command.ts",
           "packages/lerna/src/commands/diff/index.ts",
           "packages/lerna/src/commands/diff/lib/get-last-commit.ts",
@@ -94,6 +103,9 @@
           },
           "logOverride": {
             "commonjs-variable-in-esm": "silent"
+          },
+          "define": {
+            "process.env.LERNA_CREATE_GENERATOR_FILES_PATH": "BUILT_LERNA_CREATE_GENERATOR_FILES_PATH"
           }
         }
       }

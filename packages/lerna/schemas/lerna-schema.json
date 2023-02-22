@@ -355,6 +355,9 @@
             "tag": {
               "$ref": "#/$defs/commandOptions/create/tag"
             },
+            "dryRun": {
+              "$ref": "#/$defs/commandOptions/create/dryRun"
+            },
 
             "npmClient": {
               "$ref": "#/$defs/globals/npmClient"
@@ -1620,6 +1623,11 @@
         "tag": {
           "type": "string",
           "description": "During `lerna create`, specifies the publishConfig.tag for the new package."
+        },
+        "dryRun": {
+          "type": "boolean",
+          "description": "Only see a preview of what will be generated, do not commit the changes to the file system",
+          "default": false
         }
       },
       "import": {

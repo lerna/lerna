@@ -28,6 +28,8 @@
       "@lerna/commands/clean/*": ["libs/commands/clean/src/*"],
       "@lerna/commands/create": ["libs/commands/create/src/index.ts"],
       "@lerna/commands/create/*": ["libs/commands/create/src/*"],
+      "@lerna/commands/create-alt": ["libs/commands/create-alt/src/index.ts"],
+      "@lerna/commands/create-alt/*": ["libs/commands/create-alt/src/*"],
       "@lerna/commands/diff": ["libs/commands/diff/src/index.ts"],
       "@lerna/commands/diff/*": ["libs/commands/diff/src/*"],
       "@lerna/commands/exec": ["libs/commands/exec/src/index.ts"],
