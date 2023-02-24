@@ -650,6 +650,30 @@ class VersionCommand extends Command {
       });
     }
 
+    if (this.options.npmClient === "yarn") {
+      chain = chain
+        .then(() => childProcess.execSync("yarn", ["--version"], this.execOpts))
+        .then((yarnVersion) => {
+          this.logger.verbose("version", `Detected yarn version ${yarnVersion}`);
+
+          if (semver.gte(yarnVersion, "2.0.0")) {
+            this.logger.verbose("version", "Updating root yarn.lock");
+            return childProcess
+              .exec("yarn", ["install", "--mode", "update-lockfile", ...npmClientArgs], {
+                ...this.execOpts,
+                env: {
+                  ...process.env,
+                  YARN_ENABLE_SCRIPTS: false,
+                },
+              })
+              .then(() => {
+                const lockfilePath = path.join(this.project.rootPath, "yarn.lock");
+                changedFiles.add(lockfilePath);
+              });
+          }
+        });
+    }
+
     if (this.options.npmClient === "npm" || !this.options.npmClient) {
       const lockfilePath = path.join(this.project.rootPath, "package-lock.json");
       if (fs.existsSync(lockfilePath)) {
