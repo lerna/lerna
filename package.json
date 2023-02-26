@@ -34,7 +34,7 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org",
   "dependencies": {
-    "@npmcli/arborist": "5.3.0",
+    "@npmcli/arborist": "^6.2.3",
     "@npmcli/run-script": "^4.1.7",
     "@nrwl/devkit": "15.5.2",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
