@@ -12,10 +12,10 @@ index a2cd30e..c47a77b 100644
              }
          }
 diff --git a/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js b/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-index 424925b..3138529 100644
+index 424925b..570f889 100644
 --- a/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
 +++ b/node_modules/@nrwl/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-@@ -11,11 +11,14 @@ const ESM_FILE_EXTENSION = '.js';
+@@ -11,7 +11,7 @@ const ESM_FILE_EXTENSION = '.js';
  const CJS_FILE_EXTENSION = '.cjs';
  function buildEsbuildOptions(format, options, context) {
      var _a, _b;
@@ -24,11 +24,3 @@ index 424925b..3138529 100644
              '.js': getOutExtension(format, options),
          } });
      if (options.platform === 'browser') {
--        esbuildOptions.define = (0, environment_variables_1.getClientEnvironment)();
-+        esbuildOptions.define = {
-+            ...(0, environment_variables_1.getClientEnvironment)(),
-+            ...(esbuildOptions.define || {}),
-+        }
-     }
-     if (options.singleEntry && options.bundle) {
-         esbuildOptions.outfile = getOutfile(format, options, context);

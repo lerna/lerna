@@ -1,5 +1,23 @@
 import { updateJson, joinPathFragments, workspaceRoot, Tree, generateFiles } from "@nrwl/devkit";
 import { stringUtils } from "@lerna/core";
+import { Generator } from "nx/src/config/misc-interfaces";
+
+export interface CreateGeneratorOptions {
+  // loc: string;
+  // access: "public" | "restricted";
+  // dependencies: string[];
+  // esModule: boolean;
+  // homepage: string;
+  // keywords: string[];
+  // registry: string;
+  // tag: string;
+  name: string;
+  private: boolean;
+  description: string;
+  license: string;
+  binDir: string;
+  binFileName: string;
+}
 
 /**
  * A quirk of our current backwards-compatible bundling approach in v6 is that we need to account for the
@@ -16,14 +34,27 @@ const BUILT_LERNA_CREATE_GENERATOR_FILES_PATH = joinPathFragments(
   "commands/create/lib/generators/default/files"
 );
 
-export function generatorFactory(lernaLogger) {
-  return async function generatorImplementation(tree: Tree, options) {
-    lernaLogger.success("create", "Ran the generator!");
-
-    generateFiles(tree, process.env.LERNA_CREATE_GENERATOR_FILES_PATH, tree.root, {
+export function generatorFactory(lernaLogger): Generator {
+  return async function generatorImplementation(tree: Tree, options: CreateGeneratorOptions) {
+    generateFiles(tree, process.env.LERNA_CREATE_GENERATOR_FILES_PATH, "", {
       tmpl: "",
       packageNameDashCase: stringUtils.dasherize(options.name),
       packageNameCamelCase: stringUtils.camelize(options.name),
     });
+
+    const packageJson: Record<string, unknown> = {};
+
+    packageJson.name = options.name;
+    packageJson.version = "1.0.0";
+    packageJson.description = options.description;
+
+    if (options.binFileName) {
+        tree.write(options.binFileName, ")
+        chain = chain.then(() => Promise.all([this.writeBinFile(), this.writeCliFile(), this.writeCliTest()]));
+      }
+      
+
+    console.log({ packageJson });
+    // tree.write("package.json", JSON.stringify(packageJson, null, 2));
   };
 }
