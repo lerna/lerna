@@ -94,6 +94,8 @@ it is recommended to customize the [`--preid`](#--preid) and [`--dist-tag <tag>`
 
 > The intended use case for this flag is a per commit level release or nightly release.
 
+NOTE: Canary releases cannot be used in conjunction with the `--build-metadata` option.
+
 ### `--contents <dir>`
 
 Subdirectory to publish. Must apply to ALL packages, and MUST contain a package.json file.
