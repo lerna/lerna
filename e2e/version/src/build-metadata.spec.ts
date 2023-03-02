@@ -94,7 +94,9 @@ describe("lerna-version-build-metadata", () => {
     afterEach(() => fixture.destroy());
 
     it("should correctly generate build metadata", async () => {
-      const output = await fixture.lerna("version 3.3.3 --build-metadata exp.sha.SHA -y", { silenceError: true });
+      const output = await fixture.lerna("version 3.3.3 --build-metadata exp.sha.SHA -y", {
+        silenceError: true,
+      });
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
@@ -118,7 +120,9 @@ describe("lerna-version-build-metadata", () => {
 
       `);
 
-      const checkTagIsPresentOnRemote = await fixture.exec("git ls-remote origin refs/tags/v3.3.3+exp.sha.SHA");
+      const checkTagIsPresentOnRemote = await fixture.exec(
+        "git ls-remote origin refs/tags/v3.3.3+exp.sha.SHA"
+      );
       expect(checkTagIsPresentOnRemote.combinedOutput).toMatchInlineSnapshot(`
         {FULL_COMMIT_SHA}	refs/tags/v3.3.3+exp.sha.SHA
 
@@ -212,13 +216,13 @@ describe("lerna-version-build-metadata", () => {
         "independent"
       );
 
-      expect(
-        JSON.parse(await fixture.readWorkspaceFile("packages/package-a/package.json")).version
-      ).toEqual("3.3.3+001");
+      expect(JSON.parse(await fixture.readWorkspaceFile("packages/package-a/package.json")).version).toEqual(
+        "3.3.3+001"
+      );
 
-      expect(
-        JSON.parse(await fixture.readWorkspaceFile("packages/package-b/package.json")).version
-      ).toEqual("3.3.3+001");
+      expect(JSON.parse(await fixture.readWorkspaceFile("packages/package-b/package.json")).version).toEqual(
+        "3.3.3+001"
+      );
     });
   });
 });

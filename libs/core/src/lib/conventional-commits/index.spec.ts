@@ -16,7 +16,7 @@ const initFixture = initFixtureFactory(__dirname);
 import { getChangelogConfig } from "./get-changelog-config";
 import { recommendVersion } from "./recommend-version";
 import { updateChangelog } from "./update-changelog";
-import { applyBuildMetadata } from './apply-build-metadata';
+import { applyBuildMetadata } from "./apply-build-metadata";
 
 // stabilize changelog commit SHA and datestamp
 // nx-ignore-next-line

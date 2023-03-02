@@ -14,7 +14,7 @@ applyBuildMetadata.mockImplementation((version, buildMetadata) => {
   if (buildMetadata) {
     return `${version}+${buildMetadata}`;
   }
-  
+
   return version;
 });
 
