@@ -46,7 +46,7 @@ interface ProjectConfig {
   command?: CommandConfigs;
 }
 
-interface CommandConfig {
+interface PnpmWorkspaceConfig {
   packages: string[];
 }
 

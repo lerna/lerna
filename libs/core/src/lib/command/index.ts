@@ -203,9 +203,8 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   }
 
   configureProperties() {
-    const { concurrency, sort, maxBuffer } = this.options;
-
-    this.concurrency = Math.max(1, +(concurrency ?? 0) || DEFAULT_CONCURRENCY);
+    const { concurrency = 0, sort, maxBuffer } = this.options;
+    this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
     this.toposort = sort === undefined || sort;
 
     /** @type {import("@lerna/child-process").ExecOpts} */
