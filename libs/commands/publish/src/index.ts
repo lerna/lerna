@@ -144,7 +144,12 @@ class PublishCommand extends Command {
       return versionCommand(this.argv).then(() => false);
     }
 
-    if (this.options.canary) {
+    if (this.options.buildMetadata && this.options.canary) {
+      throw new ValidationError(
+        "ENOTSATISFIED",
+        "Cannot use --build-metadata in conjunction with --canary option."
+      );
+    } else if (this.options.canary) {
       this.logger.info("canary", "enabled");
     }
 
@@ -386,6 +391,7 @@ class PublishCommand extends Command {
           // (we tried)
           this.logger.silly("EWORKINGTREE", err.message);
           this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
+          process.exitCode = 0;
         } else {
           // validation errors should be preserved
           throw err;

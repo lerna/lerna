@@ -467,3 +467,13 @@ test("publish --canary --no-private", async () => {
     }
   `);
 });
+
+test("publish throws error when --build-metadata and --canary are both applied", async () => {
+  const cwd = await initFixture("independent");
+  await expect(() => lernaPublish(cwd)("--build-metadata", "001", "--canary")).rejects.toThrow(
+    expect.objectContaining({
+      name: "ValidationError",
+      message: "Cannot use --build-metadata in conjunction with --canary option.",
+    })
+  );
+});

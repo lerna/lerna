@@ -985,6 +985,9 @@
             "amend": {
               "$ref": "#/$defs/commandOptions/version/amend"
             },
+            "buildMetadata": {
+              "$ref": "#/$defs/commandOptions/version/buildMetadata"
+            },
             "conventionalCommits": {
               "$ref": "#/$defs/commandOptions/shared/conventionalCommits"
             },
@@ -1734,6 +1737,11 @@
         "amend": {
           "type": "boolean",
           "description": "During `lerna version`, when true, amend the existing commit instead of generating a new one."
+        },
+        "build-metadata": {
+          "describe": "Apply semver-compatible build metadata to the release",
+          "requiresArg": true,
+          "type": "string"
         },
         "conventionalPrerelease": {
           "anyOf": [

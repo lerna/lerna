@@ -2,7 +2,7 @@ export { checkWorkingTree, throwIfUncommitted } from "./lib/check-working-tree";
 export * from "./lib/cli";
 export * from "./lib/collect-updates";
 export { Command } from "./lib/command";
-export { recommendVersion, updateChangelog } from "./lib/conventional-commits";
+export { applyBuildMetadata, recommendVersion, updateChangelog } from "./lib/conventional-commits";
 export { createSymlink } from "./lib/create-symlink";
 export { describeRef } from "./lib/describe-ref";
 export { filterOptions, getFilteredPackages } from "./lib/filter-options";

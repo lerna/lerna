@@ -46,8 +46,8 @@ index SHA..SHA 100644
 --- a/packages/package-1/package.json
 +++ b/packages/package-1/package.json
 @@ -3 +3 @@
--	"version": "1.0.0",
-+	"version": "2.0.0",
+-  "version": "1.0.0",
++  "version": "2.0.0",
 diff --git a/packages/package-2/package.json b/packages/package-2/package.json
 index SHA..SHA 100644
 --- a/packages/package-2/package.json

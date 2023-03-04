@@ -2,6 +2,7 @@ import conventionalRecommendedBump from "conventional-recommended-bump";
 import log from "npmlog";
 import semver from "semver";
 import { Package } from "../package";
+import { applyBuildMetadata } from "./apply-build-metadata";
 import { BaseChangelogOptions, VersioningStrategy } from "./constants";
 import { getChangelogConfig } from "./get-changelog-config";
 
@@ -14,7 +15,8 @@ export function recommendVersion(
     tagPrefix,
     prereleaseId,
     conventionalBumpPrerelease,
-  }: BaseChangelogOptions & { prereleaseId?: string }
+    buildMetadata,
+  }: BaseChangelogOptions & { prereleaseId?: string; buildMetadata?: string }
 ) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
@@ -68,7 +70,7 @@ export function recommendVersion(
           // TODO: refactor to address type issues
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          resolve(semver.inc(pkg.version, prereleaseType, prereleaseId));
+          resolve(applyBuildMetadata(semver.inc(pkg.version, prereleaseType, prereleaseId), buildMetadata));
         } else {
           if (semver.major(pkg.version) === 0) {
             // According to semver, major version zero (0.y.z) is for initial
@@ -94,7 +96,7 @@ export function recommendVersion(
           // TODO: refactor to address type issues
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          resolve(semver.inc(pkg.version, releaseType));
+          resolve(applyBuildMetadata(semver.inc(pkg.version, releaseType), buildMetadata));
         }
       });
     });

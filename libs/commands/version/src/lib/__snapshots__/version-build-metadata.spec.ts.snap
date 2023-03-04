@@ -1,0 +1,571 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`--build-metadata with prompt accepts build metadata 1`] = `
+"v1.1.0+20130313144700
+
+HEAD -> main, tag: v1.1.0+20130313144700
+
+diff --git a/lerna.json b/lerna.json
+index SHA..SHA 100644
+--- a/lerna.json
++++ b/lerna.json
+@@ -2 +2 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+20130313144700\\",
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+20130313144700\\",
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+20130313144700\\",
+@@ -5 +5 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.1.0+20130313144700\\"
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+20130313144700\\",
+@@ -8 +8 @@
+-    \\"package-2\\": \\"^1.0.0\\"
++    \\"package-2\\": \\"^1.1.0+20130313144700\\"
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+20130313144700\\",
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -4 +4 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.1.0+20130313144700\\"
+@@ -7 +7 @@
+-    \\"package-3\\": \\"^1.0.0\\"
++    \\"package-3\\": \\"^1.1.0+20130313144700\\"
+@@ -10 +10 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+20130313144700\\","
+`;
+
+exports[`--build-metadata with prompt accepts build metadata across independent versions 1`] = `
+"Publish
+
+ - package-1@1.0.1+21AF26D3--117B344092BD
+ - package-2@2.1.0+21AF26D3--117B344092BD
+ - package-3@4.0.0+21AF26D3--117B344092BD
+ - package-4@4.1.0+21AF26D3--117B344092BD
+ - package-5@5.0.1+21AF26D3--117B344092BD
+
+HEAD -> main, tag: package-5@5.0.1+21AF26D3--117B344092BD, tag: package-4@4.1.0+21AF26D3--117B344092BD, tag: package-3@4.0.0+21AF26D3--117B344092BD, tag: package-2@2.1.0+21AF26D3--117B344092BD, tag: package-1@1.0.1+21AF26D3--117B344092BD
+
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1+21AF26D3--117B344092BD\\",
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"2.0.0\\",
++  \\"version\\": \\"2.1.0+21AF26D3--117B344092BD\\",
+@@ -5 +5 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.0.1+21AF26D3--117B344092BD\\"
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"3.0.0\\",
++  \\"version\\": \\"4.0.0+21AF26D3--117B344092BD\\",
+@@ -5 +5 @@
+-    \\"package-2\\": \\"^2.0.0\\"
++    \\"package-2\\": \\"^2.1.0+21AF26D3--117B344092BD\\"
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"4.0.0\\",
++  \\"version\\": \\"4.1.0+21AF26D3--117B344092BD\\",
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -4 +4 @@
+-    \\"package-3\\": \\"^3.0.0\\"
++    \\"package-3\\": \\"^4.0.0+21AF26D3--117B344092BD\\"
+@@ -7 +7 @@
+-  \\"version\\": \\"5.0.0\\",
++  \\"version\\": \\"5.0.1+21AF26D3--117B344092BD\\","
+`;
+
+exports[`--build-metadata with prompt updates build metadata 1`] = `
+"v1.1.0+20130313144700
+
+HEAD -> main, tag: v1.1.0+20130313144700
+
+diff --git a/lerna.json b/lerna.json
+index SHA..SHA 100644
+--- a/lerna.json
++++ b/lerna.json
+@@ -2 +2 @@
+-  \\"version\\": \\"1.0.0+001\\"
++  \\"version\\": \\"1.1.0+20130313144700\\"
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0+001\\"
++  \\"version\\": \\"1.1.0+20130313144700\\""
+`;
+
+exports[`--build-metadata with prompt updates build metadata across independent versions 1`] = `
+"Publish
+
+ - package-1@1.0.1+exp.sha.SHA
+ - package-2@2.1.0+exp.sha.SHA
+
+HEAD -> main, tag: package-2@2.1.0+exp.sha.SHA, tag: package-1@1.0.1+exp.sha.SHA
+
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0+001\\"
++  \\"version\\": \\"1.0.1+exp.sha.SHA\\"
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"2.0.0+001\\"
++  \\"version\\": \\"2.1.0+exp.sha.SHA\\""
+`;
+
+exports[`--build-metadata without prompt accepts build metadata across independent versions with semver keyword 1`] = `
+"Publish
+
+ - package-1@1.1.0+001
+ - package-2@2.1.0+001
+ - package-3@3.1.0+001
+ - package-4@4.1.0+001
+ - package-5@5.1.0+001
+
+HEAD -> main, tag: package-5@5.1.0+001, tag: package-4@4.1.0+001, tag: package-3@3.1.0+001, tag: package-2@2.1.0+001, tag: package-1@1.1.0+001
+
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+001\\",
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"2.0.0\\",
++  \\"version\\": \\"2.1.0+001\\",
+@@ -5 +5 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.1.0+001\\"
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"3.0.0\\",
++  \\"version\\": \\"3.1.0+001\\",
+@@ -5 +5 @@
+-    \\"package-2\\": \\"^2.0.0\\"
++    \\"package-2\\": \\"^2.1.0+001\\"
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"4.0.0\\",
++  \\"version\\": \\"4.1.0+001\\",
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -4 +4 @@
+-    \\"package-3\\": \\"^3.0.0\\"
++    \\"package-3\\": \\"^3.1.0+001\\"
+@@ -7 +7 @@
+-  \\"version\\": \\"5.0.0\\",
++  \\"version\\": \\"5.1.0+001\\","
+`;
+
+exports[`--build-metadata without prompt accepts build metadata for explicit version 1`] = `
+"v1.0.1+20130313144700
+
+HEAD -> main, tag: v1.0.1+20130313144700
+
+diff --git a/lerna.json b/lerna.json
+index SHA..SHA 100644
+--- a/lerna.json
++++ b/lerna.json
+@@ -2 +2 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1+20130313144700\\",
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1+20130313144700\\",
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1+20130313144700\\",
+@@ -5 +5 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.0.1+20130313144700\\"
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1+20130313144700\\",
+@@ -8 +8 @@
+-    \\"package-2\\": \\"^1.0.0\\"
++    \\"package-2\\": \\"^1.0.1+20130313144700\\"
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1+20130313144700\\",
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -4 +4 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.0.1+20130313144700\\"
+@@ -7 +7 @@
+-    \\"package-3\\": \\"^1.0.0\\"
++    \\"package-3\\": \\"^1.0.1+20130313144700\\"
+@@ -10 +10 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1+20130313144700\\","
+`;
+
+exports[`--build-metadata without prompt accepts build metadata for repository version 1`] = `
+"v1.0.2+21AF26D3--117B344092BD
+
+HEAD -> main, tag: v1.0.2+21AF26D3--117B344092BD
+
+diff --git a/lerna.json b/lerna.json
+index SHA..SHA 100644
+--- a/lerna.json
++++ b/lerna.json
+@@ -2 +2 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.2+21AF26D3--117B344092BD\\",
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.2+21AF26D3--117B344092BD\\",
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.2+21AF26D3--117B344092BD\\",
+@@ -5 +5 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.0.2+21AF26D3--117B344092BD\\"
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.2+21AF26D3--117B344092BD\\",
+@@ -8 +8 @@
+-    \\"package-2\\": \\"^1.0.0\\"
++    \\"package-2\\": \\"^1.0.2+21AF26D3--117B344092BD\\"
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.2+21AF26D3--117B344092BD\\",
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -4 +4 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.0.2+21AF26D3--117B344092BD\\"
+@@ -7 +7 @@
+-    \\"package-3\\": \\"^1.0.0\\"
++    \\"package-3\\": \\"^1.0.2+21AF26D3--117B344092BD\\"
+@@ -10 +10 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.2+21AF26D3--117B344092BD\\","
+`;
+
+exports[`--build-metadata without prompt accepts build metadata with cd version 1`] = `
+"v2.0.0-alpha.0+exp.sha.SHA
+
+HEAD -> main, tag: v2.0.0-alpha.0+exp.sha.SHA
+
+diff --git a/lerna.json b/lerna.json
+index SHA..SHA 100644
+--- a/lerna.json
++++ b/lerna.json
+@@ -2 +2 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0-alpha.0+exp.sha.SHA\\",
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0-alpha.0+exp.sha.SHA\\",
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0-alpha.0+exp.sha.SHA\\",
+@@ -5 +5 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^2.0.0-alpha.0+exp.sha.SHA\\"
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0-alpha.0+exp.sha.SHA\\",
+@@ -8 +8 @@
+-    \\"package-2\\": \\"^1.0.0\\"
++    \\"package-2\\": \\"^2.0.0-alpha.0+exp.sha.SHA\\"
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0-alpha.0+exp.sha.SHA\\",
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -4 +4 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^2.0.0-alpha.0+exp.sha.SHA\\"
+@@ -7 +7 @@
+-    \\"package-3\\": \\"^1.0.0\\"
++    \\"package-3\\": \\"^2.0.0-alpha.0+exp.sha.SHA\\"
+@@ -10 +10 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0-alpha.0+exp.sha.SHA\\","
+`;
+
+exports[`--build-metadata without prompt accepts build metadata with default prerelease id 1`] = `
+"v1.0.1-alpha.0+20130313144700
+
+HEAD -> main, tag: v1.0.1-alpha.0+20130313144700
+
+diff --git a/lerna.json b/lerna.json
+index SHA..SHA 100644
+--- a/lerna.json
++++ b/lerna.json
+@@ -2 +2 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1-alpha.0+20130313144700\\",
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1-alpha.0+20130313144700\\",
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1-alpha.0+20130313144700\\",
+@@ -5 +5 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.0.1-alpha.0+20130313144700\\"
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1-alpha.0+20130313144700\\",
+@@ -8 +8 @@
+-    \\"package-2\\": \\"^1.0.0\\"
++    \\"package-2\\": \\"^1.0.1-alpha.0+20130313144700\\"
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1-alpha.0+20130313144700\\",
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -4 +4 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.0.1-alpha.0+20130313144700\\"
+@@ -7 +7 @@
+-    \\"package-3\\": \\"^1.0.0\\"
++    \\"package-3\\": \\"^1.0.1-alpha.0+20130313144700\\"
+@@ -10 +10 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.0.1-alpha.0+20130313144700\\","
+`;
+
+exports[`--build-metadata without prompt accepts build metadata with semver keyword 1`] = `
+"v1.1.0+001
+
+HEAD -> main, tag: v1.1.0+001
+
+diff --git a/lerna.json b/lerna.json
+index SHA..SHA 100644
+--- a/lerna.json
++++ b/lerna.json
+@@ -2 +2 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+001\\",
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+001\\",
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+001\\",
+@@ -5 +5 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.1.0+001\\"
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+001\\",
+@@ -8 +8 @@
+-    \\"package-2\\": \\"^1.0.0\\"
++    \\"package-2\\": \\"^1.1.0+001\\"
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+001\\",
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -4 +4 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.1.0+001\\"
+@@ -7 +7 @@
+-    \\"package-3\\": \\"^1.0.0\\"
++    \\"package-3\\": \\"^1.1.0+001\\"
+@@ -10 +10 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"1.1.0+001\\","
+`;
+
+exports[`--build-metadata without prompt updates build metadata across independent versions with semver keyword 1`] = `
+"Publish
+
+ - package-1@1.1.0+exp.sha.SHA
+ - package-2@2.1.0+exp.sha.SHA
+
+HEAD -> main, tag: package-2@2.1.0+exp.sha.SHA, tag: package-1@1.1.0+exp.sha.SHA
+
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0+001\\"
++  \\"version\\": \\"1.1.0+exp.sha.SHA\\"
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"2.0.0+001\\"
++  \\"version\\": \\"2.1.0+exp.sha.SHA\\""
+`;
+
+exports[`--build-metadata without prompt updates build metadata for explicit version 1`] = `
+"v1.0.1+20130313144700
+
+HEAD -> main, tag: v1.0.1+20130313144700
+
+diff --git a/lerna.json b/lerna.json
+index SHA..SHA 100644
+--- a/lerna.json
++++ b/lerna.json
+@@ -2 +2 @@
+-  \\"version\\": \\"1.0.0+001\\"
++  \\"version\\": \\"1.0.1+20130313144700\\"
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0+001\\"
++  \\"version\\": \\"1.0.1+20130313144700\\""
+`;
