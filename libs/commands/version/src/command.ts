@@ -42,6 +42,11 @@ const command: CommandModule = {
         describe: "Amend the existing commit, instead of generating a new one.",
         type: "boolean",
       },
+      "build-metadata": {
+        describe: "Apply semver-compatible build metadata to the release",
+        requiresArg: true,
+        type: "string",
+      },
       "conventional-commits": {
         describe: "Use conventional-changelog to determine version bump and generate CHANGELOG.",
         type: "boolean",
