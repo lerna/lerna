@@ -114,6 +114,13 @@ const config = {
             label: "Get Started",
           },
           { to: "/upgrade", label: "Upgrade", position: "left" },
+          {
+            href: "https://www.youtube.com/watch?v=ASCSTKX21jE",
+            "aria-label": "What's New in Lerna 6.5",
+            position: "left",
+            title: "What's New in Lerna 6.5",
+            label: `🎥 Lerna 6.5`,
+          },
           // {
           //   href: "https://nx.dev",
           //   className: "header-nxdev-link",
