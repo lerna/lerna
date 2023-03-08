@@ -4,6 +4,9 @@ import { loggingOutput } from "@lerna/test-helpers";
 import { Package } from "./package";
 import { createRunner, runLifecycle } from "./run-lifecycle";
 
+// TODO: remove concatenation workaround once the issue with !test-helpers not being respected is resolved
+require("@lerna" + "/test-helpers/src/lib/silence-logging");
+
 jest.mock("@npmcli/run-script", () => jest.fn(() => Promise.resolve({ stdout: "" })));
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

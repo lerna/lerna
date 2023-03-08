@@ -9,7 +9,7 @@ jest.mock("@lerna/core", () => ({
   },
 }));
 
-const tempWrite = jest.mocked(_tempWrite, true);
+const tempWrite = jest.mocked(_tempWrite);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");

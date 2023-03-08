@@ -5,7 +5,7 @@ import { resolveSymlink } from "./resolve-symlink";
 jest.mock("read-cmd-shim");
 jest.mock("fs-extra");
 
-const fs = jest.mocked(_fs, true);
+const fs = jest.mocked(_fs);
 
 // read-cmd-shim does not have any types
 // eslint-disable-next-line @typescript-eslint/no-var-requires

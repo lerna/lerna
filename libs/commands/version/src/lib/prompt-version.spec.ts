@@ -8,7 +8,7 @@ import semver from "semver";
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
-const promptTextInput = jest.mocked(_promtTextInput, true);
+const promptTextInput = jest.mocked(_promtTextInput);
 
 // The mocked version isn't the same as the real one
 const promptSelectOne = _promptSelectOne as any;

@@ -38,7 +38,7 @@ jest.mock("@lerna/core", () => {
   };
 });
 
-const promptTextInput = jest.mocked(_promtTextInput, true);
+const promptTextInput = jest.mocked(_promtTextInput);
 
 // The mocked version isn't the same as the real one
 const promptSelectOne = _promptSelectOne as any;

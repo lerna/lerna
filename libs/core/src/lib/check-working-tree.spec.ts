@@ -5,8 +5,8 @@ import { describeRef as _describeRef } from "./describe-ref";
 jest.mock("./describe-ref");
 jest.mock("./collect-uncommitted");
 
-const describeRef = jest.mocked(_describeRef, true);
-const collectUncommitted = jest.mocked(_collectUncommitted, true);
+const describeRef = jest.mocked(_describeRef);
+const collectUncommitted = jest.mocked(_collectUncommitted);
 
 describe("check-working-tree", () => {
   it("resolves on a clean tree with no release tags", async () => {

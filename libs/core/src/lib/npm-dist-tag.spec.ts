@@ -7,7 +7,7 @@ jest.mock("@lerna/core", () => ({
   otplease: (cb: (arg0: any) => any, opts: any) => Promise.resolve(cb(opts)),
 }));
 
-const fetch = jest.mocked(_fetch, true);
+const fetch = jest.mocked(_fetch);
 
 const stubLog = {
   verbose: jest.fn(),

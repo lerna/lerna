@@ -88,7 +88,7 @@
           "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts"
         ],
         "esbuildOptions": {
-          "external": ["*package.json"],
+          "external": ["*package.json", "@lerna/child-process", "@lerna/create"],
           "outExtension": {
             ".js": ".js"
           },
