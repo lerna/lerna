@@ -1,4 +1,11 @@
-import { Command, Package, PackageGraph, symlinkDependencies, ValidationError } from "@lerna/core";
+import {
+  Command,
+  CommandConfigOptions,
+  Package,
+  PackageGraph,
+  symlinkDependencies,
+  ValidationError,
+} from "@lerna/core";
 import pMap from "p-map";
 import path from "path";
 import slash from "slash";
@@ -7,7 +14,12 @@ module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new LinkCommand(argv);
 };
 
-class LinkCommand extends Command {
+interface LinkCommandOptions extends CommandConfigOptions {
+  contents: string;
+  forceLocal: boolean;
+}
+
+class LinkCommand extends Command<LinkCommandOptions> {
   allPackages: Package[];
   targetGraph: PackageGraph;
 

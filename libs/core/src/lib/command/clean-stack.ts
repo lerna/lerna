@@ -1,7 +1,5 @@
-import { ExecaError } from "execa";
-
-export function cleanStack(err: ExecaError, className: string) {
-  const lines = err.stack ? err.stack.split("\n") : String(err).split("\n");
+export function cleanStack(err: string | Error, className: string) {
+  const lines = isErrorWithStack(err) ? err.stack.split("\n") : String(err).split("\n");
   const cutoff = new RegExp(`^    at ${className}.runCommand .*$`);
   const relevantIndex = lines.findIndex((line) => cutoff.test(line));
 
@@ -10,5 +8,9 @@ export function cleanStack(err: ExecaError, className: string) {
   }
 
   // nothing matched, just return original error
-  return err;
+  return err.toString();
+}
+
+function isErrorWithStack(err: Error | string): err is Error & { stack: string } {
+  return (err as Error).stack !== undefined;
 }

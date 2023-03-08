@@ -1,4 +1,4 @@
-import { Command, ValidationError } from "@lerna/core";
+import { Command, CommandConfigOptions, ValidationError } from "@lerna/core";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { getLastCommit } = require("./lib/get-last-commit");
@@ -12,7 +12,12 @@ module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new DiffCommand(argv);
 };
 
-class DiffCommand extends Command {
+interface DiffCommandOptions extends CommandConfigOptions {
+  pkgName: string;
+  ignoreChanges: string[];
+}
+
+class DiffCommand extends Command<DiffCommandOptions> {
   private args: string[];
 
   initialize() {

@@ -15,12 +15,35 @@ import { applyExtends } from "./apply-extends";
 import { deprecateConfig } from "./deprecate-config";
 import { makeFileFinder, makeSyncFileFinder } from "./make-file-finder";
 
+interface CommandConfigs {
+  [command: string]: CommandConfigOptions;
+}
+
+export interface CommandConfigOptions {
+  //Here we have all general options
+  _?: string[];
+  concurrency?: number;
+  sort?: boolean;
+  maxBuffer?: number;
+  stream?: boolean;
+  loglevel?: string;
+  verbose?: boolean;
+  progress?: boolean;
+  npmClient?: string;
+  useNx?: boolean;
+  independent?: boolean;
+  ci?: boolean;
+  useWorkspaces?: boolean;
+  since?: string;
+}
+
 interface ProjectConfig {
   packages: string[];
   useNx: boolean;
   useWorkspaces: boolean;
   version: string;
   npmClient: string;
+  command?: CommandConfigs;
 }
 
 interface PnpmWorkspaceConfig {
@@ -192,10 +215,9 @@ export class Project {
   }
 
   get packageParentDirs() {
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return this.packageConfigs.map(globParent).map((parentDir) => path.resolve(this.rootPath, parentDir));
+    return this.packageConfigs
+      .map(globParent)
+      .map((parentDir: string) => path.resolve(this.rootPath, parentDir));
   }
 
   get manifest() {

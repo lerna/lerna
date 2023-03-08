@@ -32,6 +32,7 @@ export { symlinkDependencies } from "./lib/symlink-dependencies";
 export { default as tempWrite } from "./lib/temp-write";
 export { timer } from "./lib/timer";
 export { ValidationError } from "./lib/validation-error";
+export { CommandConfigOptions } from "./lib/project";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const npmConf = require("./lib/npm-conf");

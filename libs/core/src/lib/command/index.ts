@@ -4,7 +4,7 @@ import execa from "execa";
 import log from "npmlog";
 import os from "os";
 import { PackageGraph } from "../package-graph";
-import { Project } from "../project";
+import { CommandConfigOptions, Project } from "../project";
 import { ValidationError } from "../validation-error";
 import { writeLogFile } from "../write-log-file";
 import { cleanStack } from "./clean-stack";
@@ -14,17 +14,28 @@ import { warnIfHanging } from "./warn-if-hanging";
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
-export class Command {
+export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   name: string;
   composed: boolean;
-  project?: Project;
-  options: any;
-  runner: any;
+  options: T = {} as T;
+  runner: Promise<unknown>;
   concurrency?: number;
-  toposort: any;
-  execOpts?: { cwd: any; maxBuffer: any };
+  toposort = false;
+  execOpts?: { cwd: string; maxBuffer?: number };
   packageGraph?: PackageGraph;
   logger!: log.Logger;
+
+  private _project?: Project;
+  get project(): Project {
+    if (this._project === undefined) {
+      throw new ValidationError("ENOPROJECT", "Lerna Project not initialized!");
+    }
+    return this._project;
+  }
+
+  set project(project: Project) {
+    this._project = project;
+  }
 
   constructor(_argv: any, { skipValidations } = { skipValidations: false }) {
     log.pause();
@@ -76,17 +87,11 @@ export class Command {
           } else if (err.name !== "ValidationError") {
             // npmlog does some funny stuff to the stack by default,
             // so pass it directly to avoid duplication.
-            // TODO: refactor to address type issues
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             log.error("", cleanStack(err, this.constructor.name));
           }
 
           // ValidationError does not trigger a log dump, nor do external package errors
           if (err.name !== "ValidationError" && !err.pkg) {
-            // TODO: refactor to address type issues
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             writeLogFile(this.project.rootPath);
           }
 
@@ -117,18 +122,16 @@ export class Command {
       value: Object.freeze(argv),
     });
 
-    Object.defineProperty(this, "runner", {
-      value: runner,
-    });
+    this.runner = runner;
   }
 
   // proxy "Promise" methods to "private" instance
-  then(onResolved: any, onRejected: any) {
+  then(onResolved: () => void, onRejected: (err: string | Error) => void) {
     return this.runner.then(onResolved, onRejected);
   }
 
   /* istanbul ignore next */
-  catch(onRejected: any) {
+  catch(onRejected: (err: string | Error) => void) {
     return this.runner.catch(onRejected);
   }
 
@@ -172,9 +175,6 @@ export class Command {
 
   configureOptions() {
     // Command config object normalized to "command" namespace
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const commandConfig = this.project.config.command || {};
 
     // The current command always overrides otherCommandConfigs
@@ -186,9 +186,6 @@ export class Command {
       // Namespaced command options from `lerna.json`
       ...overrides,
       // Global options from `lerna.json`
-      // TODO: refactor to address type issues
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       this.project.config,
       // Environmental defaults prepared in previous step
       this.envDefaults
@@ -206,16 +203,12 @@ export class Command {
   }
 
   configureProperties() {
-    const { concurrency, sort, maxBuffer } = this.options;
-
+    const { concurrency = 0, sort, maxBuffer } = this.options;
     this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
     this.toposort = sort === undefined || sort;
 
     /** @type {import("@lerna/child-process").ExecOpts} */
     this.execOpts = {
-      // TODO: refactor to address type issues
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       cwd: this.project.rootPath,
       maxBuffer,
     };
@@ -248,10 +241,7 @@ export class Command {
   }
 
   gitInitialized() {
-    const opts = {
-      // TODO: refactor to address type issues
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+    const opts: execa.SyncOptions = {
       cwd: this.project.rootPath,
       // don't throw, just want boolean
       reject: false,
@@ -259,9 +249,6 @@ export class Command {
       stdio: "ignore",
     };
 
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     return execa.sync("git", ["rev-parse"], opts).exitCode === 0;
   }
 
@@ -270,30 +257,18 @@ export class Command {
       throw new ValidationError("ENOGIT", "The git binary was not found, or this is not a git repository.");
     }
 
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     if (!this.project.manifest) {
       throw new ValidationError("ENOPKG", "`package.json` does not exist, have you run `lerna init`?");
     }
 
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     if (this.project.configNotFound) {
       throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
     }
 
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     if (!this.project.version) {
       throw new ValidationError("ENOVERSION", "Required property version does not exist in `lerna.json`");
     }
 
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     if (this.options.independent && !this.project.isIndependent()) {
       throw new ValidationError(
         "EVERSIONMODE",
@@ -314,9 +289,6 @@ export class Command {
   }
 
   runPreparations() {
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     if (!this.composed && this.project.isIndependent()) {
       // composed commands have already logged the independent status
       log.info("versioning", "independent");

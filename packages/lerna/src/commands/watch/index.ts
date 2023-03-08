@@ -1,4 +1,4 @@
-import { Command, getFilteredPackages, Package, ValidationError } from "@lerna/core";
+import { Command, getFilteredPackages, Package, ValidationError, CommandConfigOptions } from "@lerna/core";
 import { watch } from "nx/src/command-line/watch";
 import { readNxJson } from "nx/src/config/configuration";
 
@@ -6,7 +6,11 @@ module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new WatchCommand(argv);
 };
 
-class WatchCommand extends Command {
+interface WatchCommandOptions extends CommandConfigOptions {
+  command: string;
+}
+
+class WatchCommand extends Command<WatchCommandOptions> {
   private filteredPackages: Package[] = [];
   private count = 0;
   private packagePlural = "packages";

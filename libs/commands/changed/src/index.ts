@@ -1,10 +1,16 @@
-import { collectUpdates, Command, listableFormat, output } from "@lerna/core";
+import { collectUpdates, Command, CommandConfigOptions, listableFormat, output } from "@lerna/core";
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new ChangedCommand(argv);
 };
 
-class ChangedCommand extends Command {
+interface ChangedCommandOptions extends CommandConfigOptions {
+  conventionalCommits: boolean;
+  conventionalGraduate: boolean;
+  forcePublish: boolean;
+}
+
+class ChangedCommand extends Command<ChangedCommandOptions> {
   result: ReturnType<typeof listableFormat>;
 
   get otherCommandConfigs() {
