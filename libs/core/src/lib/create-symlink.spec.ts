@@ -6,8 +6,8 @@ import { createSymlink } from "./create-symlink";
 jest.mock("cmd-shim");
 jest.mock("fs-extra");
 
-const cmdShim = jest.mocked(_cmdShim, true);
-const fs = jest.mocked(_fs, true);
+const cmdShim = jest.mocked(_cmdShim);
+const fs = jest.mocked(_fs);
 
 const linkRelative = (from: string, to: string) => path.relative(path.dirname(to), from);
 

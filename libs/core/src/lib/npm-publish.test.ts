@@ -20,10 +20,10 @@ import { Package } from "./package";
 // file under test
 import { npmPublish } from "./npm-publish";
 
-const fs = jest.mocked(_fs, true);
-const publish = jest.mocked(_publish, true);
-const runLifecycle = jest.mocked(_runLifecycle, true);
-const otplease = jest.mocked(_otplease, true);
+const fs = jest.mocked(_fs);
+const publish = jest.mocked(_publish);
+const runLifecycle = jest.mocked(_runLifecycle);
+const otplease = jest.mocked(_otplease);
 
 describe("npm-publish", () => {
   const mockTarData = Buffer.from("MOCK");

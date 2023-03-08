@@ -6,7 +6,7 @@ jest.mock("npm-registry-fetch");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { getNpmUsername } = require("./get-npm-username");
 
-const fetch = jest.mocked(_fetch, true);
+const fetch = jest.mocked(_fetch);
 
 fetch.json.mockImplementation(() => Promise.resolve({ username: "lerna-test" }));
 

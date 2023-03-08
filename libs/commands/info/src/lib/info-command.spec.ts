@@ -6,7 +6,7 @@ const initFixture = initFixtureFactory(__dirname);
 
 jest.mock("envinfo");
 
-const envinfo = jest.mocked(_envinfo, true);
+const envinfo = jest.mocked(_envinfo);
 
 envinfo.run.mockResolvedValue("MOCK_ENVINFO");
 

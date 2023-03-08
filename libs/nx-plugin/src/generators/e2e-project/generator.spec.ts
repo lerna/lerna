@@ -103,13 +103,8 @@ describe("e2e-project generator", () => {
       export default {
         displayName: 'e2e-test',
         preset: '../../jest.preset.js',
-        globals: {
-          'ts-jest': {
-            tsconfig: '<rootDir>/tsconfig.spec.json',
-          }
-        },
         transform: {
-          '^.+\\\\\\\\.[tj]s$': 'ts-jest'
+          '^.+\\\\\\\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }]
         },
         moduleFileExtensions: ['ts', 'js', 'html'],
         coverageDirectory: '../../coverage/e2e/test',\\"maxWorkers\\": 1,\\"testTimeout\\": 60000,\\"setupFiles\\": [\\"<rootDir>/src/test-setup.ts\\"]

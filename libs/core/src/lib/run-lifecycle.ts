@@ -148,7 +148,7 @@ export function runLifecycle(pkg: Package, stage: string, options: LifecycleConf
            * from "npm-lifecycle" to "@npmcli/run-script".
            */
           // eslint-disable-next-line no-console
-          console.log(stdout.toString().trimEnd());
+          process.stdout.write(stdout.toString().trimEnd() + "\n");
         }
 
         opts.log.silly("lifecycle", "%j finished in %j", stage, pkg.name);
