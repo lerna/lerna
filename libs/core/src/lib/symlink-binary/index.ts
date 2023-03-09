@@ -10,7 +10,7 @@ import { Package, RawManifest } from "../package";
 export function symlinkBinary(
   srcPackageRef: string | Package | RawManifest,
   destPackageRef: string | Package | RawManifest
-): Promise<any> {
+): Promise<[Package, Package]> {
   return Promise.all([Package.lazy(srcPackageRef), Package.lazy(destPackageRef)]).then(
     // TODO: refactor based on TS feedback
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

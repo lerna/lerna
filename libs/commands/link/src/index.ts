@@ -3,12 +3,15 @@ import {
   CommandConfigOptions,
   Package,
   PackageGraph,
+  PackageGraphNode,
   symlinkDependencies,
   ValidationError,
 } from "@lerna/core";
+
 import pMap from "p-map";
 import path from "path";
 import slash from "slash";
+import npa from "npm-package-arg";
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new LinkCommand(argv);
@@ -20,8 +23,8 @@ interface LinkCommandOptions extends CommandConfigOptions {
 }
 
 class LinkCommand extends Command<LinkCommandOptions> {
-  allPackages: Package[];
-  targetGraph: PackageGraph;
+  allPackages: Package[] = [];
+  targetGraph?: PackageGraph;
 
   override get requiresGit() {
     return false;
@@ -35,7 +38,7 @@ class LinkCommand extends Command<LinkCommandOptions> {
       );
     }
 
-    this.allPackages = this.packageGraph.rawPackageList;
+    this.allPackages = this.packageGraph?.rawPackageList ?? [];
 
     if (this.options.contents) {
       // globally override directory to link
@@ -45,15 +48,12 @@ class LinkCommand extends Command<LinkCommandOptions> {
     }
 
     this.targetGraph = this.options.forceLocal
-      ? // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        new PackageGraph(this.allPackages, "allDependencies", "forceLocal")
+      ? new PackageGraph(this.allPackages, "allDependencies", true)
       : this.packageGraph;
   }
 
   override execute() {
-    if (this.options._.pop() === "convert") {
+    if (this.options._?.pop() === "convert") {
       return this.convertLinksToFileSpecs();
     }
 
@@ -62,44 +62,51 @@ class LinkCommand extends Command<LinkCommandOptions> {
 
   convertLinksToFileSpecs() {
     const rootPkg = this.project.manifest;
-    const rootDependencies = {};
+    const rootDependencies: Record<string, string> = {};
     const hoisted = {};
-    const changed = new Set();
+    const changed = new Set<PackageGraphNode>();
     const savePrefix = "file:";
+    if (this.targetGraph) {
+      for (const targetNode of this.targetGraph.values()) {
+        const resolved: npa.Result = {
+          name: targetNode.name,
+          type: "directory",
+          registry: false,
+          scope: null,
+          escapedName: null,
+          rawSpec: "",
+          saveSpec: null,
+          fetchSpec: null,
+          raw: "",
+        };
 
-    for (const targetNode of this.targetGraph.values()) {
-      const resolved = { name: targetNode.name, type: "directory" };
+        // install root file: specifiers to avoid bootstrap
+        if (targetNode.pkg.resolved.saveSpec) {
+          rootDependencies[targetNode.name] = targetNode.pkg.resolved.saveSpec;
+        }
 
-      // install root file: specifiers to avoid bootstrap
-      rootDependencies[targetNode.name] = targetNode.pkg.resolved.saveSpec;
+        for (const depNode of targetNode.localDependents.values()) {
+          const depVersion = slash(path.relative(depNode.pkg.location, targetNode.pkg.location));
+          // console.log("\n%s\n  %j: %j", depNode.name, name, `${savePrefix}${depVersion}`);
 
-      for (const depNode of targetNode.localDependents.values()) {
-        const depVersion = slash(path.relative(depNode.pkg.location, targetNode.pkg.location));
-        // console.log("\n%s\n  %j: %j", depNode.name, name, `${savePrefix}${depVersion}`);
+          depNode.pkg.updateLocalDependency(resolved, depVersion, savePrefix);
+          changed.add(depNode);
+        }
 
-        // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        depNode.pkg.updateLocalDependency(resolved, depVersion, savePrefix);
-        changed.add(depNode);
-      }
-
-      if (targetNode.pkg.devDependencies) {
-        // hoist _all_ devDependencies to the root
-        Object.assign(hoisted, targetNode.pkg.devDependencies);
-        targetNode.pkg.set("devDependencies", {});
-        changed.add(targetNode);
+        if (targetNode.pkg.devDependencies) {
+          // hoist _all_ devDependencies to the root
+          Object.assign(hoisted, targetNode.pkg.devDependencies);
+          targetNode.pkg.set("devDependencies", {});
+          changed.add(targetNode);
+        }
       }
     }
 
     // mutate project manifest, completely overwriting existing dependencies
-    rootPkg.set("dependencies", rootDependencies);
-    rootPkg.set("devDependencies", Object.assign(rootPkg.get("devDependencies") || {}, hoisted));
+    rootPkg?.set("dependencies", rootDependencies);
+    rootPkg?.set("devDependencies", Object.assign(rootPkg?.get("devDependencies") || {}, hoisted));
 
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return pMap(changed, (node) => node.pkg.serialize()).then(() => rootPkg.serialize());
+    return pMap(changed, (node) => node.pkg.serialize()).then(() => rootPkg?.serialize());
   }
 }
 
