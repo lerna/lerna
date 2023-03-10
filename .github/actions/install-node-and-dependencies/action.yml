@@ -4,6 +4,10 @@ inputs:
   node-version:
     description: "A specific version of node to install (rather than the value specified in the volta config in package.json)"
     required: false
+  install-command:
+    description: "The command to run to install dependencies"
+    required: false
+    default: "npm ci"
 
 runs:
   using: "composite"
@@ -29,7 +33,7 @@ runs:
           ${{ runner.os }}-node-
 
     - name: Install dependencies
-      run: npm ci
+      run: ${{ inputs.install-command }}
       shell: bash
 
     - name: Install pnpm

@@ -7,8 +7,8 @@
     "packages/legacy-structure/commands/*"
   ],
   "volta": {
-    "node": "16.18.1",
-    "npm": "8.19.2",
+    "node": "18.15.0",
+    "npm": "9.5.0",
     "yarn": "1.22.18"
   },
   "engines": {

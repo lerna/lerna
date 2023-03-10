@@ -26,12 +26,8 @@ jobs:
       - name: Set node matrix
         id: node-matrix
         # These versions intentionally do not contain our primary major version because that has already been tested by ci.yml
-        # 19 is included so that we can test npm v9
-        #
-        # TODO: Investigate unit test failure on v19
-        # TODO: ^14.15.0 is currently failing e2e because of later JS usage in our e2e-utils, so we need to address that
         run: |
-          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['18']));")
+          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['16']));")
           echo $NODE_VERSIONS_JSON_ARRAY
           echo "node-versions=$NODE_VERSIONS_JSON_ARRAY" >> $GITHUB_OUTPUT
 
@@ -49,8 +45,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
+      - uses: nrwl/nx-set-shas@v3
 
       - name: Set NX_RUN_GROUP
         shell: bash
@@ -64,6 +59,8 @@ jobs:
         uses: ./.github/actions/install-node-and-dependencies
         with:
           node-version: ${{ matrix.node }}
+          # Because of lockfile differences across major versions of node, we need to run npm install instead of npm ci
+          install-command: rm -rf node_modules && rm package-lock.json && npm install
 
       - name: Install pnpm
         run: npm install -g pnpm
@@ -79,7 +76,7 @@ jobs:
           cmd2: npx nx run integration:integration --ci --maxWorkers=2
 
       # e2e tests for everything except the primary task runner
-      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --target=run-e2e-tests-process --parallel=1
+      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
 
       - name: Configure git metadata
         run: |
@@ -112,8 +109,8 @@ jobs:
       fail-fast: false
       matrix:
         node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
-        # Create 2 agents per node version
-        agent: [1, 2]
+        # Create 4 agents per node version
+        agent: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v3
 
@@ -134,10 +131,8 @@ jobs:
         uses: ./.github/actions/install-node-and-dependencies
         with:
           node-version: ${{ matrix.node }}
-
-      - run: npm run e2e-start-local-registry
-
-      - run: NX_VERBOSE_LOGGING=true PUBLISHED_VERSION=999.9.9-e2e.0 npm run e2e-build-package-publish
+          # Because of lockfile differences across major versions of node, we need to run npm install instead of npm ci
+          install-command: rm -rf node_modules && rm package-lock.json && npm install
 
       - name: Start Nx Agent node-${{ matrix.node }}-agent-${{ matrix.agent }}
         run: npx nx-cloud start-agent

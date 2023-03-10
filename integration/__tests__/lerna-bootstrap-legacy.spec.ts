@@ -49,9 +49,9 @@ package-3 cli2 package-2 OK
   expect(lock1).toMatchObject({
     name: "@integration/package-1",
     version: "1.0.0",
-    dependencies: {
-      pify: expect.any(Object),
-      "tiny-tarball": {
+    packages: {
+      "node_modules/pify": expect.any(Object),
+      "node_modules/tiny-tarball": {
         version: "1.0.0",
         optional: true,
       },
@@ -60,11 +60,11 @@ package-3 cli2 package-2 OK
   expect(lock2).toMatchObject({
     name: "@integration/package-2",
     version: "1.0.0",
-    dependencies: { pify: expect.any(Object) },
+    packages: { "node_modules/pify": expect.any(Object) },
   });
   expect(lock3).toMatchObject({
     name: "@integration/package-3",
     version: "1.0.0",
-    dependencies: { pify: expect.any(Object) },
+    packages: { "node_modules/pify": expect.any(Object) },
   });
 });
