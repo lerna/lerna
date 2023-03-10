@@ -17,20 +17,8 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
 
-    - name: Get npm cache directory and node version for cache key
-      id: npm-cache-dir
-      run: |
-        echo "node_version=$(node --version)" >> $GITHUB_OUTPUT
-        echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-      shell: bash
-
-    - uses: actions/cache@v3
-      with:
-        path: ${{ steps.npm-cache-dir.outputs.dir }}
-        # We can't just pass through the node-version input because in the common case it won't be set (we resolve from volta config in package.json)
-        key: ${{ runner.os }}-node-${{ steps.npm-cache-dir.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-${{ steps.npm-cache-dir.outputs.node_version }}
+    # Github actions/cache now recommends _not_ caching node_modules when using npm ci
+    # https://github.com/actions/cache/blob/940f3d7cf195ba83374c77632d1e2cbb2f24ae68/examples.md#node---npm
 
     - name: Install dependencies
       run: ${{ inputs.install-command }}
