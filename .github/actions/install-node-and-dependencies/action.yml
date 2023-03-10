@@ -30,7 +30,7 @@ runs:
         # We can't just pass through the node-version input because in the common case it won't be set (we resolve from volta config in package.json)
         key: ${{ runner.os }}-node-${{ steps.npm-cache-dir.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-
+          ${{ runner.os }}-node-${{ steps.npm-cache-dir.outputs.node_version }}
 
     - name: Install dependencies
       run: ${{ inputs.install-command }}
