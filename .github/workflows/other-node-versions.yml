@@ -69,11 +69,12 @@ jobs:
       - run: pnpm --version
         shell: bash
 
-      - name: Run parallel distributed tests on each node version
+      - name: Run parallel distributed builds and tests on each node version
         uses: jameshenry/parallel-bash-commands@v1
         with:
-          cmd1: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
-          cmd2: npx nx run integration:integration --ci --maxWorkers=2
+          cmd1: npx nx run-many -t build --parallel=3
+          cmd2: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
+          cmd3: npx nx run integration:integration --ci --maxWorkers=2
 
       # e2e tests for everything except the primary task runner
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
