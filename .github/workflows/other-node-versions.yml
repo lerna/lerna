@@ -133,7 +133,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           # Because of lockfile differences across major versions of node, we need to run npm install instead of npm ci
-          install-command: rm -rf node_modules && rm package-lock.json && npm install
+          # install-command: rm -rf node_modules && rm package-lock.json && npm install
 
       - name: Start Nx Agent node-${{ matrix.node }}-agent-${{ matrix.agent }}
         run: npx nx-cloud start-agent
