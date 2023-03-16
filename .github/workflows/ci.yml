@@ -211,5 +211,5 @@ jobs:
 
       - name: Run e2e tests for task-runner
         if: ${{ steps.check_affected.outputs.is_affected }}
-        run: npx nx-cloud record -- e2e/run/task-runner/src/run-tests.sh
+        run: e2e/run/task-runner/src/run-tests.sh
         shell: bash

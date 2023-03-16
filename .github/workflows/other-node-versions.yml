@@ -87,7 +87,7 @@ jobs:
           git config --global user.name "Tester McPerson"
 
       - name: Run e2e tests for task-runner
-        run: npx nx prepare-for-e2e e2e-run-task-runner && curl http://localhost:4872 && npx nx-cloud record -- e2e/run/task-runner/src/run-tests.sh
+        run: npx nx prepare-for-e2e e2e-run-task-runner && e2e/run/task-runner/src/run-tests.sh
         shell: bash
         env:
           NX_CLOUD_DISTRIBUTED_EXECUTION: false
