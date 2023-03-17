@@ -61,8 +61,6 @@ jobs:
         uses: ./.github/actions/install-node-and-dependencies
         with:
           node-version: ${{ matrix.node }}
-          # Because of lockfile differences across major versions of node, we need to run npm install instead of npm ci
-          install-command: rm -rf node_modules && rm package-lock.json && npm install
 
       - name: Remove the volta key from package.json to ensure the explicitly installed version is respected
         run: |
@@ -133,8 +131,6 @@ jobs:
         uses: ./.github/actions/install-node-and-dependencies
         with:
           node-version: ${{ matrix.node }}
-          # Because of lockfile differences across major versions of node, we need to run npm install instead of npm ci
-          install-command: rm -rf node_modules && rm package-lock.json && npm install
 
       - name: Remove the volta key from package.json to ensure the explicitly installed version is respected
         run: |
