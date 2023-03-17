@@ -48,20 +48,20 @@ package-3 cli2 package-2 OK
   expect(lock3).toMatchObject({
     name: "@integration/package-3",
     version: "1.0.0",
-    dependencies: { pify: expect.any(Object) },
+    packages: { "node_modules/pify": expect.any(Object) },
   });
   expect(rootLock).toMatchObject({
     name: "integration",
     version: "0.0.0",
-    dependencies: {
-      pify: expect.any(Object),
-      "tiny-tarball": {
+    packages: {
+      "node_modules/pify": expect.any(Object),
+      "node_modules/tiny-tarball": {
         version: "1.0.0",
         // root hoist does not preserve optional
       },
     },
   });
-  expect(rootLock).not.toHaveProperty("dependencies.tiny-tarball.optional");
+  expect(rootLock).not.toHaveProperty("packages.node_modules/tiny-tarball.optional");
 });
 
 test("postinstall does not recurse", async () => {
