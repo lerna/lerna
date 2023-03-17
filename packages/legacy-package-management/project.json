@@ -1,0 +1,54 @@
+{
+  "name": "legacy-package-management",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/legacy-package-management/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "dependsOn": ["compile"],
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/legacy-package-management/dist",
+        "parallel": false,
+        "commands": ["rm -rf package.json"]
+      }
+    },
+    "compile": {
+      "executor": "@nrwl/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "packages/legacy-package-management/dist",
+        "main": "packages/legacy-package-management/src/index.ts",
+        "tsConfig": "packages/legacy-package-management/tsconfig.lib.json",
+        "assets": ["packages/legacy-package-management/*.md"],
+        "thirdParty": false,
+        "platform": "node",
+        "format": ["cjs"],
+        "esbuildOptions": {
+          "external": ["*package.json", "@lerna/child-process", "@lerna/create"],
+          "outExtension": {
+            ".js": ".js"
+          },
+          "logOverride": {
+            "commonjs-variable-in-esm": "silent"
+          }
+        }
+      }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/publish.mjs legacy-package-management {args.ver} {args.tag}"
+      },
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/legacy-package-management/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}

@@ -39,6 +39,7 @@
   "dependencies": {
     "@lerna/child-process": "6.5.1",
     "@lerna/create": "6.5.1",
+    "@lerna/legacy-package-management": "6.5.1",
     "@npmcli/arborist": "6.2.3",
     "@npmcli/run-script": "4.1.7",
     "@nrwl/devkit": ">=15.5.2 < 16",

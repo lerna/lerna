@@ -35,7 +35,7 @@
   "dependencies": {
     "@npmcli/arborist": "^6.2.3",
     "@npmcli/run-script": "^4.1.7",
-    "@nrwl/devkit": "15.8.5",
+    "@nrwl/devkit": "15.8.7",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
     "@octokit/rest": "^19.0.3",
     "@swc/helpers": "~0.4.11",
@@ -113,13 +113,13 @@
     "yargs-parser": "20.2.4"
   },
   "devDependencies": {
-    "@nrwl/esbuild": "15.8.5",
-    "@nrwl/eslint-plugin-nx": "15.8.5",
-    "@nrwl/jest": "15.8.5",
-    "@nrwl/js": "15.8.5",
-    "@nrwl/nx-cloud": "15.3.0-beta.4",
-    "@nrwl/nx-plugin": "15.8.5",
-    "@nrwl/web": "15.8.5",
+    "@nrwl/esbuild": "15.8.7",
+    "@nrwl/eslint-plugin-nx": "15.8.7",
+    "@nrwl/jest": "15.8.7",
+    "@nrwl/js": "15.8.7",
+    "@nrwl/nx-cloud": "15.3.1",
+    "@nrwl/nx-plugin": "15.8.7",
+    "@nrwl/web": "15.8.7",
     "@swc-node/register": "^1.4.2",
     "@swc/cli": "~0.1.55",
     "@swc/core": "^1.2.173",
@@ -138,7 +138,7 @@
     "@types/jest": "29.4.0",
     "@types/js-yaml": "^4.0.5",
     "@types/libnpmpublish": "^4.0.3",
-    "@types/node": "16.11.7",
+    "@types/node": "18.7.1",
     "@types/node-fetch": "^2.6.2",
     "@types/normalize-path": "^3.0.0",
     "@types/npm-package-arg": "^6.1.1",
@@ -177,7 +177,7 @@
     "node-jq": "^2.3.3",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
-    "nx": "15.8.5",
+    "nx": "15.8.7",
     "path-key": "^3.1.1",
     "prettier": "^2.2.1",
     "resolve.exports": "2.0.0",
@@ -190,3 +190,4 @@
     "verdaccio": "^5.19.0"
   }
 }
+
