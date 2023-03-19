@@ -1,4 +1,4 @@
-import { Command, CommandConfigOptions, Project } from "@lerna/core";
+import { Command, CommandConfigOptions, Package, Project } from "@lerna/core";
 import { writeJsonFile } from "@nrwl/devkit";
 import fs from "fs-extra";
 import pMap from "p-map";
@@ -17,8 +17,8 @@ interface InitCommandOptions extends CommandConfigOptions {
 }
 
 class InitCommand extends Command<InitCommandOptions> {
-  exact: boolean;
-  lernaVersion: string;
+  exact?: boolean;
+  lernaVersion = "";
 
   get requiresGit() {
     return false;
@@ -47,13 +47,10 @@ class InitCommand extends Command<InitCommandOptions> {
   }
 
   override execute() {
-    let chain = Promise.resolve();
+    let chain: Promise<void | Package | void[]> = Promise.resolve();
 
     chain = chain.then(() => this.ensureGitIgnore());
     chain = chain.then(() => this.ensureConfig());
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     chain = chain.then(() => this.ensurePackagesDir());
 
     return chain.then(() => {
@@ -82,7 +79,7 @@ class InitCommand extends Command<InitCommandOptions> {
     const useNx = !hasExistingLernaConfig || this.project.config.useNx !== false;
     const useWorkspaces = !hasExistingLernaConfig || this.project.config.useWorkspaces === true;
 
-    let chain = Promise.resolve();
+    let chain: Promise<void | Package> = Promise.resolve();
 
     if (!hasExistingPackageJson) {
       this.logger.info("", "Creating package.json");
@@ -109,10 +106,10 @@ class InitCommand extends Command<InitCommandOptions> {
       this.logger.info("", "Updating package.json");
 
       chain = chain.then(() => {
-        if (useWorkspaces && !this.project.manifest.get("workspaces")) {
-          this.project.manifest.set("workspaces", [Project.PACKAGE_GLOB]);
+        if (useWorkspaces && !this.project.manifest?.get("workspaces")) {
+          this.project.manifest?.set("workspaces", [Project.PACKAGE_GLOB]);
 
-          return this.project.manifest.serialize();
+          return this.project.manifest?.serialize();
         }
       });
     }
@@ -121,25 +118,26 @@ class InitCommand extends Command<InitCommandOptions> {
     chain = chain.then(() => {
       const rootPkg = this.project.manifest;
 
-      const setDependency = ({ name, version }) => {
+      const setDependency = ({ name, version }: { name: string; version: string }) => {
         let targetDependencies;
 
-        if (rootPkg.dependencies && rootPkg.dependencies[name]) {
+        if (rootPkg?.dependencies && rootPkg.dependencies[name]) {
           targetDependencies = rootPkg.dependencies;
         } else {
-          if (!rootPkg.devDependencies) {
-            rootPkg.set("devDependencies", {});
+          if (!rootPkg?.devDependencies) {
+            rootPkg?.set("devDependencies", {});
           }
 
-          targetDependencies = rootPkg.devDependencies;
+          targetDependencies = rootPkg?.devDependencies;
         }
-
-        targetDependencies[name] = this.exact ? version : `^${version}`;
+        if (targetDependencies) {
+          targetDependencies[name] = this.exact ? version : `^${version}`;
+        }
       };
 
       setDependency({ name: "lerna", version: this.lernaVersion });
 
-      return rootPkg.serialize();
+      return rootPkg?.serialize();
     });
 
     // TODO: refactor based on TS feedback
