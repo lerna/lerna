@@ -10,12 +10,14 @@ export function createSymlink(src: string, dest: string, type: CreateSymlinkType
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   log.silly("createSymlink", [src, dest, type]);
+  if (src) {
+    if (process.platform === "win32") {
+      return createWindowsSymlink(src, dest, type);
+    }
 
-  if (process.platform === "win32") {
-    return createWindowsSymlink(src, dest, type);
+    return createPosixSymlink(src, dest, type);
   }
-
-  return createPosixSymlink(src, dest, type);
+  return Promise.resolve();
 }
 
 function createSymbolicLink(src: string, dest: string, type: SymlinkType) {

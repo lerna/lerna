@@ -17,31 +17,22 @@ type Tracker = any;
  */
 export function symlinkDependencies(
   packages: Package[],
-  packageGraph: PackageGraph,
+  packageGraph: PackageGraph | undefined,
   tracker: Tracker
-): Promise<any> {
+): Promise<unknown> {
   tracker.info("", "Symlinking packages and binaries");
   tracker.addWork(packages.length);
 
   const nodes =
-    packageGraph.size === packages.length
+    packageGraph?.size === packages.length
       ? packageGraph.values()
-      : new Set(packages.map(({ name }) => packageGraph.get(name)));
+      : new Set(packages.map(({ name }) => packageGraph?.get(name)));
 
   return pMapSeries(nodes, (currentNode) => {
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const currentName = currentNode.name;
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const currentNodeModules = currentNode.pkg.nodeModulesLocation;
+    const currentName = currentNode?.name;
+    const currentNodeModules = currentNode?.pkg.nodeModulesLocation;
 
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return pMap(currentNode.localDependencies, ([dependencyName, resolved]) => {
+    return pMap(currentNode?.localDependencies ?? new Map(), ([dependencyName, resolved]) => {
       if (resolved.type === "directory") {
         // a local file: specifier is already a symlink
         return;
@@ -49,30 +40,17 @@ export function symlinkDependencies(
 
       // get PackageGraphNode of dependency
       // const dependencyName = resolved.name;
-      const dependencyNode = packageGraph.get(dependencyName);
-      const targetDirectory = path.join(currentNodeModules, dependencyName);
+      const dependencyNode = packageGraph?.get(dependencyName);
+      const targetDirectory = path.join(currentNodeModules ?? "", dependencyName);
 
-      let chain = Promise.resolve();
+      let chain: Promise<void | boolean | [Package, Package]> = Promise.resolve();
 
-      // check if dependency is already installed
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       chain = chain.then(() => fs.pathExists(targetDirectory));
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       chain = chain.then((dirExists) => {
-        // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         if (dirExists) {
           const isDepSymlink = resolveSymlink(targetDirectory);
 
-          // TODO: refactor based on TS feedback
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          if (isDepSymlink !== false && isDepSymlink !== dependencyNode.location) {
+          if (isDepSymlink !== false && isDepSymlink !== dependencyNode?.location) {
             // installed dependency is a symlink pointing to a different location
             tracker.warn(
               "EREPLACE_OTHER",
@@ -89,6 +67,7 @@ export function symlinkDependencies(
             // remove installed dependency
             return fs.remove(targetDirectory);
           }
+          return Promise.resolve();
         } else {
           // ensure destination directory exists (dealing with scoped subdirs)
           return fs.ensureDir(path.dirname(targetDirectory));
@@ -96,25 +75,16 @@ export function symlinkDependencies(
       });
 
       // create package symlink
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const dependencyLocation = dependencyNode.pkg.contents
-        ? // TODO: refactor based on TS feedback
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          path.resolve(dependencyNode.location, dependencyNode.pkg.contents)
-        : // TODO: refactor based on TS feedback
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          dependencyNode.location;
-      chain = chain.then(() => createSymlink(dependencyLocation, targetDirectory, "junction"));
-
+      const dependencyLocation = dependencyNode?.pkg.contents
+        ? path.resolve(dependencyNode.location, dependencyNode.pkg.contents)
+        : dependencyNode?.location;
+      if (dependencyLocation) {
+        chain = chain.then(() => createSymlink(dependencyLocation, targetDirectory, "junction"));
+      }
       // TODO: pass PackageGraphNodes directly instead of Packages
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      chain = chain.then(() => symlinkBinary(dependencyNode.pkg, currentNode.pkg));
+      if (dependencyNode && currentNode) {
+        chain = chain.then(() => symlinkBinary(dependencyNode?.pkg, currentNode?.pkg));
+      }
 
       return chain;
     }).then(() => {

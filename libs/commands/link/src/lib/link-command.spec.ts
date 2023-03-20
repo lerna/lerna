@@ -13,7 +13,7 @@ const createSymlink = jest.mocked(_createSymlink);
 const lernaLink = commandRunner(require("../command"));
 
 // assertion helpers
-const symlinkedDirectories = (testDir) =>
+const symlinkedDirectories = (testDir: string) =>
   createSymlink.mock.calls
     .slice()
     // ensure sort is always consistent, despite promise variability
@@ -28,10 +28,10 @@ const symlinkedDirectories = (testDir) =>
         return b[1] < a[1] ? 1 : -1;
       }
 
-      return b[0] < a[0] ? 1 : -1;
+      return (b[0] ?? "") < (a[0] ?? "") ? 1 : -1;
     })
     .map(([src, dest, type]) => ({
-      _src: normalizeRelativeDir(testDir, src),
+      _src: normalizeRelativeDir(testDir, src!),
       dest: normalizeRelativeDir(testDir, dest),
       type,
     }));
