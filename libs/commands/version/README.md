@@ -415,7 +415,7 @@ This option makes the most sense configured in lerna.json, as you really don't w
 }
 ```
 
-The root-level configuration is intentional, as this also covers the [identically-named option in `lerna publish`](https://github.com/lerna/lerna/tree/main/commands/publish#--no-granular-pathspec).
+The root-level configuration is intentional, as this also covers the [identically-named option in `lerna publish`](https://github.com/lerna/lerna/tree/main/libs/commands/publish#--no-granular-pathspec).
 
 ### `--no-private`
 
@@ -541,7 +541,7 @@ Use [`--no-git-tag-version`](#--no-git-tag-version) and [`--no-push`](#--no-push
 
 ### Generating Initial Changelogs
 
-If you start using the [`--conventional-commits`](#--conventional-commits) option _after_ the monorepo has been active for awhile, you can still generate changelogs for previous releases using [`conventional-changelog-cli`](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli#readme) and [`lerna exec`](https://github.com/lerna/lerna/tree/main/commands/exec#readme):
+If you start using the [`--conventional-commits`](#--conventional-commits) option _after_ the monorepo has been active for awhile, you can still generate changelogs for previous releases using [`conventional-changelog-cli`](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli#readme) and [`lerna exec`](https://github.com/lerna/lerna/tree/main/libs/commands/exec#readme):
 
 ```bash
 # Lerna does not actually use conventional-changelog-cli, so you need to install it temporarily

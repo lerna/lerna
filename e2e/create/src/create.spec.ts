@@ -1246,7 +1246,7 @@ describe("lerna-create", () => {
         expect(result.combinedOutput).toMatchInlineSnapshot(`
           lerna notice cli v999.9.9-e2e.0
           lerna ERR! ENOPKGNAME Invalid package name. Use the <loc> positional to specify package directory.
-          lerna ERR! ENOPKGNAME See https://github.com/lerna/lerna/tree/main/commands/create#usage for details.
+          lerna ERR! ENOPKGNAME See https://github.com/lerna/lerna/tree/main/libs/commands/create#usage for details.
 
         `);
       });
@@ -1261,7 +1261,7 @@ describe("lerna-create", () => {
       expect(result.combinedOutput).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
         lerna ERR! ENOPKGNAME Invalid package name. Use the <loc> positional to specify package directory.
-        lerna ERR! ENOPKGNAME See https://github.com/lerna/lerna/tree/main/commands/create#usage for details.
+        lerna ERR! ENOPKGNAME See https://github.com/lerna/lerna/tree/main/libs/commands/create#usage for details.
 
       `);
     });
@@ -1283,7 +1283,7 @@ describe("lerna-create", () => {
         > node ./__tests__/test-script.test.js
         testScript tests passed
 
-         
+
 
          >  Lerna (powered by Nx)   Successfully ran target test for project test-script
 
