@@ -119,6 +119,7 @@
     "@nrwl/js": "15.8.5",
     "@nrwl/nx-cloud": "15.3.0-beta.4",
     "@nrwl/nx-plugin": "15.8.5",
+    "@nrwl/react": "^15.8.7",
     "@nrwl/web": "15.8.5",
     "@swc-node/register": "^1.4.2",
     "@swc/cli": "~0.1.55",
