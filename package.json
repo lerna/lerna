@@ -113,6 +113,7 @@
     "yargs-parser": "20.2.4"
   },
   "devDependencies": {
+    "@nrwl/angular": "^15.8.7",
     "@nrwl/esbuild": "15.8.5",
     "@nrwl/eslint-plugin-nx": "15.8.5",
     "@nrwl/jest": "15.8.5",
