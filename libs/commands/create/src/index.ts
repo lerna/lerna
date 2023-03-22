@@ -60,7 +60,7 @@ class CreateCommand extends Command {
     if (!name && pkgName.includes("/")) {
       throw new ValidationError(
         "ENOPKGNAME",
-        "Invalid package name. Use the <loc> positional to specify package directory.\nSee https://github.com/lerna/lerna/tree/main/commands/create#usage for details."
+        "Invalid package name. Use the <loc> positional to specify package directory.\nSee https://github.com/lerna/lerna/tree/main/libs/commands/create#usage for details."
       );
     }
 
