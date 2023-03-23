@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.6.0](https://github.com/lerna/lerna/compare/6.5.1...6.6.0) (2023-03-23)
+
+### Bug Fixes
+
+- correct links to command docs ([#3598](https://github.com/lerna/lerna/issues/3598)) ([b90b684](https://github.com/lerna/lerna/commit/b90b684976e33b18f1a856657dbc9a9546fe2c66))
+- **publish:** ensure zero exit code when EWORKINGTREE warning occurs ([#3327](https://github.com/lerna/lerna/issues/3327)) ([9c00a33](https://github.com/lerna/lerna/commit/9c00a33b18046b6f0a5a20d7043a4f0bb309d9c4))
+- update `troubleshooting.md` typo ([#3581](https://github.com/lerna/lerna/issues/3581)) ([a174cd7](https://github.com/lerna/lerna/commit/a174cd78165c5e9f05bf160891d927177ed7b948))
+- update arborist package to get rid of deprecated warning ([#3559](https://github.com/lerna/lerna/issues/3559)) ([aff38a7](https://github.com/lerna/lerna/commit/aff38a7a0f5e5eea04d1743e78add9b2e052de3a))
+- **version:** handle deps property missing due to outdated lockfile ([#3549](https://github.com/lerna/lerna/issues/3549)) ([fdbbab9](https://github.com/lerna/lerna/commit/fdbbab9c2cb96ac9e97018129bbdb5347c0e6171))
+- **version:** update yarn lock for versions of yarn >= 2.0.0 ([#3555](https://github.com/lerna/lerna/issues/3555)) ([ce2ceca](https://github.com/lerna/lerna/commit/ce2ceca7defd06fc2c8abf0241cbb2c3dcfaf0f3))
+
+### Features
+
+- add @lerna/legacy-package-management package ([#3602](https://github.com/lerna/lerna/issues/3602)) ([4a03dd5](https://github.com/lerna/lerna/commit/4a03dd5f02c118eb683cf2ed525715b4d8e5221b))
+- **version:** add user-defined build metadata to bumped packages ([#2880](https://github.com/lerna/lerna/issues/2880)) ([0b0e2a6](https://github.com/lerna/lerna/commit/0b0e2a62257ad8728835057dc37654626cbd621e))
+
 ## [6.5.1](https://github.com/lerna/lerna/compare/6.5.0...6.5.1) (2023-02-14)
 
 ### Bug Fixes

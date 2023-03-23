@@ -1,6 +1,6 @@
 {
   "name": "@lerna/bootstrap",
-  "version": "6.5.1",
+  "version": "6.6.0",
   "description": "Link local packages together and install remaining package dependencies",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/bootstrap"
   },
   "dependencies": {
-    "lerna": "6.5.1"
+    "lerna": "6.6.0"
   },
   "exports": {
     ".": "./dist/index.js",

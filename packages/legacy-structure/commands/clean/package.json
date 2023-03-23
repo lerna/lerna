@@ -1,6 +1,6 @@
 {
   "name": "@lerna/clean",
-  "version": "6.5.1",
+  "version": "6.6.0",
   "description": "Remove the node_modules directory from all packages",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/clean"
   },
   "dependencies": {
-    "lerna": "6.5.1"
+    "lerna": "6.6.0"
   },
   "exports": {
     ".": "./dist/index.js",

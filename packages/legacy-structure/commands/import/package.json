@@ -1,6 +1,6 @@
 {
   "name": "@lerna/import",
-  "version": "6.5.1",
+  "version": "6.6.0",
   "description": "Import a package into the monorepo with commit history",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/import"
   },
   "dependencies": {
-    "lerna": "6.5.1"
+    "lerna": "6.6.0"
   },
   "exports": {
     ".": "./dist/index.js",
