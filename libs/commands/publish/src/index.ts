@@ -671,15 +671,15 @@ class PublishCommand extends Command {
       for (const [depName, resolved] of node.localDependencies) {
         // only update local dependencies with workspace: links
         if (resolved.workspaceSpec) {
-          let depVersion;
-          let savePrefix;
+          let depVersion: string;
+          let savePrefix: string;
           if (resolved.workspaceAlias) {
             depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
             savePrefix = resolved.workspaceAlias === "*" ? "" : resolved.workspaceAlias;
           } else {
             const specMatch = resolved.workspaceSpec.match(/^workspace:([~^]?)(.*)/);
             savePrefix = specMatch[1];
-            depVersion = specMatch[2];
+            depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
           }
 
           // it no longer matters if we mutate the shared Package instance
