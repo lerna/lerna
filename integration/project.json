@@ -2,7 +2,7 @@
   "name": "integration",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "implicitDependencies": ["lerna", "legacy-structure-commands-*"],
+  "implicitDependencies": ["lerna", "legacy-structure-commands-*", "legacy-package-management"],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
