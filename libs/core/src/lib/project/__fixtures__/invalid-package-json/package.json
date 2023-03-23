@@ -1,0 +1,9 @@
+{
+  "name": "test",
+  "devDependencies": {
+    "lerna": "500.0.0",
+  },
+  "lerna": {
+    "version": "1.0.0"
+  }
+}

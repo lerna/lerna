@@ -5,6 +5,18 @@ import fs from "fs-extra";
 import { dump } from "js-yaml";
 import path from "path";
 
+// Serialize the JSONError output to be more human readable
+expect.addSnapshotSerializer({
+  serialize(str: string) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const stripAnsi = require("strip-ansi");
+    return stripAnsi(str).replace(/Error in: .*lerna\.json/, "Error in: normalized/path/to/lerna.json");
+  },
+  test(val: string) {
+    return val != null && typeof val === "string" && val.includes("Error in: ");
+  },
+});
+
 // helpers
 const initFixture = initFixtureFactory(__dirname);
 
@@ -59,8 +71,18 @@ describe("Project", () => {
       expect(new Project().config).toEqual({});
     });
 
-    it("errors when lerna.json is not valid JSON", async () => {
-      const cwd = await initFixture("invalid-json");
+    it("does not error when lerna.json contains trailing commas and/or comments", async () => {
+      const cwd = await initFixture("invalid-lerna-json-recoverable");
+
+      expect(new Project(cwd).config).toMatchInlineSnapshot(`
+        Object {
+          "version": "1.0.0",
+        }
+      `);
+    });
+
+    it("errors when lerna.json is irrecoverably invalid JSON", async () => {
+      const cwd = await initFixture("invalid-lerna-json-irrecoverable");
 
       expect(() => new Project(cwd)).toThrow(
         expect.objectContaining({
@@ -68,6 +90,18 @@ describe("Project", () => {
           prefix: "JSONError",
         })
       );
+
+      expect(() => new Project(cwd)).toThrowErrorMatchingInlineSnapshot(`
+        Error in: normalized/path/to/lerna.json
+        PropertyNameExpected in JSON at 2:3
+          1 | {
+        > 2 |   233434
+            |   ^^^^^^
+          3 |   "version": "1.0.0",
+          4 | }
+          5 | 
+
+      `);
     });
 
     it("returns parsed rootPkg.lerna", async () => {
@@ -447,7 +481,7 @@ describe("Project", () => {
     });
 
     it("errors when root package.json is not valid JSON", async () => {
-      const cwd = await initFixture("invalid-json");
+      const cwd = await initFixture("invalid-package-json");
 
       expect(() => new Project(cwd)).toThrow(
         expect.objectContaining({

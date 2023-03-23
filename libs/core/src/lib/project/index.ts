@@ -1,5 +1,5 @@
-import { writeJsonFile } from "@nrwl/devkit";
-import { cosmiconfigSync } from "cosmiconfig";
+import { parseJson, writeJsonFile } from "@nrwl/devkit";
+import { cosmiconfigSync, defaultLoaders } from "cosmiconfig";
 import dedent from "dedent";
 import fs from "fs";
 import globParent from "glob-parent";
@@ -75,6 +75,29 @@ export class Project {
 
   constructor(cwd?: string) {
     const explorer = cosmiconfigSync("lerna", {
+      loaders: {
+        ...defaultLoaders,
+        ".json": (filepath, content) => {
+          if (!filepath.endsWith("lerna.json")) {
+            return defaultLoaders[".json"](filepath, content);
+          }
+          /**
+           * This prevents lerna from blowing up on trailing commas and comments in lerna configs,
+           * however it should be noted that we will not be able to respect those things whenever
+           * we perform an automated config migration, e.g. via `lerna repair` and they will be lost.
+           * (Although that will be easy enough for the user to see and updated in their `git diff`)
+           */
+          try {
+            return parseJson(content);
+          } catch (err: unknown) {
+            if (err instanceof Error) {
+              err.name = "JSONError";
+              err.message = `Error in: ${filepath}\n${err.message}`;
+            }
+            throw err;
+          }
+        },
+      },
       searchPlaces: ["lerna.json", "package.json"],
       transform(obj) {
         // cosmiconfig returns null when nothing is found
