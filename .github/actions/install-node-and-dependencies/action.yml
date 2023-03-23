@@ -16,7 +16,7 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version-file: "package.json"
-      # The volta action seems to failing to install/unpack a lot recently
+      # The volta action seems to failing to install/unpack a lot recently https://github.com/volta-cli/action/issues/77#issuecomment-1481045178
       # uses: volta-cli/action@v4
       # with:
       #   node-version: ${{ inputs.node-version }}
