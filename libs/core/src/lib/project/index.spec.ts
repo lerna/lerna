@@ -10,7 +10,7 @@ expect.addSnapshotSerializer({
   serialize(str: string) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const stripAnsi = require("strip-ansi");
-    return stripAnsi(str).replace(/Error in: .*\/lerna\.json/, "Error in: normalized/path/to/lerna.json");
+    return stripAnsi(str).replace(/Error in: .*lerna\.json/, "Error in: normalized/path/to/lerna.json");
   },
   test(val: string) {
     return val != null && typeof val === "string" && val.includes("Error in: ");
