@@ -5,20 +5,17 @@
 import {
   applyBuildMetadata,
   checkWorkingTree,
-  collectPackages,
-  collectUpdates,
-  Command,
   createRunner,
   getPackagesForOption,
   output,
   prereleaseIdFromVersion,
   promptConfirmation,
   recommendVersion,
-  runTopologically,
   throwIfUncommitted,
   updateChangelog,
   ValidationError,
 } from "@lerna/core";
+import { collectPackages, collectUpdates, Command, runTopologically } from "@lerna/legacy-core";
 import chalk from "chalk";
 import dedent from "dedent";
 import fs from "fs";

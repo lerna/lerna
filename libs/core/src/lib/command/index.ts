@@ -1,10 +1,15 @@
+import { createProjectGraphAsync, ProjectGraphProjectNode, workspaceRoot } from "@nrwl/devkit";
 import cloneDeep from "clone-deep";
 import dedent from "dedent";
 import execa from "execa";
+import { readJson } from "fs-extra";
+import { sortBy } from "lodash";
 import log from "npmlog";
 import os from "os";
-import { PackageGraph } from "../package-graph";
+import { join } from "path";
+import { Package, RawManifest } from "../package";
 import { CommandConfigOptions, Project } from "../project";
+import { getPackageManifestPath, ProjectGraphWithPackages } from "../project-operations";
 import { ValidationError } from "../validation-error";
 import { writeLogFile } from "../write-log-file";
 import { cleanStack } from "./clean-stack";
@@ -22,8 +27,9 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   concurrency?: number;
   toposort = false;
   execOpts?: { cwd: string; maxBuffer?: number };
-  packageGraph?: PackageGraph;
   logger!: log.Logger;
+
+  projectGraph!: ProjectGraphWithPackages;
 
   private _project?: Project;
   get project(): Project {
@@ -67,6 +73,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureProperties());
       chain = chain.then(() => this.configureLogging());
+      chain = chain.then(() => this.detectProjects());
       // For the special "repair" command we want to initialize everything but don't want to run validations as that will end up becoming cyclical
       if (!skipValidations) {
         chain = chain.then(() => this.runValidations());
@@ -143,6 +150,45 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   // For example `changed` inherits config from `publish`.
   get otherCommandConfigs() {
     return [];
+  }
+
+  private async detectProjects() {
+    const projectGraph = await createProjectGraphAsync({
+      exitOnError: false,
+      resetDaemonClient: true,
+    });
+    await Promise.all(
+      Object.values(projectGraph.nodes).map(
+        (node) =>
+          new Promise<[ProjectGraphProjectNode, RawManifest | null]>((resolve) => {
+            const manifestPath = getPackageManifestPath(node);
+            if (manifestPath) {
+              resolve(readJson(join(workspaceRoot, manifestPath)).then((manifest) => [node, manifest]));
+            } else {
+              resolve([node, null]);
+            }
+          })
+      )
+    ).then((tuples) => {
+      // We want Object.values(projectGraph.nodes) to be sorted by root path
+      const projectGraphWithOrderedNodes: ProjectGraphWithPackages = {
+        ...projectGraph,
+        nodes: {},
+      };
+      const sortedTuples = sortBy(tuples, (t) => t[0].data.root);
+      sortedTuples.forEach(([node, manifest]) => {
+        let pkg: Package | null = null;
+        if (manifest) {
+          pkg = new Package(manifest, join(workspaceRoot, node.data.root), workspaceRoot);
+        }
+        projectGraphWithOrderedNodes.nodes[node.name] = {
+          ...node,
+          package: pkg,
+        };
+      });
+
+      this.projectGraph = projectGraphWithOrderedNodes;
+    });
   }
 
   configureEnvironment() {
@@ -297,21 +343,6 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     if (!this.composed && this.options.ci) {
       log.info("ci", "enabled");
     }
-
-    let chain = Promise.resolve();
-
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    chain = chain.then(() => this.project.getPackages());
-    chain = chain.then((packages) => {
-      // TODO: refactor to address type issues
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.packageGraph = new PackageGraph(packages);
-    });
-
-    return chain;
   }
 
   runCommand() {

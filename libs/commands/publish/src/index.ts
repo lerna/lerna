@@ -3,8 +3,6 @@
 // @ts-nocheck
 
 import {
-  collectUpdates,
-  Command,
   createRunner,
   describeRef,
   getOneTimePassword,
@@ -17,10 +15,11 @@ import {
   prereleaseIdFromVersion,
   promptConfirmation,
   pulseTillDone,
-  runTopologically,
   throwIfUncommitted,
   ValidationError,
 } from "@lerna/core";
+
+import { collectUpdates, Command, runTopologically } from "@lerna/legacy-core";
 import crypto from "crypto";
 import fs from "fs";
 import os from "os";

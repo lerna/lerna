@@ -1,4 +1,5 @@
-import { collectUpdates, Command, CommandConfigOptions, listableFormat, output } from "@lerna/core";
+import { CommandConfigOptions, output } from "@lerna/core";
+import { collectUpdates, Command, listableFormat } from "@lerna/legacy-core";
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new ChangedCommand(argv);

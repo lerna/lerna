@@ -1,4 +1,4 @@
-import { Command } from "@lerna/core";
+import { Command } from "@lerna/legacy-core";
 import {
   joinPathFragments,
   NxJsonConfiguration,

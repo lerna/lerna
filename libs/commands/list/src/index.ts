@@ -1,4 +1,4 @@
-import { Command, getFilteredPackages, listableFormat, output } from "@lerna/core";
+import { Command, filterProjects, listableFormatProjects, output } from "@lerna/core";
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new ListCommand(argv);
@@ -14,21 +14,12 @@ class ListCommand extends Command {
     return false;
   }
 
-  override initialize() {
-    let chain = Promise.resolve();
+  override async initialize() {
+    const filteredProjects = await filterProjects(this.projectGraph, this.execOpts, this.options);
 
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
-    chain = chain.then((filteredPackages) => {
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.result = listableFormat(filteredPackages, this.options);
-    });
+    this.logger.silly("AUSTIN", "TEST");
 
-    return chain;
+    this.result = listableFormatProjects(filteredProjects, this.projectGraph.dependencies, this.options);
   }
 
   override execute() {

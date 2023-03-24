@@ -43,6 +43,7 @@ function shallowCopy(json: any) {
 export interface RawManifest {
   name: string;
   version: string;
+  description?: string;
   private?: boolean;
   bin?: Record<string, string> | string;
   scripts?: Record<string, string>;

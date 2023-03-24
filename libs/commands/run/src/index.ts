@@ -3,17 +3,15 @@
 // @ts-nocheck
 
 import {
-  Command,
   generateProfileOutputPath,
-  getFilteredPackages,
   npmRunScript,
   npmRunScriptStreaming,
   output,
   Profiler,
-  runTopologically,
   timer,
   ValidationError,
 } from "@lerna/core";
+import { Command, getFilteredPackages, runTopologically } from "@lerna/legacy-core";
 import { existsSync } from "fs-extra";
 import pMap from "p-map";
 import path from "path";

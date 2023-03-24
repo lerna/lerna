@@ -2,7 +2,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { Command, getFilteredPackages, Profiler, runTopologically, ValidationError } from "@lerna/core";
+import { Profiler, ValidationError } from "@lerna/core";
+import { Command, getFilteredPackages, runTopologically } from "@lerna/legacy-core";
 import pMap from "p-map";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

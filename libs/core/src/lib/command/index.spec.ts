@@ -255,15 +255,6 @@ describe("command", () => {
     });
   });
 
-  describe(".packageGraph", () => {
-    it("returns the graph of packages", async () => {
-      const command = testFactory();
-      await command;
-
-      expect(command.packageGraph).toBeInstanceOf(Map);
-    });
-  });
-
   describe(".options", () => {
     class TestACommand extends Command {}
     class TestBCommand extends Command {}

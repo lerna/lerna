@@ -1,4 +1,5 @@
-import { Command, CommandConfigOptions, ValidationError } from "@lerna/core";
+import { CommandConfigOptions, ValidationError } from "@lerna/core";
+import { Command } from "@lerna/legacy-core";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { getLastCommit } = require("./lib/get-last-commit");

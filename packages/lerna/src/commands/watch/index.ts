@@ -1,6 +1,11 @@
-import { Command, getFilteredPackages, Package, ValidationError, CommandConfigOptions } from "@lerna/core";
+import {
+  Command,
+  CommandConfigOptions,
+  filterProjects,
+  ProjectGraphProjectNodeWithPackage,
+  ValidationError,
+} from "@lerna/core";
 import { watch } from "nx/src/command-line/watch";
-import { readNxJson } from "nx/src/config/configuration";
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new WatchCommand(argv);
@@ -11,7 +16,7 @@ interface WatchCommandOptions extends CommandConfigOptions {
 }
 
 class WatchCommand extends Command<WatchCommandOptions> {
-  private filteredPackages: Package[] = [];
+  private filteredProjects: ProjectGraphProjectNodeWithPackage[] = [];
   private count = 0;
   private packagePlural = "packages";
 
@@ -25,12 +30,9 @@ class WatchCommand extends Command<WatchCommandOptions> {
     }
 
     // catch allows missing file to pass without breaking chain
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.filteredPackages = await getFilteredPackages(this.packageGraph, this.execOpts, this.options);
+    this.filteredProjects = await filterProjects(this.projectGraph, this.execOpts, this.options);
 
-    this.count = this.filteredPackages.length;
+    this.count = this.filteredProjects.length;
     this.packagePlural = this.count === 1 ? "package" : "packages";
   }
 
@@ -43,7 +45,7 @@ class WatchCommand extends Command<WatchCommandOptions> {
       this.packagePlural
     );
 
-    const projectNames = getNxProjectNamesFromLernaPackageNames(this.filteredPackages.map((p) => p.name));
+    const projectNames = this.filteredProjects.map((p) => p.name);
 
     await watch({
       command: this.options.command,
@@ -55,14 +57,5 @@ class WatchCommand extends Command<WatchCommandOptions> {
     });
   }
 }
-
-const getNxProjectNamesFromLernaPackageNames = (packageNames: string[]): string[] => {
-  const nxJson = readNxJson();
-  const nxConfiguredNpmScope = nxJson.npmScope;
-
-  return nxConfiguredNpmScope
-    ? packageNames.map((name) => name.replace(`@${nxConfiguredNpmScope}/`, ""))
-    : packageNames;
-};
 
 module.exports.WatchCommand = WatchCommand;

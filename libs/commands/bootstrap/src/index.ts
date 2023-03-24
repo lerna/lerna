@@ -3,20 +3,22 @@
 // @ts-nocheck
 
 import {
-  Command,
   createRunner,
-  getFilteredPackages,
   hasNpmVersion,
   npmInstall,
   npmInstallDependencies,
-  PackageGraph,
   pulseTillDone,
   rimrafDir,
+  ValidationError,
+} from "@lerna/core";
+import {
+  Command,
+  getFilteredPackages,
+  PackageGraph,
   runTopologically,
   symlinkBinary,
   symlinkDependencies,
-  ValidationError,
-} from "@lerna/core";
+} from "@lerna/legacy-core";
 import dedent from "dedent";
 import getPort from "get-port";
 import npa from "npm-package-arg";
