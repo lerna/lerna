@@ -10,7 +10,7 @@ const childProcess = require("@lerna/child-process");
 
 let rimrafBinPath: string | undefined;
 
-export async function useRimrafBinPath(): Promise<string> {
+async function useRimrafBinPath(): Promise<string> {
   if (typeof rimrafBinPath === "string") {
     return rimrafBinPath;
   }
