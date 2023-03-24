@@ -1,6 +1,6 @@
 {
   "name": "@lerna/version",
-  "version": "6.6.0",
+  "version": "6.6.1",
   "description": "Bump version of packages changed since the last release",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/version"
   },
   "dependencies": {
-    "lerna": "6.6.0"
+    "lerna": "6.6.1"
   },
   "exports": {
     ".": "./dist/index.js",

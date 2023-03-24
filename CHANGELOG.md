@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.6.1](https://github.com/lerna/lerna/compare/6.6.0...6.6.1) (2023-03-24)
+
+### Bug Fixes
+
+- build-metadata reference in lerna schema ([e2349ad](https://github.com/lerna/lerna/commit/e2349ad4f529c307ea69d21698a2ab53f5a9d6b4))
+- **deps:** update to rimraf v4, remove path-exists ([#3616](https://github.com/lerna/lerna/issues/3616)) ([2f2ee2a](https://github.com/lerna/lerna/commit/2f2ee2a02091e2c9e35feaabc8f202f77407a408))
+- ensure rimraf bin dir can always be resolved ([#3614](https://github.com/lerna/lerna/issues/3614)) ([0fe5faf](https://github.com/lerna/lerna/commit/0fe5fafb28a47cb80c7d8ea4fb4e152b6ed0d978))
+- handle trailing commas and comments in lerna.json files ([#3603](https://github.com/lerna/lerna/issues/3603)) ([b826398](https://github.com/lerna/lerna/commit/b826398b6da61b6b3a0e972211fb3a8ec68654f3))
+- lerna schema type for contents should be string ([1625757](https://github.com/lerna/lerna/commit/162575758e9422f2c05fc741ead370eaf793cb57))
+- **publish:** use updated version with pnpm workspaces ([#3606](https://github.com/lerna/lerna/issues/3606)) ([cd7ad21](https://github.com/lerna/lerna/commit/cd7ad211212bd18e4876703a26d53df4b77f2d38))
+
 # [6.6.0](https://github.com/lerna/lerna/compare/6.5.1...6.6.0) (2023-03-23)
 
 ### Bug Fixes

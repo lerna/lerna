@@ -1,6 +1,6 @@
 {
   "name": "@lerna/publish",
-  "version": "6.6.0",
+  "version": "6.6.1",
   "description": "Publish packages in the current project",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/publish"
   },
   "dependencies": {
-    "lerna": "6.6.0"
+    "lerna": "6.6.1"
   },
   "exports": {
     ".": "./dist/index.js",

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/exec",
-  "version": "6.6.0",
+  "version": "6.6.1",
   "description": "Execute an arbitrary command in each package",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/exec"
   },
   "dependencies": {
-    "lerna": "6.6.0"
+    "lerna": "6.6.1"
   },
   "exports": {
     ".": "./dist/index.js",

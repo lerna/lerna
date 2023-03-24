@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.6.1](https://github.com/lerna/lerna/compare/6.6.0...6.6.1) (2023-03-24)
+
+### Bug Fixes
+
+- build-metadata reference in lerna schema ([e2349ad](https://github.com/lerna/lerna/commit/e2349ad4f529c307ea69d21698a2ab53f5a9d6b4))
+- **deps:** update to rimraf v4, remove path-exists ([#3616](https://github.com/lerna/lerna/issues/3616)) ([2f2ee2a](https://github.com/lerna/lerna/commit/2f2ee2a02091e2c9e35feaabc8f202f77407a408))
+- lerna schema type for contents should be string ([1625757](https://github.com/lerna/lerna/commit/162575758e9422f2c05fc741ead370eaf793cb57))
+
 # [6.6.0](https://github.com/lerna/lerna/compare/6.5.1...6.6.0) (2023-03-23)
 
 ### Bug Fixes
