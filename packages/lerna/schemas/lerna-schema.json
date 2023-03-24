@@ -986,7 +986,7 @@
               "$ref": "#/$defs/commandOptions/version/amend"
             },
             "buildMetadata": {
-              "$ref": "#/$defs/commandOptions/version/buildMetadata"
+              "$ref": "#/$defs/commandOptions/version/build-metadata"
             },
             "conventionalCommits": {
               "$ref": "#/$defs/commandOptions/shared/conventionalCommits"
