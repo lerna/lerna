@@ -1848,7 +1848,7 @@
           "description": "During `lerna bootstrap` and `lerna link`, when true, force local sibling links regardless of version range match."
         },
         "contents": {
-          "type": "boolean",
+          "type": "string",
           "description": "For `lerna bootstrap`, `lerna link`, and `lerna publish`, the subdirectory to use as the source of any links. Must apply to ALL packages."
         },
         "ignoreChanges": {
