@@ -1,13 +1,12 @@
+import { existsSync } from "fs";
 import log from "npmlog";
-import pathExists from "path-exists";
 import rimraf from "rimraf";
 
 export async function rimrafDir(dirPath: string) {
   log.silly("rimrafDir", dirPath);
 
   // Short-circuit if we don't have anything to do.
-  const fileExists = await pathExists(dirPath);
-  if (!fileExists) {
+  if (!existsSync(dirPath)) {
     return;
   }
 

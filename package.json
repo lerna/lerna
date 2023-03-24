@@ -88,7 +88,6 @@
     "p-reduce": "^2.1.0",
     "p-waterfall": "^2.1.1",
     "pacote": "^13.6.2",
-    "path-exists": "^4.0.0",
     "pify": "^5.0.0",
     "read-cmd-shim": "^3.0.0",
     "read-package-json": "^5.0.1",
