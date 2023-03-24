@@ -16,20 +16,24 @@ async function useRimrafBinPath(): Promise<string> {
   }
 
   const filePath = require.resolve("rimraf");
-  const directoryPath = path.basename(filePath);
+  const directoryPath = path.dirname(filePath);
 
   try {
     const rawFile = await fs.promises.readFile(path.join(directoryPath, "package.json"), {
       encoding: "utf-8",
     });
     const file = JSON.parse(rawFile);
-
-    rimrafBinPath = file.bin || require.resolve("rimraf/bin");
+    if (typeof file.bin === "string") {
+      rimrafBinPath = path.join(directoryPath, file.bin);
+      return rimrafBinPath;
+    }
   } catch (e) {
-    rimrafBinPath = require.resolve("rimraf/bin");
+    // do nothing
   }
 
-  return rimrafBinPath as string;
+  rimrafBinPath = require.resolve("rimraf/bin");
+
+  return rimrafBinPath;
 }
 
 export async function rimrafDir(dirPath: string) {
