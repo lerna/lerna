@@ -10,7 +10,6 @@ import {
 import execa from "execa";
 import fs from "fs-extra";
 import path from "path";
-import pathExists from "path-exists";
 
 const promptConfirmation = jest.mocked(_promptConfirmation);
 
@@ -45,7 +44,7 @@ describe("ImportCommand", () => {
       await lernaImport(testDir)(externalDir);
 
       expect(await lastCommitInDir(testDir)).toBe("Init external commit");
-      expect(await pathExists(packageJson)).toBe(true);
+      expect(fs.existsSync(packageJson)).toBe(true);
     });
 
     it("imports a repo with conflicted merge commits when run with --flatten", async () => {
@@ -84,7 +83,7 @@ describe("ImportCommand", () => {
       await lernaImport(testDir)(externalDir, "--flatten");
 
       expect(await lastCommitInDir(testDir)).toBe("Branch merged");
-      expect(await pathExists(newFilePath)).toBe(true);
+      expect(fs.existsSync(newFilePath)).toBe(true);
     });
 
     it("imports a repo into the root directory when packages are located there", async () => {
@@ -94,8 +93,8 @@ describe("ImportCommand", () => {
       await lernaImport(testDir)(externalDir);
 
       expect(await lastCommitInDir(testDir)).toBe("myapp-foo init commit");
-      expect(await pathExists(path.join(testDir, "myapp-foo/old-file"))).toBe(true);
-      expect(await pathExists(path.join(testDir, "myapp-foo/package.json"))).toBe(true);
+      expect(fs.existsSync(path.join(testDir, "myapp-foo/old-file"))).toBe(true);
+      expect(fs.existsSync(path.join(testDir, "myapp-foo/package.json"))).toBe(true);
     });
 
     it("supports moved files within the external repo", async () => {
@@ -108,7 +107,7 @@ describe("ImportCommand", () => {
       await lernaImport(testDir)(externalDir);
 
       expect(await lastCommitInDir(testDir)).toBe("Moved old-file to new-file");
-      expect(await pathExists(newFilePath)).toBe(true);
+      expect(fs.existsSync(newFilePath)).toBe(true);
     });
 
     it("supports filepaths that have spaces within the external repo", async () =>
@@ -128,8 +127,8 @@ describe("ImportCommand", () => {
           }
 
           expect(await lastCommitInDir(testDir)).toBe("Init external commit");
-          expect(await pathExists(newFilePath)).toBe(true);
-          expect(await pathExists(newDeepFilePath)).toBe(true);
+          expect(fs.existsSync(newFilePath)).toBe(true);
+          expect(fs.existsSync(newDeepFilePath)).toBe(true);
         })
       ));
 
@@ -159,8 +158,8 @@ describe("ImportCommand", () => {
           }
 
           expect(await lastCommitInDir(testDir)).toBe("rename");
-          expect(await pathExists(copyFilePath)).toBe(true);
-          expect(await pathExists(renameFilePath)).toBe(true);
+          expect(fs.existsSync(copyFilePath)).toBe(true);
+          expect(fs.existsSync(renameFilePath)).toBe(true);
         })
       ));
 
@@ -315,7 +314,7 @@ describe("ImportCommand", () => {
       await lernaImport(testDir)(externalDir);
 
       expect(await lastCommitInDir(testDir)).toBe("[ISSUE-10] Moved old-file to new-file");
-      expect(await pathExists(newFilePath)).toBe(true);
+      expect(fs.existsSync(newFilePath)).toBe(true);
     });
   });
 
@@ -330,7 +329,7 @@ describe("ImportCommand", () => {
       await lernaImport(testDir)(externalDir);
 
       expect(await lastCommitInDir(rootDir)).toBe("Init external commit");
-      expect(await pathExists(packageJson)).toBe(true);
+      expect(fs.existsSync(packageJson)).toBe(true);
     });
   });
 
@@ -344,7 +343,7 @@ describe("ImportCommand", () => {
       await lernaImport(testDir)(externalDir, "--dest=packages");
 
       expect(await lastCommitInDir(testDir)).toBe("Init external commit");
-      expect(await pathExists(packageJson)).toBe(true);
+      expect(fs.existsSync(packageJson)).toBe(true);
     });
 
     it("throws error when the package directory does not match with config", async () => {
