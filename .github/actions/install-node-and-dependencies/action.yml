@@ -15,7 +15,8 @@ runs:
     - name: Install node and npm based on the given values (or the volta config in package.json)
       uses: actions/setup-node@v3
       with:
-        node-version-file: "package.json"
+        node-version-file: ${{ inputs.node-version == '' && 'package.json' || '' }}
+        node-version: ${{ inputs.node-version }}
       # The volta action seems to failing to install/unpack a lot recently https://github.com/volta-cli/action/issues/77#issuecomment-1481045178
       # uses: volta-cli/action@v4
       # with:
