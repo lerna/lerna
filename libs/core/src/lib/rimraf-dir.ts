@@ -8,23 +8,25 @@ import pathExists from "path-exists";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-let rimrafBinPath : string | undefined;
+let rimrafBinPath: string | undefined;
 
-export async function useRimrafBinPath() : Promise<string> {
-  if(typeof rimrafBinPath === 'string') {
+export async function useRimrafBinPath(): Promise<string> {
+  if (typeof rimrafBinPath === "string") {
     return rimrafBinPath;
   }
 
-  const filePath = require.resolve('rimraf');
+  const filePath = require.resolve("rimraf");
   const directoryPath = path.basename(filePath);
 
   try {
-    const rawFile = await fs.promises.readFile(path.join(directoryPath, 'package.json'), {encoding: 'utf-8'});
+    const rawFile = await fs.promises.readFile(path.join(directoryPath, "package.json"), {
+      encoding: "utf-8",
+    });
     const file = JSON.parse(rawFile);
 
-    rimrafBinPath = file.bin || require.resolve('rimraf/bin');
+    rimrafBinPath = file.bin || require.resolve("rimraf/bin");
   } catch (e) {
-    rimrafBinPath = require.resolve('rimraf/bin');
+    rimrafBinPath = require.resolve("rimraf/bin");
   }
 
   return rimrafBinPath as string;
@@ -37,7 +39,7 @@ export async function rimrafDir(dirPath: string) {
   // This lets us short-circuit if we don't have anything to do.
 
   const fileExists = await pathExists(dirPath);
-  if(!fileExists) {
+  if (!fileExists) {
     return;
   }
 
