@@ -11,6 +11,7 @@ initializeFixture $DIR
 
 # Run the relevant task runner commands and write stdout and stderr to a named file in each case (for later assertions)
 npx lerna run print-name,print-name-again > $OUTPUTS/multiple-targets.txt 2>&1
+npx lerna run print-name,print-name-again --scope="package-3" > $OUTPUTS/multiple-targets-single-package.txt 2>&1
 
 # Run the assertions
 runAssertions $DIR $E2E_ROOT $FIXTURE_ROOT_PATH $UPDATE_SNAPSHOTS

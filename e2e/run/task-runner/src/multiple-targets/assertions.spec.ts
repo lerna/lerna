@@ -81,4 +81,42 @@ describe("lerna-run-nx-multiple-targets", () => {
 
     `);
   });
+
+  it("should run multiple comma-delimited targets concurrently for a single package", async () => {
+    const output = await fixture.readOutput("multiple-targets-single-package");
+    expect(output).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna notice filter including "package-X"
+      lerna info filter [ 'package-X' ]
+
+      >  Lerna (powered by Nx)   Running targets XXXXXXXXXX, XXXXXXXXXX for project package-X:
+
+      - package-X
+
+
+
+      > package-X:XXXXXXXXXX
+
+
+      > package-X@0.0.0 XXXXXXXXXX
+      > echo test-package-X
+
+      test-package-X
+
+      > package-X:XXXXXXXXXX
+
+
+      > package-X@0.0.0 XXXXXXXXXX
+      > echo test-package-X
+
+      test-package-X
+
+
+
+      >  Lerna (powered by Nx)   Successfully ran targets XXXXXXXXXX, XXXXXXXXXX for project package-X
+
+
+
+    `);
+  });
 });
