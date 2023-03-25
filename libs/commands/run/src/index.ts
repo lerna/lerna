@@ -222,7 +222,7 @@ class RunCommand extends Command {
     this.configureNxOutput();
     const { targetDependencies, options, extraOptions } = await this.prepNxOptions();
 
-    if (this.packagesWithScript.length === 1) {
+    if (this.packagesWithScript.length === 1 && !Array.isArray(this.script)) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { runOne } = require("nx/src/command-line/run-one");
       const fullQualifiedTarget =
