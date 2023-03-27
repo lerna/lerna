@@ -1,5 +1,6 @@
-import { output as _output, collectUpdates as _collectUpdates } from "@lerna/core";
-import { initFixtureFactory, commandRunner } from "@lerna/test-helpers";
+import { output as _output } from "@lerna/core";
+import { collectUpdates as _collectUpdates } from "@lerna/legacy-core";
+import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -9,6 +10,8 @@ const lernaLs = commandRunner(require("../command"));
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 // The mock modifies the exported symbols and therefore types
 const output = _output as any;

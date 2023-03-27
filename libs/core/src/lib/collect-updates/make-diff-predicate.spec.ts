@@ -5,7 +5,7 @@ jest.mock("@lerna/child-process");
 const childProcess = require("@lerna/child-process");
 
 import { basename } from "path";
-import { Package } from "../../package";
+import { Package } from "../package";
 import { ProjectGraphProjectNodeWithPackage } from "../project-graph-with-packages";
 // file under test
 import { makeDiffPredicate } from "./make-diff-predicate";

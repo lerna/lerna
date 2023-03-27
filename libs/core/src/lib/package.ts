@@ -53,6 +53,7 @@ export interface RawManifest {
   peerDependencies?: Record<string, string>;
   publishConfig?: Record<"directory" | "registry" | "tag", string>;
   workspaces?: string[];
+  nx?: Record<string, unknown>;
 }
 
 type ExtendedNpaResult = npa.Result & {

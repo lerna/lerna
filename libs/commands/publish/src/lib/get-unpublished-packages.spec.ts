@@ -1,4 +1,5 @@
-import { getPackages, PackageGraph } from "@lerna/core";
+import { getPackages } from "@lerna/core";
+import { PackageGraph } from "@lerna/legacy-core";
 import { initFixtureFactory } from "@lerna/test-helpers";
 import _pacote from "pacote";
 

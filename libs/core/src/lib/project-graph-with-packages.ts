@@ -1,5 +1,5 @@
 import { ProjectGraph, ProjectGraphProjectNode } from "@nrwl/devkit";
-import { Package } from "../package";
+import { Package } from "./package";
 
 export interface ProjectGraphProjectNodeWithPackage extends ProjectGraphProjectNode {
   package: Package | null;

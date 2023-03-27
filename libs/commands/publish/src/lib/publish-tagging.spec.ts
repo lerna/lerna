@@ -1,12 +1,11 @@
-import {
-  collectUpdates as _collectUpdates,
-  npmDistTag as _npmDistTag,
-  npmPublish as _npmPublish,
-} from "@lerna/core";
+import { npmDistTag as _npmDistTag, npmPublish as _npmPublish } from "@lerna/core";
+import { collectUpdates as _collectUpdates } from "@lerna/legacy-core";
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 // lerna publish mocks
 jest.mock("./get-packages-without-license", () => {

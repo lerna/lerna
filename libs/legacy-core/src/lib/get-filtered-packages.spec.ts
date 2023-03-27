@@ -1,11 +1,12 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 // nx-ignore-next-line
-import { FilterOptions, filterOptions, getPackages, PackageGraph } from "@lerna/core";
+import { FilterOptions, filterOptions, getPackages } from "@lerna/core";
 import { initFixtureFactory } from "@lerna/test-helpers";
 import path from "path";
 import yargs from "yargs/yargs";
 import { collectUpdates as _collectUpdates } from "./collect-updates";
 import { getFilteredPackages } from "./get-filtered-packages";
+import { PackageGraph } from "./package-graph";
 
 jest.mock("./collect-updates");
 

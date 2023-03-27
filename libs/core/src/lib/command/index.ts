@@ -1,18 +1,15 @@
-import { createProjectGraphAsync, ProjectGraphProjectNode, workspaceRoot } from "@nrwl/devkit";
+import { createProjectGraphAsync } from "@nrwl/devkit";
 import cloneDeep from "clone-deep";
 import dedent from "dedent";
 import execa from "execa";
-import { readJson } from "fs-extra";
-import { sortBy } from "lodash";
 import log from "npmlog";
 import os from "os";
-import { join } from "path";
-import { Package, RawManifest } from "../package";
 import { CommandConfigOptions, Project } from "../project";
-import { getPackageManifestPath, ProjectGraphWithPackages } from "../project-operations";
+import { ProjectGraphWithPackages } from "../project-graph-with-packages";
 import { ValidationError } from "../validation-error";
 import { writeLogFile } from "../write-log-file";
 import { cleanStack } from "./clean-stack";
+import { createProjectGraphWithPackages } from "./create-project-graph-with-packages";
 import { defaultOptions } from "./default-options";
 import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
@@ -157,38 +154,8 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       exitOnError: false,
       resetDaemonClient: true,
     });
-    await Promise.all(
-      Object.values(projectGraph.nodes).map(
-        (node) =>
-          new Promise<[ProjectGraphProjectNode, RawManifest | null]>((resolve) => {
-            const manifestPath = getPackageManifestPath(node);
-            if (manifestPath) {
-              resolve(readJson(join(workspaceRoot, manifestPath)).then((manifest) => [node, manifest]));
-            } else {
-              resolve([node, null]);
-            }
-          })
-      )
-    ).then((tuples) => {
-      // We want Object.values(projectGraph.nodes) to be sorted by root path
-      const projectGraphWithOrderedNodes: ProjectGraphWithPackages = {
-        ...projectGraph,
-        nodes: {},
-      };
-      const sortedTuples = sortBy(tuples, (t) => t[0].data.root);
-      sortedTuples.forEach(([node, manifest]) => {
-        let pkg: Package | null = null;
-        if (manifest) {
-          pkg = new Package(manifest, join(workspaceRoot, node.data.root), workspaceRoot);
-        }
-        projectGraphWithOrderedNodes.nodes[node.name] = {
-          ...node,
-          package: pkg,
-        };
-      });
 
-      this.projectGraph = projectGraphWithOrderedNodes;
-    });
+    this.projectGraph = await createProjectGraphWithPackages(projectGraph);
   }
 
   configureEnvironment() {

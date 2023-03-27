@@ -1,12 +1,23 @@
+export { addDependencies } from "./lib/add-dependencies";
+export { addDependents } from "./lib/add-dependents";
 export { checkWorkingTree, throwIfUncommitted } from "./lib/check-working-tree";
 export * from "./lib/cli";
+export {
+  collectProjects,
+  collectProjectUpdates,
+  ProjectCollectorOptions,
+  ProjectUpdateCollectorOptions,
+} from "./lib/collect-updates";
 export { Command } from "./lib/command";
 export { applyBuildMetadata, recommendVersion, updateChangelog } from "./lib/conventional-commits";
 export { describeRef, describeRefSync } from "./lib/describe-ref";
 export { filterOptions, FilterOptions } from "./lib/filter-options";
+export { filterProjects } from "./lib/filter-projects";
+export { getPackageManifestPath } from "./lib/get-package-manifest-path";
 export * from "./lib/get-packages-for-option";
 export { hasNpmVersion } from "./lib/has-npm-version";
-export { listableOptions, ListableOptions } from "./lib/listable/listable-options";
+export { listableFormatProjects } from "./lib/listable-format-projects";
+export { listableOptions, ListableOptions } from "./lib/listable-options";
 export { logPacked } from "./lib/log-packed";
 export { npmInstall, npmInstallDependencies } from "./lib/npm-install";
 export { npmPublish } from "./lib/npm-publish";
@@ -18,7 +29,11 @@ export { Package, RawManifest } from "./lib/package";
 export { prereleaseIdFromVersion } from "./lib/prerelease-id-from-version";
 export { generateProfileOutputPath, Profiler } from "./lib/profiler";
 export { CommandConfigOptions, getPackages, Project } from "./lib/project";
-export * from "./lib/project-operations";
+export {
+  getPackage,
+  ProjectGraphProjectNodeWithPackage,
+  ProjectGraphWithPackages,
+} from "./lib/project-graph-with-packages";
 export { promptConfirmation, promptSelectOne, promptTextInput } from "./lib/prompt";
 export { pulseTillDone } from "./lib/pulse-till-done";
 export { rimrafDir } from "./lib/rimraf-dir";
@@ -26,6 +41,7 @@ export { createRunner, runLifecycle } from "./lib/run-lifecycle";
 export { createGitHubClient, createGitLabClient, parseGitRepo } from "./lib/scm-clients";
 export { default as tempWrite } from "./lib/temp-write";
 export { timer } from "./lib/timer";
+export { toposortProjects } from "./lib/toposort-projects";
 export { ValidationError } from "./lib/validation-error";
 export { npmConf, npmDistTag };
 

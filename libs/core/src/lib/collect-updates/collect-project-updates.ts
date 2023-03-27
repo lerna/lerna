@@ -1,9 +1,9 @@
 import { ExecOptions } from "child_process";
 import { flatten } from "lodash";
 import log from "npmlog";
-import { describeRefSync } from "../../describe-ref";
-import { getPackagesForOption } from "../../get-packages-for-option";
-import { prereleaseIdFromVersion } from "../../prerelease-id-from-version";
+import { describeRefSync } from "../describe-ref";
+import { getPackagesForOption } from "../get-packages-for-option";
+import { prereleaseIdFromVersion } from "../prerelease-id-from-version";
 import {
   getPackage,
   ProjectGraphProjectNodeWithPackage,

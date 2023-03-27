@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 // nx-ignore-next-line
+import { ListableOptions, Package, Project } from "@lerna/core";
 import { loggingOutput } from "@lerna/test-helpers";
 import chalk from "chalk";
 // tacks does not have any types
@@ -8,10 +9,7 @@ import chalk from "chalk";
 // @ts-ignore.
 import Tacks from "tacks";
 import tempy from "tempy";
-import { Package } from "../package";
-import { Project } from "../project";
 import { listableFormat } from "./listable-format";
-import { ListableOptions } from "./listable-options";
 
 const { File, Dir } = Tacks;
 

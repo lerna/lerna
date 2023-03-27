@@ -1,5 +1,5 @@
 import { Argv } from "yargs";
-import { CommandConfigOptions } from "../project";
+import { CommandConfigOptions } from "./project";
 
 // Because yargs.InferredOptionsTypes is next to useless here
 export interface ListableOptions extends CommandConfigOptions {

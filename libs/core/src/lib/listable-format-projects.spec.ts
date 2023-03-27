@@ -5,9 +5,9 @@ import { loggingOutput } from "@lerna/test-helpers";
 import { ProjectGraphDependency } from "@nrwl/devkit";
 import chalk from "chalk";
 import tempy from "tempy";
-import { ListableOptions } from "../listable/listable-options";
-import { Package, RawManifest } from "../package";
 import { listableFormatProjects } from "./listable-format-projects";
+import { ListableOptions } from "./listable-options";
+import { Package, RawManifest } from "./package";
 import { ProjectGraphProjectNodeWithPackage } from "./project-graph-with-packages";
 import { projectGraphDependency } from "./test-helpers/create-project-graph";
 

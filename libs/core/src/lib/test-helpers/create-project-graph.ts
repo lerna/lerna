@@ -1,5 +1,5 @@
 import { ProjectGraph, ProjectGraphDependency, ProjectGraphProjectNode } from "@nrwl/devkit";
-import { Package, RawManifest } from "../../package";
+import { Package, RawManifest } from "../package";
 import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "../project-graph-with-packages";
 
 export function projectNode(projectNode: Partial<ProjectGraphProjectNode>): ProjectGraphProjectNode {

@@ -109,14 +109,14 @@ export function filterOptions(yargs: Argv) {
 }
 
 export interface FilterOptions {
-  scope: string;
-  ignore: string;
-  private: boolean;
-  since: string;
-  continueIfNoMatch: boolean;
-  excludeDependents: boolean;
-  includeDependents: boolean;
-  includeDependencies: boolean;
-  includeMergedTags: boolean;
+  scope?: string;
+  ignore?: string;
+  private?: boolean;
+  since?: string;
+  continueIfNoMatch?: boolean;
+  excludeDependents?: boolean;
+  includeDependents?: boolean;
+  includeDependencies?: boolean;
+  includeMergedTags?: boolean;
   log: typeof log;
 }

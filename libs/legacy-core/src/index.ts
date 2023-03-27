@@ -1,5 +1,6 @@
 export { collectPackages, collectUpdates } from "./lib/collect-updates";
 export { Command } from "./lib/command";
+export { createSymlink } from "./lib/create-symlink";
 export { getFilteredPackages } from "./lib/get-filtered-packages";
 export { listableFormat } from "./lib/listable-format";
 export { PackageGraph } from "./lib/package-graph";

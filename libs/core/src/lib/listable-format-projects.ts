@@ -2,8 +2,8 @@ import { ProjectGraphDependency } from "@nrwl/devkit";
 import chalk from "chalk";
 import columnify from "columnify";
 import path from "path";
-import { ListableOptions } from "../listable/listable-options";
-import { Package } from "../package";
+import { ListableOptions } from "./listable-options";
+import { Package } from "./package";
 import { getPackage, ProjectGraphProjectNodeWithPackage } from "./project-graph-with-packages";
 import { toposortProjects } from "./toposort-projects";
 

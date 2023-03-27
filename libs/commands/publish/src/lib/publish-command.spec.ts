@@ -1,11 +1,11 @@
 import {
-  collectUpdates as _collectUpdates,
   getOneTimePassword as _getOneTimePassword,
   npmDistTag as _npmDistTag,
   npmPublish as _npmPublish,
   packDirectory as _packDirectory,
   promptConfirmation as _promptConfirmation,
 } from "@lerna/core";
+import { collectUpdates as _collectUpdates } from "@lerna/legacy-core";
 import { commandRunner, commitChangeToPackage, initFixtureFactory, loggingOutput } from "@lerna/test-helpers";
 import fsmain from "fs";
 import fs from "fs-extra";
@@ -13,6 +13,8 @@ import path from "path";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 // lerna publish mocks
 jest.mock("./get-packages-without-license", () => ({

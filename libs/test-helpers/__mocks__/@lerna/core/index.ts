@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-const collectUpdates = require("./collect-updates");
 const checkWorkingTree = require("./check-working-tree");
 const conventionalCommits = require("./conventional-commits");
 const { output } = require("./output");
@@ -18,7 +17,6 @@ const { createGitHubClient, parseGitRepo } = require("./github-client");
 module.exports = {
   ...jest.requireActual("@lerna/core"),
   output,
-  ...collectUpdates,
   ...prompt,
   ...checkWorkingTree,
   ...conventionalCommits,

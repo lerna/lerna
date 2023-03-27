@@ -1,9 +1,9 @@
-jest.mock("../../describe-ref");
+jest.mock("../describe-ref");
 jest.mock("./has-tags");
 jest.mock("./make-diff-predicate");
 
 // mocked modules
-import { describeRefSync } from "../../describe-ref";
+import { describeRefSync } from "../describe-ref";
 import { hasTags } from "./has-tags";
 import { makeDiffPredicate } from "./make-diff-predicate";
 
