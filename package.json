@@ -12,7 +12,7 @@
     "yarn": "1.22.19"
   },
   "engines": {
-    "node": "^14.15.0 || >=16.0.0"
+    "node": "^14.17.0 || >=16.0.0"
   },
   "scripts": {
     "build": "tools/scripts/build.sh",
@@ -87,7 +87,7 @@
     "p-queue": "^6.6.2",
     "p-reduce": "^2.1.0",
     "p-waterfall": "^2.1.1",
-    "pacote": "^13.6.2",
+    "pacote": "15.1.1",
     "pify": "^5.0.0",
     "read-cmd-shim": "^3.0.0",
     "read-package-json": "^5.0.1",
