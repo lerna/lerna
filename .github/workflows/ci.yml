@@ -195,8 +195,8 @@ jobs:
           echo "is_affected=$IS_AFFECTED" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Install pnpm v7
+        run: npm install -g pnpm@7
         shell: bash
 
       - run: pnpm --version
