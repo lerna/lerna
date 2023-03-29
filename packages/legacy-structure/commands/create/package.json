@@ -19,7 +19,7 @@
   ],
   "main": "./dist/index.js",
   "engines": {
-    "node": "^14.15.0 || >=16.0.0"
+    "node": "^14.17.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -36,7 +36,7 @@
     "init-package-json": "^3.0.2",
     "npm-package-arg": "8.1.1",
     "p-reduce": "^2.1.0",
-    "pacote": "^13.6.1",
+    "pacote": "15.1.1",
     "pify": "^5.0.0",
     "semver": "^7.3.4",
     "slash": "^3.0.0",
