@@ -95,9 +95,7 @@ describe("create-symlink", () => {
       const dst = path.resolve("./packages/package-1/node_modules/.bin/package-3");
       const type = "exec";
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      fs.pathExists.mockReturnValueOnce(false);
+      fs.pathExists.mockReturnValueOnce(Promise.resolve(false) as any);
 
       await createSymlink(src, dst, type);
 
