@@ -120,7 +120,7 @@ jobs:
 
           # Ignored specs currently failing on windows
           # TODO: investigate why
-          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --testTimeout=60000 --testPathIgnorePatterns=get-two-factor-auth-required.spec.ts --testPathIgnorePatterns=version-lifecycle-scripts.spec.ts --testPathIgnorePatterns=version-allow-branch.spec.ts --testPathIgnorePatterns=version-message.spec.ts --testPathIgnorePatterns=version-conventional-commits.spec.ts --testPathIgnorePatterns=version-bump-prerelease.spec.ts --testPathIgnorePatterns=version-bump.spec.ts --testPathIgnorePatterns=version-git-hosted-siblings.spec.ts --testPathIgnorePatterns=version-command.spec.ts  --testPathIgnorePatterns=bootstrap-command.spec.ts --testPathIgnorePatterns=publish-command.spec.ts --testPathIgnorePatterns=publish-licenses.spec.ts --testPathIgnorePatterns=publish-lifecycle-scripts.spec.ts --testPathIgnorePatterns=publish-tagging.spec.ts --testPathIgnorePatterns=publish-relative-file-specifiers.spec.ts &
+          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --testTimeout=60000 --testPathIgnorePatterns=publish-command.spec.ts --testPathIgnorePatterns=publish-licenses.spec.ts --testPathIgnorePatterns=publish-lifecycle-scripts.spec.ts --testPathIgnorePatterns=publish-tagging.spec.ts --testPathIgnorePatterns=publish-relative-file-specifiers.spec.ts &
 
           pids+=($!)
 
