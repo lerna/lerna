@@ -20,12 +20,12 @@ jest.mock("./get-npm-username");
 jest.mock("./get-two-factor-auth-required");
 
 // lerna version mocks
-jest.mock("../../../version/src/lib/git-push");
-jest.mock("../../../version/src/lib/is-anything-committed", () => ({
+jest.mock("@lerna/commands/version/lib/git-push");
+jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
   isAnythingCommitted: jest.fn().mockResolvedValue(true),
 }));
-jest.mock("../../../version/src/lib/is-behind-upstream");
-jest.mock("../../../version/src/lib/remote-branch-exists", () => ({
+jest.mock("@lerna/commands/version/lib/is-behind-upstream");
+jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
   remoteBranchExists: jest.fn().mockResolvedValue(true),
 }));
 
