@@ -1,12 +1,14 @@
 import { ProjectGraphDependency, ProjectGraphProjectNode } from "@nrwl/devkit";
 import { flatten } from "lodash";
+import { getCycles, mergeOverlappingCycles, reportCycles } from "./cycles";
 
 export function toposortProjects<T extends ProjectGraphProjectNode>(
   projects: T[],
   projectGraphDependencies: Record<string, ProjectGraphDependency[]>
 ): T[] {
-  const allDependencies = flatten(Object.values(projectGraphDependencies));
   const projectsMap = new Map(projects.map((p) => [p.name, p]));
+  const localDependencies = getLocalDependencies(projectGraphDependencies, projectsMap);
+  const flattenedLocalDependencies = flatten(Object.values(localDependencies));
 
   const getProject = (name: string) => {
     const project = projectsMap.get(name);
@@ -24,18 +26,23 @@ export function toposortProjects<T extends ProjectGraphProjectNode>(
     {}
   );
 
-  allDependencies.forEach((dep) => {
-    if (dependenciesBySource[dep.source] && projectsMap.has(dep.target))
-      dependenciesBySource[dep.source].add(dep.target);
+  flattenedLocalDependencies.forEach((dep) => {
+    if (dependenciesBySource[dep.source]) dependenciesBySource[dep.source].add(dep.target);
   });
 
+  const unmergedCycles = getCycles(localDependencies);
+
+  reportCycles(unmergedCycles, false);
+
+  const cycles = mergeOverlappingCycles(unmergedCycles);
+
   const sorted: T[] = [];
-  while (Object.keys(dependenciesBySource).length > 0) {
+  while (sorted.length < projects.length) {
     let batch = Object.keys(dependenciesBySource).filter((p) => dependenciesBySource[p].size === 0);
 
     if (batch.length === 0) {
-      // cycle detected, so just pick one to start
-      batch = [Object.keys(dependenciesBySource)[0]];
+      // no other leaf nodes found, so process the first cycle
+      batch = cycles.shift() || [];
     }
 
     batch.forEach((p) => {
@@ -49,4 +56,23 @@ export function toposortProjects<T extends ProjectGraphProjectNode>(
   }
 
   return sorted;
+}
+
+/**
+ * Get only dependencies between local projects.
+ * @param projectGraphDependencies all project graph dependencies
+ * @param projectsMap a map of projects to filter dependencies by
+ * @returns all project dependencies between projects in the projectsMap
+ */
+function getLocalDependencies(
+  projectGraphDependencies: Record<string, ProjectGraphDependency[]>,
+  projectsMap: Map<string, ProjectGraphProjectNode>
+): Record<string, ProjectGraphDependency[]> {
+  const localDependencies: Record<string, ProjectGraphDependency[]> = {};
+  Object.entries(projectGraphDependencies).forEach(([project, deps]) => {
+    if (projectsMap.has(project)) {
+      localDependencies[project] = deps.filter((dep) => projectsMap.has(dep.target));
+    }
+  });
+  return localDependencies;
 }

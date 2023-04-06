@@ -194,63 +194,58 @@ export class PackageGraph extends Map<string, PackageGraphNode> {
    * @param  rejectCycles Whether or not to reject cycles
    */
   partitionCycles(rejectCycles: boolean): [Set<string[]>, Set<PackageGraphNode>] {
-    const cyclePaths = new Set();
-    const cycleNodes = new Set();
+    const cyclePaths = new Set<string[]>();
+    const cycleNodes = new Set<PackageGraphNode>();
 
     this.forEach((currentNode, currentName) => {
       const seen = new Set();
 
-      // TODO: refactor to address type issues
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const visits = (walk) => (dependentNode, dependentName, siblingDependents) => {
-        const step = walk.concat(dependentName);
+      const visits =
+        (walk: string[]) =>
+        (
+          dependentNode: PackageGraphNode,
+          dependentName: string,
+          siblingDependents: Map<string, PackageGraphNode>
+        ) => {
+          const step = walk.concat(dependentName);
 
-        if (seen.has(dependentNode)) {
-          return;
-        }
+          if (seen.has(dependentNode)) {
+            return;
+          }
 
-        seen.add(dependentNode);
+          seen.add(dependentNode);
 
-        if (dependentNode === currentNode) {
-          // a direct cycle
-          cycleNodes.add(currentNode);
-          cyclePaths.add(step);
+          if (dependentNode === currentNode) {
+            // a direct cycle
+            cycleNodes.add(currentNode);
+            cyclePaths.add(step);
 
-          return;
-        }
+            return;
+          }
 
-        if (siblingDependents.has(currentName)) {
-          // a transitive cycle
-          const cycleDependentName = Array.from(dependentNode.localDependencies.keys()).find((key) =>
-            // TODO: refactor to address type issues
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            currentNode.localDependents.has(key)
-          );
-          const pathToCycle = step.slice().reverse().concat(cycleDependentName);
+          if (siblingDependents.has(currentName)) {
+            // a transitive cycle
+            const cycleDependentName = Array.from(dependentNode.localDependencies.keys()).find((key) =>
+              currentNode.localDependents.has(key)
+            );
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const pathToCycle = step.slice().reverse().concat(cycleDependentName!);
 
-          cycleNodes.add(dependentNode);
-          cyclePaths.add(pathToCycle);
-        }
+            cycleNodes.add(dependentNode);
+            cyclePaths.add(pathToCycle);
+          }
 
-        dependentNode.localDependents.forEach(visits(step));
-      };
+          dependentNode.localDependents.forEach(visits(step));
+        };
 
       currentNode.localDependents.forEach(visits([currentName]));
     });
 
     reportCycles(
-      // TODO: refactor to address type issues
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       Array.from(cyclePaths, (cycle) => cycle.join(" -> ")),
       rejectCycles
     );
 
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     return [cyclePaths, cycleNodes];
   }
 

@@ -11,8 +11,6 @@ import { Package, RawManifest } from "./package";
 import { ProjectGraphProjectNodeWithPackage } from "./project-graph-with-packages";
 import { projectGraphDependency } from "./test-helpers/create-project-graph";
 
-// const { File, Dir } = Tacks;
-
 // keep snapshots stable cross-platform
 chalk.level = 0;
 
@@ -237,7 +235,7 @@ pkg-1
 `);
     });
 
-    test.skip("cycles", () => {
+    test("cycles", () => {
       const { text } = formatWithOptions({ toposort: true, all: true });
 
       expect(loggingOutput("warn")).toContainEqual(expect.stringContaining("pkg-2 -> pkg-3 -> pkg-2"));
@@ -310,10 +308,14 @@ const createDependencies = (): Record<string, ProjectGraphDependency[]> => ({
       source: "pkg-1",
       target: "pkg-2",
     }),
+  ],
+  "pkg-2": [
     projectGraphDependency({
       source: "pkg-2",
       target: "pkg-3",
     }),
+  ],
+  "pkg-3": [
     projectGraphDependency({
       source: "pkg-3",
       target: "pkg-2",
