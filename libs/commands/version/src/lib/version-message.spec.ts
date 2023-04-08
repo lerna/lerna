@@ -1,4 +1,4 @@
-import { commandRunner, getCommitMessage, initFixtureFactory } from "@lerna/test-helpers";
+import { commandRunner, getCommitMessage, gitSHASerializer, initFixtureFactory } from "@lerna/test-helpers";
 import path from "path";
 
 // eslint-disable-next-line jest/no-mocks-import
@@ -22,8 +22,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish
 const lernaVersion = commandRunner(require("../command"));
 
 // stabilize commit SHA
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-git-sha"));
+expect.addSnapshotSerializer(gitSHASerializer);
 
 test("publish --message %s", async () => {
   const cwd = await initFixture("normal");
