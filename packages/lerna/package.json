@@ -118,6 +118,7 @@
     ".": "./dist/index.js",
     "./cli": "./dist/cli.js",
     "./cli.js": "./dist/cli.js",
+    "./dist/cli.js": "./dist/cli.js",
     "./commands/*": "./dist/commands/*/index.js",
     "./commands/*/command": "./dist/commands/*/command.js",
     "./commands/add/lib/*": "./dist/commands/add/lib/*.js",
