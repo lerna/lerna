@@ -1,8 +1,5 @@
-import {
-  collectUpdates as _collectUpdates,
-  recommendVersion as _recommendVersion,
-  updateChangelog as _updateChangelog,
-} from "@lerna/core";
+import { recommendVersion as _recommendVersion, updateChangelog as _updateChangelog } from "@lerna/core";
+import { collectUpdates as _collectUpdates } from "@lerna/legacy-core";
 import { commandRunner, initFixtureFactory, showCommit } from "@lerna/test-helpers";
 import path from "path";
 import semver from "semver";
@@ -13,6 +10,9 @@ jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"))
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 jest.mock("./git-push");
 jest.mock("./is-anything-committed", () => ({
