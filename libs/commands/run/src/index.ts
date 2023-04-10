@@ -105,11 +105,11 @@ class RunCommand extends Command {
     this.configureNxOutput();
     const { targetDependencies, options, extraOptions } = await this.prepNxOptions();
 
-    if (this.packagesWithScript.length === 1 && !Array.isArray(this.script)) {
+    if (this.projectsWithScript.length === 1 && !Array.isArray(this.script)) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { runOne } = require("nx/src/command-line/run-one");
       const fullQualifiedTarget =
-        this.projectsWithScript.map((p) => getPackage(p).name)[0] +
+        this.projectsWithScript.map((p) => p.name)[0] +
         ":" +
         this.addQuotesAroundScriptNameIfItHasAColon(this.script);
       return runOne(
@@ -124,7 +124,7 @@ class RunCommand extends Command {
     } else {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { runMany } = require("nx/src/command-line/run-many");
-      const projects = this.projectsWithScript.map((p) => getPackage(p).name).join(",");
+      const projects = this.projectsWithScript.map((p) => p.name).join(",");
       return runMany(
         {
           projects,
