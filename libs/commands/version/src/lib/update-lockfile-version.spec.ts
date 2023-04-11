@@ -3,17 +3,16 @@ import { initFixtureFactory } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import _loadJsonFile from "load-json-file";
 import path from "path";
+import { updateLockfileVersion } from "./update-lockfile-version";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("load-json-file", () => require("@lerna/test-helpers/__mocks__/load-json-file"));
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const loadJsonFile = _loadJsonFile as any;
 
 const initFixture = initFixtureFactory(__dirname);
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { updateLockfileVersion } = require("./update-lockfile-version");
 
 test("updateLockfileVersion with lockfile v1", async () => {
   const cwd = await initFixture("lockfile-leaf");
@@ -25,7 +24,7 @@ test("updateLockfileVersion with lockfile v1", async () => {
 
   expect(returnedLockfilePath).toBe(path.join(pkg.location, "package-lock.json"));
   expect(Array.from(loadJsonFile.registry.keys())).toStrictEqual(["/packages/package-1"]);
-  expect(fs.readJSONSync(returnedLockfilePath)).toHaveProperty("version", "2.0.0");
+  expect(fs.readJSONSync(returnedLockfilePath as string)).toHaveProperty("version", "2.0.0");
 });
 
 test("updateLockfileVersion without sibling lockfile", async () => {
@@ -54,7 +53,7 @@ test("updateLockfileVersion with lockfile v2 - local dependency should be update
 
   expect(returnedLockfilePath).toBe(path.join(pkg.location, "package-lock.json"));
   expect(Array.from(loadJsonFile.registry.keys())).toStrictEqual(["/packages/package-1"]);
-  const updatedLockfile = fs.readJSONSync(returnedLockfilePath);
+  const updatedLockfile = fs.readJSONSync(returnedLockfilePath as string);
   expect(updatedLockfile).toHaveProperty("version", "2.0.0");
   expect(updatedLockfile).toHaveProperty(["packages", "", "dependencies", "package-2"], "^2.0.0");
   expect(updatedLockfile).toHaveProperty(["packages", "", "dependencies", "tiny-tarball"], "^1.0.0");
@@ -72,7 +71,7 @@ test("updateLockfileVersion with lockfile v2 - local dependency should not be ad
   const returnedLockfilePath = await updateLockfileVersion(pkg2);
 
   expect(returnedLockfilePath).toBe(path.join(pkg2.location, "package-lock.json"));
-  const updatedLockfile = fs.readJSONSync(returnedLockfilePath);
+  const updatedLockfile = fs.readJSONSync(returnedLockfilePath as string);
 
   expect(updatedLockfile).toHaveProperty("version", "2.0.0");
 
@@ -90,7 +89,7 @@ test("updateLockfileVersion with outdated lockfile v2 - should not fail", async 
   const pkg2 = (await getPackages(cwd))[1];
 
   const returnedLockfilePath = await updateLockfileVersion(pkg2);
-  const updatedLockfile = fs.readJSONSync(returnedLockfilePath);
+  const updatedLockfile = fs.readJSONSync(returnedLockfilePath as string);
 
   expect(updatedLockfile.packages[""].dependencies).toEqual({});
   expect(updatedLockfile.packages[""].devDependencies).toEqual({});

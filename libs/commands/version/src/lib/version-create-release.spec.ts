@@ -8,6 +8,9 @@ import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
+
 jest.mock("./git-add");
 jest.mock("./git-commit");
 jest.mock("./git-push");
@@ -22,8 +25,11 @@ jest.mock("./remote-branch-exists", () => ({
 }));
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createGitHubClient = _createGitHubClient as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createGitLabClient = _createGitLabClient as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const recommendVersion = _recommendVersion as any;
 
 const initFixture = initFixtureFactory(__dirname);

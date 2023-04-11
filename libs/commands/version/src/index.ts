@@ -27,34 +27,21 @@ import pReduce from "p-reduce";
 import pWaterfall from "p-waterfall";
 import path from "path";
 import semver from "semver";
+import { createRelease, createReleaseClient } from "./lib/create-release";
+import { getCurrentBranch } from "./lib/get-current-branch";
+import { gitAdd } from "./lib/git-add";
+import { gitCommit } from "./lib/git-commit";
+import { gitPush } from "./lib/git-push";
+import { gitTag } from "./lib/git-tag";
+import { isAnythingCommitted } from "./lib/is-anything-committed";
+import { isBehindUpstream } from "./lib/is-behind-upstream";
+import { isBreakingChange } from "./lib/is-breaking-change";
+import { makePromptVersion } from "./lib/prompt-version";
+import { remoteBranchExists } from "./lib/remote-branch-exists";
+import { updateLockfileVersion } from "./lib/update-lockfile-version";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getCurrentBranch } = require("./lib/get-current-branch");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitAdd } = require("./lib/git-add");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitCommit } = require("./lib/git-commit");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitPush } = require("./lib/git-push");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitTag } = require("./lib/git-tag");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { isBehindUpstream } = require("./lib/is-behind-upstream");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { remoteBranchExists } = require("./lib/remote-branch-exists");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { isBreakingChange } = require("./lib/is-breaking-change");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { isAnythingCommitted } = require("./lib/is-anything-committed");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { makePromptVersion } = require("./lib/prompt-version");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { createRelease, createReleaseClient } = require("./lib/create-release");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { updateLockfileVersion } = require("./lib/update-lockfile-version");
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new VersionCommand(argv);

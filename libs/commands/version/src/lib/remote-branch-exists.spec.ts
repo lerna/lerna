@@ -1,10 +1,8 @@
 import { cloneFixtureFactory } from "@lerna/test-helpers";
 import execa from "execa";
+import { remoteBranchExists } from "./remote-branch-exists";
 
 const cloneFixture = cloneFixtureFactory(__dirname);
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { remoteBranchExists } = require("./remote-branch-exists");
 
 test("remoteBranchExists", async () => {
   const { cwd } = await cloneFixture("root-manifest-only");

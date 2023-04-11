@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-const { collectPackages, getPackagesForOption } = jest.requireActual("@lerna/core");
+const { collectPackages, getPackagesForOption } = jest.requireActual("@lerna/legacy-core");
 
 // collectUpdates.setUpdated(cwd, packageNames...)
 // otherwise, enables everything

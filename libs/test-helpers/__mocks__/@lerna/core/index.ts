@@ -29,7 +29,6 @@ module.exports = {
   createRunner,
   npmPublish,
   packDirectory,
-  createSymlink: jest.fn(),
   npmRunScript: jest.fn(),
   npmRunScriptStreaming: jest.fn(),
   promptConfirmation: jest.fn(),

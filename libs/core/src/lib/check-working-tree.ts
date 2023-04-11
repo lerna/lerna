@@ -35,8 +35,8 @@ const EUNCOMMIT_MSG =
   "Working tree has uncommitted changes, please commit or remove the following changes before continuing:\n";
 
 export function mkThrowIfUncommitted(options = {}) {
-  return function throwIfUncommitted({ isDirty }) {
-    if (isDirty) {
+  return function throwIfUncommitted(opts: { isDirty?: boolean }) {
+    if (opts.isDirty) {
       return collectUncommitted(options).then((uncommitted) => {
         throw new ValidationError("EUNCOMMIT", `${EUNCOMMIT_MSG}${uncommitted.join("\n")}`);
       });

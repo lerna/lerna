@@ -1,14 +1,12 @@
 import { applyBuildMetadata, promptSelectOne, promptTextInput } from "@lerna/core";
+import { PackageGraphNode } from "@lerna/legacy-core";
 import semver from "semver";
 
-module.exports.makePromptVersion = makePromptVersion;
-
-/**
- * @param {(existingPreid: string) => string} resolvePrereleaseId
- * @param {string} buildMetadata
- */
-function makePromptVersion(resolvePrereleaseId, buildMetadata) {
-  return (/** @type {import("@lerna/package-graph").PackageGraphNode} */ node) =>
+export function makePromptVersion(
+  resolvePrereleaseId: (existingPreId: string) => string,
+  buildMetadata: string
+) {
+  return (node: PackageGraphNode) =>
     promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId), buildMetadata);
 }
 
@@ -21,7 +19,7 @@ function makePromptVersion(resolvePrereleaseId, buildMetadata) {
  * @param {string} prereleaseId
  * @param {string} buildMetadata
  */
-function promptVersion(currentVersion, name, prereleaseId, buildMetadata) {
+function promptVersion(currentVersion: string, name: string, prereleaseId: string, buildMetadata: string) {
   const patch = applyBuildMetadata(semver.inc(currentVersion, "patch"), buildMetadata);
   const minor = applyBuildMetadata(semver.inc(currentVersion, "minor"), buildMetadata);
   const major = applyBuildMetadata(semver.inc(currentVersion, "major"), buildMetadata);

@@ -1,16 +1,17 @@
 import {
   prereleaseIdFromVersion,
   promptSelectOne as _promptSelectOne,
-  promptTextInput as _promtTextInput,
+  promptTextInput as _promptTextInput,
 } from "@lerna/core";
 import semver from "semver";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
-const promptTextInput = jest.mocked(_promtTextInput);
+const promptTextInput = jest.mocked(_promptTextInput);
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const promptSelectOne = _promptSelectOne as any;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

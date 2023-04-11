@@ -1,13 +1,8 @@
 import { createGitHubClient, createGitLabClient, parseGitRepo, ValidationError } from "@lerna/core";
+import { ExecOptions } from "child_process";
 import semver from "semver";
 
-module.exports.createRelease = createRelease;
-module.exports.createReleaseClient = createReleaseClient;
-
-/**
- * @param {'github' | 'gitlab'} type
- */
-function createReleaseClient(type) {
+export function createReleaseClient(type: "github" | "gitlab") {
   switch (type) {
     case "gitlab":
       return createGitLabClient();
@@ -19,12 +14,11 @@ function createReleaseClient(type) {
   }
 }
 
-/**
- * @param {ReturnType<typeof createReleaseClient>} client
- * @param {{ tags: string[]; releaseNotes: { name: string; notes: string; }[] }} commandProps
- * @param {{ gitRemote: string; execOpts: import("@lerna/child-process").ExecOpts }} opts
- */
-function createRelease(client, { tags, releaseNotes }, { gitRemote, execOpts }) {
+export function createRelease(
+  client: ReturnType<typeof createReleaseClient>,
+  { tags, releaseNotes }: { tags: string[]; releaseNotes: { name: string; notes: string }[] },
+  { gitRemote, execOpts }: { gitRemote: string; execOpts: ExecOptions }
+) {
   const repo = parseGitRepo(gitRemote, execOpts);
 
   return Promise.all(

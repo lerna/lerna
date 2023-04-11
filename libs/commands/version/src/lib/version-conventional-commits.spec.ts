@@ -26,9 +26,13 @@ jest.mock("./remote-branch-exists", () => ({
 }));
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const updateChangelog = _updateChangelog as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const collectUpdates = _collectUpdates as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const recommendVersion = _recommendVersion as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const writePkg = _writePkg as any;
 
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));

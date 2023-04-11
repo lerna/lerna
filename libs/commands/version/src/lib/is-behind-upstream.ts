@@ -1,20 +1,11 @@
+import { ExecOptions } from "child_process";
 import log from "npmlog";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-module.exports.isBehindUpstream = isBehindUpstream;
-
-/**
- * @param {string} gitRemote
- * @param {string} branch
- * @param {import("@lerna/child-process").ExecOpts} opts
- */
-function isBehindUpstream(gitRemote, branch, opts) {
-  // TODO: refactor to address type issues
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  log.silly("isBehindUpstream");
+export function isBehindUpstream(gitRemote: string, branch: string, opts: ExecOptions) {
+  log.silly("isBehindUpstream", "");
 
   updateRemote(opts);
 

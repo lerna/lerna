@@ -1,4 +1,4 @@
-import { promptSelectOne as _promptSelectOne, promptTextInput as _promtTextInput } from "@lerna/core";
+import { promptSelectOne as _promptSelectOne, promptTextInput as _promptTextInput } from "@lerna/core";
 import {
   commandRunner,
   getCommitMessage,
@@ -33,14 +33,24 @@ jest.mock("@lerna/core", () => {
     ...mockCore,
     recommendVersion: realCore.recommendVersion,
     updateChangelog: realCore.updateChangelog,
+  };
+});
+
+jest.mock("@lerna/legacy-core", () => {
+  const realCore = jest.requireActual("@lerna/legacy-core");
+  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
+  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/legacy-core");
+  return {
+    ...mockCore,
     // we're actually testing integration with git
     collectUpdates: realCore.collectUpdates,
   };
 });
 
-const promptTextInput = jest.mocked(_promtTextInput);
+const promptTextInput = jest.mocked(_promptTextInput);
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const promptSelectOne = _promptSelectOne as any;
 
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));

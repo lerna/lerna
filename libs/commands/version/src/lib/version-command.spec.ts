@@ -1,11 +1,11 @@
 import {
   checkWorkingTree as _checkWorkingTree,
-  collectUpdates as _collectUpdates,
+  output as _output,
   promptConfirmation,
   promptSelectOne as _promptSelectOne,
   throwIfUncommitted as _throwIfUncommitted,
-  output as _output,
 } from "@lerna/core";
+import { collectUpdates as _collectUpdates } from "@lerna/legacy-core";
 import {
   commandRunner,
   getCommitMessage,
@@ -27,6 +27,9 @@ jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"))
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
+
 jest.mock("./git-push");
 jest.mock("./is-anything-committed", () => ({
   isAnythingCommitted: jest.fn().mockReturnValue(true),
@@ -38,28 +41,36 @@ jest.mock("./remote-branch-exists", () => ({
   remoteBranchExists: jest.fn().mockResolvedValue(true),
 }));
 
+import { gitPush as _libPush } from "./git-push";
+import { isAnythingCommitted as _isAnythingCommitted } from "./is-anything-committed";
+import { isBehindUpstream as _isBehindUpstream } from "./is-behind-upstream";
+import { remoteBranchExists as _remoteBranchExists } from "./remote-branch-exists";
+
 const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
 const checkWorkingTree = jest.mocked(_checkWorkingTree);
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const promptSelectOne = _promptSelectOne as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const collectUpdates = _collectUpdates as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const writePkg = _writePkg as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const output = _output as any;
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitPush: libPush } = require("./git-push");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { isAnythingCommitted } = require("./is-anything-committed");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { isBehindUpstream } = require("./is-behind-upstream");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { remoteBranchExists } = require("./remote-branch-exists");
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const libPush = _libPush as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isAnythingCommitted = _isAnythingCommitted as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isBehindUpstream = _isBehindUpstream as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const remoteBranchExists = _remoteBranchExists as any;
 
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
 
 // certain tests need to use the real thing
-const collectUpdatesActual = jest.requireActual("@lerna/core").collectUpdates;
+const collectUpdatesActual = jest.requireActual("@lerna/legacy-core").collectUpdates;
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires

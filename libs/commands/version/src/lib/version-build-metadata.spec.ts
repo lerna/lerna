@@ -1,13 +1,19 @@
-import { promptSelectOne as _promptSelectOne, promptTextInput as _promtTextInput } from "@lerna/core";
+import { promptSelectOne as _promptSelectOne, promptTextInput as _promptTextInput } from "@lerna/core";
+import { PackageGraphNode } from "@lerna/legacy-core";
 import { commandRunner, initFixtureFactory, showCommit } from "@lerna/test-helpers";
 import path from "path";
+import { makePromptVersion } from "./prompt-version";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
-const promptTextInput = jest.mocked(_promtTextInput);
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
+
+const promptTextInput = jest.mocked(_promptTextInput);
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const promptSelectOne = _promptSelectOne as any;
 
 jest.mock("./git-push");
@@ -20,9 +26,6 @@ jest.mock("./is-behind-upstream", () => ({
 jest.mock("./remote-branch-exists", () => ({
   remoteBranchExists: jest.fn().mockResolvedValue(true),
 }));
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { makePromptVersion } = require("./prompt-version");
 
 const resolvePrereleaseId = jest.fn(() => "alpha");
 const versionPrompt = (buildMetadata) => makePromptVersion(resolvePrereleaseId, buildMetadata);
@@ -182,7 +185,7 @@ describe("--build-metadata in version prompt", () => {
   ])("accepts build metadata for prompted choice %s", async (bump, result) => {
     promptSelectOne.chooseBump(bump);
 
-    const choice = await versionPrompt("001")({ version: "1.0.0" });
+    const choice = await versionPrompt("001")({ version: "1.0.0" } as PackageGraphNode);
 
     expect(promptSelectOne).toHaveBeenLastCalledWith(
       "Select a new version (currently 1.0.0)",
@@ -196,7 +199,7 @@ describe("--build-metadata in version prompt", () => {
   it("updates build metadata for prompted choice", async () => {
     promptSelectOne.chooseBump("patch");
 
-    const choice = await versionPrompt("20130313144700")({ version: "1.0.0+001" });
+    const choice = await versionPrompt("20130313144700")({ version: "1.0.0+001" } as PackageGraphNode);
 
     expect(promptSelectOne).toHaveBeenLastCalledWith(
       "Select a new version (currently 1.0.0+001)",
@@ -216,7 +219,7 @@ describe("--build-metadata in version prompt", () => {
       return Promise.resolve(msg);
     });
 
-    await versionPrompt("exp.sha.5114f85")({ version: "1.0.0" });
+    await versionPrompt("exp.sha.5114f85")({ version: "1.0.0" } as PackageGraphNode);
 
     expect(promptSelectOne).toHaveBeenLastCalledWith(
       "Select a new version (currently 1.0.0)",
@@ -238,7 +241,7 @@ describe("--build-metadata in version prompt", () => {
       return Promise.resolve(msg);
     });
 
-    await versionPrompt("20130313144700")({ version: "1.0.0" });
+    await versionPrompt("20130313144700")({ version: "1.0.0" } as PackageGraphNode);
 
     expect(promptSelectOne).toHaveBeenLastCalledWith(
       "Select a new version (currently 1.0.0)",

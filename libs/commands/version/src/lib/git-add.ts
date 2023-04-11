@@ -1,4 +1,5 @@
 import { readJsonFile, workspaceRoot } from "@nrwl/devkit";
+import { ExecOptions } from "child_process";
 import fs from "fs";
 import log from "npmlog";
 import path from "path";
@@ -6,8 +7,6 @@ import slash from "slash";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
-
-module.exports.gitAdd = gitAdd;
 
 let resolvedPrettier;
 function resolvePrettier() {
@@ -55,15 +54,14 @@ function maybeFormatFile(filePath) {
   }
 }
 
-/**
- * @param {string[]} changedFiles
- * @param {{ granularPathspec: boolean; }} gitOpts
- * @param {import("@lerna/child-process").ExecOpts} execOpts
- */
-function gitAdd(changedFiles, gitOpts, execOpts) {
+export function gitAdd(
+  changedFiles: string[],
+  gitOpts: { granularPathspec: boolean },
+  execOpts: ExecOptions
+) {
   let files: string | string[] = [];
   for (const file of changedFiles) {
-    const filePath = slash(path.relative(execOpts.cwd, path.resolve(execOpts.cwd, file)));
+    const filePath = slash(path.relative(execOpts.cwd as string, path.resolve(execOpts.cwd as string, file)));
     maybeFormatFile(filePath);
     if (gitOpts.granularPathspec) {
       files.push(filePath);
