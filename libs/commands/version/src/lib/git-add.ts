@@ -56,7 +56,7 @@ function maybeFormatFile(filePath) {
 
 export function gitAdd(
   changedFiles: string[],
-  gitOpts: { granularPathspec: boolean },
+  gitOpts: { granularPathspec?: boolean },
   execOpts: ExecOptions
 ) {
   let files: string | string[] = [];

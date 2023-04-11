@@ -1,13 +1,11 @@
-// TODO: refactor based on TS feedback
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 import {
   applyBuildMetadata,
   checkWorkingTree,
+  CommandConfigOptions,
   createRunner,
   getPackagesForOption,
   output,
+  Package,
   prereleaseIdFromVersion,
   promptConfirmation,
   recommendVersion,
@@ -15,7 +13,13 @@ import {
   updateChangelog,
   ValidationError,
 } from "@lerna/core";
-import { collectPackages, collectUpdates, Command, runTopologically } from "@lerna/legacy-core";
+import {
+  collectPackages,
+  collectUpdates,
+  Command,
+  PackageGraphNode,
+  runTopologically,
+} from "@lerna/legacy-core";
 import chalk from "chalk";
 import dedent from "dedent";
 import fs from "fs";
@@ -26,7 +30,7 @@ import pPipe from "p-pipe";
 import pReduce from "p-reduce";
 import pWaterfall from "p-waterfall";
 import path from "path";
-import semver from "semver";
+import semver, { ReleaseType } from "semver";
 import { createRelease, createReleaseClient } from "./lib/create-release";
 import { getCurrentBranch } from "./lib/get-current-branch";
 import { gitAdd } from "./lib/git-add";
@@ -47,15 +51,80 @@ module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new VersionCommand(argv);
 };
 
+interface VersionCommandConfigOptions extends CommandConfigOptions {
+  allowBranch?: string | string[];
+  conventionalCommits?: boolean;
+  amend?: boolean;
+  commitHooks?: boolean;
+  gitRemote?: string;
+  gitTagVersion?: boolean;
+  granularPathspec?: boolean;
+  push?: boolean;
+  signGitCommit?: boolean;
+  signoffGitCommit?: boolean;
+  signGitTag?: boolean;
+  forceGitTag?: boolean;
+  tagVersionPrefix?: string;
+  createRelease?: "github" | "gitlab";
+  changelog?: boolean;
+  exact?: boolean;
+  conventionalPrerelease?: string;
+  conventionalGraduate?: string;
+  private?: boolean;
+  forcePublish?: string | string[];
+  bump?: string;
+  preid?: string;
+  buildMetadata?: string;
+  gitTagCommand?: string;
+  message?: string;
+  npmClientArgs?: string[];
+  changelogPreset?: string;
+  conventionalBumpPrerelease?: boolean;
+  yes?: boolean;
+  rejectCycles?: boolean;
+}
+
 class VersionCommand extends Command {
+  options: VersionCommandConfigOptions;
+
+  commitAndTag?: boolean;
+  pushToRemote?: boolean;
+  allowBranch?: boolean;
+  gitRemote?: string;
+  tagPrefix?: string;
+  releaseClient?: ReturnType<typeof createReleaseClient>;
+  releaseNotes?: { name: string; notes: string }[];
+  gitOpts?: {
+    amend?: boolean;
+    commitHooks?: boolean;
+    granularPathspec?: boolean;
+    signGitCommit?: boolean;
+    signoffGitCommit?: boolean;
+    signGitTag?: boolean;
+    forceGitTag?: boolean;
+  };
+  savePrefix?: string;
+  currentBranch?: string;
+  updates: PackageGraphNode[] = [];
+  tags?: string[];
+  globalVersion?: string;
+  hasRootedLeaf?: boolean;
+  runPackageLifecycle?: (pkg: Package, script: string) => Promise<void>;
+  runRootLifecycle?: (script: string) => Promise<void> | void;
+  updatesVersions?: Map<string, string>;
+  packagesToVersion?: Package[];
+
   get otherCommandConfigs() {
     // back-compat
     return ["publish"];
   }
 
   get requiresGit() {
-    return (
-      this.commitAndTag || this.pushToRemote || this.options.allowBranch || this.options.conventionalCommits
+    return !!(
+      this.commitAndTag ||
+      this.pushToRemote ||
+      this.options.allowBranch ||
+      this.options.conventionalCommits
     );
   }
 
@@ -270,7 +339,7 @@ class VersionCommand extends Command {
   }
 
   execute() {
-    const tasks = [() => this.updatePackageVersions()];
+    const tasks: (() => Promise<unknown>)[] = [() => this.updatePackageVersions()];
 
     if (this.commitAndTag) {
       tasks.push(() => this.commitAndTagUpdates());
@@ -315,16 +384,18 @@ class VersionCommand extends Command {
     const repoVersion = bump ? semver.clean(bump) : "";
     const increment = bump && !semver.valid(bump) ? bump : "";
 
-    const resolvePrereleaseId = (existingPreid) => preid || existingPreid || "alpha";
+    const resolvePrereleaseId = (existingPreid: string) => preid || existingPreid || "alpha";
 
-    const makeGlobalVersionPredicate = (nextVersion) => {
+    const makeGlobalVersionPredicate = (nextVersion: string) => {
       this.globalVersion = nextVersion;
 
       return () => nextVersion;
     };
 
     // decide the predicate in the conditionals below
-    let predicate;
+    // TODO: tighten up predicate typing
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let predicate: any;
 
     if (repoVersion) {
       predicate = makeGlobalVersionPredicate(applyBuildMetadata(repoVersion, this.options.buildMetadata));
@@ -332,14 +403,14 @@ class VersionCommand extends Command {
       // compute potential prerelease ID for each independent update
       predicate = (node) =>
         applyBuildMetadata(
-          semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId)),
+          semver.inc(node.version, increment as ReleaseType, resolvePrereleaseId(node.prereleaseId)),
           this.options.buildMetadata
         );
     } else if (increment) {
       // compute potential prerelease ID once for all fixed updates
       const prereleaseId = prereleaseIdFromVersion(this.project.version);
       const nextVersion = applyBuildMetadata(
-        semver.inc(this.project.version, increment, resolvePrereleaseId(prereleaseId)),
+        semver.inc(this.project.version, increment as ReleaseType, resolvePrereleaseId(prereleaseId)),
         this.options.buildMetadata
       );
 
@@ -498,7 +569,7 @@ class VersionCommand extends Command {
     output("");
 
     if (this.options.yes) {
-      this.logger.info("auto-confirmed");
+      this.logger.info("auto-confirmed", "");
       return true;
     }
 
@@ -514,10 +585,10 @@ class VersionCommand extends Command {
     const { conventionalCommits, changelogPreset, changelog = true } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
-    const changedFiles = new Set();
+    const changedFiles = new Set<string>();
 
     // my kingdom for async await :(
-    let chain = Promise.resolve();
+    let chain: Promise<unknown> = Promise.resolve();
 
     // preversion:  Run BEFORE bumping the package version.
     // version:     Run AFTER bumping the package version, but BEFORE commit.
@@ -697,30 +768,23 @@ class VersionCommand extends Command {
     return chain;
   }
 
-  commitAndTagUpdates() {
-    let chain = Promise.resolve();
-
+  async commitAndTagUpdates() {
+    let tags: string[] = [];
     if (this.project.isIndependent()) {
-      chain = chain.then(() => this.gitCommitAndTagVersionForUpdates());
+      tags = await this.gitCommitAndTagVersionForUpdates();
     } else {
-      chain = chain.then(() => this.gitCommitAndTagVersion());
+      tags = await this.gitCommitAndTagVersion();
     }
 
-    chain = chain.then((tags) => {
-      this.tags = tags;
-    });
+    this.tags = tags;
 
     // run the postversion script for each update
-    chain = chain.then(() =>
-      pMap(this.packagesToVersion, (pkg) => this.runPackageLifecycle(pkg, "postversion"))
-    );
+    await pMap(this.packagesToVersion, (pkg) => this.runPackageLifecycle(pkg, "postversion"));
 
     if (!this.hasRootedLeaf) {
       // run postversion, if set, in the root directory
-      chain = chain.then(() => this.runRootLifecycle("postversion"));
+      await this.runRootLifecycle("postversion");
     }
-
-    return chain;
   }
 
   gitCommitAndTagVersionForUpdates() {
