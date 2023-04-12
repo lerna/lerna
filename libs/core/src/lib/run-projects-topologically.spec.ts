@@ -1,9 +1,9 @@
 import { ProjectGraphDependency, ProjectGraphProjectNode } from "@nrwl/devkit";
+import { runProjectsTopologically } from "./run-projects-topologically";
 import { projectGraphDependency } from "./test-helpers/create-project-graph";
-import { toposortProjects } from "./toposort-projects";
 
-describe("toposortProjects", () => {
-  it("should order projects by depth of the tree with leaves first", () => {
+describe("runProjectsTopologically", () => {
+  it("should run packages in order by depth of tree with leaves first", async () => {
     const projects: ProjectGraphProjectNode[] = [
       // the order of this array is by root path
       // this simulates Object.values(...) on projectGraph.nodes
@@ -99,7 +99,15 @@ describe("toposortProjects", () => {
       ],
     };
 
-    expect(toposortProjects(projects, projectGraphDependencies).map((p) => p.name)).toEqual([
+    const result: string[] = [];
+    const runner = (node: ProjectGraphProjectNode) => {
+      result.push(node.name);
+      return Promise.resolve();
+    };
+
+    await runProjectsTopologically(projects, projectGraphDependencies, runner, { concurrency: 4 });
+
+    expect(result).toEqual([
       "ppp2",
       "ooo2",
       "other-2",
@@ -112,7 +120,7 @@ describe("toposortProjects", () => {
     ]);
   });
 
-  it("should handle cycles", () => {
+  it("should handle cycles", async () => {
     const projects: ProjectGraphProjectNode[] = [
       // the order of this array is by root path
       // this simulates Object.values(...) on projectGraph.nodes
@@ -229,7 +237,15 @@ describe("toposortProjects", () => {
       ],
     };
 
-    expect(toposortProjects(projects, projectGraphDependencies).map((p) => p.name)).toEqual([
+    const result: string[] = [];
+    const runner = (node: ProjectGraphProjectNode) => {
+      result.push(node.name);
+      return Promise.resolve();
+    };
+
+    await runProjectsTopologically(projects, projectGraphDependencies, runner, { concurrency: 4 });
+
+    expect(result).toEqual([
       "ppp2",
       "ooo2",
       "other-2",
@@ -244,7 +260,7 @@ describe("toposortProjects", () => {
     ]);
   });
 
-  it("should handle nested cycles", () => {
+  it("should handle nested cycles", async () => {
     const projects: ProjectGraphProjectNode[] = [
       // the order of this array is by root path
       // this simulates Object.values(...) on projectGraph.nodes
@@ -339,7 +355,15 @@ describe("toposortProjects", () => {
       "package-8": [projectGraphDependency({ source: "package-8", target: "package-9" })],
     };
 
-    expect(toposortProjects(projects, projectGraphDependencies).map((p) => p.name)).toEqual([
+    const result: string[] = [];
+    const runner = (node: ProjectGraphProjectNode) => {
+      result.push(node.name);
+      return Promise.resolve();
+    };
+
+    await runProjectsTopologically(projects, projectGraphDependencies, runner, { concurrency: 4 });
+
+    expect(result).toEqual([
       "package-9",
       "package-8",
       "package-2",

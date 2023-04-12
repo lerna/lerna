@@ -4,9 +4,13 @@ import {
   promptTextInput as _promptTextInput,
 } from "@lerna/core";
 import semver from "semver";
+import { makePromptVersion } from "./prompt-version";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 const promptTextInput = jest.mocked(_promptTextInput);
 
@@ -14,11 +18,8 @@ const promptTextInput = jest.mocked(_promptTextInput);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const promptSelectOne = _promptSelectOne as any;
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { makePromptVersion } = require("./prompt-version");
-
 const resolvePrereleaseId = jest.fn(() => "alpha");
-const versionPrompt = makePromptVersion(resolvePrereleaseId);
+const versionPrompt = makePromptVersion(resolvePrereleaseId, "");
 
 describe("select", () => {
   describe("message", () => {

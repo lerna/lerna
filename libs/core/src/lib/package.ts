@@ -56,7 +56,7 @@ export interface RawManifest {
   nx?: Record<string, unknown>;
 }
 
-type ExtendedNpaResult = npa.Result & {
+export type ExtendedNpaResult = npa.Result & {
   workspaceSpec?: string;
   workspaceAlias?: string;
 };
@@ -252,6 +252,30 @@ export class Package {
    */
   serialize() {
     return writePkg(this.manifestLocation, this[PKG] as any).then(() => this);
+  }
+
+  getLocalDependency(
+    depName: string
+  ): { collection: "dependencies" | "devDependencies" | "optionalDependencies"; spec: string } | null {
+    if (this.dependencies && this.dependencies[depName]) {
+      return {
+        collection: "dependencies",
+        spec: this.dependencies[depName],
+      };
+    }
+    if (this.devDependencies && this.devDependencies[depName]) {
+      return {
+        collection: "devDependencies",
+        spec: this.devDependencies[depName],
+      };
+    }
+    if (this.optionalDependencies && this.optionalDependencies[depName]) {
+      return {
+        collection: "optionalDependencies",
+        spec: this.optionalDependencies[depName],
+      };
+    }
+    return null;
   }
 
   /**

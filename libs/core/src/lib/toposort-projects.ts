@@ -4,7 +4,8 @@ import { getCycles, mergeOverlappingCycles, reportCycles } from "./cycles";
 
 export function toposortProjects<T extends ProjectGraphProjectNode>(
   projects: T[],
-  projectGraphDependencies: Record<string, ProjectGraphDependency[]>
+  projectGraphDependencies: Record<string, ProjectGraphDependency[]>,
+  rejectCycles = false
 ): T[] {
   const projectsMap = new Map(projects.map((p) => [p.name, p]));
   const localDependencies = getLocalDependencies(projectGraphDependencies, projectsMap);
@@ -32,7 +33,7 @@ export function toposortProjects<T extends ProjectGraphProjectNode>(
 
   const unmergedCycles = getCycles(localDependencies);
 
-  reportCycles(unmergedCycles, false);
+  reportCycles(unmergedCycles, rejectCycles);
 
   const cycles = mergeOverlappingCycles(unmergedCycles);
 
@@ -64,7 +65,7 @@ export function toposortProjects<T extends ProjectGraphProjectNode>(
  * @param projectsMap a map of projects to filter dependencies by
  * @returns all project dependencies between projects in the projectsMap
  */
-function getLocalDependencies(
+export function getLocalDependencies(
   projectGraphDependencies: Record<string, ProjectGraphDependency[]>,
   projectsMap: Map<string, ProjectGraphProjectNode>
 ): Record<string, ProjectGraphDependency[]> {

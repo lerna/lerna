@@ -1,29 +1,30 @@
 import {
   applyBuildMetadata,
   checkWorkingTree,
+  collectProjects,
+  collectProjectUpdates,
+  Command,
   CommandConfigOptions,
   createRunner,
+  ExtendedNpaResult,
+  getPackage,
   getPackagesForOption,
   output,
   Package,
   prereleaseIdFromVersion,
+  ProjectGraphProjectNodeWithPackage,
   promptConfirmation,
   recommendVersion,
+  runProjectsTopologically,
   throwIfUncommitted,
   updateChangelog,
   ValidationError,
 } from "@lerna/core";
-import {
-  collectPackages,
-  collectUpdates,
-  Command,
-  PackageGraphNode,
-  runTopologically,
-} from "@lerna/legacy-core";
 import chalk from "chalk";
 import dedent from "dedent";
 import fs from "fs";
 import minimatch from "minimatch";
+import { resolve } from "npm-package-arg";
 import os from "os";
 import pMap from "p-map";
 import pPipe from "p-pipe";
@@ -105,7 +106,7 @@ class VersionCommand extends Command {
   };
   savePrefix?: string;
   currentBranch?: string;
-  updates: PackageGraphNode[] = [];
+  updates: ProjectGraphProjectNodeWithPackage[] = [];
   tags?: string[];
   globalVersion?: string;
   hasRootedLeaf?: boolean;
@@ -113,6 +114,7 @@ class VersionCommand extends Command {
   runRootLifecycle?: (script: string) => Promise<void> | void;
   updatesVersions?: Map<string, string>;
   packagesToVersion?: Package[];
+  projectsWithPackage: ProjectGraphProjectNodeWithPackage[] = [];
 
   get otherCommandConfigs() {
     // back-compat
@@ -179,7 +181,7 @@ class VersionCommand extends Command {
     this.savePrefix = this.options.exact ? "" : "^";
   }
 
-  initialize() {
+  async initialize() {
     if (!this.project.isIndependent()) {
       this.logger.info("current version", this.project.version);
     }
@@ -266,34 +268,37 @@ class VersionCommand extends Command {
       );
     }
 
-    this.updates = collectUpdates(
-      this.packageGraph.rawPackageList,
-      this.packageGraph,
+    this.projectsWithPackage = Object.values(this.projectGraph.nodes).filter((node) => !!node.package);
+
+    this.updates = collectProjectUpdates(
+      this.projectsWithPackage,
+      this.projectGraph,
       this.execOpts,
       this.options
     ).filter((node) => {
+      const pkg = getPackage(node);
       // --no-private completely removes private packages from consideration
-      if (node.pkg.private && this.options.private === false) {
+      if (pkg.private && this.options.private === false) {
         // TODO: (major) make --no-private the default
         return false;
       }
 
-      if (!node.version) {
+      if (!pkg.version) {
         // a package may be unversioned only if it is private
-        if (node.pkg.private) {
-          this.logger.info("version", "Skipping unversioned private package %j", node.name);
+        if (pkg.private) {
+          this.logger.info("version", "Skipping unversioned private package %j", pkg.name);
         } else {
           throw new ValidationError(
             "ENOVERSION",
             dedent`
-              A version field is required in ${node.name}'s package.json file.
+              A version field is required in ${pkg.name}'s package.json file.
               If you wish to keep the package unversioned, it must be made private.
             `
           );
         }
       }
 
-      return !!node.version;
+      return !!pkg.version;
     });
 
     if (!this.updates.length) {
@@ -304,7 +309,7 @@ class VersionCommand extends Command {
     }
 
     // a "rooted leaf" is the regrettable pattern of adding "." to the "packages" config in lerna.json
-    this.hasRootedLeaf = this.packageGraph.has(this.project.manifest.name);
+    this.hasRootedLeaf = !!this.projectGraph.nodes[this.project.manifest.name];
 
     if (this.hasRootedLeaf && !this.composed) {
       this.logger.info("version", "rooted leaf detected, skipping synthetic root lifecycles");
@@ -319,23 +324,20 @@ class VersionCommand extends Command {
         }
       : (stage) => this.runPackageLifecycle(this.project.manifest, stage);
 
-    const tasks = [
-      () => this.getVersionsForUpdates(),
-      (versions) => this.setUpdatesForVersions(versions),
-      () => this.confirmVersions(),
-    ];
-
     // amending a commit probably means the working tree is dirty
     if (this.commitAndTag && this.gitOpts.amend !== true) {
       const { forcePublish, conventionalCommits, conventionalGraduate } = this.options;
       const checkUncommittedOnly = forcePublish || (conventionalCommits && conventionalGraduate);
       const check = checkUncommittedOnly ? throwIfUncommitted : checkWorkingTree;
-      tasks.unshift(() => check(this.execOpts));
+      await check(this.execOpts);
     } else {
       this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");
     }
 
-    return pWaterfall(tasks);
+    const versions = await this.getVersionsForUpdates();
+    this.setUpdatesForVersions(versions);
+
+    return this.confirmVersions();
   }
 
   execute() {
@@ -378,6 +380,10 @@ class VersionCommand extends Command {
     });
   }
 
+  /**
+   * Gets a mapping of project names to their package's new version.
+   * @returns {Promise<Record<string, string>>} A map of project names to their package's new versions
+   */
   getVersionsForUpdates() {
     const independentVersions = this.project.isIndependent();
     const { bump, conventionalCommits, preid } = this.options;
@@ -393,9 +399,14 @@ class VersionCommand extends Command {
     };
 
     // decide the predicate in the conditionals below
-    // TODO: tighten up predicate typing
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let predicate: any;
+    let predicate:
+      | ((node?: {
+          version: string;
+          name?: string;
+          prereleaseId?: string;
+          buildMetadata?: string;
+        }) => string | Promise<string>)
+      | Promise<() => string>;
 
     if (repoVersion) {
       predicate = makeGlobalVersionPredicate(applyBuildMetadata(repoVersion, this.options.buildMetadata));
@@ -426,91 +437,97 @@ class VersionCommand extends Command {
       const prereleaseId = prereleaseIdFromVersion(this.project.version);
       const node = { version: this.project.version, prereleaseId };
 
-      predicate = makePromptVersion(resolvePrereleaseId, this.options.buildMetadata);
-      predicate = predicate(node).then(makeGlobalVersionPredicate);
+      const prompt = makePromptVersion(resolvePrereleaseId, this.options.buildMetadata);
+      predicate = prompt(node).then(makeGlobalVersionPredicate);
     }
 
-    return Promise.resolve(predicate).then((getVersion) => this.reduceVersions(getVersion));
+    return Promise.resolve(predicate).then((getVersion) =>
+      this.reduceVersions((node: ProjectGraphProjectNodeWithPackage) => getVersion(getPackage(node)))
+    );
   }
 
-  reduceVersions(getVersion) {
-    const iterator = (versionMap, node) =>
-      Promise.resolve(getVersion(node)).then((version) => versionMap.set(node.name, version));
+  reduceVersions(getVersion: (node: ProjectGraphProjectNodeWithPackage) => string | Promise<string>) {
+    const iterator = (versionMap: Map<string, string>, node: ProjectGraphProjectNodeWithPackage) =>
+      Promise.resolve(getVersion(node)).then((version) => {
+        this.logger.silly("setting version", "%s: %s", node.name, version);
+        this.logger.silly("versionMap", JSON.stringify(versionMap));
+        return versionMap.set(node.name, version);
+      });
 
-    return pReduce(this.updates, iterator, new Map());
+    return pReduce(this.updates, iterator, new Map<string, string>());
   }
 
   getPrereleasePackageNames() {
     const prereleasePackageNames = getPackagesForOption(this.options.conventionalPrerelease);
     const isCandidate = prereleasePackageNames.has("*")
       ? () => true
-      : (node, name) => prereleasePackageNames.has(name);
+      : (node: unknown, name: string) => prereleasePackageNames.has(name);
 
-    return collectPackages(this.packageGraph, { isCandidate }).map((pkg) => pkg.name);
+    return collectProjects(this.projectsWithPackage, this.projectGraph, { isCandidate }).map(
+      (pkg) => pkg.name
+    );
   }
 
-  recommendVersions(resolvePrereleaseId) {
+  async recommendVersions(resolvePrereleaseId: (existingPreid: string) => string) {
     const independentVersions = this.project.isIndependent();
     const { buildMetadata, changelogPreset, conventionalGraduate, conventionalBumpPrerelease } = this.options;
     const rootPath = this.project.manifest.location;
     const type = independentVersions ? "independent" : "fixed";
     const prereleasePackageNames = this.getPrereleasePackageNames();
     const graduatePackageNames = Array.from(getPackagesForOption(conventionalGraduate));
-    const shouldPrerelease = (name) => prereleasePackageNames && prereleasePackageNames.includes(name);
-    const shouldGraduate = (name) =>
+    const shouldPrerelease = (name: string) =>
+      prereleasePackageNames && prereleasePackageNames.includes(name);
+    const shouldGraduate = (name: string) =>
       graduatePackageNames.includes("*") || graduatePackageNames.includes(name);
-    const getPrereleaseId = (node) => {
+    const getPrereleaseId = (node: { name: string; prereleaseId: string }) => {
       if (!shouldGraduate(node.name) && (shouldPrerelease(node.name) || node.prereleaseId)) {
         return resolvePrereleaseId(node.prereleaseId);
       }
     };
 
-    let chain = Promise.resolve();
-
     if (type === "fixed") {
-      chain = chain.then(() => this.setGlobalVersionFloor());
+      this.setGlobalVersionFloor();
     }
 
-    chain = chain.then(() =>
-      this.reduceVersions((node) =>
-        recommendVersion(node, type, {
-          changelogPreset,
-          rootPath,
-          tagPrefix: this.tagPrefix,
-          prereleaseId: getPrereleaseId(node),
-          conventionalBumpPrerelease,
-          buildMetadata,
-        })
-      )
-    );
-
-    if (type === "fixed") {
-      chain = chain.then((versions) => {
-        this.globalVersion = this.setGlobalVersionCeiling(versions);
-
-        return versions;
+    const versions = await this.reduceVersions((node) => {
+      const pkg = getPackage(node);
+      return recommendVersion(pkg, type, {
+        changelogPreset,
+        rootPath,
+        tagPrefix: this.tagPrefix,
+        prereleaseId: getPrereleaseId({
+          name: node.name,
+          prereleaseId: prereleaseIdFromVersion(pkg.version),
+        }),
+        conventionalBumpPrerelease,
+        buildMetadata,
       });
+    });
+
+    if (type === "fixed") {
+      this.globalVersion = this.setGlobalVersionCeiling(versions);
     }
 
-    return chain;
+    return versions;
   }
 
   setGlobalVersionFloor() {
     const globalVersion = this.project.version;
 
     for (const node of this.updates) {
-      if (semver.lt(node.version, globalVersion)) {
+      const pkg = getPackage(node);
+      if (semver.lt(pkg.version, globalVersion)) {
         this.logger.verbose(
           "version",
-          `Overriding version of ${node.name} from ${node.version} to ${globalVersion}`
+          `Overriding version of ${pkg.name} from ${pkg.version} to ${globalVersion}`
         );
 
-        node.pkg.set("version", globalVersion);
+        pkg.set("version", globalVersion);
       }
     }
   }
 
-  setGlobalVersionCeiling(versions) {
+  setGlobalVersionCeiling(versions: Map<string, string>) {
     let highestVersion = this.project.version;
 
     versions.forEach((bump) => {
@@ -524,25 +541,26 @@ class VersionCommand extends Command {
     return highestVersion;
   }
 
-  setUpdatesForVersions(versions) {
-    if (this.project.isIndependent() || versions.size === this.packageGraph.size) {
+  setUpdatesForVersions(versions: Map<string, string>) {
+    if (this.project.isIndependent() || versions.size === this.projectsWithPackage.length) {
       // only partial fixed versions need to be checked
       this.updatesVersions = versions;
     } else {
-      let hasBreakingChange;
+      let hasBreakingChange: boolean;
 
       for (const [name, bump] of versions) {
-        hasBreakingChange = hasBreakingChange || isBreakingChange(this.packageGraph.get(name).version, bump);
+        const pkg = getPackage(this.projectGraph.nodes[name]);
+        hasBreakingChange = hasBreakingChange || isBreakingChange(pkg.version, bump);
       }
 
       if (hasBreakingChange) {
         // _all_ packages need a major version bump whenever _any_ package does
-        this.updates = Array.from(this.packageGraph.values());
+        this.updates = this.projectsWithPackage;
 
         // --no-private completely removes private packages from consideration
         if (this.options.private === false) {
           // TODO: (major) make --no-private the default
-          this.updates = this.updates.filter((node) => !node.pkg.private);
+          this.updates = this.updates.filter((node) => !getPackage(node).private);
         }
 
         this.updatesVersions = new Map(this.updates.map((node) => [node.name, this.globalVersion]));
@@ -551,7 +569,7 @@ class VersionCommand extends Command {
       }
     }
 
-    this.packagesToVersion = this.updates.map((node) => node.pkg);
+    this.packagesToVersion = this.updates.map((node) => getPackage(node));
   }
 
   confirmVersions() {
@@ -581,14 +599,11 @@ class VersionCommand extends Command {
     return promptConfirmation(message);
   }
 
-  updatePackageVersions() {
+  async updatePackageVersions() {
     const { conventionalCommits, changelogPreset, changelog = true } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
     const changedFiles = new Set<string>();
-
-    // my kingdom for async await :(
-    let chain: Promise<unknown> = Promise.resolve();
 
     // preversion:  Run BEFORE bumping the package version.
     // version:     Run AFTER bumping the package version, but BEFORE commit.
@@ -597,26 +612,23 @@ class VersionCommand extends Command {
 
     if (!this.hasRootedLeaf) {
       // exec preversion lifecycle in root (before all updates)
-      chain = chain.then(() => this.runRootLifecycle("preversion"));
+      await this.runRootLifecycle("preversion");
     }
 
-    const actions = [
-      (pkg) => this.runPackageLifecycle(pkg, "preversion").then(() => pkg),
+    const actions: ((pkg: ProjectGraphProjectNodeWithPackage) => Promise<unknown>)[] = [
+      (node) => this.runPackageLifecycle(getPackage(node), "preversion").then(() => node),
       // manifest may be mutated by any previous lifecycle
-      (pkg) => pkg.refresh(),
-      (pkg) => {
+      (node) =>
+        getPackage(node)
+          .refresh()
+          .then(() => node),
+      (node) => {
+        const pkg = getPackage(node);
         // set new version
-        pkg.set("version", this.updatesVersions.get(pkg.name));
+        pkg.set("version", this.updatesVersions.get(node.name));
 
-        // update pkg dependencies
-        for (const [depName, resolved] of this.packageGraph.get(pkg.name).localDependencies) {
-          const depVersion = this.updatesVersions.get(depName);
-
-          if (depVersion && resolved.type !== "directory") {
-            // don't overwrite local file: specifiers, they only change during publish
-            pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
-          }
-        }
+        // update dependencies
+        this.updateDependencies(node);
 
         return Promise.all([updateLockfileVersion(pkg), pkg.serialize()]).then(([lockfilePath]) => {
           // commit the updated manifest
@@ -626,10 +638,10 @@ class VersionCommand extends Command {
             changedFiles.add(lockfilePath);
           }
 
-          return pkg;
+          return node;
         });
       },
-      (pkg) => this.runPackageLifecycle(pkg, "version").then(() => pkg),
+      (node) => this.runPackageLifecycle(getPackage(node), "version").then(() => node),
     ];
 
     if (conventionalCommits && changelog) {
@@ -637,8 +649,8 @@ class VersionCommand extends Command {
       // the updated version that we're about to release.
       const type = independentVersions ? "independent" : "fixed";
 
-      actions.push((pkg) =>
-        updateChangelog(pkg, type, {
+      actions.push((node) =>
+        updateChangelog(getPackage(node), type, {
           changelogPreset,
           rootPath,
           tagPrefix: this.tagPrefix,
@@ -649,123 +661,159 @@ class VersionCommand extends Command {
           // add release notes
           if (independentVersions) {
             this.releaseNotes.push({
-              name: pkg.name,
+              name: getPackage(node).name,
               notes: newEntry,
             });
           }
 
-          return pkg;
+          return node;
         })
       );
     }
 
     const mapUpdate = pPipe(...actions);
 
-    chain = chain.then(() =>
-      runTopologically(this.packagesToVersion, mapUpdate, {
-        concurrency: this.concurrency,
-        rejectCycles: this.options.rejectCycles,
-      })
-    );
+    await runProjectsTopologically(this.updates, this.projectGraph.dependencies, mapUpdate, {
+      concurrency: this.concurrency,
+      rejectCycles: this.options.rejectCycles,
+    });
 
     if (!independentVersions) {
       this.project.version = this.globalVersion;
 
       if (conventionalCommits && changelog) {
-        chain = chain.then(() =>
-          updateChangelog(this.project.manifest, "root", {
-            changelogPreset,
-            rootPath,
-            tagPrefix: this.tagPrefix,
-            version: this.globalVersion,
-          }).then(({ logPath, newEntry }) => {
-            // commit the updated changelog
-            changedFiles.add(logPath);
+        const { logPath, newEntry } = await updateChangelog(this.project.manifest, "root", {
+          changelogPreset,
+          rootPath,
+          tagPrefix: this.tagPrefix,
+          version: this.globalVersion,
+        });
 
-            // add release notes
-            this.releaseNotes.push({
-              name: "fixed",
-              notes: newEntry,
-            });
-          })
-        );
+        // commit the updated changelog
+        changedFiles.add(logPath);
+
+        // add release notes
+        this.releaseNotes.push({
+          name: "fixed",
+          notes: newEntry,
+        });
       }
 
-      chain = chain.then(() =>
-        Promise.resolve(this.project.serializeConfig()).then((lernaConfigLocation) => {
-          // commit the version update
-          changedFiles.add(lernaConfigLocation);
-        })
-      );
+      const lernaConfigLocation = await Promise.resolve(this.project.serializeConfig());
+      // commit the version update
+      changedFiles.add(lernaConfigLocation);
     }
 
     const npmClientArgsRaw = this.options.npmClientArgs || [];
     const npmClientArgs = npmClientArgsRaw.reduce((args, arg) => args.concat(arg.split(/\s|,/)), []);
 
     if (this.options.npmClient === "pnpm") {
-      chain = chain.then(() => {
-        this.logger.verbose("version", "Updating root pnpm-lock.yaml");
-        return childProcess
-          .exec("pnpm", ["install", "--lockfile-only", "--ignore-scripts", ...npmClientArgs], this.execOpts)
-          .then(() => {
-            const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
-            changedFiles.add(lockfilePath);
-          });
-      });
+      this.logger.verbose("version", "Updating root pnpm-lock.yaml");
+      await childProcess.exec(
+        "pnpm",
+        ["install", "--lockfile-only", "--ignore-scripts", ...npmClientArgs],
+        this.execOpts
+      );
+
+      const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
+      changedFiles.add(lockfilePath);
     }
 
     if (this.options.npmClient === "yarn") {
-      chain = chain
-        .then(() => childProcess.execSync("yarn", ["--version"], this.execOpts))
-        .then((yarnVersion) => {
-          this.logger.verbose("version", `Detected yarn version ${yarnVersion}`);
+      const yarnVersion = await childProcess.execSync("yarn", ["--version"], this.execOpts);
+      this.logger.verbose("version", `Detected yarn version ${yarnVersion}`);
 
-          if (semver.gte(yarnVersion, "2.0.0")) {
-            this.logger.verbose("version", "Updating root yarn.lock");
-            return childProcess
-              .exec("yarn", ["install", "--mode", "update-lockfile", ...npmClientArgs], {
-                ...this.execOpts,
-                env: {
-                  ...process.env,
-                  YARN_ENABLE_SCRIPTS: false,
-                },
-              })
-              .then(() => {
-                const lockfilePath = path.join(this.project.rootPath, "yarn.lock");
-                changedFiles.add(lockfilePath);
-              });
-          }
+      if (semver.gte(yarnVersion, "2.0.0")) {
+        this.logger.verbose("version", "Updating root yarn.lock");
+        await childProcess.exec("yarn", ["install", "--mode", "update-lockfile", ...npmClientArgs], {
+          ...this.execOpts,
+          env: {
+            ...process.env,
+            YARN_ENABLE_SCRIPTS: false,
+          },
         });
+
+        const lockfilePath = path.join(this.project.rootPath, "yarn.lock");
+        changedFiles.add(lockfilePath);
+      }
     }
 
     if (this.options.npmClient === "npm" || !this.options.npmClient) {
       const lockfilePath = path.join(this.project.rootPath, "package-lock.json");
       if (fs.existsSync(lockfilePath)) {
-        chain = chain.then(() => {
-          this.logger.verbose("version", "Updating root package-lock.json");
-          return childProcess
-            .exec(
-              "npm",
-              ["install", "--package-lock-only", "--ignore-scripts", ...npmClientArgs],
-              this.execOpts
-            )
-            .then(() => {
-              changedFiles.add(lockfilePath);
-            });
-        });
+        this.logger.verbose("version", "Updating root package-lock.json");
+        await childProcess.exec(
+          "npm",
+          ["install", "--package-lock-only", "--ignore-scripts", ...npmClientArgs],
+          this.execOpts
+        );
+        changedFiles.add(lockfilePath);
       }
     }
 
-    if (!this.hasRootedLeaf) {
-      // exec version lifecycle in root (after all updates)
-      chain = chain.then(() => this.runRootLifecycle("version"));
-    }
+    // exec version lifecycle in root (after all updates)
+    await this.runRootLifecycle("version");
 
     if (this.commitAndTag) {
-      chain = chain.then(() => gitAdd(Array.from(changedFiles), this.gitOpts, this.execOpts));
+      await gitAdd(Array.from(changedFiles), this.gitOpts, this.execOpts);
+    }
+  }
+
+  private updateDependencies(node: ProjectGraphProjectNodeWithPackage) {
+    const dependencies = this.projectGraph.dependencies[node.name];
+    const pkg = getPackage(node);
+
+    const localDependencies = dependencies.filter((d) => !d.target.startsWith("npm:"));
+
+    localDependencies.forEach((dependency) => {
+      const depPackage = getPackage(this.projectGraph.nodes[dependency.target]);
+
+      const localDependency = pkg.getLocalDependency(depPackage.name);
+
+      const resolved = this.resolvePackageSpec(depPackage, localDependency.spec, pkg.location);
+
+      const depVersion = this.updatesVersions.get(depPackage.name);
+
+      if (depVersion && resolved.type !== "directory") {
+        // don't overwrite local file: specifiers, they only change during publish
+        pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
+      }
+    });
+  }
+
+  private resolvePackageSpec(pkg: Package, spec: string, location?: string): ExtendedNpaResult {
+    // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
+    // As they apparently have no intention of being compatible, we have to do it for them.
+    // @see https://github.com/yarnpkg/yarn/issues/4212
+    spec = spec.replace(/^link:/, "file:");
+
+    // Support workspace: protocol for pnpm and yarn 2+ (https://pnpm.io/workspaces#workspace-protocol-workspace)
+    const isWorkspaceSpec = /^workspace:/.test(spec);
+
+    let fullWorkspaceSpec;
+    let workspaceAlias;
+    if (isWorkspaceSpec) {
+      fullWorkspaceSpec = spec;
+      spec = spec.replace(/^workspace:/, "");
+
+      // replace aliases (https://pnpm.io/workspaces#referencing-workspace-packages-through-aliases)
+      if (spec === "*" || spec === "^" || spec === "~") {
+        workspaceAlias = spec;
+        if (pkg.version) {
+          const prefix = spec === "*" ? "" : spec;
+          const version = pkg.version;
+          spec = `${prefix}${version}`;
+        } else {
+          spec = "*";
+        }
+      }
     }
 
-    return chain;
+    const resolved = resolve(pkg.name, spec, location) as ExtendedNpaResult;
+    resolved.workspaceSpec = fullWorkspaceSpec;
+    resolved.workspaceAlias = workspaceAlias;
+
+    return resolved;
   }
 
   async commitAndTagUpdates() {

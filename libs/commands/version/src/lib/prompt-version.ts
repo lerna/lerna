@@ -1,12 +1,11 @@
 import { applyBuildMetadata, promptSelectOne, promptTextInput } from "@lerna/core";
-import { PackageGraphNode } from "@lerna/legacy-core";
 import semver from "semver";
 
 export function makePromptVersion(
   resolvePrereleaseId: (existingPreId: string) => string,
   buildMetadata: string
 ) {
-  return (node: PackageGraphNode) =>
+  return (node: { version: string; name?: string; prereleaseId?: string; buildMetadata?: string }) =>
     promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId), buildMetadata);
 }
 

@@ -25,7 +25,7 @@ export { npmRunScript, npmRunScriptStreaming } from "./lib/npm-run-script";
 export { getOneTimePassword } from "./lib/otplease";
 export { output } from "./lib/output";
 export { packDirectory } from "./lib/pack-directory";
-export { Package, RawManifest } from "./lib/package";
+export { ExtendedNpaResult, Package, RawManifest } from "./lib/package";
 export { prereleaseIdFromVersion } from "./lib/prerelease-id-from-version";
 export { generateProfileOutputPath, Profiler } from "./lib/profiler";
 export { CommandConfigOptions, getPackages, Project } from "./lib/project";
@@ -38,6 +38,7 @@ export { promptConfirmation, promptSelectOne, promptTextInput } from "./lib/prom
 export { pulseTillDone } from "./lib/pulse-till-done";
 export { rimrafDir } from "./lib/rimraf-dir";
 export { createRunner, runLifecycle } from "./lib/run-lifecycle";
+export { runProjectsTopologically } from "./lib/run-projects-topologically";
 export { createGitHubClient, createGitLabClient, parseGitRepo } from "./lib/scm-clients";
 export { default as tempWrite } from "./lib/temp-write";
 export { timer } from "./lib/timer";
