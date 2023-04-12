@@ -1,4 +1,4 @@
-import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
+import { commandRunner, gitSHASerializer, initFixtureFactory } from "@lerna/test-helpers";
 import execa from "execa";
 import path from "path";
 
@@ -24,8 +24,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish
 const lernaVersion = commandRunner(require("../command"));
 
 // stabilize commit SHA
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-git-sha"));
+expect.addSnapshotSerializer(gitSHASerializer);
 
 describe("version --allow-branch", () => {
   const changeBranch = (cwd, name) => execa("git", ["checkout", "-B", name], { cwd });

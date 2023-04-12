@@ -1,5 +1,6 @@
 import { promptSelectOne as _promptSelectOne, promptTextInput as _promtTextInput } from "@lerna/core";
 import {
+  changelogSerializer,
   commandRunner,
   getCommitMessage,
   gitAdd,
@@ -63,8 +64,7 @@ expect.addSnapshotSerializer({
 });
 
 // stabilize commit SHA
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-changelog"));
+expect.addSnapshotSerializer(changelogSerializer);
 
 const setupChanges = async (cwd) => {
   await gitTag(cwd, "v1.0.1-beta.3");

@@ -1,5 +1,13 @@
 import { getPackages } from "@lerna/core";
-import { commandRunner, gitAdd, gitCommit, gitInit, gitTag, initFixtureFactory } from "@lerna/test-helpers";
+import {
+  commandRunner,
+  gitAdd,
+  gitCommit,
+  gitInit,
+  gitSHASerializer,
+  gitTag,
+  initFixtureFactory,
+} from "@lerna/test-helpers";
 import execa from "execa";
 import fs from "fs-extra";
 import path from "path";
@@ -15,8 +23,7 @@ const initFixture = initFixtureFactory(__dirname);
 const lernaDiff = commandRunner(require("../command"));
 
 // stabilize commit SHA
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-git-sha"));
+expect.addSnapshotSerializer(gitSHASerializer);
 
 describe("DiffCommand", () => {
   // overwrite spawn so we get piped stdout, not inherited

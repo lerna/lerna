@@ -5,7 +5,7 @@
 
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 // nx-ignore-next-line
-import { gitAdd, gitCommit, gitTag, initFixtureFactory } from "@lerna/test-helpers";
+import { changelogSerializer, gitAdd, gitCommit, gitTag, initFixtureFactory } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import path from "path";
 import { getPackages } from "../project/index";
@@ -20,7 +20,7 @@ import { applyBuildMetadata } from "./apply-build-metadata";
 
 // stabilize changelog commit SHA and datestamp
 // nx-ignore-next-line
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-changelog"));
+expect.addSnapshotSerializer(changelogSerializer);
 
 describe("conventional-commits", () => {
   beforeEach(() => {
