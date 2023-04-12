@@ -105,6 +105,23 @@ describe("publish from-package", () => {
     ]);
   });
 
+  it("logs the name of the package that fails to be published", async () => {
+    const cwd = await initFixture("independent");
+
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => Array.from(packageGraph.values()));
+
+    npmPublish.mockImplementation(pkg => {
+      if (pkg.name === "package-2") {
+        throw new Error("some-error");
+      }
+    })
+
+    await lernaPublish(cwd)("from-package");
+
+    const logMessages = loggingOutput("notice");
+    expect(logMessages).toContain("Package failed to publish: package-2");
+  });
+
   it("exits early when all packages are published", async () => {
     const cwd = await initFixture("normal");
 
