@@ -1,11 +1,16 @@
-import { cliRunner, cloneFixtureFactory, commitChangeToPackage, gitTag } from "@lerna/test-helpers";
+import {
+  changelogSerializer,
+  cliRunner,
+  cloneFixtureFactory,
+  commitChangeToPackage,
+  gitTag,
+} from "@lerna/test-helpers";
 import path from "path";
 
 const cloneFixture = cloneFixtureFactory(path.resolve(__dirname, "../../libs/commands/publish"));
 
 // stabilize changelog commit SHA and datestamp
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-changelog"));
+expect.addSnapshotSerializer(changelogSerializer);
 
 test("lerna publish --skip-npm aliases to lerna version immediately", async () => {
   const { cwd } = await cloneFixture("normal", "feat: init repo");

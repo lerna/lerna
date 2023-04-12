@@ -4,6 +4,7 @@ import {
   npmPublish as _npmPublish,
 } from "@lerna/core";
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
+import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
@@ -19,14 +20,7 @@ jest.mock("./get-npm-username");
 jest.mock("./get-two-factor-auth-required");
 
 // lerna version mocks
-jest.mock("@lerna/commands/version/lib/git-push");
-jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
-  isAnythingCommitted: jest.fn().mockResolvedValue(true),
-}));
-jest.mock("@lerna/commands/version/lib/is-behind-upstream");
-jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
-  remoteBranchExists: jest.fn().mockResolvedValue(true),
-}));
+setupLernaVersionMocks();
 
 const npmDistTag = jest.mocked(_npmDistTag);
 

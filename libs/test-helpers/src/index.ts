@@ -8,6 +8,8 @@ export * from "./lib/logging-output";
 export { multiLineTrimRight } from "./lib/multi-line-trim-right";
 export * from "./lib/npm";
 
+export * from "./lib/serializers";
+
 /**
  * Update lerna config inside a test case.
  *

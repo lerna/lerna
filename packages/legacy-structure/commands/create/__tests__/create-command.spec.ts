@@ -1,6 +1,6 @@
 "use strict";
 
-import { commandRunner, gitAdd, initFixtureFactory } from "@lerna/test-helpers";
+import { commandRunner, gitAdd, gitSHASerializer, initFixtureFactory } from "@lerna/test-helpers";
 import execa from "execa";
 import fs from "fs-extra";
 import _pacote from "pacote";
@@ -18,8 +18,7 @@ const initFixture = initFixtureFactory(__dirname);
 const lernaCreate = commandRunner(require("../src/command"));
 
 // stabilize commit SHA
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-git-sha"));
+expect.addSnapshotSerializer(gitSHASerializer);
 
 // assertion helpers
 const addRemote = (cwd, remote = "origin", url = "git@github.com:test/test.git") =>
