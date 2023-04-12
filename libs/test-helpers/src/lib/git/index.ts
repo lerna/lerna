@@ -6,9 +6,7 @@ import loadJsonFile from "load-json-file";
 import os from "os";
 import path from "path";
 import { writeJsonFile } from "@nrwl/devkit";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const gitSHA = require("../serializers/serialize-git-sha");
+import { gitSHASerializer } from "../serializers";
 
 // Contains all relevant git config (user, commit.gpgSign, etc)
 const TEMPLATE = path.resolve(__dirname, "template");
@@ -67,7 +65,7 @@ export function showCommit(cwd: string, ...args: any[]) {
       ...args,
     ],
     { cwd }
-  ).then((result) => gitSHA.serialize(result.stdout));
+  ).then((result) => gitSHASerializer.serialize(result.stdout));
 }
 
 export function commitChangeToPackage(cwd: string, packageName: string, commitMsg: any, data: any) {
