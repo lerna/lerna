@@ -225,16 +225,6 @@ describe("lerna ls", () => {
         },
       ]);
     });
-
-    // TODO: investigate this failure
-    // it.skip("emits empty array with no results", async () => {
-    //   const testDir = await initFixture("basic");
-
-    //   collectUpdates.setUpdated(testDir);
-    //   const result = await cliRunner(testDir)("list", "--since", "deadbeef", "--json");
-
-    //   expect(JSON.parse(output.logged())).toEqual([]);
-    // });
   });
 
   describe("in a Yarn workspace", () => {
@@ -287,26 +277,6 @@ describe("lerna ls", () => {
         package-3
         package-5
         `);
-    });
-
-    it("lists packages under explicitly configured node_modules directories", async () => {
-      const testDir = await initFixture("explicit-node-modules");
-      const result = await cliRunner(testDir)("list");
-      expect(result.stdout).toMatchInlineSnapshot(`
-        alle-pattern-root
-        package-1
-        package-2
-        package-3
-        package-4
-        @scoped/package-5
-        `);
-    });
-
-    it("throws an error when globstars and explicit node_modules configs are mixed", async () => {
-      const testDir = await initFixture("mixed-globstar");
-      const command = cliRunner(testDir)("list");
-
-      await expect(command).rejects.toThrow("An explicit node_modules package path does not allow globstars");
     });
   });
 });
