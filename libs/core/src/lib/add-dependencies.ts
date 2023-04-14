@@ -7,7 +7,7 @@ export function addDependencies<U extends ProjectGraph, T extends U["nodes"][key
 ): T[] {
   const projectsLookup = new Set(projects.map((p) => p.name));
   const dependencies: Record<string, string[]> = mapValues(projectGraph.dependencies, (deps) =>
-    deps.map((dep) => dep.target)
+    deps.map((dep) => dep.target).filter((dep) => !dep.startsWith("npm:"))
   );
   const collected = new Set<T>();
 
@@ -42,5 +42,5 @@ export function addDependencies<U extends ProjectGraph, T extends U["nodes"][key
     }
   });
 
-  return [...projects, ...collected];
+  return Array.from(new Set([...projects, ...collected]));
 }

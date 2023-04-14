@@ -7,10 +7,13 @@ export function addDependents<U extends ProjectGraph, T extends U["nodes"][keyof
 ): T[] {
   const projectsLookup = new Set(projects.map((p) => p.name));
   const dependents: Record<string, string[]> = flatten(Object.values(projectGraph.dependencies)).reduce(
-    (prev, next) => ({
-      ...prev,
-      [next.target]: [...(prev[next.target] || []), next.source],
-    }),
+    (prev, next) =>
+      next.target.startsWith("npm:")
+        ? prev
+        : {
+            ...prev,
+            [next.target]: [...(prev[next.target] || []), next.source],
+          },
     {} as Record<string, string[]>
   );
 
@@ -47,5 +50,5 @@ export function addDependents<U extends ProjectGraph, T extends U["nodes"][keyof
     }
   });
 
-  return [...projects, ...collected];
+  return Array.from(new Set([...projects, ...collected]));
 }
