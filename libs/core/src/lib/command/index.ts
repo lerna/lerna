@@ -155,7 +155,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       resetDaemonClient: true,
     });
 
-    this.projectGraph = await createProjectGraphWithPackages(projectGraph);
+    this.projectGraph = await createProjectGraphWithPackages(projectGraph, this.project.packageConfigs);
   }
 
   configureEnvironment() {

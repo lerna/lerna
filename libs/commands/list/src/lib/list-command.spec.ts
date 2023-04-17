@@ -40,12 +40,12 @@ describe("lerna ls", () => {
     it("should also list private packages with --all", async () => {
       const result = await cliRunner(testDir)("list", "--all");
       expect(result.stdout).toMatchInlineSnapshot(`
-    package-1
-    package-2
-    package-3
-    package-4
-    package-5 (PRIVATE)
-    `);
+        package-1
+        package-2
+        package-3
+        package-4
+        package-5 (PRIVATE)
+      `);
     });
 
     it("lists public package versions and relative paths with --long", async () => {
@@ -277,6 +277,28 @@ describe("lerna ls", () => {
         package-3
         package-5
         `);
+    });
+  });
+
+  describe("with multiple packages folders", () => {
+    it("should exclude packages in directories not included in the packages property", async () => {
+      const testDir = await initFixture("exclude-packages");
+      const result = await cliRunner(testDir)("list");
+      expect(result.stdout).toMatchInlineSnapshot(`
+      package-1
+      package-2
+      package-3
+      `);
+    });
+
+    it("should exclude packages in directories not included in the workspaces configuration", async () => {
+      const testDir = await initFixture("exclude-packages-workspaces");
+      const result = await cliRunner(testDir)("list");
+      expect(result.stdout).toMatchInlineSnapshot(`
+      package-1
+      package-2
+      package-3
+      `);
     });
   });
 });

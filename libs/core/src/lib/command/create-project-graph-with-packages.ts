@@ -1,16 +1,23 @@
 import { ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nrwl/devkit";
 import { readJson } from "fs-extra";
 import { sortBy } from "lodash";
+import minimatch from "minimatch";
 import { join } from "path";
 import { getPackageManifestPath } from "../get-package-manifest-path";
 import { Package, RawManifest } from "../package";
 import { ProjectGraphWithPackages } from "../project-graph-with-packages";
 
 export async function createProjectGraphWithPackages(
-  projectGraph: ProjectGraph
+  projectGraph: ProjectGraph,
+  packageConfigs: string[]
 ): Promise<ProjectGraphWithPackages> {
+  const projectNodes = Object.values(projectGraph.nodes);
+  const projectNodesMatchingPackageConfigs = projectNodes.filter((node) => {
+    const matchesRootPath = (config: string) => minimatch(node.data.root, config);
+    return packageConfigs.some(matchesRootPath);
+  });
   const tuples = await Promise.all(
-    Object.values(projectGraph.nodes).map(
+    projectNodesMatchingPackageConfigs.map(
       (node) =>
         new Promise<[ProjectGraphProjectNode, RawManifest | null]>((resolve) => {
           const manifestPath = getPackageManifestPath(node);

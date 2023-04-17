@@ -19,7 +19,7 @@ jest
 
 describe("createProjectGraphWithPackages", () => {
   it("should add package objects to project graph nodes", async () => {
-    const result = await createProjectGraphWithPackages(projectGraph());
+    const result = await createProjectGraphWithPackages(projectGraph(), ["packages/*", "other-packages/*"]);
 
     expect(result.nodes.projectA.package?.name).toEqual("projectA");
     expect(result.nodes.projectA.package?.version).toEqual("1.0.0");
@@ -40,7 +40,7 @@ describe("createProjectGraphWithPackages", () => {
   });
 
   it("should order project graph nodes by root directory", async () => {
-    const result = await createProjectGraphWithPackages(projectGraph());
+    const result = await createProjectGraphWithPackages(projectGraph(), ["packages/*", "other-packages/*"]);
     expect(Object.keys(result.nodes)).toEqual([
       "otherProjectB",
       "otherProjectA",
@@ -48,6 +48,14 @@ describe("createProjectGraphWithPackages", () => {
       "projectA",
       "projectB",
     ]);
+  });
+
+  it.each([
+    ["other-packages/*", ["otherProjectB", "otherProjectA"]],
+    ["packages/*", ["project", "projectA", "projectB"]],
+  ])("should ignore projects that do not match packageConfigs glob", async (glob, expected) => {
+    const result = await createProjectGraphWithPackages(projectGraph(), [glob]);
+    expect(Object.keys(result.nodes)).toEqual(expected);
   });
 });
 
