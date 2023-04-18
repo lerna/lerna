@@ -1,5 +1,4 @@
-import { output as _output } from "@lerna/core";
-import { collectUpdates as _collectUpdates } from "@lerna/legacy-core";
+import { collectProjectUpdates as _collectUpdates, output as _output } from "@lerna/core";
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 
 const initFixture = initFixtureFactory(__dirname);

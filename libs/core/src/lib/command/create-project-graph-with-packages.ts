@@ -12,7 +12,7 @@ export async function createProjectGraphWithPackages(
   packageConfigs: string[]
 ): Promise<ProjectGraphWithPackages> {
   // We respect the NX_WORKSPACE_ROOT_PATH environment variable at runtime in order to support existing unit tests
-  const _workspaceRoot = process.env.NX_WORKSPACE_ROOT_PATH || workspaceRoot;
+  const _workspaceRoot = process.env["NX_WORKSPACE_ROOT_PATH"] || workspaceRoot;
 
   const projectNodes = Object.values(projectGraph.nodes);
   const projectNodesMatchingPackageConfigs = projectNodes.filter((node) => {

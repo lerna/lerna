@@ -13,6 +13,7 @@ const { npmPublish } = require("./npm-publish");
 const { runLifecycle, createRunner } = require("./run-lifecycle");
 const { createGitLabClient } = require("./gitlab-client");
 const { createGitHubClient, parseGitRepo } = require("./github-client");
+const collectProjectUpdates = require("./collect-project-updates");
 
 module.exports = {
   ...jest.requireActual("@lerna/core"),
@@ -20,6 +21,7 @@ module.exports = {
   ...prompt,
   ...checkWorkingTree,
   ...conventionalCommits,
+  ...collectProjectUpdates,
   createGitLabClient,
   createGitHubClient,
   parseGitRepo,
