@@ -1,5 +1,5 @@
+import { readJson, readProjectConfiguration, Tree } from "@nrwl/devkit";
 import { createTreeWithEmptyWorkspace } from "@nrwl/devkit/testing";
-import { Tree, readProjectConfiguration, readJson } from "@nrwl/devkit";
 
 import generator from "./generator";
 import { E2eProjectGeneratorSchema } from "./schema";
@@ -104,10 +104,13 @@ describe("e2e-project generator", () => {
         displayName: 'e2e-test',
         preset: '../../jest.preset.js',
         transform: {
-          '^.+\\\\\\\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }]
+          '^.+\\\\\\\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
         },
         moduleFileExtensions: ['ts', 'js', 'html'],
-        coverageDirectory: '../../coverage/e2e/test',\\"maxWorkers\\": 1,\\"testTimeout\\": 60000,\\"setupFiles\\": [\\"<rootDir>/src/test-setup.ts\\"]
+        coverageDirectory: '../../coverage/e2e/test',
+        maxWorkers: 1,
+        testTimeout: 60000,
+        setupFiles: ['<rootDir>/src/test-setup.ts'],
       };
       "
     `);
