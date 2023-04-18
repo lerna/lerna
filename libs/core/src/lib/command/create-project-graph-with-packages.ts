@@ -11,6 +11,9 @@ export async function createProjectGraphWithPackages(
   projectGraph: ProjectGraph,
   packageConfigs: string[]
 ): Promise<ProjectGraphWithPackages> {
+  // We respect the NX_WORKSPACE_ROOT_PATH environment variable at runtime in order to support existing unit tests
+  const _workspaceRoot = process.env.NX_WORKSPACE_ROOT_PATH || workspaceRoot;
+
   const projectNodes = Object.values(projectGraph.nodes);
   const projectNodesMatchingPackageConfigs = projectNodes.filter((node) => {
     const matchesRootPath = (config: string) => minimatch(node.data.root, config);
@@ -22,7 +25,7 @@ export async function createProjectGraphWithPackages(
         new Promise<[ProjectGraphProjectNode, RawManifest | null]>((resolve) => {
           const manifestPath = getPackageManifestPath(node);
           if (manifestPath) {
-            resolve(readJson(join(workspaceRoot, manifestPath)).then((manifest) => [node, manifest]));
+            resolve(readJson(join(_workspaceRoot, manifestPath)).then((manifest) => [node, manifest]));
           } else {
             resolve([node, null]);
           }
@@ -39,7 +42,7 @@ export async function createProjectGraphWithPackages(
   sortedTuples.forEach(([node, manifest]) => {
     let pkg: Package | null = null;
     if (manifest) {
-      pkg = new Package(manifest, join(workspaceRoot, node.data.root), workspaceRoot);
+      pkg = new Package(manifest, join(_workspaceRoot, node.data.root), _workspaceRoot);
     }
     projectGraphWithOrderedNodes.nodes[node.name] = {
       ...node,

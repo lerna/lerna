@@ -24,7 +24,8 @@
     "lerna-release": "nx build lerna --no-dte && ts-node -P ./tools/scripts/tsconfig.scripts.json ./tools/scripts/lerna-release",
     "lint": "nx run-many -t lint",
     "local-registry": "./tools/scripts/local-registry.sh",
-    "test": "nx run-many -t test"
+    "test": "nx run-many -t test",
+    "postinstall": "patch-package --patch-dir tools/patches"
   },
   "repository": {
     "type": "git",
@@ -179,6 +180,7 @@
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
     "nx": "15.9.2",
+    "patch-package": "^6.5.1",
     "path-key": "^3.1.1",
     "prettier": "^2.2.1",
     "resolve.exports": "2.0.0",

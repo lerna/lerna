@@ -1,0 +1,27 @@
+diff --git a/node_modules/nx/src/utils/workspace-root.d.ts b/node_modules/nx/src/utils/workspace-root.d.ts
+index b5b7223..837c6bb 100644
+--- a/node_modules/nx/src/utils/workspace-root.d.ts
++++ b/node_modules/nx/src/utils/workspace-root.d.ts
+@@ -2,4 +2,5 @@
+  * The root of the workspace
+  */
+ export declare const workspaceRoot: string;
++export declare function setWorkspaceRoot(root: string): void;
+ export declare function workspaceRootInner(dir: string, candidateRoot: string | null): string;
+diff --git a/node_modules/nx/src/utils/workspace-root.js b/node_modules/nx/src/utils/workspace-root.js
+index c0100be..7b0940b 100644
+--- a/node_modules/nx/src/utils/workspace-root.js
++++ b/node_modules/nx/src/utils/workspace-root.js
+@@ -7,6 +7,12 @@ const fileutils_1 = require("./fileutils");
+  * The root of the workspace
+  */
+ exports.workspaceRoot = workspaceRootInner(process.cwd(), process.cwd());
++
++function setWorkspaceRoot(root) {
++    exports.workspaceRoot = root;
++}
++exports.setWorkspaceRoot = setWorkspaceRoot;
++
+ function workspaceRootInner(dir, candidateRoot) {
+     if (process.env.NX_WORKSPACE_ROOT_PATH)
+         return process.env.NX_WORKSPACE_ROOT_PATH;
