@@ -6,9 +6,9 @@ import {
   Command,
   CommandConfigOptions,
   createRunner,
-  ExtendedNpaResult,
   getPackage,
   getPackagesForOption,
+  isWorkspacePackageDependency,
   output,
   Package,
   prereleaseIdFromVersion,
@@ -24,7 +24,6 @@ import chalk from "chalk";
 import dedent from "dedent";
 import fs from "fs";
 import minimatch from "minimatch";
-import { resolve } from "npm-package-arg";
 import os from "os";
 import pMap from "p-map";
 import pPipe from "p-pipe";
@@ -763,57 +762,23 @@ class VersionCommand extends Command {
     const dependencies = this.projectGraph.dependencies[node.name];
     const pkg = getPackage(node);
 
-    const localDependencies = dependencies.filter((d) => !d.target.startsWith("npm:"));
+    const workspacePackageDependencies = dependencies.filter(isWorkspacePackageDependency);
 
-    localDependencies.forEach((dependency) => {
-      const depPackage = getPackage(this.projectGraph.nodes[dependency.target]);
-
-      const localDependency = pkg.getLocalDependency(depPackage.name);
-
-      const resolved = this.resolvePackageSpec(depPackage, localDependency.spec, pkg.location);
+    workspacePackageDependencies.forEach((dep) => {
+      const depPackage = getPackage(this.projectGraph.nodes[dep.target]);
 
       const depVersion = this.updatesVersions.get(depPackage.name);
-
-      if (depVersion && resolved.type !== "directory") {
+      if (
+        // only update if the dependency version is being changed
+        depVersion &&
         // don't overwrite local file: specifiers, they only change during publish
-        pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
+        dep.targetResolvedNpaResult.type !== "directory" &&
+        // only update if the local package's existing version is compatible with the dependency requirement
+        dep.targetVersionMatchesDependencyRequirement
+      ) {
+        pkg.updateLocalDependency(dep.targetResolvedNpaResult, depVersion, this.savePrefix);
       }
     });
-  }
-
-  private resolvePackageSpec(pkg: Package, spec: string, location?: string): ExtendedNpaResult {
-    // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
-    // As they apparently have no intention of being compatible, we have to do it for them.
-    // @see https://github.com/yarnpkg/yarn/issues/4212
-    spec = spec.replace(/^link:/, "file:");
-
-    // Support workspace: protocol for pnpm and yarn 2+ (https://pnpm.io/workspaces#workspace-protocol-workspace)
-    const isWorkspaceSpec = /^workspace:/.test(spec);
-
-    let fullWorkspaceSpec;
-    let workspaceAlias;
-    if (isWorkspaceSpec) {
-      fullWorkspaceSpec = spec;
-      spec = spec.replace(/^workspace:/, "");
-
-      // replace aliases (https://pnpm.io/workspaces#referencing-workspace-packages-through-aliases)
-      if (spec === "*" || spec === "^" || spec === "~") {
-        workspaceAlias = spec;
-        if (pkg.version) {
-          const prefix = spec === "*" ? "" : spec;
-          const version = pkg.version;
-          spec = `${prefix}${version}`;
-        } else {
-          spec = "*";
-        }
-      }
-    }
-
-    const resolved = resolve(pkg.name, spec, location) as ExtendedNpaResult;
-    resolved.workspaceSpec = fullWorkspaceSpec;
-    resolved.workspaceAlias = workspaceAlias;
-
-    return resolved;
   }
 
   async commitAndTagUpdates() {

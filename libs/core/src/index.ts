@@ -31,8 +31,11 @@ export { generateProfileOutputPath, Profiler } from "./lib/profiler";
 export { CommandConfigOptions, getPackages, Project } from "./lib/project";
 export {
   getPackage,
+  isExternalNpmDependency,
+  isWorkspacePackageDependency,
   ProjectGraphProjectNodeWithPackage,
   ProjectGraphWithPackages,
+  ProjectGraphWorkspacePackageDependency,
 } from "./lib/project-graph-with-packages";
 export { promptConfirmation, promptSelectOne, promptTextInput } from "./lib/prompt";
 export { pulseTillDone } from "./lib/pulse-till-done";

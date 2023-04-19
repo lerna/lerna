@@ -1,11 +1,11 @@
 import {
   checkWorkingTree as _checkWorkingTree,
+  collectProjectUpdates as _collectUpdates,
   output as _output,
   promptConfirmation,
   promptSelectOne as _promptSelectOne,
   throwIfUncommitted as _throwIfUncommitted,
 } from "@lerna/core";
-import { collectUpdates as _collectUpdates } from "@lerna/legacy-core";
 import {
   commandRunner,
   getCommitMessage,
@@ -70,7 +70,7 @@ const remoteBranchExists = _remoteBranchExists as any;
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
 
 // certain tests need to use the real thing
-const collectUpdatesActual = jest.requireActual("@lerna/legacy-core").collectUpdates;
+const collectUpdatesActual = jest.requireActual("@lerna/core").collectProjectUpdates;
 
 // file under test
 // eslint-disable-next-line @typescript-eslint/no-var-requires
