@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`version patch with previous prerelease also graduates prereleased 1`] = `
+exports[`version bump prerelease version patch with previous prerelease also graduates prereleased 1`] = `
 v1.0.1
 
 HEAD -> main, tag: v1.0.1
@@ -38,7 +38,7 @@ index SHA..SHA 100644
 +  "version": "1.0.1",
 `;
 
-exports[`version prerelease with immediate graduation 1`] = `
+exports[`version bump prerelease version prerelease with immediate graduation 1`] = `
 v1.0.1-beta.4
 
 HEAD -> main, tag: v1.0.1-beta.4
@@ -66,7 +66,7 @@ index SHA..SHA 100644
 +  "version": "1.0.1-beta.4",
 `;
 
-exports[`version prerelease with immediate graduation 2`] = `
+exports[`version bump prerelease version prerelease with immediate graduation 2`] = `
 v1.0.1
 
 HEAD -> main, tag: v1.0.1
@@ -127,7 +127,7 @@ index SHA..SHA 100644
 +    "package-1": "^1.0.1"
 `;
 
-exports[`version prerelease with previous prerelease bumps changed only 1`] = `
+exports[`version bump prerelease version prerelease with previous prerelease bumps changed only 1`] = `
 v1.0.1-beta.4
 
 HEAD -> main, tag: v1.0.1-beta.4
@@ -148,7 +148,7 @@ index SHA..SHA 100644
 +  "version": "1.0.1-beta.4",
 `;
 
-exports[`version prerelease with previous prerelease supersedes --conventional-commits 1`] = `
+exports[`version bump prerelease version prerelease with previous prerelease supersedes --conventional-commits 1`] = `
 v1.0.1-beta.4
 
 HEAD -> main, tag: v1.0.1-beta.4

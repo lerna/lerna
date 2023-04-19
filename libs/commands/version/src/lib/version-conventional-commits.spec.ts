@@ -1,5 +1,8 @@
-import { recommendVersion as _recommendVersion, updateChangelog as _updateChangelog } from "@lerna/core";
-import { collectUpdates as _collectUpdates } from "@lerna/legacy-core";
+import {
+  collectProjectUpdates as _collectUpdates,
+  recommendVersion as _recommendVersion,
+  updateChangelog as _updateChangelog,
+} from "@lerna/core";
 import { commandRunner, initFixtureFactory, showCommit } from "@lerna/test-helpers";
 import path from "path";
 import semver from "semver";
@@ -10,9 +13,6 @@ jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"))
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
-
-// eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 jest.mock("./git-push");
 jest.mock("./is-anything-committed", () => ({
@@ -41,7 +41,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lernaVersion = commandRunner(require("../command"));
 
-describe("--conventional-commits", () => {
+describe("version --conventional-commits", () => {
   describe("independent", () => {
     const versionBumps = new Map([
       ["package-1", "1.0.1"],

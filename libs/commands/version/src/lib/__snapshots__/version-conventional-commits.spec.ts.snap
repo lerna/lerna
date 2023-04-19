@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`--conventional-commits accepts --build-metadata option 1`] = `
+exports[`version --conventional-commits accepts --build-metadata option 1`] = `
 "v1.0.1+exp.sha.SHA
 
 HEAD -> main, tag: v1.0.1+exp.sha.SHA
@@ -19,7 +19,7 @@ packages/package-5/CHANGELOG.md
 packages/package-5/package.json"
 `;
 
-exports[`--conventional-commits fixed mode should guess prerelease version bumps and generate CHANGELOG 1`] = `
+exports[`version --conventional-commits fixed mode should guess prerelease version bumps and generate CHANGELOG 1`] = `
 "v2.0.0-alpha.0
 
 HEAD -> main, tag: v2.0.0-alpha.0
@@ -38,7 +38,7 @@ packages/package-5/CHANGELOG.md
 packages/package-5/package.json"
 `;
 
-exports[`--conventional-commits fixed mode should use conventional-commits utility to guess version bump and generate CHANGELOG 1`] = `
+exports[`version --conventional-commits fixed mode should use conventional-commits utility to guess version bump and generate CHANGELOG 1`] = `
 "v2.0.0
 
 HEAD -> main, tag: v2.0.0
@@ -57,7 +57,7 @@ packages/package-5/CHANGELOG.md
 packages/package-5/package.json"
 `;
 
-exports[`--conventional-commits independent accepts --build-metadata option 1`] = `
+exports[`version --conventional-commits independent accepts --build-metadata option 1`] = `
 "Publish
 
  - package-1@1.0.1+001
@@ -80,7 +80,7 @@ packages/package-5/CHANGELOG.md
 packages/package-5/package.json"
 `;
 
-exports[`--conventional-commits independent should graduate prerelease version bumps and generate CHANGELOG 1`] = `
+exports[`version --conventional-commits independent should graduate prerelease version bumps and generate CHANGELOG 1`] = `
 "Publish
 
  - package-1@1.0.1
@@ -103,7 +103,7 @@ packages/package-5/CHANGELOG.md
 packages/package-5/package.json"
 `;
 
-exports[`--conventional-commits independent should guess prerelease version bumps and generate CHANGELOG 1`] = `
+exports[`version --conventional-commits independent should guess prerelease version bumps and generate CHANGELOG 1`] = `
 "Publish
 
  - package-1@1.0.1-alpha.0
@@ -126,7 +126,7 @@ packages/package-5/CHANGELOG.md
 packages/package-5/package.json"
 `;
 
-exports[`--conventional-commits independent should use conventional-commits utility to guess version bump and generate CHANGELOG 1`] = `
+exports[`version --conventional-commits independent should use conventional-commits utility to guess version bump and generate CHANGELOG 1`] = `
 "Publish
 
  - package-1@1.0.1
