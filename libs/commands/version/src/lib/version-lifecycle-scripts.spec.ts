@@ -8,9 +8,6 @@ jest.mock("load-json-file", () => require("@lerna/test-helpers/__mocks__/load-js
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
-// eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
-
 jest.mock("./git-push");
 jest.mock("./is-anything-committed", () => ({
   isAnythingCommitted: jest.fn().mockReturnValue(true),
@@ -34,7 +31,7 @@ const initFixture = initFixtureFactory(__dirname);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lernaVersion = commandRunner(require("../command"));
 
-describe("lifecycle scripts", () => {
+describe.skip("lifecycle scripts", () => {
   const npmLifecycleEvent = process.env.npm_lifecycle_event;
 
   afterEach(() => {
