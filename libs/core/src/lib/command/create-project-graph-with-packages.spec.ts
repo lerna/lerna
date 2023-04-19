@@ -57,6 +57,26 @@ describe("createProjectGraphWithPackages", () => {
     const result = await createProjectGraphWithPackages(projectGraph(), [glob]);
     expect(Object.keys(result.nodes)).toEqual(expected);
   });
+
+  it("should add optional dependencies from raw manifest", async () => {
+    const result = await createProjectGraphWithPackages(projectGraph(), ["packages/*", "other-packages/*"]);
+    expect(result.dependencies).toEqual({
+      projectA: [
+        {
+          source: "projectA",
+          target: "otherProjectA",
+          type: "static",
+        },
+      ],
+      projectB: [
+        {
+          source: "projectB",
+          target: "projectA",
+          type: "static",
+        },
+      ],
+    });
+  });
 });
 
 const projectGraph = () =>
@@ -103,7 +123,13 @@ const projectGraph = () =>
         },
       }),
     ],
-    dependencies: [],
+    dependencies: [
+      {
+        source: "projectB",
+        target: "projectA",
+        type: "static",
+      },
+    ],
   });
 
 const getManifestForPath = (path: string): RawManifest | null => {
@@ -118,6 +144,9 @@ const getManifestForPath = (path: string): RawManifest | null => {
     "root/packages/projectA/package.json": {
       name: "projectA",
       version: "1.0.0",
+      optionalDependencies: {
+        otherProjectA: "1.0.0",
+      },
     },
     "root/other-packages/zzzProjectA/package.json": {
       name: "otherProjectA",

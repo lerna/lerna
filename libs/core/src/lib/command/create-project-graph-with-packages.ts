@@ -5,7 +5,7 @@ import minimatch from "minimatch";
 import { join } from "path";
 import { getPackageManifestPath } from "../get-package-manifest-path";
 import { Package, RawManifest } from "../package";
-import { ProjectGraphWithPackages } from "../project-graph-with-packages";
+import { getPackage, ProjectGraphWithPackages } from "../project-graph-with-packages";
 
 export async function createProjectGraphWithPackages(
   projectGraph: ProjectGraph,
@@ -38,16 +38,37 @@ export async function createProjectGraphWithPackages(
     ...projectGraph,
     nodes: {},
   };
+  const projectLookupByPackageName: Record<string, string> = {};
   const sortedTuples = sortBy(tuples, (t) => t[0].data.root);
   sortedTuples.forEach(([node, manifest]) => {
     let pkg: Package | null = null;
     if (manifest) {
       pkg = new Package(manifest, join(_workspaceRoot, node.data.root), _workspaceRoot);
+      projectLookupByPackageName[pkg.name] = node.name;
     }
     projectGraphWithOrderedNodes.nodes[node.name] = {
       ...node,
       package: pkg,
     };
+  });
+
+  // detect and add optional dependencies to the graph
+  Object.values(projectGraphWithOrderedNodes.nodes).forEach((node) => {
+    if (!node.package) {
+      return;
+    }
+    const pkg = getPackage(node);
+    if (!pkg.optionalDependencies) {
+      return;
+    }
+    Object.keys(pkg.optionalDependencies).forEach((dep) => {
+      if (projectLookupByPackageName[dep]) {
+        projectGraphWithOrderedNodes.dependencies[node.name] = [
+          ...(projectGraphWithOrderedNodes.dependencies[node.name] || []),
+          { source: node.name, target: projectLookupByPackageName[dep], type: "static" },
+        ];
+      }
+    });
   });
 
   return projectGraphWithOrderedNodes;
