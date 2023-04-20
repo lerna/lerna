@@ -1,16 +1,13 @@
 import dedent from "dedent";
 import log from "npmlog";
 import os from "os";
-import yargs from "yargs/yargs";
+import yargs from "yargs";
 
 /**
  * A factory that returns a yargs() instance configured with everything except commands.
  * Chain .parse() from this method to invoke.
- *
- * @param {Array = []} argv
- * @param {String = process.cwd()} cwd
  */
-export function lernaCLI(argv?: any, cwd?: any) {
+export function lernaCLI(argv?: string | readonly string[], cwd?: string) {
   const cli = yargs(argv, cwd);
 
   return globalOptions(cli)
@@ -18,7 +15,7 @@ export function lernaCLI(argv?: any, cwd?: any) {
     .demandCommand(1, "A command is required. Pass --help to see all available commands and options.")
     .recommendCommands()
     .strict()
-    .fail((msg: any, err: any) => {
+    .fail((msg, err: any) => {
       // certain yargs validations throw strings :P
       const actual = err || new Error(msg);
 
@@ -47,16 +44,16 @@ export function lernaCLI(argv?: any, cwd?: any) {
     `);
 }
 
-function globalOptions(argv: any) {
+function globalOptions(argv: yargs.Argv) {
   // the global options applicable to _every_ command
-  const opts = {
+  const opts: { [key: string]: yargs.Options } = {
     loglevel: {
       defaultDescription: "info",
       describe: "What level of logs to report.",
       type: "string",
     },
     concurrency: {
-      defaultDescription: os.cpus().length,
+      defaultDescription: String(os.cpus().length),
       describe: "How many processes to use when lerna parallelizes tasks.",
       type: "number",
       requiresArg: true,

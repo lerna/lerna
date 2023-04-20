@@ -320,4 +320,4 @@ const command: CommandModule = {
   addBumpPositional,
 };
 
-module.exports = command;
+export = command;
