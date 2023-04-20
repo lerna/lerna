@@ -57,8 +57,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
   "private": true,
   "description": "This package.json exists to facilitate publish built packages via tools/scripts/lerna-release.ts",
   "workspaces": [
-    "packages/*",
-    "packages/legacy-structure/commands/*"
+    "packages/*"
   ]
 }`;
     writeFileSync("./lerna.json", distLernaJson);
