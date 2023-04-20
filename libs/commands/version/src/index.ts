@@ -748,8 +748,10 @@ class VersionCommand extends Command {
       }
     }
 
-    // exec version lifecycle in root (after all updates)
-    await this.runRootLifecycle("version");
+    if (!this.hasRootedLeaf) {
+      // exec version lifecycle in root (after all updates)
+      await this.runRootLifecycle("version");
+    }
 
     if (this.commitAndTag) {
       await gitAdd(Array.from(changedFiles), this.gitOpts, this.execOpts);

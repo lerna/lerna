@@ -30,7 +30,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish
 const lernaVersion = commandRunner(require("../command"));
 
 describe("git-hosted sibling specifiers", () => {
-  test("gitCommittish", async () => {
+  it("gitCommittish", async () => {
     const cwd = await initFixture("git-hosted-sibling-committish");
 
     await lernaVersion(cwd)("minor");
@@ -58,7 +58,7 @@ describe("git-hosted sibling specifiers", () => {
     });
   });
 
-  test("gitRange", async () => {
+  it("gitRange", async () => {
     const cwd = await initFixture("git-hosted-sibling-semver");
 
     await lernaVersion(cwd)("prerelease", "--preid", "beta");
@@ -86,7 +86,7 @@ describe("git-hosted sibling specifiers", () => {
     });
   });
 
-  test("gitlab", async () => {
+  it("gitlab", async () => {
     const cwd = await initFixture("git-hosted-sibling-gitlab");
 
     await lernaVersion(cwd)("premajor", "--preid", "rc");

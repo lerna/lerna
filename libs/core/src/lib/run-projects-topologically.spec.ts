@@ -166,6 +166,14 @@ describe("runProjectsTopologically", () => {
         },
       },
       {
+        name: "cycle-3",
+        type: "lib",
+        data: {
+          root: "packages/cycle-3",
+          files: [],
+        },
+      },
+      {
         name: "other-1",
         type: "lib",
         data: {
@@ -215,8 +223,15 @@ describe("runProjectsTopologically", () => {
       },
     ];
     const projectGraphDependencies: Record<string, ProjectGraphDependency[]> = {
-      "cycle-1": [projectGraphDependency({ source: "cycle-1", target: "cycle-2" })],
-      "cycle-2": [projectGraphDependency({ source: "cycle-2", target: "cycle-1" })],
+      "cycle-1": [
+        projectGraphDependency({ source: "cycle-1", target: "cycle-2" }),
+        projectGraphDependency({ source: "cycle-1", target: "ooo1" }),
+      ],
+      "cycle-2": [
+        projectGraphDependency({ source: "cycle-2", target: "cycle-3" }),
+        projectGraphDependency({ source: "cycle-2", target: "ooo1" }),
+      ],
+      "cycle-3": [projectGraphDependency({ source: "cycle-3", target: "cycle-1" })],
       "other-1": [
         projectGraphDependency({
           source: "other-1",
@@ -255,6 +270,7 @@ describe("runProjectsTopologically", () => {
       "other-1",
       "cycle-1",
       "cycle-2",
+      "cycle-3",
       "package-2",
       "package-1",
     ]);

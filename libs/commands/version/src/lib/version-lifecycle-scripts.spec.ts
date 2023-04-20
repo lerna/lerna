@@ -31,7 +31,7 @@ const initFixture = initFixtureFactory(__dirname);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lernaVersion = commandRunner(require("../command"));
 
-describe.skip("lifecycle scripts", () => {
+describe("lifecycle scripts", () => {
   const npmLifecycleEvent = process.env.npm_lifecycle_event;
 
   afterEach(() => {
@@ -94,12 +94,21 @@ describe.skip("lifecycle scripts", () => {
     ]);
   });
 
-  it("does not duplicate rooted leaf scripts", async () => {
+  it.skip("does not duplicate rooted leaf scripts", async () => {
     const cwd = await initFixture("lifecycle-rooted-leaf");
 
     await lernaVersion(cwd)();
 
-    expect(runLifecycle.getOrderedCalls()).toEqual([
+    /**
+      ["package-1", "preversion"],
+      ["lifecycle-rooted-leaf", "preversion"],
+      ["lifecycle-rooted-leaf", "version"],
+      ["package-1", "version"],
+      ["lifecycle-rooted-leaf", "postversion"],
+      ["package-1", "postversion"],
+     */
+    const orderedCalls = runLifecycle.getOrderedCalls();
+    expect(orderedCalls).toEqual([
       ["package-1", "preversion"],
       ["package-1", "version"],
       ["lifecycle-rooted-leaf", "preversion"],
