@@ -5,7 +5,7 @@ export function makePromptVersion(
   resolvePrereleaseId: (existingPreId: string) => string,
   buildMetadata: string
 ) {
-  return (node: { version: string; name?: string; prereleaseId?: string; buildMetadata?: string }) =>
+  return (node: { version: string; name?: string; prereleaseId?: string }) =>
     promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId), buildMetadata);
 }
 

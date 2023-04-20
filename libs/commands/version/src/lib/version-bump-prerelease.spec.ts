@@ -137,7 +137,7 @@ describe("version bump prerelease", () => {
     expect(secondDiff).toMatchSnapshot();
   });
 
-  test.skip("independent version prerelease does not bump on every unrelated change", async () => {
+  test("independent version prerelease does not bump on every unrelated change", async () => {
     const cwd = tempy.directory();
     const fixture = new Tacks(
       Dir({

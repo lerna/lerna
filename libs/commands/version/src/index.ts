@@ -399,12 +399,7 @@ class VersionCommand extends Command {
 
     // decide the predicate in the conditionals below
     let predicate:
-      | ((node?: {
-          version: string;
-          name?: string;
-          prereleaseId?: string;
-          buildMetadata?: string;
-        }) => string | Promise<string>)
+      | ((node?: { version: string; name?: string; prereleaseId?: string }) => string | Promise<string>)
       | Promise<() => string>;
 
     if (repoVersion) {
@@ -441,17 +436,20 @@ class VersionCommand extends Command {
     }
 
     return Promise.resolve(predicate).then((getVersion) =>
-      this.reduceVersions((node: ProjectGraphProjectNodeWithPackage) => getVersion(getPackage(node)))
+      this.reduceVersions((node: ProjectGraphProjectNodeWithPackage) => {
+        const pkg = getPackage(node);
+        return getVersion({
+          version: pkg.version,
+          name: pkg.name,
+          prereleaseId: prereleaseIdFromVersion(pkg.version),
+        });
+      })
     );
   }
 
   reduceVersions(getVersion: (node: ProjectGraphProjectNodeWithPackage) => string | Promise<string>) {
     const iterator = (versionMap: Map<string, string>, node: ProjectGraphProjectNodeWithPackage) =>
-      Promise.resolve(getVersion(node)).then((version) => {
-        this.logger.silly("setting version", "%s: %s", node.name, version);
-        this.logger.silly("versionMap", JSON.stringify(versionMap));
-        return versionMap.set(node.name, version);
-      });
+      Promise.resolve(getVersion(node)).then((version) => versionMap.set(node.name, version));
 
     return pReduce(this.updates, iterator, new Map<string, string>());
   }
