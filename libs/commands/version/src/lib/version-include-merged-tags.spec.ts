@@ -48,7 +48,7 @@ expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/se
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-tempdir"));
 
-describe.skip("version --include-merged-tags", () => {
+describe("version --include-merged-tags", () => {
   const setupGitChangesWithBranch = async (cwd, mainPaths, branchPaths) => {
     await gitTag(cwd, "v1.0.0");
     await Promise.all(mainPaths.map((fp) => fs.appendFileSync(path.join(cwd, fp), "1")));

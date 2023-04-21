@@ -3,7 +3,7 @@ import { runProjectsTopologically } from "./run-projects-topologically";
 import { projectGraphDependency } from "./test-helpers/create-project-graph";
 
 describe("runProjectsTopologically", () => {
-  it("should run packages in order by depth of tree with leaves first", async () => {
+  it("should run projects in order by depth of tree with leaves first", async () => {
     const projects: ProjectGraphProjectNode[] = [
       // the order of this array is by root path
       // this simulates Object.values(...) on projectGraph.nodes
