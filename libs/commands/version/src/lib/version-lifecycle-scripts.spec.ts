@@ -94,19 +94,11 @@ describe("lifecycle scripts", () => {
     ]);
   });
 
-  it.skip("does not duplicate rooted leaf scripts", async () => {
+  it("does not duplicate rooted leaf scripts", async () => {
     const cwd = await initFixture("lifecycle-rooted-leaf");
 
     await lernaVersion(cwd)();
 
-    /**
-      ["package-1", "preversion"],
-      ["lifecycle-rooted-leaf", "preversion"],
-      ["lifecycle-rooted-leaf", "version"],
-      ["package-1", "version"],
-      ["lifecycle-rooted-leaf", "postversion"],
-      ["package-1", "postversion"],
-     */
     const orderedCalls = runLifecycle.getOrderedCalls();
     expect(orderedCalls).toEqual([
       ["package-1", "preversion"],
