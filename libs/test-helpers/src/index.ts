@@ -7,6 +7,7 @@ export * from "./lib/git";
 export * from "./lib/logging-output";
 export { multiLineTrimRight } from "./lib/multi-line-trim-right";
 export * from "./lib/npm";
+export { applyFixtureToTree } from "./lib/apply-fixture-to-tree";
 
 export * from "./lib/serializers";
 

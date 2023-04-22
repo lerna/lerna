@@ -2,12 +2,13 @@
 import log from "npmlog";
 
 // Currently external until the usage of LERNA_MODULE_DATA can be refactored
-const createCmd = require("@lerna/create/command");
+const createLegacyCmd = require("@lerna/create/command");
 
 // Bundled
 import { lernaCLI } from "@lerna/core";
 import changedCmd from "@lerna/commands/changed/command";
 import cleanCmd from "@lerna/commands/clean/command";
+import createCmd from "@lerna/commands/create/command";
 import diffCmd from "@lerna/commands/diff/command";
 import execCmd from "@lerna/commands/exec/command";
 import importCmd from "@lerna/commands/import/command";
@@ -35,6 +36,7 @@ module.exports = function main(argv: NodeJS.Process["argv"]) {
     .command(changedCmd)
     .command(cleanCmd)
     .command(createCmd)
+    .command(createLegacyCmd)
     .command(diffCmd)
     .command(execCmd)
     .command(importCmd)

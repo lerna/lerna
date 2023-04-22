@@ -22,7 +22,7 @@
         "tsConfig": "packages/legacy-structure/commands/create/tsconfig.lib.json",
         "assets": [
           {
-            "input": "libs/commands/create",
+            "input": "libs/commands/create-legacy",
             "glob": "README.md",
             "output": "../"
           },

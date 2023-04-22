@@ -27,6 +27,8 @@
       "@lerna/commands/clean/*": ["libs/commands/clean/src/*"],
       "@lerna/commands/create": ["libs/commands/create/src/index.ts"],
       "@lerna/commands/create/*": ["libs/commands/create/src/*"],
+      "@lerna/commands/create-legacy": ["libs/commands/create-legacy/src/index.ts"],
+      "@lerna/commands/create-legacy/*": ["libs/commands/create-legacy/src/*"],
       "@lerna/commands/diff": ["libs/commands/diff/src/index.ts"],
       "@lerna/commands/diff/*": ["libs/commands/diff/src/*"],
       "@lerna/commands/exec": ["libs/commands/exec/src/index.ts"],

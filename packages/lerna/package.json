@@ -40,6 +40,7 @@
     "@lerna/child-process": "6.6.1",
     "@lerna/create": "6.6.1",
     "@npmcli/arborist": "6.2.3",
+    "@npmcli/config": "6.1.6",
     "@npmcli/run-script": "4.1.7",
     "@nrwl/devkit": ">=15.5.2 < 16",
     "@octokit/plugin-enterprise-rest": "6.0.1",
