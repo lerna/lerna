@@ -97,7 +97,7 @@ Running `lerna publish` now would detect v1.1.0 instead of v1.2.1 as the last re
 The implications of this depends on your usage of `lerna publish`:
 
 - The publish prompt would use v1.1.0 as the base for major/minor/patch suggestions.
-- When using the --conventional-commit flag:
+- When using the `--conventional-commit` flag:
   - would suggest a semver increment based on all the commits since v1.1.0 (including commits from v1.2.0, v1.2.1 etc)
   - The generated CHANGELOG.md files will repeat all the commits that have already been released in v1.2.0, v1.2.1 etc
 
