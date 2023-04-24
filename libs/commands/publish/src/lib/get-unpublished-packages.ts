@@ -1,26 +1,21 @@
+import { PackageGraph, PackageGraphNode } from "@lerna/legacy-core";
 import log from "npmlog";
 import pMap from "p-map";
 import pacote from "pacote";
-
-module.exports.getUnpublishedPackages = getUnpublishedPackages;
+import { FetchConfig } from "./fetch-config";
 
 /**
  * Retrieve a list of graph nodes for packages that need to be published.
- * @param {import("@lerna/package-graph").PackageGraph} packageGraph
- * @param {import("./fetch-config").FetchConfig} opts
- * @returns {Promise<import("@lerna/package-graph").PackageGraphNode[]>}
  */
-function getUnpublishedPackages(packageGraph, opts) {
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  log.silly("getUnpublishedPackages");
-
-  let chain = Promise.resolve();
+export async function getUnpublishedPackages(
+  packageGraph: PackageGraph,
+  opts: Partial<FetchConfig>
+): Promise<PackageGraphNode[]> {
+  log.silly("getUnpublishedPackages", "");
 
   const graphNodesToCheck = Array.from(packageGraph.values());
 
-  const mapper = (pkg) =>
+  const mapper = (pkg: PackageGraphNode) =>
     pacote.packument(pkg.name, opts).then(
       (packument) => {
         if (packument.versions === undefined || packument.versions[pkg.version] === undefined) {
@@ -33,13 +28,7 @@ function getUnpublishedPackages(packageGraph, opts) {
       }
     );
 
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  chain = chain.then(() => pMap(graphNodesToCheck, mapper, { concurrency: 4 }));
+  const results = await pMap(graphNodesToCheck, mapper, { concurrency: 4 });
 
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return chain.then((results) => results.filter(Boolean));
+  return results.filter(Boolean);
 }

@@ -2,12 +2,12 @@ import { loggingOutput } from "@lerna/test-helpers";
 
 jest.mock("./get-profile-data");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getProfileData } = require("./get-profile-data");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getTwoFactorAuthRequired } = require("./get-two-factor-auth-required");
+import { getProfileData as _getProfileData, ProfileData } from "./get-profile-data";
+import { getTwoFactorAuthRequired } from "./get-two-factor-auth-required";
 
-getProfileData.mockImplementation(() => Promise.resolve({ tfa: {} }));
+const getProfileData = _getProfileData as jest.MockedFunction<typeof _getProfileData>;
+
+getProfileData.mockImplementation(() => Promise.resolve({ tfa: {} } as ProfileData));
 
 describe("getTwoFactorAuthRequired", () => {
   const origConsoleError = console.error;
@@ -25,7 +25,7 @@ describe("getTwoFactorAuthRequired", () => {
       tfa: {
         mode: "auth-and-writes",
       },
-    });
+    } as ProfileData);
 
     const result = await getTwoFactorAuthRequired();
     expect(result).toBe(true);
@@ -37,7 +37,7 @@ describe("getTwoFactorAuthRequired", () => {
       tfa: {
         mode: "auth-only",
       },
-    });
+    } as ProfileData);
 
     const result = await getTwoFactorAuthRequired();
     expect(result).toBe(false);
@@ -49,7 +49,7 @@ describe("getTwoFactorAuthRequired", () => {
         pending: true,
         mode: "ignored",
       },
-    });
+    } as unknown as ProfileData);
 
     const result = await getTwoFactorAuthRequired();
     expect(result).toBe(false);

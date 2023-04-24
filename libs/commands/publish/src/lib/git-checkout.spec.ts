@@ -5,8 +5,7 @@ import path from "path";
 
 const initFixture = initFixtureFactory(__dirname);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitCheckout } = require("./git-checkout");
+import { gitCheckout } from "./git-checkout";
 
 test("gitCheckout files", async () => {
   const cwd = await initFixture("no-interdependencies");

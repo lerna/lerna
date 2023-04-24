@@ -1,18 +1,12 @@
 import { ValidationError } from "@lerna/core";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getFetchConfig } = require("./fetch-config");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getProfileData } = require("./get-profile-data");
-
-module.exports.getTwoFactorAuthRequired = getTwoFactorAuthRequired;
+import { FetchConfig, getFetchConfig } from "./fetch-config";
+import { getProfileData } from "./get-profile-data";
 
 /**
  * Determine if the logged-in user has enabled two-factor auth.
- * @param {import("./fetch-config").FetchConfig} options
- * @returns {Promise<boolean>}
  */
-function getTwoFactorAuthRequired(options) {
+export function getTwoFactorAuthRequired(options: Partial<FetchConfig> = {}): Promise<boolean> {
   const opts = getFetchConfig(options, {
     // don't wait forever for third-party failures to be dealt with
     fetchRetries: 0,

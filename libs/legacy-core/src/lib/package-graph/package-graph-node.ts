@@ -1,4 +1,4 @@
-import { Package, prereleaseIdFromVersion } from "@lerna/core";
+import { ExtendedNpaResult, Package, prereleaseIdFromVersion } from "@lerna/core";
 import { Result } from "npm-package-arg";
 import semver from "semver";
 
@@ -10,7 +10,7 @@ const PKG = Symbol("pkg");
 export class PackageGraphNode {
   name: string;
   externalDependencies: Map<string, Result>;
-  localDependencies: Map<string, Result>;
+  localDependencies: Map<string, ExtendedNpaResult>;
   localDependents: Map<string, PackageGraphNode>;
   [PKG]: Package;
 

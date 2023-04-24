@@ -2,8 +2,7 @@ import { initFixtureFactory } from "@lerna/test-helpers";
 
 const initFixture = initFixtureFactory(__dirname);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getCurrentSHA } = require("./get-current-sha");
+import { getCurrentSHA } from "./get-current-sha";
 
 test("getCurrentSHA", async () => {
   const cwd = await initFixture("root-manifest-only");

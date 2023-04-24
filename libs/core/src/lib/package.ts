@@ -2,6 +2,7 @@ import loadJsonFile from "load-json-file";
 import npa from "npm-package-arg";
 import path from "path";
 import writePkg from "write-pkg";
+import { Packed } from "./pack-directory";
 
 // symbol used to "hide" internal state
 const PKG = Symbol("pkg");
@@ -54,6 +55,7 @@ export interface RawManifest {
   publishConfig?: Record<"directory" | "registry" | "tag", string>;
   workspaces?: string[];
   nx?: Record<string, unknown>;
+  gitHead?: string;
 }
 
 export type ExtendedNpaResult = npa.Result & {
@@ -73,6 +75,8 @@ export class Package {
   [_rootPath]: string;
   [_scripts]: Record<string, string>;
   [_contents]: string | undefined;
+  licensePath?: string;
+  packed?: Packed;
 
   /**
    * Create a Package instance from parameters, possibly reusing existing instance.

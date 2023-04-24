@@ -1,16 +1,32 @@
-import path from "path";
 import packlist from "npm-packlist";
 import log from "npmlog";
+import path from "path";
+import { IntegrityMap } from "ssri";
 import tar from "tar";
-import tempWrite from "./temp-write";
 import { getPacked } from "./get-packed";
 import { Package } from "./package";
 import { runLifecycle } from "./run-lifecycle";
+import tempWrite from "./temp-write";
 
 interface PackConfig {
   log?: typeof log;
   lernaCommand?: string; // If "publish", run "prepublishOnly" lifecycle
   ignorePrepublish?: boolean;
+}
+
+export interface Packed {
+  id: string;
+  name: string;
+  version: string;
+  size: number;
+  unpackedSize: number;
+  shasum: string;
+  integrity: IntegrityMap;
+  filename: string;
+  files: string[];
+  entryCount: number;
+  bundled: unknown[];
+  tarFilePath: string;
 }
 
 /**
@@ -19,7 +35,7 @@ interface PackConfig {
  * @param dir to pack
  * @param options
  */
-export function packDirectory(_pkg: Package | string, dir: string, options: PackConfig) {
+export function packDirectory(_pkg: Package | string, dir: string, options: PackConfig): Promise<Packed> {
   const pkg = Package.lazy(_pkg, dir);
   const opts = {
     log,
@@ -99,7 +115,7 @@ export function packDirectory(_pkg: Package | string, dir: string, options: Pack
     )
   );
 
-  return chain;
+  return chain as unknown as Promise<Packed>;
 }
 
 function getTarballName(pkg: Package) {

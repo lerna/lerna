@@ -7,15 +7,10 @@ jest.mock("pacote");
 
 const initFixture = initFixtureFactory(__dirname);
 
-// file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getUnpublishedPackages } = require("./get-unpublished-packages");
+import { getUnpublishedPackages } from "./get-unpublished-packages";
 
 const pacote = jest.mocked(_pacote);
 
-// TODO: refactor to address type issues
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 pacote.packument.mockImplementation(async (pkg) => {
   if (pkg === "package-1") {
     return {
@@ -28,7 +23,7 @@ pacote.packument.mockImplementation(async (pkg) => {
       versions: {
         "1.0.0": {},
       },
-    };
+    } as any;
   }
 
   throw new Error("package does not exist");

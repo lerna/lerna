@@ -1,29 +1,23 @@
 import { pulseTillDone, ValidationError } from "@lerna/core";
 import access from "libnpmaccess";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getFetchConfig } = require("./fetch-config");
-
-module.exports.verifyNpmPackageAccess = verifyNpmPackageAccess;
+import { FetchConfig, getFetchConfig } from "./fetch-config";
 
 /**
  * Throw an error if the logged-in user does not have read-write access to all packages.
- * @param {{ name: string; }[]} packages
- * @param {string} username
- * @param {import("./fetch-config").FetchConfig} options
- * @returns {Promise<void>}
  */
-function verifyNpmPackageAccess(packages, username, options) {
+export function verifyNpmPackageAccess(
+  packages: { name: string }[],
+  username: string,
+  options: Partial<FetchConfig>
+): Promise<void> {
   const opts = getFetchConfig(options, {
     // don't wait forever for third-party failures to be dealt with
     fetchRetries: 0,
   });
 
-  opts.log.silly("verifyNpmPackageAccess");
+  opts.log.silly("verifyNpmPackageAccess", "");
 
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   return pulseTillDone(access.lsPackages(username, opts)).then(success, failure);
 
   function success(result) {
@@ -63,7 +57,7 @@ function verifyNpmPackageAccess(packages, username, options) {
 
     // Log the error cleanly to stderr
     opts.log.pause();
-    console.error(err.message); // eslint-disable-line no-console
+    console.error(err.message);
     opts.log.resume();
 
     throw new ValidationError("EWHOAMI", "Authentication error. Use `npm whoami` to troubleshoot.");
