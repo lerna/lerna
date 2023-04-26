@@ -1,10 +1,13 @@
-import { ProjectGraphDependency } from "@nrwl/devkit";
 import chalk from "chalk";
 import columnify from "columnify";
 import path from "path";
 import { ListableOptions } from "./listable-options";
 import { Package } from "./package";
-import { getPackage, ProjectGraphProjectNodeWithPackage } from "./project-graph-with-packages";
+import {
+  getPackage,
+  ProjectGraphProjectNodeWithPackage,
+  ProjectGraphWithPackages,
+} from "./project-graph-with-packages";
 import { toposortProjects } from "./toposort-projects";
 
 /**
@@ -13,11 +16,11 @@ import { toposortProjects } from "./toposort-projects";
  */
 export function listableFormatProjects(
   projectsList: ProjectGraphProjectNodeWithPackage[],
-  projectGraphDependencies: Record<string, ProjectGraphDependency[]>,
+  projectGraph: ProjectGraphWithPackages,
   options: ListableOptions
 ) {
   const viewOptions = parseViewOptions(options);
-  const resultList = filterResultList(projectsList, projectGraphDependencies, viewOptions);
+  const resultList = filterResultList(projectsList, projectGraph, viewOptions);
   const count = resultList.length;
 
   let text: string;
@@ -56,7 +59,7 @@ function parseViewOptions(options: ListableOptions) {
 
 function filterResultList(
   projectList: ProjectGraphProjectNodeWithPackage[],
-  projectGraphDependencies: Record<string, ProjectGraphDependency[]>,
+  projectGraph: ProjectGraphWithPackages,
   viewOptions: ReturnType<typeof parseViewOptions>
 ): ProjectGraphProjectNodeWithPackage[] {
   let result = viewOptions.showAll
@@ -64,7 +67,7 @@ function filterResultList(
     : projectList.filter((project) => !getPackage(project).private);
 
   if (viewOptions.isTopological) {
-    result = toposortProjects(result, projectGraphDependencies);
+    result = toposortProjects(result, projectGraph);
   }
 
   return result;

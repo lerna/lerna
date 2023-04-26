@@ -27,6 +27,7 @@ describe("createProjectGraphWithPackages", () => {
     expect(result.nodes.projectB.package?.name).toEqual("projectB");
     expect(result.nodes.projectB.package?.version).toEqual("1.0.0");
     expect(result.nodes.projectB.package?.dependencies).toEqual({
+      otherProjectB: "0.0.0",
       projectA: "1.0.0",
       yargs: "3.0.0",
     });
@@ -99,6 +100,42 @@ describe("createProjectGraphWithPackages", () => {
           source: "projectB",
           target: "npm:yargs",
           type: "static",
+        },
+        {
+          source: "projectB",
+          target: "otherProjectB",
+          type: "static",
+          dependencyCollection: "dependencies",
+          targetResolvedNpaResult: expect.objectContaining({
+            name: "otherProjectB",
+          }),
+          targetVersionMatchesDependencyRequirement: false,
+        },
+      ],
+    });
+    expect(result.localPackageDependencies).toEqual({
+      projectA: [
+        {
+          source: "projectA",
+          target: "otherProjectB",
+          type: "static",
+          dependencyCollection: "optionalDependencies",
+          targetResolvedNpaResult: expect.objectContaining({
+            name: "otherProjectB",
+          }),
+          targetVersionMatchesDependencyRequirement: true,
+        },
+      ],
+      projectB: [
+        {
+          source: "projectB",
+          target: "projectA",
+          type: "static",
+          dependencyCollection: "dependencies",
+          targetResolvedNpaResult: expect.objectContaining({
+            name: "projectA",
+          }),
+          targetVersionMatchesDependencyRequirement: true,
         },
       ],
     });
@@ -318,6 +355,11 @@ const projectGraph = () =>
         target: "npm:yargs",
         type: "static",
       },
+      {
+        source: "projectB",
+        target: "otherProjectB",
+        type: "static",
+      },
     ],
   });
 
@@ -328,6 +370,7 @@ const getManifestForPath = (path: string): RawManifest | null => {
       version: "1.0.0",
       dependencies: {
         projectA: "1.0.0",
+        otherProjectB: "0.0.0",
         yargs: "3.0.0",
       },
     },

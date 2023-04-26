@@ -1,15 +1,12 @@
-import { ProjectGraph } from "@nrwl/devkit";
-import { mapValues } from "lodash";
+import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";
 
-export function addDependencies<U extends ProjectGraph, T extends U["nodes"][keyof U["nodes"]]>(
-  projects: T[],
-  projectGraph: U
-): T[] {
+export function addDependencies(
+  projects: ProjectGraphProjectNodeWithPackage[],
+  projectGraph: ProjectGraphWithPackages
+): ProjectGraphProjectNodeWithPackage[] {
   const projectsLookup = new Set(projects.map((p) => p.name));
-  const dependencies: Record<string, string[]> = mapValues(projectGraph.dependencies, (deps) =>
-    deps.map((dep) => dep.target).filter((dep) => !dep.startsWith("npm:"))
-  );
-  const collected = new Set<T>();
+  const dependencies = projectGraph.localPackageDependencies;
+  const collected = new Set<ProjectGraphProjectNodeWithPackage>();
 
   projects.forEach((currentNode) => {
     if (dependencies[currentNode.name] && dependencies[currentNode.name].length === 0) {
@@ -21,21 +18,20 @@ export function addDependencies<U extends ProjectGraph, T extends U["nodes"][key
     const seen = new Set<string>();
 
     while (queue.length) {
-      const node = queue.shift() as T;
+      const node = queue.shift() as ProjectGraphProjectNodeWithPackage;
 
-      dependencies[node.name]?.forEach((dep) => {
-        if (seen.has(dep)) {
+      dependencies[node.name]?.forEach(({ target }) => {
+        if (seen.has(target)) {
           return;
         }
-        seen.add(dep);
+        seen.add(target);
 
-        if (dep === currentNode.name || projectsLookup.has(dep)) {
+        if (target === currentNode.name || projectsLookup.has(target)) {
           // a direct or transitive cycle, skip it
           return;
         }
 
-        // It's fine to cast here because we know that the project graph consists of nodes of a uniform structure
-        const dependencyNode = projectGraph.nodes[dep] as T;
+        const dependencyNode = projectGraph.nodes[target];
         collected.add(dependencyNode);
         queue.push(dependencyNode);
       });

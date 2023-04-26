@@ -1,8 +1,7 @@
-import { ProjectGraphDependency, ProjectGraphProjectNode } from "@nrwl/devkit";
 import { flatten } from "lodash";
 import PQueue from "p-queue";
 import { getCycles, mergeOverlappingCycles, reportCycles } from "./cycles";
-import { getLocalDependencies } from "./toposort-projects";
+import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";
 
 interface TopologicalConfig {
   concurrency?: number;
@@ -12,10 +11,10 @@ interface TopologicalConfig {
 /**
  * Run callback in maximally-saturated topological order.
  */
-export async function runProjectsTopologically<T, U extends ProjectGraphProjectNode>(
-  projects: U[],
-  projectGraphDependencies: Record<string, ProjectGraphDependency[]>,
-  runner: (node: U) => Promise<T>,
+export async function runProjectsTopologically<T>(
+  projects: ProjectGraphProjectNodeWithPackage[],
+  projectGraph: ProjectGraphWithPackages,
+  runner: (node: ProjectGraphProjectNodeWithPackage) => Promise<T>,
   { concurrency, rejectCycles }: TopologicalConfig = {}
 ): Promise<T[]> {
   const queue = new PQueue({ concurrency });
@@ -23,7 +22,7 @@ export async function runProjectsTopologically<T, U extends ProjectGraphProjectN
   const returnValues: T[] = [];
 
   const projectsMap = new Map(projects.map((p) => [p.name, p]));
-  const localDependencies = getLocalDependencies(projectGraphDependencies, projectsMap);
+  const localDependencies = projectGraph.localPackageDependencies;
   const flattenedLocalDependencies = flatten(Object.values(localDependencies));
 
   const getProject = (name: string) => {
@@ -43,7 +42,9 @@ export async function runProjectsTopologically<T, U extends ProjectGraphProjectN
   );
 
   flattenedLocalDependencies.forEach((dep) => {
-    if (dependenciesBySource[dep.source]) dependenciesBySource[dep.source].add(dep.target);
+    if (dependenciesBySource[dep.source] && projectsMap.has(dep.target)) {
+      dependenciesBySource[dep.source].add(dep.target);
+    }
   });
 
   const unmergedCycles = getCycles(localDependencies);
@@ -53,6 +54,8 @@ export async function runProjectsTopologically<T, U extends ProjectGraphProjectN
   const cycles = mergeOverlappingCycles(unmergedCycles);
 
   const seen: Set<string> = new Set();
+
+  const errors: Error[] = [];
 
   const queueNextPackages = () => {
     if (seen.size === projects.length) {
@@ -73,7 +76,9 @@ export async function runProjectsTopologically<T, U extends ProjectGraphProjectN
       });
 
       if (!cycleHasExternalDependencies) {
+        // no other leaf nodes found, so process the first cycle
         batch = cycles.shift() || [];
+        batch = batch.filter((p) => projectsMap.has(p));
       }
     }
 
@@ -82,15 +87,20 @@ export async function runProjectsTopologically<T, U extends ProjectGraphProjectN
       seen.add(p);
 
       queue.add(() =>
-        runner(project).then((value) => {
-          returnValues.push(value);
+        runner(project)
+          .then((value) => {
+            returnValues.push(value);
 
-          delete dependenciesBySource[p];
+            delete dependenciesBySource[p];
 
-          Object.keys(dependenciesBySource).forEach((dep) => dependenciesBySource[dep].delete(p));
+            Object.keys(dependenciesBySource).forEach((dep) => dependenciesBySource[dep].delete(p));
 
-          queueNextPackages();
-        })
+            queueNextPackages();
+          })
+          .catch((err) => {
+            // capture the inner error to throw later, since queue.onIdle will not throw it
+            errors.push(err);
+          })
       );
     });
   };
@@ -98,6 +108,11 @@ export async function runProjectsTopologically<T, U extends ProjectGraphProjectN
   queueNextPackages();
 
   await queue.onIdle();
+
+  if (errors.length) {
+    // throw the first error that was captured above
+    throw errors[0];
+  }
 
   return returnValues;
 }

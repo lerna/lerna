@@ -1,7 +1,7 @@
-import { getPackages } from "@lerna/core";
-import { PackageGraph } from "@lerna/legacy-core";
+import { getPackages, ProjectGraphProjectNodeWithPackage } from "@lerna/core";
 import { initFixtureFactory } from "@lerna/test-helpers";
 import _pacote from "pacote";
+import { join } from "path";
 
 jest.mock("pacote");
 
@@ -32,59 +32,54 @@ pacote.packument.mockImplementation(async (pkg) => {
 test("getUnpublishedPackages", async () => {
   const cwd = await initFixture("licenses-names");
   const packages = await getPackages(cwd);
-  const packageGraph = new PackageGraph(packages);
+  const projectNodes = packages.map(
+    (pkg): ProjectGraphProjectNodeWithPackage => ({
+      name: pkg.name,
+      type: "lib",
+      data: { root: pkg.location, files: [{ file: join(pkg.location, "package.json"), hash: "" }] },
+      package: pkg,
+    })
+  );
 
   const opts = {};
-  const pkgs = await getUnpublishedPackages(packageGraph, opts);
+  const pkgs = await getUnpublishedPackages(projectNodes, opts);
 
   expect(pacote.packument).toHaveBeenCalledWith("package-1", opts);
-  expect(pkgs).toMatchInlineSnapshot(`
-Array [
-  PackageGraphNode {
-    "externalDependencies": Map {},
-    "localDependencies": Map {},
-    "localDependents": Map {},
-    "name": "package-1",
-  },
-  PackageGraphNode {
-    "externalDependencies": Map {},
-    "localDependencies": Map {},
-    "localDependents": Map {},
-    "name": "package-3",
-  },
-  PackageGraphNode {
-    "externalDependencies": Map {},
-    "localDependencies": Map {},
-    "localDependents": Map {},
-    "name": "package-4",
-  },
-  PackageGraphNode {
-    "externalDependencies": Map {},
-    "localDependencies": Map {},
-    "localDependents": Map {},
-    "name": "package-5",
-  },
-]
-`);
+  expect(pkgs).toEqual([
+    expect.objectContaining({
+      name: "package-1",
+    }),
+    expect.objectContaining({
+      name: "package-3",
+    }),
+    expect.objectContaining({
+      name: "package-4",
+    }),
+    expect.objectContaining({
+      name: "package-5",
+    }),
+  ]);
 });
 
 test("getUnpublishedPackages with private package", async () => {
   const cwd = await initFixture("public-private");
   const packages = await getPackages(cwd);
-  const packageGraph = new PackageGraph(packages);
+  const projectNodes = packages.map(
+    (pkg): ProjectGraphProjectNodeWithPackage => ({
+      name: pkg.name,
+      type: "lib",
+      data: { root: pkg.location, files: [{ file: join(pkg.location, "package.json"), hash: "" }] },
+      package: pkg,
+    })
+  );
 
   const opts = {};
-  const pkgs = await getUnpublishedPackages(packageGraph, opts);
+  const pkgs = await getUnpublishedPackages(projectNodes, opts);
 
   expect(pacote.packument).toHaveBeenCalledWith("package-1", opts);
-  expect(pkgs).toMatchInlineSnapshot(`
-Array [
-  PackageGraphNode {
-    "externalDependencies": Map {},
-    "localDependencies": Map {},
-    "localDependents": Map {},
-    "name": "package-1",
-  },
-]
-`);
+  expect(pkgs).toEqual([
+    expect.objectContaining({
+      name: "package-1",
+    }),
+  ]);
 });

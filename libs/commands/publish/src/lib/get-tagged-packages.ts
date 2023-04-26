@@ -1,4 +1,4 @@
-import { PackageGraph, PackageGraphNode } from "@lerna/legacy-core";
+import { getPackage, ProjectGraphProjectNodeWithPackage } from "@lerna/core";
 import { ExecOptions } from "child_process";
 import log from "npmlog";
 import path from "path";
@@ -10,10 +10,10 @@ const childProcess = require("@lerna/child-process");
  * Retrieve a list of graph nodes for packages that were tagged in a non-independent release.
  */
 export async function getTaggedPackages(
-  packageGraph: PackageGraph,
+  projectNodes: ProjectGraphProjectNodeWithPackage[],
   rootPath: string,
   execOpts: ExecOptions
-): Promise<PackageGraphNode[]> {
+): Promise<ProjectGraphProjectNodeWithPackage[]> {
   log.silly("getTaggedPackages", "");
 
   // @see https://stackoverflow.com/a/424142/5707
@@ -28,5 +28,5 @@ export async function getTaggedPackages(
   const manifests = stdout.split("\n").filter((fp) => path.basename(fp) === "package.json");
   const locations = new Set(manifests.map((fp) => path.join(rootPath, path.dirname(fp))));
 
-  return Array.from(packageGraph.values()).filter((node) => locations.has(node.location));
+  return projectNodes.filter((node) => locations.has(getPackage(node).location));
 }

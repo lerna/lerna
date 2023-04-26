@@ -2,14 +2,17 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { loggingOutput } from "@lerna/test-helpers";
-import { ProjectGraphDependency } from "@nrwl/devkit";
 import chalk from "chalk";
 import tempy from "tempy";
 import { listableFormatProjects } from "./listable-format-projects";
 import { ListableOptions } from "./listable-options";
 import { Package, RawManifest } from "./package";
-import { ProjectGraphProjectNodeWithPackage } from "./project-graph-with-packages";
-import { projectGraphDependency } from "./test-helpers/create-project-graph";
+import {
+  ProjectGraphProjectNodeWithPackage,
+  ProjectGraphWithPackages,
+  ProjectGraphWorkspacePackageDependency,
+} from "./project-graph-with-packages";
+import { createProjectGraph, projectGraphDependency } from "./test-helpers/create-project-graph";
 
 // keep snapshots stable cross-platform
 chalk.level = 0;
@@ -33,17 +36,17 @@ expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/se
 
 describe("listableFormatProjects", () => {
   let projectNodes: ProjectGraphProjectNodeWithPackage[];
-  let dependencies: Record<string, ProjectGraphDependency[]>;
+  let projectGraph: ProjectGraphWithPackages;
 
   const formatWithOptions = (opts: ListableOptions) =>
-    listableFormatProjects(projectNodes, dependencies, { _: ["ls"], ...opts });
+    listableFormatProjects(projectNodes, projectGraph, { _: ["ls"], ...opts });
 
   beforeAll(() => {
     const cwd = tempy.directory();
     process.chdir(cwd);
 
     projectNodes = createProjectNodes(cwd);
-    dependencies = createDependencies();
+    projectGraph = createProjectGraph({ projects: projectNodes, dependencies: createDependencies() });
   });
 
   describe("renders", () => {
@@ -302,23 +305,20 @@ const createProjectNodes = (cwd: string): ProjectGraphProjectNodeWithPackage[] =
   },
 ];
 
-const createDependencies = (): Record<string, ProjectGraphDependency[]> => ({
-  "pkg-1": [
-    projectGraphDependency({
-      source: "pkg-1",
-      target: "pkg-2",
-    }),
-  ],
-  "pkg-2": [
-    projectGraphDependency({
-      source: "pkg-2",
-      target: "pkg-3",
-    }),
-  ],
-  "pkg-3": [
-    projectGraphDependency({
-      source: "pkg-3",
-      target: "pkg-2",
-    }),
-  ],
-});
+const createDependencies = (): ProjectGraphWorkspacePackageDependency[] => [
+  projectGraphDependency({
+    source: "pkg-1",
+    target: "pkg-2",
+    targetVersionMatchesDependencyRequirement: true,
+  }),
+  projectGraphDependency({
+    source: "pkg-2",
+    target: "pkg-3",
+    targetVersionMatchesDependencyRequirement: true,
+  }),
+  projectGraphDependency({
+    source: "pkg-3",
+    target: "pkg-2",
+    targetVersionMatchesDependencyRequirement: true,
+  }),
+];

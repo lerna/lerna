@@ -9,6 +9,8 @@ import {
   ValidationError,
 } from "@lerna/core";
 import { existsSync } from "fs-extra";
+import { runMany } from "nx/src/command-line/run-many";
+import { runOne } from "nx/src/command-line/run-one";
 import path from "path";
 import { performance } from "perf_hooks";
 
@@ -69,16 +71,12 @@ class RunCommand extends Command {
 
     const filteredProjects = await filterProjects(this.projectGraph, this.execOpts, this.options);
 
-    this.projectsWithScript =
-      this.script === "env"
-        ? filteredProjects
-        : filteredProjects.filter((project) => {
-            const pkg = getPackage(project);
-            if (Array.isArray(this.script)) {
-              return this.script.some((scriptName) => pkg.scripts && pkg.scripts[scriptName]);
-            }
-            return pkg.scripts && pkg.scripts[this.script];
-          });
+    this.projectsWithScript = filteredProjects.filter((project) => {
+      if (Array.isArray(this.script)) {
+        return this.script.some((scriptName) => project.data.targets?.[scriptName]);
+      }
+      return project.data.targets?.[this.script];
+    });
 
     this.count = this.projectsWithScript.length;
     this.packagePlural = this.count === 1 ? "package" : "packages";
@@ -106,8 +104,6 @@ class RunCommand extends Command {
     const { targetDependencies, options, extraOptions } = await this.prepNxOptions();
 
     if (this.projectsWithScript.length === 1 && !Array.isArray(this.script)) {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { runOne } = require("nx/src/command-line/run-one");
       const fullQualifiedTarget =
         this.projectsWithScript.map((p) => p.name)[0] +
         ":" +
@@ -118,12 +114,11 @@ class RunCommand extends Command {
           "project:target:configuration": fullQualifiedTarget,
           ...options,
         },
+        // @ts-ignore
         targetDependencies,
         extraOptions
       );
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { runMany } = require("nx/src/command-line/run-many");
       const projects = this.projectsWithScript.map((p) => p.name).join(",");
       return runMany(
         {
@@ -131,6 +126,7 @@ class RunCommand extends Command {
           targets: Array.isArray(this.script) ? this.script : [this.script],
           ...options,
         },
+        // @ts-ignore
         targetDependencies,
         extraOptions
       );

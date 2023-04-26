@@ -8,7 +8,6 @@ import {
   createRunner,
   getPackage,
   getPackagesForOption,
-  isWorkspacePackageDependency,
   output,
   Package,
   prereleaseIdFromVersion,
@@ -670,7 +669,7 @@ class VersionCommand extends Command {
 
     const mapUpdate = pPipe(...actions);
 
-    await runProjectsTopologically(this.updates, this.projectGraph.dependencies, mapUpdate, {
+    await runProjectsTopologically(this.updates, this.projectGraph, mapUpdate, {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
     });
@@ -759,22 +758,19 @@ class VersionCommand extends Command {
   }
 
   private updateDependencies(node: ProjectGraphProjectNodeWithPackage) {
-    const dependencies = this.projectGraph.dependencies[node.name];
+    const dependencies = this.projectGraph.localPackageDependencies[node.name] || [];
     const pkg = getPackage(node);
 
-    const workspacePackageDependencies = dependencies.filter(isWorkspacePackageDependency);
-
-    workspacePackageDependencies.forEach((dep) => {
+    dependencies.forEach((dep) => {
       const depPackage = getPackage(this.projectGraph.nodes[dep.target]);
 
+      // TODO: should this be dep.name?
       const depVersion = this.updatesVersions.get(depPackage.name);
       if (
         // only update if the dependency version is being changed
         depVersion &&
         // don't overwrite local file: specifiers, they only change during publish
-        dep.targetResolvedNpaResult.type !== "directory" &&
-        // only update if the local package's existing version is compatible with the dependency requirement
-        dep.targetVersionMatchesDependencyRequirement
+        dep.targetResolvedNpaResult.type !== "directory"
       ) {
         pkg.updateLocalDependency(dep.targetResolvedNpaResult, depVersion, this.savePrefix);
       }

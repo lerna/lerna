@@ -17,21 +17,72 @@ describe("addDependencies", () => {
       projectNode({ name: "cycle-1" }),
       projectNode({ name: "cycle-2" }),
       projectNode({ name: "cycle-leaf" }),
+      projectNode({ name: "base-lib-x" }),
+      projectNode({ name: "depends-on-other-version-of-x" }),
     ];
     const projectGraph = createProjectGraph({
       projects,
       dependencies: [
-        projectGraphDependency({ source: "depends-on-a", target: "base-lib-a" }),
-        projectGraphDependency({ source: "depends-on-b", target: "base-lib-b" }),
-        projectGraphDependency({ source: "depends-on-a-and-b", target: "base-lib-a" }),
-        projectGraphDependency({ source: "depends-on-a-and-b", target: "base-lib-b" }),
-        projectGraphDependency({ source: "depends-on-c", target: "base-lib-c" }),
-        projectGraphDependency({ source: "depends-on-depends-on-c", target: "depends-on-c" }),
-        projectGraphDependency({ source: "top-lib", target: "depends-on-depends-on-c" }),
-        projectGraphDependency({ source: "top-lib", target: "depends-on-a-and-b" }),
-        projectGraphDependency({ source: "cycle-1", target: "cycle-2" }),
-        projectGraphDependency({ source: "cycle-2", target: "cycle-1" }),
-        projectGraphDependency({ source: "cycle-leaf", target: "cycle-2" }),
+        projectGraphDependency({
+          source: "depends-on-a",
+          target: "base-lib-a",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "depends-on-b",
+          target: "base-lib-b",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "depends-on-a-and-b",
+          target: "base-lib-a",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "depends-on-a-and-b",
+          target: "base-lib-b",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "depends-on-c",
+          target: "base-lib-c",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "depends-on-depends-on-c",
+          target: "depends-on-c",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "top-lib",
+          target: "depends-on-depends-on-c",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "top-lib",
+          target: "depends-on-a-and-b",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "cycle-1",
+          target: "cycle-2",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "cycle-2",
+          target: "cycle-1",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "cycle-leaf",
+          target: "cycle-2",
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        projectGraphDependency({
+          source: "depends-on-other-version-of-x",
+          target: "base-lib-x",
+          targetVersionMatchesDependencyRequirement: false,
+        }),
       ],
     });
 
@@ -41,6 +92,7 @@ describe("addDependencies", () => {
       projectNode({ name: "top-lib" }),
       projectNode({ name: "base-lib-b" }),
       projectNode({ name: "cycle-leaf" }),
+      projectNode({ name: "depends-on-other-version-of-x" }),
     ];
 
     const result = addDependencies(subsetOfProjects, projectGraph);
@@ -50,6 +102,7 @@ describe("addDependencies", () => {
       projectNode({ name: "top-lib" }),
       projectNode({ name: "base-lib-b" }),
       projectNode({ name: "cycle-leaf" }),
+      projectNode({ name: "depends-on-other-version-of-x" }),
       projectNode({ name: "base-lib-a" }),
       projectNode({ name: "depends-on-depends-on-c" }),
       projectNode({ name: "depends-on-c" }),

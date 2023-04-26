@@ -12,7 +12,7 @@ import { ProjectGraphWithPackages } from "../project-graph-with-packages";
 import {
   createProjectGraph,
   projectGraphDependency,
-  projectNodeWithPackage,
+  projectNode,
 } from "../test-helpers/create-project-graph";
 import { collectProjectUpdates } from "./collect-project-updates";
 
@@ -46,6 +46,7 @@ const ALL_NODES = Object.freeze([
   expect.objectContaining({ name: "package-dag-2b" }),
   expect.objectContaining({ name: "package-dag-3" }),
   expect.objectContaining({ name: "package-standalone" }),
+  expect.objectContaining({ name: "package-dag-5" }),
 ]);
 
 describe("collectProjectUpdates", () => {
@@ -400,7 +401,7 @@ describe("collectProjectUpdates", () => {
 const buildGraph = (): ProjectGraphWithPackages =>
   createProjectGraph({
     projects: [
-      projectNodeWithPackage(
+      projectNode(
         {
           name: "package-cycle-1",
         },
@@ -409,7 +410,7 @@ const buildGraph = (): ProjectGraphWithPackages =>
           version: "1.0.0",
         }
       ),
-      projectNodeWithPackage(
+      projectNode(
         {
           name: "package-cycle-2",
         },
@@ -418,7 +419,7 @@ const buildGraph = (): ProjectGraphWithPackages =>
           version: "1.0.0",
         }
       ),
-      projectNodeWithPackage(
+      projectNode(
         {
           name: "package-cycle-extraneous-1",
         },
@@ -428,7 +429,7 @@ const buildGraph = (): ProjectGraphWithPackages =>
           description: "This package is used to break ties between package-cycle-{1,2}.",
         }
       ),
-      projectNodeWithPackage(
+      projectNode(
         {
           name: "package-cycle-extraneous-2",
         },
@@ -438,7 +439,7 @@ const buildGraph = (): ProjectGraphWithPackages =>
           description: "This package is used to break ties between package-cycle-{1,2}.",
         }
       ),
-      projectNodeWithPackage(
+      projectNode(
         {
           name: "package-dag-1",
         },
@@ -447,7 +448,7 @@ const buildGraph = (): ProjectGraphWithPackages =>
           version: "1.0.0",
         }
       ),
-      projectNodeWithPackage(
+      projectNode(
         {
           name: "package-dag-2a",
         },
@@ -456,7 +457,7 @@ const buildGraph = (): ProjectGraphWithPackages =>
           version: "1.0.0",
         }
       ),
-      projectNodeWithPackage(
+      projectNode(
         {
           name: "package-dag-2b",
         },
@@ -465,7 +466,7 @@ const buildGraph = (): ProjectGraphWithPackages =>
           version: "1.0.0",
         }
       ),
-      projectNodeWithPackage(
+      projectNode(
         {
           name: "package-dag-3",
         },
@@ -474,12 +475,21 @@ const buildGraph = (): ProjectGraphWithPackages =>
           version: "1.0.0",
         }
       ),
-      projectNodeWithPackage(
+      projectNode(
         {
           name: "package-standalone",
         },
         {
           name: "package-standalone",
+          version: "1.0.0",
+        }
+      ),
+      projectNode(
+        {
+          name: "package-dag-5",
+        },
+        {
+          name: "package-dag-1",
           version: "1.0.0",
         }
       ),
@@ -488,38 +498,52 @@ const buildGraph = (): ProjectGraphWithPackages =>
       projectGraphDependency({
         source: "package-cycle-1",
         target: "package-cycle-2",
+        targetVersionMatchesDependencyRequirement: true,
       }),
       projectGraphDependency({
         source: "package-cycle-2",
         target: "package-cycle-1",
+        targetVersionMatchesDependencyRequirement: true,
       }),
       projectGraphDependency({
         source: "package-cycle-extraneous-1",
         target: "package-cycle-1",
+        targetVersionMatchesDependencyRequirement: true,
       }),
       projectGraphDependency({
         source: "package-cycle-extraneous-2",
         target: "package-cycle-1",
+        targetVersionMatchesDependencyRequirement: true,
       }),
       projectGraphDependency({
         source: "package-cycle-extraneous-2",
         target: "package-cycle-2",
+        targetVersionMatchesDependencyRequirement: true,
       }),
       projectGraphDependency({
         source: "package-dag-2a",
         target: "package-dag-1",
+        targetVersionMatchesDependencyRequirement: true,
       }),
       projectGraphDependency({
         source: "package-dag-2b",
         target: "package-dag-1",
+        targetVersionMatchesDependencyRequirement: true,
       }),
       projectGraphDependency({
         source: "package-dag-3",
         target: "package-dag-2a",
+        targetVersionMatchesDependencyRequirement: true,
       }),
       projectGraphDependency({
         source: "package-dag-3",
         target: "package-dag-1",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "package-dag-5",
+        target: "package-dag-1",
+        targetVersionMatchesDependencyRequirement: false,
       }),
     ],
   });

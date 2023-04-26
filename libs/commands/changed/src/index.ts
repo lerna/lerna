@@ -42,7 +42,7 @@ class ChangedCommand extends Command<ChangedCommandOptions> {
       this.options
     );
 
-    this.result = listableFormatProjects(updates, this.projectGraph.dependencies, this.options);
+    this.result = listableFormatProjects(updates, this.projectGraph, this.options);
 
     if (this.result.count === 0) {
       this.logger.info("", "No changed packages found");

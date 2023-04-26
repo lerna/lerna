@@ -17,7 +17,7 @@ class ListCommand extends Command {
   override async initialize() {
     const filteredProjects = await filterProjects(this.projectGraph, this.execOpts, this.options);
 
-    this.result = listableFormatProjects(filteredProjects, this.projectGraph.dependencies, this.options);
+    this.result = listableFormatProjects(filteredProjects, this.projectGraph, this.options);
   }
 
   override execute() {

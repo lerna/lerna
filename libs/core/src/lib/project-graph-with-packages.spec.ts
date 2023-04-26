@@ -7,7 +7,7 @@ import {
   ProjectGraphProjectNodeWithPackage,
   ProjectGraphWorkspacePackageDependency,
 } from "./project-graph-with-packages";
-import { projectNode, projectNodeWithPackage } from "./test-helpers/create-project-graph";
+import { projectNode } from "./test-helpers/create-project-graph";
 
 describe("isExternalNpmDependency", () => {
   it("returns true if dep starts with npm:", () => {
@@ -62,7 +62,7 @@ describe("isWorkspacePackageDependency", () => {
 
 describe("getPackage", () => {
   it("should return package when it exists on the project node", () => {
-    const node: ProjectGraphProjectNodeWithPackage = projectNodeWithPackage(
+    const node: ProjectGraphProjectNodeWithPackage = projectNode(
       {
         name: "foo",
       },

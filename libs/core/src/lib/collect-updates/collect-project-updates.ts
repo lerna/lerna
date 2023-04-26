@@ -164,7 +164,9 @@ export function collectDependents(
   nodes: Record<string, ProjectGraphProjectNodeWithPackage>,
   projectGraph: ProjectGraphWithPackages
 ): Set<ProjectGraphProjectNodeWithPackage> {
-  const dependents: Record<string, string[]> = flatten(Object.values(projectGraph.dependencies)).reduce(
+  const dependents: Record<string, string[]> = flatten(
+    Object.values(projectGraph.localPackageDependencies)
+  ).reduce(
     (prev, next) => ({
       ...prev,
       [next.target]: [...(prev[next.target] || []), next.source],

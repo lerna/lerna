@@ -1,23 +1,25 @@
-import { ProjectGraph, ProjectGraphDependency, ProjectGraphProjectNode } from "@nrwl/devkit";
+import { ProjectGraphDependency, ProjectGraphProjectNode } from "@nrwl/devkit";
 import { Package, RawManifest } from "../package";
-import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "../project-graph-with-packages";
+import {
+  ProjectGraphProjectNodeWithPackage,
+  ProjectGraphWithPackages,
+  ProjectGraphWorkspacePackageDependency,
+} from "../project-graph-with-packages";
 
-export function projectNode(projectNode: Partial<ProjectGraphProjectNode>): ProjectGraphProjectNode {
-  return projectNode as ProjectGraphProjectNode;
-}
-
-export function projectNodeWithPackage(
+export function projectNode(
   projectNode: Partial<ProjectGraphProjectNode>,
-  pkg: Partial<RawManifest>
+  pkg?: Partial<RawManifest>
 ): ProjectGraphProjectNodeWithPackage {
   return {
     ...(projectNode as ProjectGraphProjectNode),
-    package: new Package(pkg as RawManifest, `/test/packages/${pkg.name}`, "/test"),
+    package: pkg ? new Package(pkg as RawManifest, `/test/packages/${pkg.name}`, "/test") : null,
   };
 }
 
-export function projectGraphDependency(dep: Partial<ProjectGraphDependency>): ProjectGraphDependency {
-  return dep as ProjectGraphDependency;
+export function projectGraphDependency(
+  dep: Partial<ProjectGraphWorkspacePackageDependency>
+): ProjectGraphWorkspacePackageDependency {
+  return dep as ProjectGraphWorkspacePackageDependency;
 }
 
 export function createProjectGraph<T extends ProjectGraphProjectNode>({
@@ -25,8 +27,8 @@ export function createProjectGraph<T extends ProjectGraphProjectNode>({
   dependencies,
 }: {
   projects: T[];
-  dependencies: ProjectGraphDependency[];
-}): T extends ProjectGraphProjectNodeWithPackage ? ProjectGraphWithPackages : ProjectGraph {
+  dependencies: (ProjectGraphDependency | ProjectGraphWorkspacePackageDependency)[];
+}): ProjectGraphWithPackages {
   return {
     nodes: projects.reduce((acc, project) => ({ ...acc, [project.name]: project }), {}),
     dependencies: dependencies.reduce(
@@ -36,5 +38,16 @@ export function createProjectGraph<T extends ProjectGraphProjectNode>({
       }),
       {} as Record<string, ProjectGraphDependency[]>
     ),
+    localPackageDependencies: dependencies
+      .filter(
+        (deps) => (deps as ProjectGraphWorkspacePackageDependency).targetVersionMatchesDependencyRequirement
+      )
+      .reduce(
+        (prev, next) => ({
+          ...prev,
+          [next.source]: [...(prev[next.source] || []), next as ProjectGraphWorkspacePackageDependency],
+        }),
+        {} as Record<string, ProjectGraphWorkspacePackageDependency[]>
+      ),
   };
 }

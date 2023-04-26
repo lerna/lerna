@@ -44,6 +44,7 @@ export async function createProjectGraphWithPackages(
   const projectGraphWithOrderedNodes: ProjectGraphWithPackages = {
     ...projectGraph,
     nodes: {},
+    localPackageDependencies: {},
   };
   const projectLookupByPackageName: Record<string, string> = {};
   const sortedTuples = sortBy(tuples, (t) => t[0].data.root);
@@ -82,7 +83,7 @@ export async function createProjectGraphWithPackages(
     });
   });
 
-  // add metadata to local dependencies
+  // populate local npm package dependencies
   Object.values(projectGraphWithOrderedNodes.dependencies).forEach((projectDeps) => {
     const workspaceDeps = projectDeps.filter(
       (dep) => !isExternalNpmDependency(dep.target) && !isExternalNpmDependency(dep.source)
@@ -110,7 +111,6 @@ export async function createProjectGraphWithPackages(
         sourcePkg.location
       );
       const targetMatchesRequirement =
-        // forceLocal ||
         resolvedTarget.fetchSpec === targetPkg.location ||
         satisfies(
           targetPkg.version,
@@ -120,6 +120,14 @@ export async function createProjectGraphWithPackages(
       workspaceDep.dependencyCollection = sourceNpmDependency.collection;
       workspaceDep.targetResolvedNpaResult = resolvedTarget;
       workspaceDep.targetVersionMatchesDependencyRequirement = targetMatchesRequirement;
+
+      if (workspaceDep.targetVersionMatchesDependencyRequirement) {
+        // track only local package dependencies that are satisfied by the target's version
+        projectGraphWithOrderedNodes.localPackageDependencies[dep.source] = [
+          ...(projectGraphWithOrderedNodes.localPackageDependencies[dep.source] || []),
+          workspaceDep,
+        ];
+      }
     }
   });
 

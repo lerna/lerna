@@ -1,6 +1,8 @@
 // NOTE: This file can't use ESM without breaking the spyOn() os.cpus() call right now.
 // TODO: refactor the command index.ts to resolve this
 
+import { createProjectGraph } from "../test-helpers/create-project-graph";
+
 /* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require("fs-extra");
 const log = require("npmlog");
@@ -13,6 +15,18 @@ const os = require("os");
 
 // normalize concurrency across different environments (localhost, CI, etc)
 jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
+
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@nrwl/devkit", () => ({
+  ...jest.requireActual("@nrwl/devkit"),
+  createProjectGraphAsync: () =>
+    Promise.resolve(
+      createProjectGraph({
+        projects: [],
+        dependencies: [],
+      })
+    ),
+}));
 
 // helpers
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */

@@ -1,11 +1,11 @@
 import {
+  collectProjectUpdates as _collectUpdates,
   getOneTimePassword as _getOneTimePassword,
   npmDistTag as _npmDistTag,
   npmPublish as _npmPublish,
   packDirectory as _packDirectory,
   promptConfirmation as _promptConfirmation,
 } from "@lerna/core";
-import { collectUpdates as _collectUpdates } from "@lerna/legacy-core";
 import { commandRunner, commitChangeToPackage, initFixtureFactory, loggingOutput } from "@lerna/test-helpers";
 import fsmain from "fs";
 import fs from "fs-extra";
@@ -13,8 +13,6 @@ import path from "path";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
-// eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 // lerna publish mocks
 jest.mock("./get-packages-without-license", () => ({
@@ -51,14 +49,10 @@ const npmPublish = _npmPublish as any;
 const collectUpdates = _collectUpdates as any;
 const packDirectory = _packDirectory as any;
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getNpmUsername } = require("./get-npm-username");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { verifyNpmPackageAccess } = require("./verify-npm-package-access");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getTwoFactorAuthRequired } = require("./get-two-factor-auth-required");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitCheckout } = require("./git-checkout");
+import { getNpmUsername as _getNpmUsername } from "./get-npm-username";
+import { getTwoFactorAuthRequired as _getTwoFactorAuthRequired } from "./get-two-factor-auth-required";
+import { gitCheckout as _gitCheckout } from "./git-checkout";
+import { verifyNpmPackageAccess } from "./verify-npm-package-access";
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -66,6 +60,11 @@ const initFixture = initFixtureFactory(__dirname);
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lernaPublish = commandRunner(require("../command"));
 
+const getNpmUsername = _getNpmUsername as jest.MockedFunction<typeof _getNpmUsername>;
+const getTwoFactorAuthRequired = _getTwoFactorAuthRequired as jest.MockedFunction<
+  typeof _getTwoFactorAuthRequired
+>;
+const gitCheckout = _gitCheckout as jest.MockedFunction<typeof _gitCheckout>;
 gitCheckout.mockImplementation(() => Promise.resolve());
 
 describe("PublishCommand", () => {
@@ -226,28 +225,6 @@ Map {
         "package-3",
         // package-5 is private
       ]);
-    });
-
-    it("produces a topological ordering that _excludes_ devDependencies when value is 'dependencies' (DEPRECATED)", async () => {
-      const cwd = await initFixture("normal");
-
-      await lernaPublish(cwd)("--graph-type", "dependencies");
-
-      expect(npmPublish.order()).toEqual([
-        "package-1",
-        // package-3 has a peer/devDependency on package-2
-        "package-3",
-        "package-4",
-        "package-2",
-        // package-5 is private
-      ]);
-
-      const logMessages = loggingOutput("warn");
-      expect(logMessages).toMatchInlineSnapshot(`
-        Array [
-          "--graph-type=dependencies is deprecated and will be removed in lerna v6. If you have a use-case you feel requires it please open an issue to discuss: https://github.com/lerna/lerna/issues/new/choose",
-        ]
-      `);
     });
 
     it("throws an error when value is _not_ 'all' or 'dependencies'", async () => {
@@ -511,7 +488,7 @@ Map {
     });
 
     it("is implied when npm username is undefined", async () => {
-      getNpmUsername.mockImplementationOnce(() => Promise.resolve());
+      getNpmUsername.mockImplementationOnce(() => Promise.resolve(""));
 
       const cwd = await initFixture("normal");
 

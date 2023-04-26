@@ -70,11 +70,11 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureProperties());
       chain = chain.then(() => this.configureLogging());
-      chain = chain.then(() => this.detectProjects());
       // For the special "repair" command we want to initialize everything but don't want to run validations as that will end up becoming cyclical
       if (!skipValidations) {
         chain = chain.then(() => this.runValidations());
       }
+      chain = chain.then(() => this.detectProjects());
       chain = chain.then(() => this.runPreparations());
       chain = chain.then(() => this.runCommand());
 
@@ -149,7 +149,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     return [];
   }
 
-  private async detectProjects() {
+  async detectProjects() {
     const projectGraph = await createProjectGraphAsync({
       exitOnError: false,
       resetDaemonClient: true,
