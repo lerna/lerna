@@ -6,14 +6,14 @@ import { addDependencies } from "./add-dependencies";
 import { addDependents } from "./add-dependents";
 import { collectProjectUpdates } from "./collect-updates/collect-project-updates";
 import { FilterOptions } from "./filter-options";
-import { ProjectGraphWithPackages } from "./project-graph-with-packages";
+import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";
 import { ValidationError } from "./validation-error";
 
 export async function filterProjects(
   projectGraph: ProjectGraphWithPackages,
   execOpts: Partial<ExecOptions> = {},
   opts: Partial<FilterOptions> = {}
-) {
+): Promise<ProjectGraphProjectNodeWithPackage[]> {
   const options = { log, ...opts };
 
   if (options.scope) {
@@ -35,11 +35,8 @@ export async function filterProjects(
     projects = projects.filter((p) => !p.package?.private);
   }
 
+  const patternsToLog = [...patterns];
   if (patterns.length) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    log.info("filter", patterns);
-
     if (!options.scope?.length) {
       // only excludes needs to select all items first
       // globstar is for matching scoped packages
@@ -86,6 +83,12 @@ export async function filterProjects(
     options.log.notice("filter", "including dependencies");
 
     projects = addDependencies(projects, projectGraph);
+  }
+
+  if (patternsToLog.length) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    log.info("filter", patternsToLog);
   }
 
   return projects;

@@ -22,6 +22,7 @@ import {
   throwIfUncommitted,
   ValidationError,
 } from "@lerna/core";
+import { workspaceRoot } from "@nrwl/devkit";
 
 import crypto from "crypto";
 import fs from "fs";
@@ -741,13 +742,14 @@ class PublishCommand extends Command {
   private async resetChanges() {
     // the package.json files are changed (by gitHead if not --canary)
     // and we should always __attempt_ to leave the working tree clean
-    const { cwd } = this.execOpts;
+    const _workspaceRoot = process.env["NX_WORKSPACE_ROOT_PATH"] || workspaceRoot;
+
     const gitOpts = {
       granularPathspec: this.options.granularPathspec !== false,
     };
     const dirtyManifests = [this.project.manifest]
       .concat(this.packagesToPublish)
-      .map((pkg) => path.relative(cwd, pkg.manifestLocation));
+      .map((pkg) => path.relative(_workspaceRoot, pkg.manifestLocation));
 
     await gitCheckout(dirtyManifests, gitOpts, this.execOpts).catch((err) => {
       this.logger.silly("EGITCHECKOUT", err.message);

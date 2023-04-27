@@ -569,8 +569,9 @@ class VersionCommand extends Command {
   }
 
   confirmVersions() {
-    const changes = this.packagesToVersion.map((pkg) => {
-      let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
+    const changes = this.updates.map((node) => {
+      const pkg = getPackage(node);
+      let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(node.name)}`;
       if (pkg.private) {
         line += ` (${chalk.red("private")})`;
       }
@@ -762,10 +763,7 @@ class VersionCommand extends Command {
     const pkg = getPackage(node);
 
     dependencies.forEach((dep) => {
-      const depPackage = getPackage(this.projectGraph.nodes[dep.target]);
-
-      // TODO: should this be dep.name?
-      const depVersion = this.updatesVersions.get(depPackage.name);
+      const depVersion = this.updatesVersions.get(dep.target);
       if (
         // only update if the dependency version is being changed
         depVersion &&
@@ -797,7 +795,10 @@ class VersionCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.packagesToVersion.map((pkg) => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
+    const tags = this.updates.map((node) => {
+      const pkg = getPackage(node);
+      return `${pkg.name}@${this.updatesVersions.get(node.name)}`;
+    });
     const subject = this.options.message || "Publish";
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
