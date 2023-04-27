@@ -50,7 +50,7 @@ module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new PublishCommand(argv);
 };
 
-export interface PublishCommandConfigOptions extends CommandConfigOptions {
+interface PublishCommandConfigOptions extends CommandConfigOptions {
   bump?: string;
   exact?: boolean;
   gitHead?: string;
