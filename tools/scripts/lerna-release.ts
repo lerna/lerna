@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import * as yargs from "yargs";
 import { execSync } from "child_process";
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { URL } from "url";
 import { join } from "path";
+import { URL } from "url";
+import * as yargs from "yargs";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const version = require("lerna/commands/version");
@@ -57,7 +57,8 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
   "private": true,
   "description": "This package.json exists to facilitate publish built packages via tools/scripts/lerna-release.ts",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "packages/legacy-structure/commands/create"
   ]
 }`;
     writeFileSync("./lerna.json", distLernaJson);
