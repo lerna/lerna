@@ -120,56 +120,55 @@ class RunCommand extends Command {
       );
     }
 
-    let chain: Promise<unknown> = Promise.resolve();
     const getElapsed = timer();
 
+    let runScripts: () => Promise<unknown>;
     if (this.options.useNx !== false) {
-      chain = chain.then(() => this.runScriptsUsingNx());
+      runScripts = () => this.runScriptsUsingNx();
     } else if (this.options.parallel) {
-      chain = chain.then(() => this.runScriptInPackagesParallel());
+      runScripts = () => this.runScriptInPackagesParallel();
     } else if (this.toposort) {
-      chain = chain.then(() => this.runScriptInPackagesTopological());
+      runScripts = () => this.runScriptInPackagesTopological();
     } else {
-      chain = chain.then(() => this.runScriptInPackagesLexical());
+      runScripts = () => this.runScriptInPackagesLexical();
     }
 
     if (this.bail) {
       // only the first error is caught
-      chain = chain.catch((err) => {
+      try {
+        await runScripts();
+      } catch (err) {
         process.exitCode = err.exitCode;
 
         // rethrow to halt chain and log properly
         throw err;
-      });
+      }
     } else {
       // detect error (if any) from collected results
-      chain = chain.then((results: { failed: boolean; exitCode: number }[]) => {
-        /* istanbul ignore else */
-        if (results.some((result) => result.failed)) {
-          // propagate "highest" error code, it's probably the most useful
-          const codes = results.filter((result) => result.failed).map((result) => result.exitCode);
-          const exitCode = Math.max(...codes, 1);
+      const results = (await runScripts()) as { failed: boolean; exitCode: number }[];
+      /* istanbul ignore else */
+      if (results.some((result) => result.failed)) {
+        // propagate "highest" error code, it's probably the most useful
+        const codes = results.filter((result) => result.failed).map((result) => result.exitCode);
+        const exitCode = Math.max(...codes, 1);
 
-          this.logger.error("", "Received non-zero exit code %d during execution", exitCode);
-          process.exitCode = exitCode;
-        }
-      });
+        this.logger.error("", "Received non-zero exit code %d during execution", exitCode);
+        process.exitCode = exitCode;
+      }
     }
 
-    return chain.then(() => {
-      this.logger.success(
-        "run",
-        "Ran npm script '%s' in %d %s in %ss:",
-        this.script,
-        this.count,
-        this.packagePlural,
-        (getElapsed() / 1000).toFixed(1)
-      );
-      this.logger.success("", this.projectsWithScript.map((p) => `- ${getPackage(p).name}`).join("\n"));
-    });
+    this.logger.success(
+      "run",
+      "Ran npm script '%s' in %d %s in %ss:",
+      this.script,
+      this.count,
+      this.packagePlural,
+      (getElapsed() / 1000).toFixed(1)
+    );
+    this.logger.success("", this.projectsWithScript.map((p) => `- ${getPackage(p).name}`).join("\n"));
   }
 
-  private getOpts(pkg) {
+  private getOpts(pkg: Package) {
     // these options are NOT passed directly to execa, they are composed in npm-run-script
     return {
       args: this.args,
