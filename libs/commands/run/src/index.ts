@@ -5,12 +5,20 @@ import {
   filterProjects,
   generateProfileOutputPath,
   getPackage,
+  npmRunScript,
+  npmRunScriptStreaming,
+  output,
+  Package,
+  Profiler,
   ProjectGraphProjectNodeWithPackage,
+  runProjectsTopologically,
+  timer,
   ValidationError,
 } from "@lerna/core";
 import { existsSync } from "fs-extra";
 import { runMany } from "nx/src/command-line/run-many";
 import { runOne } from "nx/src/command-line/run-one";
+import pMap from "p-map";
 import path from "path";
 import { performance } from "perf_hooks";
 
@@ -65,18 +73,29 @@ class RunCommand extends Command {
       );
     }
 
+    // Only the modern task runner supports multiple targets concurrently
+    if (Array.isArray(this.script) && this.options.useNx === false) {
+      throw new ValidationError(
+        "run",
+        "The legacy task runner does not support running multiple scripts concurrently. Please update to the latest version of lerna and ensure you do not have useNx set to false in your lerna.json."
+      );
+    }
+
     // inverted boolean options
     this.bail = bail !== false;
     this.prefix = prefix !== false;
 
     const filteredProjects = await filterProjects(this.projectGraph, this.execOpts, this.options);
 
-    this.projectsWithScript = filteredProjects.filter((project) => {
-      if (Array.isArray(this.script)) {
-        return this.script.some((scriptName) => project.data.targets?.[scriptName]);
-      }
-      return project.data.targets?.[this.script];
-    });
+    this.projectsWithScript =
+      script === "env"
+        ? filteredProjects
+        : filteredProjects.filter((project) => {
+            if (Array.isArray(this.script)) {
+              return this.script.some((scriptName) => project.data.targets?.[scriptName]);
+            }
+            return project.data.targets?.[this.script];
+          });
 
     this.count = this.projectsWithScript.length;
     this.packagePlural = this.count === 1 ? "package" : "packages";
@@ -91,6 +110,147 @@ class RunCommand extends Command {
   }
 
   override async execute() {
+    if (this.options.useNx === false) {
+      this.logger.info(
+        "",
+        "Executing command in %d %s: %j",
+        this.count,
+        this.packagePlural,
+        this.joinedCommand
+      );
+    }
+
+    let chain: Promise<unknown> = Promise.resolve();
+    const getElapsed = timer();
+
+    if (this.options.useNx !== false) {
+      chain = chain.then(() => this.runScriptsUsingNx());
+    } else if (this.options.parallel) {
+      chain = chain.then(() => this.runScriptInPackagesParallel());
+    } else if (this.toposort) {
+      chain = chain.then(() => this.runScriptInPackagesTopological());
+    } else {
+      chain = chain.then(() => this.runScriptInPackagesLexical());
+    }
+
+    if (this.bail) {
+      // only the first error is caught
+      chain = chain.catch((err) => {
+        process.exitCode = err.exitCode;
+
+        // rethrow to halt chain and log properly
+        throw err;
+      });
+    } else {
+      // detect error (if any) from collected results
+      chain = chain.then((results: { failed: boolean; exitCode: number }[]) => {
+        /* istanbul ignore else */
+        if (results.some((result) => result.failed)) {
+          // propagate "highest" error code, it's probably the most useful
+          const codes = results.filter((result) => result.failed).map((result) => result.exitCode);
+          const exitCode = Math.max(...codes, 1);
+
+          this.logger.error("", "Received non-zero exit code %d during execution", exitCode);
+          process.exitCode = exitCode;
+        }
+      });
+    }
+
+    return chain.then(() => {
+      this.logger.success(
+        "run",
+        "Ran npm script '%s' in %d %s in %ss:",
+        this.script,
+        this.count,
+        this.packagePlural,
+        (getElapsed() / 1000).toFixed(1)
+      );
+      this.logger.success("", this.projectsWithScript.map((p) => `- ${getPackage(p).name}`).join("\n"));
+    });
+  }
+
+  private getOpts(pkg) {
+    // these options are NOT passed directly to execa, they are composed in npm-run-script
+    return {
+      args: this.args,
+      npmClient: this.npmClient,
+      prefix: this.prefix,
+      reject: this.bail,
+      pkg,
+    };
+  }
+
+  private getRunner() {
+    return this.options.stream
+      ? (pkg: Package) => this.runScriptInPackageStreaming(pkg)
+      : (pkg: Package) => this.runScriptInPackageCapturing(pkg);
+  }
+
+  private runScriptInPackagesTopological() {
+    let profiler: Profiler;
+    let runner: (pkg: Package) => Promise<unknown>;
+
+    if (this.options.profile) {
+      profiler = new Profiler({
+        concurrency: this.concurrency,
+        log: this.logger,
+        outputDirectory: this.options.profileLocation,
+      });
+
+      const callback = this.getRunner();
+      runner = (pkg: Package) => profiler.run(() => callback(pkg), pkg.name);
+    } else {
+      runner = this.getRunner();
+    }
+
+    let chain = runProjectsTopologically(
+      this.projectsWithScript,
+      this.projectGraph,
+      (p) => runner(getPackage(p)),
+      {
+        concurrency: this.concurrency,
+        rejectCycles: this.options.rejectCycles,
+      }
+    );
+
+    if (profiler) {
+      chain = chain.then((results) => profiler.output().then(() => results));
+    }
+
+    return chain;
+  }
+
+  private runScriptInPackagesParallel() {
+    return pMap(this.projectsWithScript, (p) => this.runScriptInPackageStreaming(getPackage(p)));
+  }
+
+  private runScriptInPackagesLexical() {
+    return pMap(this.projectsWithScript.map(getPackage), this.getRunner(), { concurrency: this.concurrency });
+  }
+
+  private runScriptInPackageStreaming(pkg: Package) {
+    // script can only be a string when using the legacy task runner
+    return npmRunScriptStreaming(this.script as string, this.getOpts(pkg));
+  }
+
+  private runScriptInPackageCapturing(pkg: Package) {
+    const getElapsed = timer();
+    // script can only be a string when using the legacy task runner
+    return npmRunScript(this.script as string, this.getOpts(pkg)).then((result) => {
+      this.logger.info(
+        "run",
+        "Ran npm script '%s' in '%s' in %ss:",
+        this.script,
+        pkg.name,
+        (getElapsed() / 1000).toFixed(1)
+      );
+      output(result.stdout);
+
+      return result;
+    });
+  }
+
+  private async runScriptsUsingNx() {
     if (this.options.ci) {
       process.env.CI = "true";
     }

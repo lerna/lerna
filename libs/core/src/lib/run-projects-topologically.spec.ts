@@ -686,6 +686,100 @@ describe("runProjectsTopologically", () => {
     ]);
   });
 
+  it("should handle cycles with dependencies", async () => {
+    // these projects mimic the 'cycle-separate' fixture
+    const projects: ProjectGraphProjectNodeWithPackage[] = [
+      projectNode({
+        name: "a",
+      }),
+      projectNode({
+        name: "b",
+      }),
+      projectNode({
+        name: "c",
+      }),
+      projectNode({
+        name: "d",
+      }),
+      projectNode({
+        name: "e",
+      }),
+      projectNode({
+        name: "f",
+      }),
+      projectNode({
+        name: "g",
+      }),
+      projectNode({
+        name: "h",
+      }),
+    ];
+    const dependencies: ProjectGraphWorkspacePackageDependency[] = [
+      projectGraphDependency({
+        source: "a",
+        target: "b",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "a",
+        target: "h",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "b",
+        target: "c",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "c",
+        target: "d",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "d",
+        target: "b",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "h",
+        target: "e",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "d",
+        target: "g",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "g",
+        target: "e",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "e",
+        target: "f",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "f",
+        target: "g",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+    ];
+
+    const projectGraph = createProjectGraph({ projects, dependencies });
+
+    const result: string[] = [];
+    const runner = (node: ProjectGraphProjectNode) => {
+      result.push(node.name);
+      return Promise.resolve();
+    };
+
+    await runProjectsTopologically(projects, projectGraph, runner, { concurrency: 4 });
+
+    expect(result).toEqual(["g", "e", "f", "b", "c", "d", "h", "a"]);
+  });
+
   it("should run projects in order by depth of tree with leaves first, ignoring incompatible dependencies", async () => {
     const projects: ProjectGraphProjectNodeWithPackage[] = [
       // the order of this array is by root path

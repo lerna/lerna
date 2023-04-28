@@ -6,7 +6,7 @@ import {
 import { commandRunner, initFixtureFactory, loggingOutput, normalizeRelativeDir } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import globby from "globby";
-import { afterAll, afterEach } from "jest-circus";
+import { afterEach } from "jest-circus";
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -287,9 +287,9 @@ describe("RunCommand", () => {
       const [logMessage] = loggingOutput("warn");
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
       expect(logMessage).toMatch("b -> c -> d -> e -> b");
-      expect(logMessage).toMatch("f -> g -> (nested cycle: b -> c -> d -> e -> b) -> f");
+      expect(logMessage).toMatch("b -> c -> f -> g -> b");
 
-      expect(output.logged().split("\n")).toEqual(["f", "b", "e", "d", "c", "g", "a"]);
+      expect(output.logged().split("\n")).toEqual(["b", "c", "d", "e", "f", "g", "a"]);
     });
 
     it("works with separate cycles", async () => {
@@ -300,9 +300,9 @@ describe("RunCommand", () => {
       const [logMessage] = loggingOutput("warn");
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
       expect(logMessage).toMatch("b -> c -> d -> b");
-      expect(logMessage).toMatch("e -> f -> g -> e");
+      expect(logMessage).toMatch("g -> e -> f -> g");
 
-      expect(output.logged().split("\n")).toEqual(["e", "g", "f", "h", "b", "d", "c", "a"]);
+      expect(output.logged().split("\n")).toEqual(["g", "e", "f", "b", "c", "d", "h", "a"]);
     });
 
     it("should throw an error with --reject-cycles", async () => {

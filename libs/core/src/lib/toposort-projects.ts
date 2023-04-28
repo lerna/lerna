@@ -37,27 +37,51 @@ export function toposortProjects(
 
   reportCycles(unmergedCycles, rejectCycles);
 
-  const cycles = mergeOverlappingCycles(unmergedCycles);
+  const cycles = new Set(mergeOverlappingCycles(unmergedCycles));
 
-  const sorted: ProjectGraphProjectNodeWithPackage[] = [];
-  while (sorted.length < projects.length) {
-    let batch = Object.keys(dependenciesBySource).filter((p) => dependenciesBySource[p].size === 0);
+  const seen: Set<string> = new Set();
+
+  const queueNextPackages = () => {
+    if (seen.size === projects.length) {
+      return;
+    }
+
+    let batch = Object.keys(dependenciesBySource)
+      .filter((p) => dependenciesBySource[p].size === 0)
+      .filter((p) => !seen.has(p));
 
     if (batch.length === 0) {
-      // no other leaf nodes found, so process the first cycle
-      batch = cycles.shift() || [];
-      batch = batch.filter((p) => projectsMap.has(p));
+      const cycle = Array.from(cycles.values()).find((cycle) => {
+        // only process the cycle if it has NO nodes with dependencies outside this same cycle
+        const cycleHasExternalDependencies = cycle.some((project) => {
+          const projectDeps = dependenciesBySource[project];
+          const depIsNotInCycle = (dep: string) => cycle.indexOf(dep) === -1;
+          return Array.from(projectDeps).filter(depIsNotInCycle).length > 0;
+        });
+        return !cycleHasExternalDependencies;
+      });
+
+      if (cycle) {
+        cycles.delete(cycle);
+        batch = cycle.filter((p) => projectsMap.has(p));
+      }
     }
 
     batch.forEach((p) => {
-      sorted.push(getProject(p));
+      seen.add(p);
+
       delete dependenciesBySource[p];
+
+      Object.keys(dependenciesBySource).forEach((dep) => dependenciesBySource[dep].delete(p));
     });
 
-    Object.keys(dependenciesBySource).forEach((p) => {
-      batch.forEach((b) => dependenciesBySource[p].delete(b));
-    });
-  }
+    // since the sort is synchronous, we can queue up the next packages
+    // after processing the whole batch instead of after each individual
+    // project (like in runProjectsTopologically())
+    queueNextPackages();
+  };
 
-  return sorted;
+  queueNextPackages();
+
+  return Array.from(seen).map((p) => getProject(p));
 }

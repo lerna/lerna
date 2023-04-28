@@ -2,6 +2,7 @@ import { flatten } from "lodash";
 import PQueue from "p-queue";
 import { getCycles, mergeOverlappingCycles, reportCycles } from "./cycles";
 import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";
+import { ValidationError } from "./validation-error";
 
 interface TopologicalConfig {
   concurrency?: number;
@@ -51,7 +52,7 @@ export async function runProjectsTopologically<T>(
 
   reportCycles(unmergedCycles, rejectCycles);
 
-  const cycles = mergeOverlappingCycles(unmergedCycles);
+  const cycles = new Set(mergeOverlappingCycles(unmergedCycles));
 
   const seen: Set<string> = new Set();
 
@@ -66,19 +67,19 @@ export async function runProjectsTopologically<T>(
       .filter((p) => !seen.has(p));
 
     if (batch.length === 0) {
-      const cycle = cycles[0] || [];
-
-      // only process the cycle if it has NO nodes with dependencies outside this same cycle
-      const cycleHasExternalDependencies = cycle.some((project) => {
-        const projectDeps = dependenciesBySource[project];
-        const depIsNotInCycle = (dep: string) => cycle.indexOf(dep) === -1;
-        return Array.from(projectDeps).filter(depIsNotInCycle).length > 0;
+      const cycle = Array.from(cycles.values()).find((cycle) => {
+        // only process the cycle if it has NO nodes with dependencies outside this same cycle
+        const cycleHasExternalDependencies = cycle.some((project) => {
+          const projectDeps = dependenciesBySource[project];
+          const depIsNotInCycle = (dep: string) => cycle.indexOf(dep) === -1;
+          return Array.from(projectDeps).filter(depIsNotInCycle).length > 0;
+        });
+        return !cycleHasExternalDependencies;
       });
 
-      if (!cycleHasExternalDependencies) {
-        // no other leaf nodes found, so process the first cycle
-        batch = cycles.shift() || [];
-        batch = batch.filter((p) => projectsMap.has(p));
+      if (cycle) {
+        cycles.delete(cycle);
+        batch = cycle.filter((p) => projectsMap.has(p));
       }
     }
 
@@ -112,6 +113,10 @@ export async function runProjectsTopologically<T>(
   if (errors.length) {
     // throw the first error that was captured above
     throw errors[0];
+  }
+
+  if (seen.size !== projects.length) {
+    throw new ValidationError("ERROR", "Not all tasks were run. This is likely a bug in Lerna.");
   }
 
   return returnValues;
