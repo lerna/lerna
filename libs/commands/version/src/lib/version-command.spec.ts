@@ -11,6 +11,7 @@ import {
   getCommitMessage,
   gitAdd,
   gitCommit,
+  gitSHASerializer,
   gitTag,
   initFixtureFactory,
   loggingOutput,
@@ -81,8 +82,7 @@ const listDirty = (cwd) =>
   );
 
 // stabilize commit SHA
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-git-sha"));
+expect.addSnapshotSerializer(gitSHASerializer);
 
 describe("VersionCommand", () => {
   describe("normal mode", () => {

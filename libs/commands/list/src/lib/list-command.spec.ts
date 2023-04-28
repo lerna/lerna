@@ -1,5 +1,10 @@
 import { collectProjectUpdates as _collectUpdates, output as _output } from "@lerna/core";
-import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
+import {
+  initFixtureFactory,
+  commandRunner,
+  tempDirSerializer,
+  windowsPathSerializer,
+} from "@lerna/test-helpers";
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -28,10 +33,8 @@ expect.addSnapshotSerializer({
 });
 
 // normalize temp directory paths in snapshots
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-windows-paths"));
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-tempdir"));
+expect.addSnapshotSerializer(windowsPathSerializer);
+expect.addSnapshotSerializer(tempDirSerializer);
 
 describe("lerna ls", () => {
   describe("in a basic repo", () => {

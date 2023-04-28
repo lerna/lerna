@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 // nx-ignore-next-line
-import { loggingOutput } from "@lerna/test-helpers";
+import { loggingOutput, tempDirSerializer, windowsPathSerializer } from "@lerna/test-helpers";
 import chalk from "chalk";
 import tempy from "tempy";
 import { listableFormatProjects } from "./listable-format-projects";
@@ -30,9 +30,9 @@ expect.addSnapshotSerializer({
 
 // normalize temp directory paths in snapshots
 // nx-ignore-next-line
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-windows-paths"));
+expect.addSnapshotSerializer(windowsPathSerializer);
 // nx-ignore-next-line
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-tempdir"));
+expect.addSnapshotSerializer(tempDirSerializer);
 
 describe("listableFormatProjects", () => {
   let projectNodes: ProjectGraphProjectNodeWithPackage[];

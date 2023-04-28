@@ -2,6 +2,7 @@ import {
   commandRunner,
   gitAdd,
   gitCommit,
+  gitSHASerializer,
   gitTag,
   initFixtureFactory,
   showCommit,
@@ -39,8 +40,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish
 const lernaVersion = commandRunner(require("../command"));
 
 // stabilize commit SHA
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-git-sha"));
+expect.addSnapshotSerializer(gitSHASerializer);
 
 // TODO: figure out why these tests can't run with the mocks but others can
 describe.skip("version --ignore-changes", () => {

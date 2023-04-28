@@ -1,11 +1,10 @@
-import { cliRunner, cloneFixtureFactory, showCommit } from "@lerna/test-helpers";
+import { changelogSerializer, cliRunner, cloneFixtureFactory, showCommit } from "@lerna/test-helpers";
 import path from "path";
 
 const cloneFixture = cloneFixtureFactory(path.resolve(__dirname, "../commands/publish/__tests__"));
 
 // stabilize changelog commit SHA and datestamp
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-changelog"));
+expect.addSnapshotSerializer(changelogSerializer);
 
 const env = {
   // never actually upload when calling `npm publish`

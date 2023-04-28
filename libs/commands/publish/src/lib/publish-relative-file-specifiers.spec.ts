@@ -2,6 +2,7 @@ import { commandRunner, gitAdd, gitCommit, gitTag, initFixtureFactory } from "@l
 import fs from "fs-extra";
 import path from "path";
 import _writePkg from "write-pkg";
+import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
@@ -27,14 +28,7 @@ jest.mock("./get-npm-username");
 jest.mock("./get-two-factor-auth-required");
 
 // lerna version mocks
-jest.mock("@lerna/commands/version/lib/git-push");
-jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
-  isAnythingCommitted: jest.fn().mockResolvedValue(true),
-}));
-jest.mock("@lerna/commands/version/lib/is-behind-upstream");
-jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
-  remoteBranchExists: jest.fn().mockResolvedValue(true),
-}));
+setupLernaVersionMocks();
 
 // The mock differs from the real thing
 const writePkg = _writePkg as any;

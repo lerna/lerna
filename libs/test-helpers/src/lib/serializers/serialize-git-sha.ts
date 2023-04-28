@@ -1,8 +1,7 @@
-"use strict";
-
 // expect.addSnapshotSerializer(require("./serialize-git-sha"));
-module.exports = {
-  serialize(str) {
+
+export const gitSHASerializer = {
+  serialize: (str: string) => {
     return (
       str
         // short SHA tends to be in the path diff comparisons
@@ -11,7 +10,7 @@ module.exports = {
         .replace(/\b[0-9a-f]{40}\b/g, "GIT_HEAD")
     );
   },
-  test(val) {
+  test: (val: unknown) => {
     return val != null && typeof val === "string" && /[0-9a-f]{7,40}/.test(val);
   },
 };

@@ -7,6 +7,7 @@ import {
   commandRunner,
   gitAdd,
   gitCommit,
+  gitSHASerializer,
   gitTag,
   initFixtureFactory,
   loggingOutput,
@@ -55,8 +56,7 @@ const writePkg = _writePkg as any;
 const lernaPublish = commandRunner(require("../command"));
 
 // stabilize commit SHA
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-expect.addSnapshotSerializer(require("@lerna/test-helpers/src/lib/serializers/serialize-git-sha"));
+expect.addSnapshotSerializer(gitSHASerializer);
 
 async function initTaggedFixture(fixtureName, tagVersionPrefix = "v") {
   const cwd = await initFixture(fixtureName);
