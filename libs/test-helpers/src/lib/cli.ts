@@ -33,6 +33,7 @@ export function commandRunner(commandModule: yargs.CommandModule) {
       .command(commandModule);
 
     return (...args: any) =>
+      // eslint-disable-next-line no-async-promise-executor
       new Promise(async (resolve, reject) => {
         // We always need fresh copies of the graph in the unit test fixtures
         process.env.NX_DAEMON = "false";

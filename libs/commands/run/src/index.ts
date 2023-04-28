@@ -15,6 +15,7 @@ import {
   timer,
   ValidationError,
 } from "@lerna/core";
+import { TargetDependencyConfig } from "@nrwl/devkit";
 import { existsSync } from "fs-extra";
 import { runMany } from "nx/src/command-line/run-many";
 import { runOne } from "nx/src/command-line/run-one";
@@ -274,7 +275,6 @@ class RunCommand extends Command {
           "project:target:configuration": fullQualifiedTarget,
           ...options,
         },
-        // @ts-ignore
         targetDependencies,
         extraOptions
       );
@@ -286,7 +286,6 @@ class RunCommand extends Command {
           targets: Array.isArray(this.script) ? this.script : [this.script],
           ...options,
         },
-        // @ts-ignore
         targetDependencies,
         extraOptions
       );
@@ -316,7 +315,7 @@ class RunCommand extends Command {
       (nxJsonExists && targetDependenciesAreDefined) || hasProjectSpecificNxConfiguration;
     const mimicLernaDefaultBehavior = !hasCustomizedNxConfiguration;
 
-    const targetDependencies =
+    const targetDependencies: Record<string, TargetDependencyConfig[]> =
       this.toposort && !this.options.parallel && mimicLernaDefaultBehavior && !Array.isArray(this.script)
         ? {
             [this.script]: [

@@ -18,8 +18,11 @@ const lernaRun = commandRunner(require("../command"));
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 // The mock modifies the exported symbols and therefore types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const output = _output as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const npmRunScript = _npmRunScript as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const npmRunScriptStreaming = _npmRunScriptStreaming as any;
 
 // assertion helpers
@@ -127,6 +130,7 @@ describe("RunCommand", () => {
 
     it("reports script errors with early exit", async () => {
       npmRunScript.mockImplementationOnce((script, { pkg }) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const err = new Error(pkg.name) as any;
 
         err.failed = true;
@@ -143,6 +147,7 @@ describe("RunCommand", () => {
 
     it("propagates non-zero exit codes with --no-bail", async () => {
       npmRunScript.mockImplementationOnce((script, { pkg }) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const err = new Error(pkg.name) as any;
 
         err.failed = true;
