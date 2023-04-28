@@ -146,7 +146,6 @@ class RunCommand extends Command {
     } else {
       // detect error (if any) from collected results
       const results = (await runScripts()) as { failed: boolean; exitCode: number }[];
-      /* istanbul ignore else */
       if (results.some((result) => result.failed)) {
         // propagate "highest" error code, it's probably the most useful
         const codes = results.filter((result) => result.failed).map((result) => result.exitCode);
