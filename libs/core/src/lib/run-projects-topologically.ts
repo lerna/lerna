@@ -87,9 +87,9 @@ export async function runProjectsTopologically<T>(
       const project = getProject(p);
       seen.add(p);
 
-      queue.add(() =>
-        runner(project)
-          .then((value) => {
+      queue
+        .add(() =>
+          runner(project).then((value) => {
             returnValues.push(value);
 
             delete dependenciesBySource[p];
@@ -98,11 +98,11 @@ export async function runProjectsTopologically<T>(
 
             queueNextPackages();
           })
-          .catch((err) => {
-            // capture the inner error to throw later, since queue.onIdle will not throw it
-            errors.push(err);
-          })
-      );
+        )
+        .catch((err) => {
+          // capture the inner error to throw later, since queue.onIdle will not throw it
+          errors.push(err);
+        });
     });
   };
 

@@ -85,7 +85,7 @@ class RunCommand extends Command {
     this.bail = bail !== false;
     this.prefix = prefix !== false;
 
-    const filteredProjects = await filterProjects(this.projectGraph, this.execOpts, this.options);
+    const filteredProjects = filterProjects(this.projectGraph, this.execOpts, this.options);
 
     this.projectsWithScript =
       script === "env"
@@ -223,7 +223,9 @@ class RunCommand extends Command {
   }
 
   private runScriptInPackagesLexical() {
-    return pMap(this.projectsWithScript.map(getPackage), this.getRunner(), { concurrency: this.concurrency });
+    return pMap(this.projectsWithScript, (p) => this.getRunner()(getPackage(p)), {
+      concurrency: this.concurrency,
+    });
   }
 
   private runScriptInPackageStreaming(pkg: Package) {

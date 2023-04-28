@@ -30,7 +30,7 @@ class WatchCommand extends Command<WatchCommandOptions> {
     }
 
     // catch allows missing file to pass without breaking chain
-    this.filteredProjects = await filterProjects(this.projectGraph, this.execOpts, this.options);
+    this.filteredProjects = filterProjects(this.projectGraph, this.execOpts, this.options);
 
     this.count = this.filteredProjects.length;
     this.packagePlural = this.count === 1 ? "package" : "packages";

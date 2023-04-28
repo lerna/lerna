@@ -1,5 +1,14 @@
-import { CommandConfigOptions, Package, Profiler, ValidationError } from "@lerna/core";
-import { Command, getFilteredPackages, runTopologically } from "@lerna/legacy-core";
+import {
+  Command,
+  CommandConfigOptions,
+  filterProjects,
+  getPackage,
+  Package,
+  Profiler,
+  ProjectGraphProjectNodeWithPackage,
+  runProjectsTopologically,
+  ValidationError,
+} from "@lerna/core";
 import pMap from "p-map";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -28,7 +37,7 @@ class ExecCommand extends Command {
   bail?: boolean;
   prefix?: boolean;
   env?: NodeJS.ProcessEnv;
-  filteredPackages?: Package[];
+  filteredProjects?: ProjectGraphProjectNodeWithPackage[];
   count?: number;
   packagePlural?: string;
   joinedCommand?: string;
@@ -55,9 +64,9 @@ class ExecCommand extends Command {
     // so cache it here to reduce churn during tighter loops
     this.env = Object.assign({}, process.env);
 
-    this.filteredPackages = await getFilteredPackages(this.packageGraph, this.execOpts, this.options);
+    this.filteredProjects = filterProjects(this.projectGraph, this.execOpts, this.options);
 
-    this.count = this.filteredPackages.length;
+    this.count = this.filteredProjects.length;
     this.packagePlural = this.count === 1 ? "package" : "packages";
     this.joinedCommand = [this.command].concat(this.args).join(" ");
   }
@@ -150,10 +159,15 @@ class ExecCommand extends Command {
       runner = this.getRunner();
     }
 
-    let chain = runTopologically(this.filteredPackages, runner, {
-      concurrency: this.concurrency,
-      rejectCycles: this.options.rejectCycles,
-    });
+    let chain = runProjectsTopologically(
+      this.filteredProjects,
+      this.projectGraph,
+      (p) => runner(getPackage(p)),
+      {
+        concurrency: this.concurrency,
+        rejectCycles: this.options.rejectCycles,
+      }
+    );
 
     if (profiler) {
       chain = chain.then((results) => profiler.output().then(() => results));
@@ -163,11 +177,13 @@ class ExecCommand extends Command {
   }
 
   runCommandInPackagesParallel() {
-    return pMap(this.filteredPackages, (pkg) => this.runCommandInPackageStreaming(pkg));
+    return pMap(this.filteredProjects, (p) => this.runCommandInPackageStreaming(getPackage(p)));
   }
 
   runCommandInPackagesLexical() {
-    return pMap(this.filteredPackages, this.getRunner(), { concurrency: this.concurrency });
+    return pMap(this.filteredProjects, (p) => this.getRunner()(getPackage(p)), {
+      concurrency: this.concurrency,
+    });
   }
 
   runCommandInPackageStreaming(pkg) {

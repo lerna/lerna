@@ -9,11 +9,11 @@ import { FilterOptions } from "./filter-options";
 import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";
 import { ValidationError } from "./validation-error";
 
-export async function filterProjects(
+export function filterProjects(
   projectGraph: ProjectGraphWithPackages,
   execOpts: Partial<ExecOptions> = {},
   opts: Partial<FilterOptions> = {}
-): Promise<ProjectGraphProjectNodeWithPackage[]> {
+): ProjectGraphProjectNodeWithPackage[] {
   const options = { log, ...opts };
 
   if (options.scope) {
