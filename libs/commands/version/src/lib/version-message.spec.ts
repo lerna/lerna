@@ -4,9 +4,6 @@ import path from "path";
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
-// eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
-
 jest.mock("./git-push");
 jest.mock("./is-anything-committed", () => ({
   isAnythingCommitted: jest.fn().mockReturnValue(true),

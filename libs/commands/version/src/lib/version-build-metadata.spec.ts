@@ -1,14 +1,10 @@
 import { promptSelectOne as _promptSelectOne, promptTextInput as _promptTextInput } from "@lerna/core";
-import { PackageGraphNode } from "@lerna/legacy-core";
 import { commandRunner, initFixtureFactory, showCommit } from "@lerna/test-helpers";
 import path from "path";
 import { makePromptVersion } from "./prompt-version";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
-
-// eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 const promptTextInput = jest.mocked(_promptTextInput);
 
@@ -185,7 +181,7 @@ describe("--build-metadata in version prompt", () => {
   ])("accepts build metadata for prompted choice %s", async (bump, result) => {
     promptSelectOne.chooseBump(bump);
 
-    const choice = await versionPrompt("001")({ version: "1.0.0" } as PackageGraphNode);
+    const choice = await versionPrompt("001")({ version: "1.0.0" });
 
     expect(promptSelectOne).toHaveBeenLastCalledWith(
       "Select a new version (currently 1.0.0)",
@@ -199,7 +195,7 @@ describe("--build-metadata in version prompt", () => {
   it("updates build metadata for prompted choice", async () => {
     promptSelectOne.chooseBump("patch");
 
-    const choice = await versionPrompt("20130313144700")({ version: "1.0.0+001" } as PackageGraphNode);
+    const choice = await versionPrompt("20130313144700")({ version: "1.0.0+001" });
 
     expect(promptSelectOne).toHaveBeenLastCalledWith(
       "Select a new version (currently 1.0.0+001)",
@@ -219,7 +215,7 @@ describe("--build-metadata in version prompt", () => {
       return Promise.resolve(msg);
     });
 
-    await versionPrompt("exp.sha.5114f85")({ version: "1.0.0" } as PackageGraphNode);
+    await versionPrompt("exp.sha.5114f85")({ version: "1.0.0" });
 
     expect(promptSelectOne).toHaveBeenLastCalledWith(
       "Select a new version (currently 1.0.0)",
@@ -241,7 +237,7 @@ describe("--build-metadata in version prompt", () => {
       return Promise.resolve(msg);
     });
 
-    await versionPrompt("20130313144700")({ version: "1.0.0" } as PackageGraphNode);
+    await versionPrompt("20130313144700")({ version: "1.0.0" });
 
     expect(promptSelectOne).toHaveBeenLastCalledWith(
       "Select a new version (currently 1.0.0)",

@@ -9,16 +9,13 @@ import {
 import fs from "fs-extra";
 import path from "path";
 
-// eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
-
-jest.mock("@lerna/legacy-core", () => {
+jest.mock("@lerna/core", () => {
   // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
-  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/legacy-core");
+  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
     // we're actually testing integration with git
-    collectUpdates: jest.requireActual("@lerna/legacy-core").collectUpdates,
+    collectProjectUpdates: jest.requireActual("@lerna/core").collectProjectUpdates,
   };
 });
 

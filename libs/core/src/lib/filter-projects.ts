@@ -49,10 +49,10 @@ export async function filterProjects(
     const chosen = new Set(multimatch(packageNames, patterns));
 
     projects = projects.filter((p) => p.package?.name && chosen.has(p.package.name));
-  }
 
-  if (!projects.length && !options.continueIfNoMatch) {
-    throw new ValidationError("EFILTER", util.format("No packages remain after filtering", patterns));
+    if (!projects.length && !options.continueIfNoMatch) {
+      throw new ValidationError("EFILTER", util.format("No packages remain after filtering", patterns));
+    }
   }
 
   if (options.since !== undefined) {

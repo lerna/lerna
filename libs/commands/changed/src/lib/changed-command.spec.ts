@@ -9,8 +9,6 @@ const lernaChanged = commandRunner(require("../command"));
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
-// eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 // The mock modifies the exported symbols and therefore types
 const output = _output as any;

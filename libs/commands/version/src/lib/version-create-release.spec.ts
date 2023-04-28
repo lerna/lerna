@@ -8,9 +8,6 @@ import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
-// eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
-
 jest.mock("./git-add");
 jest.mock("./git-commit");
 jest.mock("./git-push");
