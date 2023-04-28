@@ -198,4 +198,4 @@ const command: CommandModule = {
   },
 };
 
-module.exports = command;
+export = command;

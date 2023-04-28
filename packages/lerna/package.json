@@ -39,7 +39,6 @@
   "dependencies": {
     "@lerna/child-process": "6.6.1",
     "@lerna/create": "6.6.1",
-    "@lerna/legacy-package-management": "6.6.1",
     "@npmcli/arborist": "6.2.3",
     "@npmcli/run-script": "4.1.7",
     "@nrwl/devkit": ">=15.9.2 < 16",
@@ -119,12 +118,10 @@
     "./cli": "./dist/cli.js",
     "./commands/*": "./dist/commands/*/index.js",
     "./commands/*/command": "./dist/commands/*/command.js",
-    "./commands/add/lib/*": "./dist/commands/add/lib/*.js",
-    "./commands/bootstrap/lib/*": "./dist/commands/bootstrap/lib/*.js",
+    "./commands/diff/lib/*": "./dist/commands/diff/lib/*.js",
     "./commands/publish/lib/*": "./dist/commands/publish/lib/*.js",
     "./commands/version/lib/*": "./dist/commands/version/lib/*.js",
-    "./migrations/**/*": "./dist/migrations/**/*",
-    "./commands/diff/lib/*": "./dist/commands/diff/lib/*.js"
+    "./migrations/**/*": "./dist/migrations/**/*"
   },
   "gitHead": "02c534e3796150ac564c57aa5a248c7bdf7835ab"
 }

@@ -17,7 +17,6 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@lerna/bootstrap": ["packages/legacy-structure/commands/bootstrap/src/index.ts"],
       "@lerna/commands/add": ["libs/commands/add/src/index.ts"],
       "@lerna/commands/add/*": ["libs/commands/add/src/*"],
       "@lerna/commands/bootstrap": ["libs/commands/bootstrap/src/index.ts"],
