@@ -124,7 +124,8 @@
     "./commands/publish/lib/*": "./dist/commands/publish/lib/*.js",
     "./commands/version/lib/*": "./dist/commands/version/lib/*.js",
     "./migrations/**/*": "./dist/migrations/**/*",
-    "./commands/diff/lib/*": "./dist/commands/diff/lib/*.js"
+    "./commands/diff/lib/*": "./dist/commands/diff/lib/*.js",
+    "./package.json": "./package.json"
   },
   "gitHead": "02c534e3796150ac564c57aa5a248c7bdf7835ab"
 }
