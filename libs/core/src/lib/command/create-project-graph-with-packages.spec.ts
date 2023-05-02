@@ -4,6 +4,7 @@ import { FileData } from "@nrwl/devkit";
 import { RawManifest } from "../package";
 import { createProjectGraph, projectNode } from "../test-helpers/create-project-graph";
 import { createProjectGraphWithPackages, resolvePackage } from "./create-project-graph-with-packages";
+import { join } from "path";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fsExtra = require("fs-extra");
@@ -157,158 +158,144 @@ describe("createProjectGraphWithPackages", () => {
 describe("resolvePackage", () => {
   it("for specific name and spec should return npa result", () => {
     const result = resolvePackage("projectA", "1.0.4", "^1.0.0", "/test/packages/packageB");
-    expect(result).toMatchInlineSnapshot(`
-      Object {
-        "escapedName": "projectA",
-        "fetchSpec": "^1.0.0",
-        "gitCommittish": undefined,
-        "gitRange": undefined,
-        "name": "projectA",
-        "raw": "projectA@^1.0.0",
-        "rawSpec": "^1.0.0",
-        "registry": true,
-        "saveSpec": null,
-        "scope": undefined,
-        "type": "range",
-        "where": undefined,
-        "workspaceAlias": undefined,
-        "workspaceSpec": undefined,
-      }
-    `);
+    expect(result).toEqual({
+      escapedName: "projectA",
+      fetchSpec: "^1.0.0",
+      gitCommittish: undefined,
+      gitRange: undefined,
+      name: "projectA",
+      raw: "projectA@^1.0.0",
+      rawSpec: "^1.0.0",
+      registry: true,
+      saveSpec: null,
+      scope: undefined,
+      type: "range",
+      where: undefined,
+      workspaceAlias: undefined,
+      workspaceSpec: undefined,
+    });
   });
 
   it("for workspace spec should return npa result with workspace data", () => {
     const result = resolvePackage("projectA", "1.0.4", "workspace:^1.0.0", "/test/packages/packageB");
-    expect(result).toMatchInlineSnapshot(`
-      Object {
-        "escapedName": "projectA",
-        "fetchSpec": "^1.0.0",
-        "gitCommittish": undefined,
-        "gitRange": undefined,
-        "name": "projectA",
-        "raw": "projectA@^1.0.0",
-        "rawSpec": "^1.0.0",
-        "registry": true,
-        "saveSpec": null,
-        "scope": undefined,
-        "type": "range",
-        "where": undefined,
-        "workspaceAlias": undefined,
-        "workspaceSpec": "workspace:^1.0.0",
-      }
-    `);
+    expect(result).toEqual({
+      escapedName: "projectA",
+      fetchSpec: "^1.0.0",
+      gitCommittish: undefined,
+      gitRange: undefined,
+      name: "projectA",
+      raw: "projectA@^1.0.0",
+      rawSpec: "^1.0.0",
+      registry: true,
+      saveSpec: null,
+      scope: undefined,
+      type: "range",
+      where: undefined,
+      workspaceAlias: undefined,
+      workspaceSpec: "workspace:^1.0.0",
+    });
   });
 
   describe("with a workspace alias", () => {
     it("should return a npa result with workspace data with * alias", () => {
       const result = resolvePackage("projectA", "1.0.4", "workspace:*", "/test/packages/packageB");
-      expect(result).toMatchInlineSnapshot(`
-        Object {
-          "escapedName": "projectA",
-          "fetchSpec": "1.0.4",
-          "gitCommittish": undefined,
-          "gitRange": undefined,
-          "name": "projectA",
-          "raw": "projectA@1.0.4",
-          "rawSpec": "1.0.4",
-          "registry": true,
-          "saveSpec": null,
-          "scope": undefined,
-          "type": "version",
-          "where": undefined,
-          "workspaceAlias": "*",
-          "workspaceSpec": "workspace:*",
-        }
-      `);
+      expect(result).toEqual({
+        escapedName: "projectA",
+        fetchSpec: "1.0.4",
+        gitCommittish: undefined,
+        gitRange: undefined,
+        name: "projectA",
+        raw: "projectA@1.0.4",
+        rawSpec: "1.0.4",
+        registry: true,
+        saveSpec: null,
+        scope: undefined,
+        type: "version",
+        where: undefined,
+        workspaceAlias: "*",
+        workspaceSpec: "workspace:*",
+      });
     });
 
     it("should return a npa result with workspace data with ^ alias", () => {
       const result = resolvePackage("projectA", "1.0.4", "workspace:^", "/test/packages/packageB");
-      expect(result).toMatchInlineSnapshot(`
-        Object {
-          "escapedName": "projectA",
-          "fetchSpec": "^1.0.4",
-          "gitCommittish": undefined,
-          "gitRange": undefined,
-          "name": "projectA",
-          "raw": "projectA@^1.0.4",
-          "rawSpec": "^1.0.4",
-          "registry": true,
-          "saveSpec": null,
-          "scope": undefined,
-          "type": "range",
-          "where": undefined,
-          "workspaceAlias": "^",
-          "workspaceSpec": "workspace:^",
-        }
-      `);
+      expect(result).toEqual({
+        escapedName: "projectA",
+        fetchSpec: "^1.0.4",
+        gitCommittish: undefined,
+        gitRange: undefined,
+        name: "projectA",
+        raw: "projectA@^1.0.4",
+        rawSpec: "^1.0.4",
+        registry: true,
+        saveSpec: null,
+        scope: undefined,
+        type: "range",
+        where: undefined,
+        workspaceAlias: "^",
+        workspaceSpec: "workspace:^",
+      });
     });
 
     it("should return a npa result with workspace data with ~ alias", () => {
       const result = resolvePackage("projectA", "1.0.4", "workspace:~", "/test/packages/packageB");
-      expect(result).toMatchInlineSnapshot(`
-        Object {
-          "escapedName": "projectA",
-          "fetchSpec": "~1.0.4",
-          "gitCommittish": undefined,
-          "gitRange": undefined,
-          "name": "projectA",
-          "raw": "projectA@~1.0.4",
-          "rawSpec": "~1.0.4",
-          "registry": true,
-          "saveSpec": null,
-          "scope": undefined,
-          "type": "range",
-          "where": undefined,
-          "workspaceAlias": "~",
-          "workspaceSpec": "workspace:~",
-        }
-      `);
+      expect(result).toEqual({
+        escapedName: "projectA",
+        fetchSpec: "~1.0.4",
+        gitCommittish: undefined,
+        gitRange: undefined,
+        name: "projectA",
+        raw: "projectA@~1.0.4",
+        rawSpec: "~1.0.4",
+        registry: true,
+        saveSpec: null,
+        scope: undefined,
+        type: "range",
+        where: undefined,
+        workspaceAlias: "~",
+        workspaceSpec: "workspace:~",
+      });
     });
   });
 
   it("for a file reference should return npa result", async () => {
     const result = resolvePackage("projectA", "1.0.0", "file:../projectB", "/packages/projectB");
-    expect(result).toMatchInlineSnapshot(`
-      Object {
-        "escapedName": "projectA",
-        "fetchSpec": "/packages/projectB",
-        "gitCommittish": undefined,
-        "gitRange": undefined,
-        "name": "projectA",
-        "raw": "projectA@file:../projectB",
-        "rawSpec": "file:../projectB",
-        "registry": undefined,
-        "saveSpec": "file:",
-        "scope": undefined,
-        "type": "directory",
-        "where": "/packages/projectB",
-        "workspaceAlias": undefined,
-        "workspaceSpec": undefined,
-      }
-    `);
+    expect(result).toEqual({
+      escapedName: "projectA",
+      fetchSpec: expect.stringContaining(join("/packages/projectB")),
+      gitCommittish: undefined,
+      gitRange: undefined,
+      name: "projectA",
+      raw: "projectA@file:../projectB",
+      rawSpec: "file:../projectB",
+      registry: undefined,
+      saveSpec: "file:",
+      scope: undefined,
+      type: "directory",
+      where: "/packages/projectB",
+      workspaceAlias: undefined,
+      workspaceSpec: undefined,
+    });
   });
 
   it("for a link reference should return a file npa result", async () => {
     const result = resolvePackage("projectA", "1.0.0", "link:../projectB", "/packages/projectB");
-    expect(result).toMatchInlineSnapshot(`
-      Object {
-        "escapedName": "projectA",
-        "fetchSpec": "/packages/projectB",
-        "gitCommittish": undefined,
-        "gitRange": undefined,
-        "name": "projectA",
-        "raw": "projectA@file:../projectB",
-        "rawSpec": "file:../projectB",
-        "registry": undefined,
-        "saveSpec": "file:",
-        "scope": undefined,
-        "type": "directory",
-        "where": "/packages/projectB",
-        "workspaceAlias": undefined,
-        "workspaceSpec": undefined,
-      }
-    `);
+    expect(result).toEqual({
+      escapedName: "projectA",
+      fetchSpec: expect.stringContaining(join("/packages/projectB")),
+      gitCommittish: undefined,
+      gitRange: undefined,
+      name: "projectA",
+      raw: "projectA@file:../projectB",
+      rawSpec: "file:../projectB",
+      registry: undefined,
+      saveSpec: "file:",
+      scope: undefined,
+      type: "directory",
+      where: "/packages/projectB",
+      workspaceAlias: undefined,
+      workspaceSpec: undefined,
+    });
   });
 });
 
@@ -404,5 +391,13 @@ const getManifestForPath = (path: string): RawManifest | null => {
     },
   };
 
-  return packages[path] || null;
+  return (
+    Object.entries(packages).find(([key]) => {
+      // When on windows, the path will have \\ instead of /
+      // this normalizes the key of the packages object above to match
+      // whatever path.join will return on the system
+      const resolvedKey = join(key);
+      return resolvedKey === path;
+    })?.[1] || null
+  );
 };
