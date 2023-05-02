@@ -1,3 +1,4 @@
+import { windowsPathSerializer } from "@lerna/test-helpers";
 import { FileData } from "@nrwl/devkit";
 import { RawManifest } from "../package";
 import { createProjectGraph, projectNode } from "../test-helpers/create-project-graph";
@@ -16,6 +17,8 @@ jest
   .mockImplementation(
     (path): Promise<RawManifest | null> => Promise.resolve(getManifestForPath(path as string))
   );
+
+expect.addSnapshotSerializer(windowsPathSerializer);
 
 describe("createProjectGraphWithPackages", () => {
   it("should add package objects to project graph nodes", async () => {
