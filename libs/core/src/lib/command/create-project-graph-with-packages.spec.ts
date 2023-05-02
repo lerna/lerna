@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { windowsPathSerializer } from "@lerna/test-helpers";
 import { FileData } from "@nrwl/devkit";
 import { RawManifest } from "../package";
@@ -19,6 +20,14 @@ jest
   );
 
 expect.addSnapshotSerializer(windowsPathSerializer);
+expect.addSnapshotSerializer({
+  serialize: (val: string) => {
+    return val.replace("C:/", "/");
+  },
+  test: (val: unknown) => {
+    return typeof val === "string";
+  },
+});
 
 describe("createProjectGraphWithPackages", () => {
   it("should add package objects to project graph nodes", async () => {
