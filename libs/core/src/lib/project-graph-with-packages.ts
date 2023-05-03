@@ -18,12 +18,6 @@ export interface ProjectGraphWithPackages extends ProjectGraph {
 
 export const isExternalNpmDependency = (dep: string): boolean => dep.startsWith("npm:");
 
-export const isWorkspacePackageDependency = (
-  dep: ProjectGraphDependency
-): dep is ProjectGraphWorkspacePackageDependency =>
-  (dep as Partial<ProjectGraphWorkspacePackageDependency>).targetVersionMatchesDependencyRequirement !==
-  undefined;
-
 /**
  * Get the package for a given project graph node with a package.
  * This should be preferred over directly accessing `node.package`,

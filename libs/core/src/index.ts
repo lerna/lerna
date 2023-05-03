@@ -33,7 +33,6 @@ export { CommandConfigOptions, getPackages, Project } from "./lib/project";
 export {
   getPackage,
   isExternalNpmDependency,
-  isWorkspacePackageDependency,
   ProjectGraphProjectNodeWithPackage,
   ProjectGraphWithPackages,
   ProjectGraphWorkspacePackageDependency,
