@@ -7,7 +7,7 @@ import { FetchConfig } from "./fetch-config";
 /**
  * Retrieve a list of graph nodes for packages that need to be published.
  */
-export async function getUnpublishedPackages(
+export async function getProjectsWithUnpublishedPackages(
   projectNodes: ProjectGraphProjectNodeWithPackage[],
   opts: Partial<FetchConfig>
 ): Promise<ProjectGraphProjectNodeWithPackage[]> {

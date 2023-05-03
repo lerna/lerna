@@ -40,9 +40,9 @@ import { getCurrentSHA } from "./lib/get-current-sha";
 import { getCurrentTags } from "./lib/get-current-tags";
 import { getNpmUsername } from "./lib/get-npm-username";
 import { getPackagesWithoutLicense } from "./lib/get-packages-without-license";
-import { getTaggedPackages } from "./lib/get-tagged-packages";
+import { getProjectsWithTaggedPackages } from "./lib/get-projects-with-tagged-packages";
+import { getProjectsWithUnpublishedPackages } from "./lib/get-projects-with-unpublished-packages";
 import { getTwoFactorAuthRequired } from "./lib/get-two-factor-auth-required";
-import { getUnpublishedPackages } from "./lib/get-unpublished-packages";
 import { gitCheckout } from "./lib/git-checkout";
 import { removeTempLicenses } from "./lib/remove-temp-licenses";
 import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
@@ -406,7 +406,11 @@ class PublishCommand extends Command {
         (name) => this.projectsWithPackage.find((node) => getPackage(node).name === name) // TODO: improve lookup efficiency
       );
     } else {
-      updates = await getTaggedPackages(this.projectsWithPackage, this.project.rootPath, this.execOpts);
+      updates = await getProjectsWithTaggedPackages(
+        this.projectsWithPackage,
+        this.project.rootPath,
+        this.execOpts
+      );
     }
 
     updates = this.filterPrivatePkgUpdates(updates);
@@ -438,7 +442,7 @@ class PublishCommand extends Command {
     }
 
     let updates: ProjectGraphProjectNodeWithPackage[];
-    updates = await getUnpublishedPackages(this.projectsWithPackage, this.conf.snapshot);
+    updates = await getProjectsWithUnpublishedPackages(this.projectsWithPackage, this.conf.snapshot);
     updates = this.filterPrivatePkgUpdates(updates);
     if (!updates.length) {
       this.logger.notice("from-package", "No unpublished release found");

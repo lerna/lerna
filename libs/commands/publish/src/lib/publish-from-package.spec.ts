@@ -26,8 +26,8 @@ jest.mock("./get-npm-username", () => ({
   getNpmUsername: jest.fn(() => Promise.resolve("lerna-test")),
 }));
 jest.mock("./get-two-factor-auth-required");
-jest.mock("./get-unpublished-packages", () => ({
-  getUnpublishedPackages: jest.fn(() => Promise.resolve([])),
+jest.mock("./get-projects-with-unpublished-packages", () => ({
+  getProjectsWithUnpublishedPackages: jest.fn(() => Promise.resolve([])),
 }));
 
 // lerna version mocks
@@ -40,8 +40,10 @@ jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
   remoteBranchExists: jest.fn().mockResolvedValue(true),
 }));
 
-import { getUnpublishedPackages as _getUnpublishedPackages } from "./get-unpublished-packages";
-const getUnpublishedPackages = _getUnpublishedPackages as jest.MockedFunction<typeof _getUnpublishedPackages>;
+import { getProjectsWithUnpublishedPackages as _getProjectsWithUnpublishedPackages } from "./get-projects-with-unpublished-packages";
+const getProjectsWithUnpublishedPackages = _getProjectsWithUnpublishedPackages as jest.MockedFunction<
+  typeof _getProjectsWithUnpublishedPackages
+>;
 
 const promptConfirmation = jest.mocked(_promptConfirmation);
 const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
@@ -61,7 +63,7 @@ describe("publish from-package", () => {
   it("publishes unpublished packages", async () => {
     const cwd = await initFixture("normal");
 
-    getUnpublishedPackages.mockImplementationOnce((nodes) => {
+    getProjectsWithUnpublishedPackages.mockImplementationOnce((nodes) => {
       return Promise.resolve(nodes.slice(1, 3));
     });
 
@@ -75,7 +77,7 @@ describe("publish from-package", () => {
   it("publishes unpublished independent packages", async () => {
     const cwd = await initFixture("independent");
 
-    getUnpublishedPackages.mockImplementationOnce((nodes) => Promise.resolve(nodes));
+    getProjectsWithUnpublishedPackages.mockImplementationOnce((nodes) => Promise.resolve(nodes));
 
     await lernaPublish(cwd)("from-package");
 
@@ -91,7 +93,7 @@ describe("publish from-package", () => {
   it("publishes unpublished independent packages, lexically sorted when --no-sort is present", async () => {
     const cwd = await initFixture("independent");
 
-    getUnpublishedPackages.mockImplementationOnce((nodes) => Promise.resolve(nodes));
+    getProjectsWithUnpublishedPackages.mockImplementationOnce((nodes) => Promise.resolve(nodes));
 
     await lernaPublish(cwd)("from-package", "--no-sort");
 
@@ -128,7 +130,7 @@ describe("publish from-package", () => {
   });
 
   it("does not require a git repo", async () => {
-    getUnpublishedPackages.mockImplementationOnce((nodes) =>
+    getProjectsWithUnpublishedPackages.mockImplementationOnce((nodes) =>
       Promise.resolve([nodes.find((node) => node.name === "package-1")])
     );
 
@@ -150,7 +152,7 @@ describe("publish from-package", () => {
   });
 
   it("accepts --git-head override", async () => {
-    getUnpublishedPackages.mockImplementationOnce((nodes) =>
+    getProjectsWithUnpublishedPackages.mockImplementationOnce((nodes) =>
       Promise.resolve([nodes.find((node) => node.name === "package-1")])
     );
 

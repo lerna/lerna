@@ -26,8 +26,8 @@ jest.mock("./get-npm-username", () => ({
   getNpmUsername: jest.fn(() => Promise.resolve("lerna-test")),
 }));
 jest.mock("./get-two-factor-auth-required");
-jest.mock("./get-unpublished-packages", () => ({
-  getUnpublishedPackages: jest.fn(() => Promise.resolve([])),
+jest.mock("./get-projects-with-unpublished-packages", () => ({
+  getProjectsWithUnpublishedPackages: jest.fn(() => Promise.resolve([])),
 }));
 jest.mock("./git-checkout");
 

@@ -9,7 +9,7 @@ const childProcess = require("@lerna/child-process");
 /**
  * Retrieve a list of graph nodes for packages that were tagged in a non-independent release.
  */
-export async function getTaggedPackages(
+export async function getProjectsWithTaggedPackages(
   projectNodes: ProjectGraphProjectNodeWithPackage[],
   rootPath: string,
   execOpts: ExecOptions

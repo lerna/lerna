@@ -7,7 +7,7 @@ jest.mock("pacote");
 
 const initFixture = initFixtureFactory(__dirname);
 
-import { getUnpublishedPackages } from "./get-unpublished-packages";
+import { getProjectsWithUnpublishedPackages } from "./get-projects-with-unpublished-packages";
 
 const pacote = jest.mocked(_pacote);
 
@@ -29,7 +29,7 @@ pacote.packument.mockImplementation(async (pkg) => {
   throw new Error("package does not exist");
 });
 
-test("getUnpublishedPackages", async () => {
+test("getProjectsWithUnpublishedPackages", async () => {
   const cwd = await initFixture("licenses-names");
   const packages = await getPackages(cwd);
   const projectNodes = packages.map(
@@ -42,7 +42,7 @@ test("getUnpublishedPackages", async () => {
   );
 
   const opts = {};
-  const pkgs = await getUnpublishedPackages(projectNodes, opts);
+  const pkgs = await getProjectsWithUnpublishedPackages(projectNodes, opts);
 
   expect(pacote.packument).toHaveBeenCalledWith("package-1", opts);
   expect(pkgs).toEqual([
@@ -61,7 +61,7 @@ test("getUnpublishedPackages", async () => {
   ]);
 });
 
-test("getUnpublishedPackages with private package", async () => {
+test("getProjectsWithUnpublishedPackages with private package", async () => {
   const cwd = await initFixture("public-private");
   const packages = await getPackages(cwd);
   const projectNodes = packages.map(
@@ -74,7 +74,7 @@ test("getUnpublishedPackages with private package", async () => {
   );
 
   const opts = {};
-  const pkgs = await getUnpublishedPackages(projectNodes, opts);
+  const pkgs = await getProjectsWithUnpublishedPackages(projectNodes, opts);
 
   expect(pacote.packument).toHaveBeenCalledWith("package-1", opts);
   expect(pkgs).toEqual([
