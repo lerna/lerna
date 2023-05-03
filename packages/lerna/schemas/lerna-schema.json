@@ -771,9 +771,6 @@
             "gitHead": {
               "$ref": "#/$defs/commandOptions/publish/gitHead"
             },
-            "graphType": {
-              "$ref": "#/$defs/commandOptions/publish/graphType"
-            },
             "ignorePrepublish": {
               "$ref": "#/$defs/commandOptions/shared/ignorePrepublish"
             },
@@ -1249,9 +1246,6 @@
     "gitHead": {
       "$ref": "#/$defs/commandOptions/publish/gitHead"
     },
-    "graphType": {
-      "$ref": "#/$defs/commandOptions/publish/graphType"
-    },
     "otp": {
       "$ref": "#/$defs/commandOptions/publish/otp"
     },
@@ -1582,13 +1576,6 @@
         "gitHead": {
           "type": "string",
           "description": "For `lerna publish`, the explicit SHA to set as gitHead when packing tarballs, only allowed with 'from-package' positional."
-        },
-        "graphType": {
-          "type": "string",
-          "enum": ["all", "dependencies"],
-          "description": "DEPRECATED: For `lerna publish`, if you want to ignore devDependencies when considering the package graph you can set this property equal to 'dependencies'. This will be removed in v6 of lerna.",
-          "default": "all",
-          "deprecated": true
         },
         "otp": {
           "type": "string",

@@ -59,7 +59,6 @@ interface PublishCommandConfigOptions extends CommandConfigOptions {
   tagVersionPrefix?: string;
   verifyAccess?: boolean;
   lernaVersion?: string;
-  graphType?: "allDependencies" | "dependencies";
   includePrivate?: string[];
   skipNpm?: boolean;
   buildMetadata?: string;
@@ -163,13 +162,6 @@ class PublishCommand extends Command {
       this.logger.warn(
         "verify-access",
         "--verify-access=false and --no-verify-access are no longer needed, because the legacy preemptive access verification is now disabled by default. Requests will fail with appropriate errors when not authorized correctly."
-      );
-    }
-
-    if (this.options.graphType === "dependencies") {
-      this.logger.warn(
-        "graph-type",
-        "--graph-type=dependencies is deprecated and will be removed in lerna v6. If you have a use-case you feel requires it please open an issue to discuss: https://github.com/lerna/lerna/issues/new/choose"
       );
     }
 

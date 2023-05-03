@@ -49,26 +49,41 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 
 `lerna publish` supports all of the options provided by [`lerna version`](https://github.com/lerna/lerna/tree/main/libs/commands/version#options) in addition to the following:
 
-- [`--canary`](#--canary)
-- [`--contents <dir>`](#--contents-dir)
-- [`--dist-tag <tag>`](#--dist-tag-tag)
-- [`--git-head <sha>`](#--git-head-sha)
-- [`--graph-type <all|dependencies>`](#--graph-type-alldependencies)
-- [`--ignore-scripts`](#--ignore-scripts)
-- [`--ignore-prepublish`](#--ignore-prepublish)
-- [`--include-private`](#--include-private)
-- [`--legacy-auth`](#--legacy-auth)
-- [`--no-git-reset`](#--no-git-reset)
-- [`--no-granular-pathspec`](#--no-granular-pathspec)
-- [`--verify-access`](#--verify-access)
-- [`--otp`](#--otp)
-- [`--preid`](#--preid)
-- [`--pre-dist-tag <tag>`](#--pre-dist-tag-tag)
-- [`--registry <url>`](#--registry-url)
-- [`--tag-version-prefix`](#--tag-version-prefix)
-- [`--temp-tag`](#--temp-tag)
-- [`--yes`](#--yes)
-- [`--summary-file <dir>`](#--summary-file)
+- [`lerna publish`](#lerna-publish)
+  - [Usage](#usage)
+  - [Positionals](#positionals)
+    - [bump `from-git`](#bump-from-git)
+    - [bump `from-package`](#bump-from-package)
+  - [Options](#options)
+    - [`--canary`](#--canary)
+    - [`--contents <dir>`](#--contents-dir)
+    - [`--dist-tag <tag>`](#--dist-tag-tag)
+    - [`--force-publish`](#--force-publish)
+    - [`--git-head <sha>`](#--git-head-sha)
+    - [`--ignore-scripts`](#--ignore-scripts)
+    - [`--ignore-prepublish`](#--ignore-prepublish)
+    - [`--include-private`](#--include-private)
+    - [`--legacy-auth`](#--legacy-auth)
+    - [`--no-git-reset`](#--no-git-reset)
+    - [`--no-granular-pathspec`](#--no-granular-pathspec)
+    - [`--verify-access`](#--verify-access)
+    - [`--otp`](#--otp)
+    - [`--preid`](#--preid)
+    - [`--pre-dist-tag <tag>`](#--pre-dist-tag-tag)
+    - [`--registry <url>`](#--registry-url)
+    - [`--tag-version-prefix`](#--tag-version-prefix)
+    - [`--temp-tag`](#--temp-tag)
+    - [`--yes`](#--yes)
+    - [`--summary-file`](#--summary-file)
+  - [Deprecated Options](#deprecated-options)
+    - [`--no-verify-access`](#--no-verify-access)
+    - [`--skip-npm`](#--skip-npm)
+  - [Per-Package Configuration](#per-package-configuration)
+    - [`publishConfig.access`](#publishconfigaccess)
+    - [`publishConfig.registry`](#publishconfigregistry)
+    - [`publishConfig.tag`](#publishconfigtag)
+    - [`publishConfig.directory`](#publishconfigdirectory)
+  - [Lifecycle Scripts](#lifecycle-scripts)
 
 ### `--canary`
 
@@ -145,28 +160,6 @@ lerna publish from-package --git-head ${CODEBUILD_RESOLVED_SOURCE_VERSION}
 ```
 
 Under all other circumstances, this value is derived from a local `git` command.
-
-### `--graph-type <all|dependencies>`
-
-Set which kind of dependencies to use when building a package graph. The default value is `dependencies`, whereby only packages listed in the `dependencies` section of a package's `package.json` are included. Pass `all` to include both `dependencies` _and_ `devDependencies` when constructing the package graph and determining topological order.
-
-When using traditional peer + dev dependency pairs, this option should be configured to `all` so the peers are always published before their dependents.
-
-```sh
-lerna publish --graph-type all
-```
-
-Configured via `lerna.json`:
-
-```json
-{
-  "command": {
-    "publish": {
-      "graphType": "all"
-    }
-  }
-}
-```
 
 ### `--ignore-scripts`
 
