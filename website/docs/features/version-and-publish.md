@@ -118,9 +118,7 @@ Use this if you want to automatically tie all package versions together. One iss
 
 #### Synchronized Versions
 
-Lerna will only version and publish packages that have changed since the previous release. This will result in package versions drifting apart over time. To prevent this, use the `--force-publish` option with `lerna version` and `lerna publish`. This will force Lerna to always version and publish all packages, regardless of if they have changed since the previous release.
-
-The result of this will be that all package versions stay synchronized to the version in `lerna.json`.
+Lerna will only version and publish packages that have changed since the previous release, causing package versions to drift apart over time. To prevent this, use the `--force-publish` option with `lerna version` and `lerna publish`. This will force Lerna to always version and publish all packages, regardless of if they have changed since the previous release. As a result, all package versions will stay synchronized to the version in `lerna.json`.
 
 ### Independent mode
 
