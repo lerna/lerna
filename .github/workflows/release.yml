@@ -32,7 +32,7 @@ jobs:
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
 
-      - run: npm run lerna-release -- --local=false --tag=latest --noAuthInScript
+      - run: npm run lerna-release -- --local=false --tag=latest --noInteractive
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
