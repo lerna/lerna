@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.6.2](https://github.com/lerna/lerna/compare/6.6.1...6.6.2) (2023-05-04)
+
+### Bug Fixes
+
+- **deps:** bump pacote to latest to remove install warning ([#3624](https://github.com/lerna/lerna/issues/3624)) ([7c34521](https://github.com/lerna/lerna/commit/7c34521b9987b064638dd218b0b417546257d5f3))
+- remove non-functional schema properties starting with "no" ([#3645](https://github.com/lerna/lerna/issues/3645)) ([43c2a48](https://github.com/lerna/lerna/commit/43c2a48fbba9e02675032aba15e1b4bb1f89a0ef))
+- **run:** only use run-one when not passing multiple scripts ([#3620](https://github.com/lerna/lerna/issues/3620)) ([9db1572](https://github.com/lerna/lerna/commit/9db157242fe08fabd126e03571a5a1ac98f9f966))
+
+### Features
+
+- **publish:** support npm provenance ([9c8bb4e](https://github.com/lerna/lerna/commit/9c8bb4ebde45791cdbade52a846f16c8fbd6f872))
+
 ## [6.6.1](https://github.com/lerna/lerna/compare/6.6.0...6.6.1) (2023-03-24)
 
 ### Bug Fixes
