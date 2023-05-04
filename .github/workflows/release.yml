@@ -34,10 +34,10 @@ jobs:
 
       - run: |
           # Required for github release to work
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
+          git config --global user.email "james@henry.sc"
+          git config --global user.name "JamesHenry"
 
       - run: npm run lerna-release -- --local=false --tag=latest --noInteractive
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.JAMES_HENRY_PAT }}
