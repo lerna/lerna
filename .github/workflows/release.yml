@@ -35,4 +35,4 @@ jobs:
       - run: npm run lerna-release -- --local=false --tag=latest --noInteractive
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
