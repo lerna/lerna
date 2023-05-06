@@ -73,6 +73,14 @@ class ImportCommand extends Command {
     const lernaRootRelativeToGitRoot = path.relative(gitRepoRoot, this.project.rootPath);
     this.targetDirRelativeToGitRoot = path.join(lernaRootRelativeToGitRoot, targetDir);
 
+    //if the target directory is not in the Git root
+    if (this.targetDirRelativeToGitRoot.startsWith("..")) {
+      throw new ValidationError(
+        "ENOTINREPO",
+        `Project root ${this.project.rootPath} is not a subdirectory of git root ${gitRepoRoot}`
+      );
+    }
+
     if (fs.existsSync(path.resolve(this.project.rootPath, targetDir))) {
       throw new ValidationError("EEXISTS", `Target directory already exists "${targetDir}"`);
     }
