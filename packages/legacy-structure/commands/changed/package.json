@@ -1,6 +1,6 @@
 {
   "name": "@lerna/changed",
-  "version": "6.6.1",
+  "version": "6.6.2",
   "description": "List local packages that have changed since the last tagged release",
   "keywords": [
     "lerna",
@@ -35,7 +35,7 @@
     "./lib/*": "./dist/lib/*.js"
   },
   "dependencies": {
-    "lerna": "6.6.1"
+    "lerna": "6.6.2"
   },
   "gitHead": "02c534e3796150ac564c57aa5a248c7bdf7835ab"
 }

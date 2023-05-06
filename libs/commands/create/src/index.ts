@@ -374,6 +374,8 @@ class CreateCommand extends Command {
     const isPublicRegistry = registry === this.conf.root.registry;
     const publishConfig = {};
 
+    // TODO: in the version of libnpmpublish that we now use, public is the default for scoped packages
+    // so we can avoid generating the unnecessary publishConfig in that case: https://github.com/npm/cli/commit/525654e957a80c7f47472e18240e3c8d94e0568f
     if (scope && isPublicRegistry) {
       publishConfig.access = this.options.access || "public";
     }

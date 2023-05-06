@@ -1,6 +1,6 @@
 {
   "name": "@lerna/add",
-  "version": "6.6.1",
+  "version": "6.6.2",
   "description": "Add a dependency to matched packages",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/add"
   },
   "dependencies": {
-    "lerna": "6.6.1"
+    "lerna": "6.6.2"
   },
   "exports": {
     ".": "./dist/index.js",
