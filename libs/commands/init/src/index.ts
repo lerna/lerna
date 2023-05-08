@@ -35,6 +35,10 @@ class InitCommand extends Command<InitCommandOptions> {
     this.logger.verbose(this.name, "skipping preparations");
   }
 
+  async detectProjects() {
+    this.logger.verbose(this.name, "skipping project detection");
+  }
+
   override initialize() {
     this.exact = this.options.exact;
     this.lernaVersion = this.options.lernaVersion;

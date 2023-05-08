@@ -2,6 +2,7 @@ import loadJsonFile from "load-json-file";
 import npa from "npm-package-arg";
 import path from "path";
 import writePkg from "write-pkg";
+import { Packed } from "./pack-directory";
 
 // symbol used to "hide" internal state
 const PKG = Symbol("pkg");
@@ -43,6 +44,7 @@ function shallowCopy(json: any) {
 export interface RawManifest {
   name: string;
   version: string;
+  description?: string;
   private?: boolean;
   bin?: Record<string, string> | string;
   scripts?: Record<string, string>;
@@ -52,9 +54,11 @@ export interface RawManifest {
   peerDependencies?: Record<string, string>;
   publishConfig?: Record<"directory" | "registry" | "tag", string>;
   workspaces?: string[];
+  nx?: Record<string, unknown>;
+  gitHead?: string;
 }
 
-type ExtendedNpaResult = npa.Result & {
+export type ExtendedNpaResult = npa.Result & {
   workspaceSpec?: string;
   workspaceAlias?: string;
 };
@@ -71,6 +75,8 @@ export class Package {
   [_rootPath]: string;
   [_scripts]: Record<string, string>;
   [_contents]: string | undefined;
+  licensePath?: string;
+  packed?: Packed;
 
   /**
    * Create a Package instance from parameters, possibly reusing existing instance.
@@ -250,6 +256,30 @@ export class Package {
    */
   serialize() {
     return writePkg(this.manifestLocation, this[PKG] as any).then(() => this);
+  }
+
+  getLocalDependency(
+    depName: string
+  ): { collection: "dependencies" | "devDependencies" | "optionalDependencies"; spec: string } | null {
+    if (this.dependencies && this.dependencies[depName]) {
+      return {
+        collection: "dependencies",
+        spec: this.dependencies[depName],
+      };
+    }
+    if (this.devDependencies && this.devDependencies[depName]) {
+      return {
+        collection: "devDependencies",
+        spec: this.devDependencies[depName],
+      };
+    }
+    if (this.optionalDependencies && this.optionalDependencies[depName]) {
+      return {
+        collection: "optionalDependencies",
+        spec: this.optionalDependencies[depName],
+      };
+    }
+    return null;
   }
 
   /**

@@ -1,0 +1,6 @@
+{
+  "name": "exclude-packages",
+  "workspaces": [
+    "packages/*"
+  ]
+}

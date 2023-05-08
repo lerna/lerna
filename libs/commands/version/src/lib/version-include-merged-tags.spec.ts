@@ -19,11 +19,12 @@ jest.mock("@lerna/core", () => {
   return {
     ...mockCore,
     // we're actually testing integration with git
-    collectUpdates: jest.requireActual("@lerna/core").collectUpdates,
+    collectProjectUpdates: jest.requireActual("@lerna/core").collectProjectUpdates,
   };
 });
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const output = _output as any;
 
 const initFixture = initFixtureFactory(__dirname);

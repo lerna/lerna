@@ -23,7 +23,9 @@ function pulseStop() {
   clearInterval(pulse);
 }
 
-export function pulseTillDone(prefix: string, promise: any) {
+export function pulseTillDone(promise: any): any;
+export function pulseTillDone(prefix: string, promise: any): any;
+export function pulseTillDone(prefix: string | any, promise?: any): any {
   if (!promise) {
     /* eslint-disable no-param-reassign */
     promise = prefix;

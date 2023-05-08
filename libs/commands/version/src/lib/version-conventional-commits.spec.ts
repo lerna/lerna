@@ -1,5 +1,5 @@
 import {
-  collectUpdates as _collectUpdates,
+  collectProjectUpdates as _collectUpdates,
   recommendVersion as _recommendVersion,
   updateChangelog as _updateChangelog,
 } from "@lerna/core";
@@ -26,9 +26,13 @@ jest.mock("./remote-branch-exists", () => ({
 }));
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const updateChangelog = _updateChangelog as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const collectUpdates = _collectUpdates as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const recommendVersion = _recommendVersion as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const writePkg = _writePkg as any;
 
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
@@ -37,7 +41,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const lernaVersion = commandRunner(require("../command"));
 
-describe("--conventional-commits", () => {
+describe("version --conventional-commits", () => {
   describe("independent", () => {
     const versionBumps = new Map([
       ["package-1", "1.0.1"],

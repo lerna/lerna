@@ -2,8 +2,7 @@ import { initFixtureFactory } from "@lerna/test-helpers";
 
 const initFixture = initFixtureFactory(__dirname);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getCurrentBranch } = require("./get-current-branch");
+import { getCurrentBranch } from "./get-current-branch";
 
 test("getCurrentBranch", async () => {
   const cwd = await initFixture("root-manifest-only");

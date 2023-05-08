@@ -1,4 +1,4 @@
-import { output as _output, collectUpdates as _collectUpdates } from "@lerna/core";
+import { collectProjectUpdates as _collectUpdates, output as _output } from "@lerna/core";
 import {
   initFixtureFactory,
   commandRunner,

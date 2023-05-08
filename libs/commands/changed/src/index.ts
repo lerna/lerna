@@ -1,4 +1,10 @@
-import { collectUpdates, Command, CommandConfigOptions, listableFormat, output } from "@lerna/core";
+import {
+  collectProjectUpdates,
+  Command,
+  CommandConfigOptions,
+  listableFormatProjects,
+  output,
+} from "@lerna/core";
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new ChangedCommand(argv);
@@ -11,7 +17,7 @@ interface ChangedCommandOptions extends CommandConfigOptions {
 }
 
 class ChangedCommand extends Command<ChangedCommandOptions> {
-  result: ReturnType<typeof listableFormat>;
+  result: ReturnType<typeof listableFormatProjects>;
 
   get otherCommandConfigs() {
     // back-compat
@@ -28,17 +34,15 @@ class ChangedCommand extends Command<ChangedCommandOptions> {
       }
     }
 
-    const updates = collectUpdates(
-      this.packageGraph.rawPackageList,
-      this.packageGraph,
+    const projectsWithPackage = Object.values(this.projectGraph.nodes).filter((node) => !!node.package);
+    const updates = collectProjectUpdates(
+      projectsWithPackage,
+      this.projectGraph,
       this.execOpts,
       this.options
     );
 
-    this.result = listableFormat(
-      updates.map((node) => node.pkg),
-      this.options
-    );
+    this.result = listableFormatProjects(updates, this.projectGraph, this.options);
 
     if (this.result.count === 0) {
       this.logger.info("", "No changed packages found");

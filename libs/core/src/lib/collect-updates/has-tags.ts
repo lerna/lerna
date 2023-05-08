@@ -1,12 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
+import { ExecOptions } from "child_process";
 import log from "npmlog";
 
 /**
  * Determine if any git tags are reachable.
  * @param {import("@lerna/child-process").ExecOpts} opts
  */
-export function hasTags(opts?: any) {
+export function hasTags(opts?: ExecOptions) {
   // TODO: refactor based on TS feedback
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

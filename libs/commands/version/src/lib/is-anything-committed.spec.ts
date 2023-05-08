@@ -1,10 +1,8 @@
 import { initFixtureFactory } from "@lerna/test-helpers";
 import execa from "execa";
+import { isAnythingCommitted } from "./is-anything-committed";
 
 const initFixture = initFixtureFactory(__dirname);
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { isAnythingCommitted } = require("./is-anything-committed");
 
 test("isAnythingCommitted", async () => {
   const cwd = await initFixture("root-manifest-only");

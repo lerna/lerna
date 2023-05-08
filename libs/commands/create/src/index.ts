@@ -2,7 +2,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { Command, npmConf, ValidationError } from "@lerna/core";
+import { npmConf, ValidationError } from "@lerna/core";
+import { Command } from "@lerna/legacy-core";
 import dedent from "dedent";
 import fs from "fs-extra";
 import npa from "npm-package-arg";

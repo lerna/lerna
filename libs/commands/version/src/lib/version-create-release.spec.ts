@@ -22,8 +22,11 @@ jest.mock("./remote-branch-exists", () => ({
 }));
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createGitHubClient = _createGitHubClient as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createGitLabClient = _createGitLabClient as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const recommendVersion = _recommendVersion as any;
 
 const initFixture = initFixtureFactory(__dirname);

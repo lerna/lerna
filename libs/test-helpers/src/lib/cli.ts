@@ -1,4 +1,6 @@
 import execa from "execa";
+import { defaultFileHasher } from "nx/src/hasher/file-hasher";
+import { setWorkspaceRoot } from "nx/src/utils/workspace-root";
 import path, { join } from "path";
 import yargs from "yargs";
 
@@ -31,7 +33,21 @@ export function commandRunner(commandModule: yargs.CommandModule) {
       .command(commandModule);
 
     return (...args: any) =>
-      new Promise((resolve, reject) => {
+      // eslint-disable-next-line no-async-promise-executor
+      new Promise(async (resolve, reject) => {
+        // We always need fresh copies of the graph in the unit test fixtures
+        process.env.NX_DAEMON = "false";
+        process.env.NX_CACHE_PROJECT_GRAPH = "false";
+
+        // Update the global workspaceRoot to the current test's cwd
+        setWorkspaceRoot(cwd);
+        // The environment variable is needed in order to influence the graph creation within lerna itself
+        process.env.NX_WORKSPACE_ROOT_PATH = cwd;
+
+        // Reset the Nx file hasher in order to respect the newly set workspaceRoot
+        defaultFileHasher.clear();
+        await defaultFileHasher.ensureInitialized();
+
         const yargsMeta = {};
 
         const context = {

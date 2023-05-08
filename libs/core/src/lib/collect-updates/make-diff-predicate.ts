@@ -1,17 +1,17 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const childProcess = require("@lerna/child-process");
-import log from "npmlog";
+const { execSync } = require("@lerna/child-process");
+import { ExecOptions } from "child_process";
 import minimatch from "minimatch";
-import path from "path";
+import log from "npmlog";
+import { relative } from "path";
 import slash from "slash";
-import { PackageGraphNode } from "../package-graph/package-graph-node";
+import { getPackage, ProjectGraphProjectNodeWithPackage } from "../project-graph-with-packages";
 
-/**
- * @param {string} committish
- * @param {import("@lerna/child-process").ExecOpts} execOpts
- * @param {string[]} ignorePatterns
- */
-export function makeDiffPredicate(committish: string, execOpts: any, ignorePatterns: string[] = []) {
+export function makeDiffPredicate(
+  committish: string,
+  execOpts: ExecOptions,
+  ignorePatterns: string[] = []
+): (node: ProjectGraphProjectNodeWithPackage) => boolean {
   const ignoreFilters = new Set(
     ignorePatterns.map((p) =>
       minimatch.filter(`!${p}`, {
@@ -29,8 +29,8 @@ export function makeDiffPredicate(committish: string, execOpts: any, ignorePatte
     log.info("ignoring diff in paths matching", ignorePatterns);
   }
 
-  return function hasDiffSinceThatIsntIgnored(node: PackageGraphNode) {
-    const diff = diffSinceIn(committish, node.location, execOpts);
+  return function hasDiffSinceThatIsntIgnored(node: ProjectGraphProjectNodeWithPackage) {
+    const diff = diffSinceIn(committish, getPackage(node).location, execOpts);
 
     if (diff === "") {
       log.silly("", "no diff found in %s", node.name);
@@ -47,6 +47,8 @@ export function makeDiffPredicate(committish: string, execOpts: any, ignorePatte
     }
 
     if (changedFiles.length) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       log.verbose("filtered diff", changedFiles);
     } else {
       log.verbose("", "no diff found in %s (after filtering)", node.name);
@@ -56,14 +58,9 @@ export function makeDiffPredicate(committish: string, execOpts: any, ignorePatte
   };
 }
 
-/**
- * @param {string} committish
- * @param {string} location
- * @param {import("@lerna/child-process").ExecOpts} opts
- */
-function diffSinceIn(committish: string, location: string, opts: { cwd: string }) {
+function diffSinceIn(committish: string, location: string, opts: ExecOptions) {
   const args = ["diff", "--name-only", committish];
-  const formattedLocation = slash(path.relative(opts.cwd, location));
+  const formattedLocation = slash(relative(opts.cwd as string, location));
 
   if (formattedLocation) {
     // avoid same-directory path.relative() === ""
@@ -71,5 +68,5 @@ function diffSinceIn(committish: string, location: string, opts: { cwd: string }
   }
 
   log.silly("checking diff", formattedLocation);
-  return childProcess.execSync("git", args, opts);
+  return execSync("git", args, opts);
 }

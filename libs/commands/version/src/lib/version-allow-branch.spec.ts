@@ -43,7 +43,7 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("normal");
 
       await changeBranch(testDir, "exact-match");
-      const result = (await lernaVersion(testDir)("--allow-branch", "exact-match")) as any;
+      const result = (await lernaVersion(testDir)("--allow-branch", "exact-match")) as { updates: unknown[] };
 
       expect(result.updates).toHaveLength(5);
     });
@@ -52,7 +52,7 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("normal");
 
       await changeBranch(testDir, "feature/awesome");
-      const result = (await lernaVersion(testDir)("--allow-branch", "feature/*")) as any;
+      const result = (await lernaVersion(testDir)("--allow-branch", "feature/*")) as { updates: unknown[] };
 
       expect(result.updates).toHaveLength(5);
     });
@@ -61,7 +61,9 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("normal");
 
       await changeBranch(testDir, "feature/awesome");
-      const result = (await lernaVersion(testDir)("--allow-branch", "main", "feature/*")) as any;
+      const result = (await lernaVersion(testDir)("--allow-branch", "main", "feature/*")) as {
+        updates: unknown[];
+      };
 
       expect(result.updates).toHaveLength(5);
     });
@@ -81,7 +83,7 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("allow-branch-lerna");
 
       await changeBranch(testDir, "lerna");
-      const result = (await lernaVersion(testDir)()) as any;
+      const result = (await lernaVersion(testDir)()) as { updates: unknown[] };
 
       expect(result.updates).toHaveLength(1);
     });
@@ -90,7 +92,9 @@ describe("version --allow-branch", () => {
       const testDir = await initFixture("allow-branch-lerna");
 
       await changeBranch(testDir, "cli-override");
-      const result = (await lernaVersion(testDir)("--allow-branch", "cli-override")) as any;
+      const result = (await lernaVersion(testDir)("--allow-branch", "cli-override")) as {
+        updates: unknown[];
+      };
 
       expect(result.updates).toHaveLength(1);
     });

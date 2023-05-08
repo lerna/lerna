@@ -1,14 +1,10 @@
+import { ExecOptions } from "child_process";
 import log from "npmlog";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-module.exports.getCurrentBranch = getCurrentBranch;
-
-/**
- * @param {import("@lerna/child-process").ExecOpts} opts
- */
-function getCurrentBranch(opts) {
+export function getCurrentBranch(opts: ExecOptions) {
   // TODO: refactor to address type issues
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

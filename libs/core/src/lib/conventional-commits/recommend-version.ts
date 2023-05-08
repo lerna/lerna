@@ -17,7 +17,7 @@ export function recommendVersion(
     conventionalBumpPrerelease,
     buildMetadata,
   }: BaseChangelogOptions & { prereleaseId?: string; buildMetadata?: string }
-) {
+): Promise<string> {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   const options: { lernaPackage?: string; tagPrefix?: string; path?: string; config?: any } = {
@@ -102,5 +102,7 @@ export function recommendVersion(
     });
   });
 
-  return chain;
+  // TODO: refactor to address type issues
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return chain as any;
 }

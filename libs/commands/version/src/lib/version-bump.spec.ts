@@ -20,6 +20,7 @@ jest.mock("./remote-branch-exists", () => ({
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const promptSelectOne = _promptSelectOne as any;
 
 // test command

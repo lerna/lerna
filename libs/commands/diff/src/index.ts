@@ -1,4 +1,4 @@
-import { Command, CommandConfigOptions, ValidationError } from "@lerna/core";
+import { Command, CommandConfigOptions, getPackage, ValidationError } from "@lerna/core";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { getLastCommit } = require("./lib/get-last-commit");
@@ -26,7 +26,10 @@ class DiffCommand extends Command<DiffCommandOptions> {
     let targetPackage;
 
     if (packageName) {
-      targetPackage = this.packageGraph.get(packageName);
+      const project = Object.values(this.projectGraph.nodes).find(
+        (p) => p.package && getPackage(p).name === packageName
+      );
+      targetPackage = project && getPackage(project);
 
       if (!targetPackage) {
         throw new ValidationError("ENOPKG", `Cannot diff, the package '${packageName}' does not exist.`);

@@ -1,13 +1,15 @@
+import { createProjectGraphAsync } from "@nrwl/devkit";
 import cloneDeep from "clone-deep";
 import dedent from "dedent";
 import execa from "execa";
 import log from "npmlog";
 import os from "os";
-import { PackageGraph } from "../package-graph";
 import { CommandConfigOptions, Project } from "../project";
+import { ProjectGraphWithPackages } from "../project-graph-with-packages";
 import { ValidationError } from "../validation-error";
 import { writeLogFile } from "../write-log-file";
 import { cleanStack } from "./clean-stack";
+import { createProjectGraphWithPackages } from "./create-project-graph-with-packages";
 import { defaultOptions } from "./default-options";
 import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
@@ -22,8 +24,9 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   concurrency?: number;
   toposort = false;
   execOpts?: { cwd: string; maxBuffer?: number };
-  packageGraph?: PackageGraph;
   logger!: log.Logger;
+
+  projectGraph!: ProjectGraphWithPackages;
 
   private _project?: Project;
   get project(): Project {
@@ -71,6 +74,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       if (!skipValidations) {
         chain = chain.then(() => this.runValidations());
       }
+      chain = chain.then(() => this.detectProjects());
       chain = chain.then(() => this.runPreparations());
       chain = chain.then(() => this.runCommand());
 
@@ -143,6 +147,15 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   // For example `changed` inherits config from `publish`.
   get otherCommandConfigs() {
     return [];
+  }
+
+  async detectProjects() {
+    const projectGraph = await createProjectGraphAsync({
+      exitOnError: false,
+      resetDaemonClient: true,
+    });
+
+    this.projectGraph = await createProjectGraphWithPackages(projectGraph, this.project.packageConfigs);
   }
 
   configureEnvironment() {
@@ -297,21 +310,6 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     if (!this.composed && this.options.ci) {
       log.info("ci", "enabled");
     }
-
-    let chain = Promise.resolve();
-
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    chain = chain.then(() => this.project.getPackages());
-    chain = chain.then((packages) => {
-      // TODO: refactor to address type issues
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.packageGraph = new PackageGraph(packages);
-    });
-
-    return chain;
   }
 
   runCommand() {
