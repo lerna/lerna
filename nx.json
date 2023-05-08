@@ -13,8 +13,7 @@
           "test",
           "run-e2e-tests-process",
           "run-e2e-tests",
-          "integration",
-          "foo"
+          "integration"
         ]
       }
     }
