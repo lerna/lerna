@@ -25,9 +25,9 @@ setupLernaVersionMocks();
 const packDirectory = _packDirectory as any;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { createTempLicenses } = require("../src/lib/create-temp-licenses");
+const { createTempLicenses } = require("./create-temp-licenses");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { removeTempLicenses } = require("../src/lib/remove-temp-licenses");
+const { removeTempLicenses } = require("./remove-temp-licenses");
 
 const initFixture = initFixtureFactory(__dirname);
 

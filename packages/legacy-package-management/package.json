@@ -1,6 +1,6 @@
 {
   "name": "@lerna/legacy-package-management",
-  "version": "6.6.1",
+  "version": "6.6.2",
   "description": "Legacy package management concerns provided by lerna. Please migrate to use npm/yarn/pnpm workspaces instead.",
   "keywords": [
     "lerna",
@@ -55,7 +55,7 @@
     "inquirer": "8.2.4",
     "is-ci": "2.0.0",
     "is-stream": "2.0.0",
-    "libnpmpublish": "6.0.4",
+    "libnpmpublish": "7.1.4",
     "load-json-file": "6.2.0",
     "make-dir": "3.1.0",
     "minimatch": "3.0.5",

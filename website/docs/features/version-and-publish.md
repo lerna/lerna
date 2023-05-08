@@ -116,6 +116,10 @@ Fixed mode Lerna projects operate on a single version line. The version is kept 
 
 Use this if you want to automatically tie all package versions together. One issue with this approach is that a major change in any package will result in all packages having a new major version.
 
+#### Synchronized Versions
+
+Lerna will only version and publish packages that have changed since the previous release, causing package versions to drift apart over time. To prevent this, use the `--force-publish` option with `lerna version` and `lerna publish`. This will force Lerna to always version and publish all packages, regardless of if they have changed since the previous release. As a result, all package versions will stay synchronized to the version in `lerna.json`.
+
 ### Independent mode
 
 `npx lerna init --independent`

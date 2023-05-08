@@ -18,7 +18,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
 
 (async () => {
   const options = await parseArgs();
-  if (!options.local && !options.force) {
+  if (!options.local && !options.force && !options.noInteractive) {
     console.log("Authenticating to NPM");
     execSync("npm adduser", {
       stdio: [0, 1, 2],
@@ -88,7 +88,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
     gitTagVersion: options.tag !== "next",
     message: "chore(misc): publish %v",
     loglevel: options.loglevel ?? "info",
-    yes: false,
+    yes: options.noInteractive,
   };
 
   if (options.local) {
@@ -206,6 +206,11 @@ async function parseArgs() {
         type: "string",
         description: "Log Level",
         choices: ["error", "info", "debug"],
+      })
+      .option("noInteractive", {
+        type: "boolean",
+        description: "Don't perform interactive operations (useful for CI)",
+        default: false,
       })
       .example(
         "$0",

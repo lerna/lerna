@@ -104,6 +104,7 @@ class PublishCommand extends Command {
   privatePackagesToPublish?: Package[];
   packagesToBeLicensed?: Package[];
   twoFactorAuthRequired?: boolean;
+  private uniqueProvenanceUrls = new Set();
 
   get otherCommandConfigs() {
     // back-compat
@@ -362,6 +363,12 @@ class PublishCommand extends Command {
     }
 
     this.logger.success("published", "%d %s", count, count === 1 ? "package" : "packages");
+
+    if (this.uniqueProvenanceUrls.size > 0) {
+      output("The following provenance transparency log entries were created during publishing:");
+      const message = Array.from(this.uniqueProvenanceUrls).map((url) => ` - ${url}`);
+      output(message.join(os.EOL));
+    }
   }
 
   private verifyWorkingTreeClean() {
@@ -868,6 +875,22 @@ class PublishCommand extends Command {
       tag: this.options.tempTag ? "lerna-temp" : this.conf.get("tag"),
     });
 
+    /**
+     * Currently libnpmpublish does not expose the provenance data is creates. We therefore have to hackily intercept
+     * the logs it emits. Sadly because we eagerly kick off all the publish requests in the same process, there
+     * is no way to reconcile the logs to the pkg's they relate to, so the best we can do is collect up the unique
+     * URLs and print them at the end of the publishing logs.
+     */
+    const logListener = (...args) => {
+      const str = args.join(" ");
+      if (str.toLowerCase().includes("provenance statement") && str.includes("https://")) {
+        // Extract the URL from the log message
+        const url = str.match(/https:\/\/[^ ]+/)[0];
+        this.uniqueProvenanceUrls.add(url);
+      }
+    };
+    process.on("log", logListener);
+
     const mapper = pPipe(
       ...[
         (pkg: Package) => {
@@ -924,9 +947,10 @@ class PublishCommand extends Command {
       chain = chain.then(() => this.runRootLifecycle("postpublish"));
     }
 
-    chain = chain.then(() => tracker.finish());
-
-    return chain;
+    return chain.finally(() => {
+      process.removeListener("log", logListener);
+      tracker.finish();
+    });
   }
 
   private async npmUpdateAsLatest() {

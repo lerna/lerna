@@ -70,7 +70,7 @@
     "is-ci": "^2.0.0",
     "is-stream": "^2.0.0",
     "libnpmaccess": "^6.0.3",
-    "libnpmpublish": "^6.0.4",
+    "libnpmpublish": "7.1.4",
     "load-json-file": "^6.2.0",
     "make-dir": "^3.0.0",
     "minimatch": "^3.0.4",
