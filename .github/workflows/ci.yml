@@ -93,6 +93,9 @@ jobs:
     runs-on: windows-latest
     env:
       LERNA_OS_TYPE: windows
+      # Set the temp directory to a short dir without username in it otherwise import command specs have a problem because of different paths on windows agents
+      TEMP: C:\temp
+      TMP: C:\temp
     steps:
       - uses: actions/checkout@v3
 
@@ -112,12 +115,10 @@ jobs:
         # From old maintainer regarding integration tests: "import is NOT TESTED in windows because pain and suffering"
         run: |
           pids=()
-          npx nx run integration:integration --ci --maxWorkers=2 --testPathIgnorePatterns=lerna-import.spec.ts &
+          npx nx run integration:integration --ci --maxWorkers=2 &
           pids+=($!)
 
-          # Ignored specs currently failing on windows
-          # TODO: investigate why
-          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --testTimeout=60000 --testPathIgnorePatterns=import-command.spec.ts &
+          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --testTimeout=60000 &
 
           pids+=($!)
 
@@ -138,6 +139,9 @@ jobs:
         agent: [1, 2, 3, 4]
     env:
       LERNA_OS_TYPE: windows
+      # Set the temp directory to a short dir without containing username, otherwise import command specs have a problem because of different paths on windows agents
+      TEMP: C:\temp
+      TMP: C:\temp
     steps:
       - uses: actions/checkout@v3
 
