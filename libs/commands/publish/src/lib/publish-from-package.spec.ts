@@ -118,7 +118,11 @@ describe("publish from-package", () => {
       }
     });
 
-    await lernaPublish(cwd)("from-package");
+    try {
+      await lernaPublish(cwd)("from-package");
+    } catch {
+      // ignore error
+    }
 
     const logMessages = loggingOutput("notice");
     expect(logMessages).toContain("Package failed to publish: package-2");
