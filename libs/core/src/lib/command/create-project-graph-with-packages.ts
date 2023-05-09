@@ -8,10 +8,10 @@ import { satisfies } from "semver";
 import { getPackageManifestPath } from "../get-package-manifest-path";
 import { ExtendedNpaResult, Package, RawManifest } from "../package";
 import {
-  getPackage,
-  isExternalNpmDependency,
   ProjectGraphWithPackages,
   ProjectGraphWorkspacePackageDependency,
+  getPackage,
+  isExternalNpmDependency,
 } from "../project-graph-with-packages";
 
 export async function createProjectGraphWithPackages(
@@ -59,29 +59,6 @@ export async function createProjectGraphWithPackages(
       ...node,
       package: pkg,
     };
-  });
-
-  // detect and add optional dependencies to the graph
-  Object.values(projectGraphWithOrderedNodes.nodes).forEach((node) => {
-    if (!node.package) {
-      return;
-    }
-    const pkg = getPackage(node);
-    if (!pkg.optionalDependencies) {
-      return;
-    }
-    Object.keys(pkg.optionalDependencies).forEach((dep) => {
-      if (projectLookupByPackageName[dep]) {
-        projectGraphWithOrderedNodes.dependencies[node.name] = [
-          ...(projectGraphWithOrderedNodes.dependencies[node.name] || []),
-          {
-            source: node.name,
-            target: projectLookupByPackageName[dep],
-            type: "static",
-          },
-        ];
-      }
-    });
   });
 
   // populate local npm package dependencies
