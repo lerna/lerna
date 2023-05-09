@@ -5,7 +5,7 @@ import {
   readJsonFile,
   workspaceRoot,
   writeJsonFile,
-} from "@nrwl/devkit";
+} from "@nx/devkit";
 import inquirer from "inquirer";
 import log from "npmlog";
 

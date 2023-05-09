@@ -1,5 +1,5 @@
 import { Command, CommandConfigOptions, Package, Project } from "@lerna/core";
-import { writeJsonFile } from "@nrwl/devkit";
+import { writeJsonFile } from "@nx/devkit";
 import fs from "fs-extra";
 import pMap from "p-map";
 import path from "path";

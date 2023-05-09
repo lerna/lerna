@@ -1,4 +1,4 @@
-import { readJsonFile, workspaceRoot } from "@nrwl/devkit";
+import { readJsonFile, workspaceRoot } from "@nx/devkit";
 import { ExecOptions } from "child_process";
 import fs from "fs";
 import log from "npmlog";

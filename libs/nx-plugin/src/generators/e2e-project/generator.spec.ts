@@ -1,5 +1,5 @@
-import { readJson, readProjectConfiguration, Tree } from "@nrwl/devkit";
-import { createTreeWithEmptyWorkspace } from "@nrwl/devkit/testing";
+import { readJson, readProjectConfiguration, Tree } from "@nx/devkit";
+import { createTreeWithEmptyWorkspace } from "@nx/devkit/testing";
 
 import generator from "./generator";
 import { E2eProjectGeneratorSchema } from "./schema";
@@ -19,7 +19,9 @@ describe("e2e-project generator", () => {
       Object {
         "$schema": "../../node_modules/nx/schemas/project-schema.json",
         "name": "e2e-test",
+        "projectType": "library",
         "root": "e2e/test",
+        "sourceRoot": "e2e/test/src",
         "tags": Array [],
         "targets": Object {
           "e2e": Object {
@@ -40,7 +42,7 @@ describe("e2e-project generator", () => {
             },
           },
           "lint": Object {
-            "executor": "@nrwl/linter:eslint",
+            "executor": "@nx/linter:eslint",
             "options": Object {
               "lintFilePatterns": Array [
                 "e2e/test/**/*.ts",
@@ -51,7 +53,7 @@ describe("e2e-project generator", () => {
             ],
           },
           "run-e2e-tests": Object {
-            "executor": "@nrwl/jest:jest",
+            "executor": "@nx/jest:jest",
             "options": Object {
               "jestConfig": "e2e/test/jest.config.ts",
               "passWithNoTests": true,

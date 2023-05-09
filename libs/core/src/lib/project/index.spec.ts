@@ -1,4 +1,4 @@
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { initFixtureFactory, loggingOutput } from "@lerna/test-helpers";
 import fs from "fs-extra";

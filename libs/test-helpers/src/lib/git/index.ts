@@ -1,11 +1,11 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { tempWrite } from "@lerna/core";
 import cp from "child_process";
 import execa from "execa";
 import loadJsonFile from "load-json-file";
 import os from "os";
 import path from "path";
-import { writeJsonFile } from "@nrwl/devkit";
+import { writeJsonFile } from "@nx/devkit";
 import { gitSHASerializer } from "../serializers";
 
 // Contains all relevant git config (user, commit.gpgSign, etc)

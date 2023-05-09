@@ -1,4 +1,4 @@
-import { ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nrwl/devkit";
+import { ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nx/devkit";
 import { readJson } from "fs-extra";
 import { sortBy } from "lodash";
 import minimatch from "minimatch";

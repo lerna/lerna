@@ -3,7 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { changelogSerializer, gitAdd, gitCommit, gitTag, initFixtureFactory } from "@lerna/test-helpers";
 import fs from "fs-extra";

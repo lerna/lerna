@@ -1,5 +1,5 @@
 import { Package } from "@lerna/core";
-import { writeJsonFile } from "@nrwl/devkit";
+import { writeJsonFile } from "@nx/devkit";
 import loadJsonFile from "load-json-file";
 import log from "npmlog";
 import path from "path";

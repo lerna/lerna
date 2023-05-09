@@ -22,7 +22,7 @@ import {
   throwIfUncommitted,
   ValidationError,
 } from "@lerna/core";
-import { workspaceRoot } from "@nrwl/devkit";
+import { workspaceRoot } from "@nx/devkit";
 
 import crypto from "crypto";
 import fs from "fs";

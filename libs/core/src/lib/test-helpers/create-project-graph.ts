@@ -1,4 +1,4 @@
-import { ProjectGraphDependency, ProjectGraphProjectNode } from "@nrwl/devkit";
+import { ProjectGraphDependency, ProjectGraphProjectNode } from "@nx/devkit";
 import { Package, RawManifest } from "../package";
 import {
   ProjectGraphProjectNodeWithPackage,

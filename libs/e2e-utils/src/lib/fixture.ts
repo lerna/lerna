@@ -1,4 +1,4 @@
-import { joinPathFragments, readJsonFile, writeJsonFile } from "@nrwl/devkit";
+import { joinPathFragments, readJsonFile, writeJsonFile } from "@nx/devkit";
 import { exec, spawn } from "child_process";
 import { ensureDir, existsSync, readFile, remove, writeFile } from "fs-extra";
 import { dump } from "js-yaml";

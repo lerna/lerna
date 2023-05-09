@@ -15,7 +15,7 @@ import {
   timer,
   ValidationError,
 } from "@lerna/core";
-import { TargetDependencyConfig } from "@nrwl/devkit";
+import { TargetDependencyConfig } from "@nx/devkit";
 import { existsSync } from "fs-extra";
 import { runMany } from "nx/src/command-line/run-many";
 import { runOne } from "nx/src/command-line/run-one";

@@ -1,4 +1,4 @@
-import { parseJson, writeJsonFile } from "@nrwl/devkit";
+import { parseJson, writeJsonFile } from "@nx/devkit";
 import { cosmiconfigSync, defaultLoaders } from "cosmiconfig";
 import dedent from "dedent";
 import fs from "fs";

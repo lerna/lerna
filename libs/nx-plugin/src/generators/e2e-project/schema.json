@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "cli": "nx",
   "$id": "e2e-project",
   "title": "e2e project",
   "type": "object",
@@ -20,5 +19,7 @@
       "alias": "d"
     }
   },
-  "required": ["name"]
+  "required": [
+    "name"
+  ]
 }

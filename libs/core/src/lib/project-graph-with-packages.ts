@@ -1,4 +1,4 @@
-import { ProjectGraph, ProjectGraphDependency, ProjectGraphProjectNode } from "@nrwl/devkit";
+import { ProjectGraph, ProjectGraphDependency, ProjectGraphProjectNode } from "@nx/devkit";
 import { ExtendedNpaResult, Package } from "./package";
 
 export interface ProjectGraphProjectNodeWithPackage extends ProjectGraphProjectNode {
