@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0-alpha.0](https://github.com/lerna/lerna/compare/6.6.2...7.0.0-alpha.0) (2023-05-10)
+
+### Features
+
+- **core:** convert commands to use nx project graph instead of legacy package graph ([#3667](https://github.com/lerna/lerna/issues/3667)) ([8e813c4](https://github.com/lerna/lerna/commit/8e813c46c543aa8e002a8982ca0b7f6afcee539e))
+- do not include bootstrap, add, link commands by default ([#3658](https://github.com/lerna/lerna/issues/3658)) ([487d475](https://github.com/lerna/lerna/commit/487d4755e8602ab3694992dd7702a2dd08f55861))
+
+### BREAKING CHANGES
+
+- We no longer include the bootstrap, add, and link commands by default. We strongly recommend using your package manager (npm, yarn, pnpm) for package management related concerns such as installing and linking dependencies.
+
+If you want to temporarily continue to use those commands in v7 you can do so by installing the @lerna/legacy-package-management package at the same version as your lerna version.
+
+There will not be any active work done on these commands and you should look to migrate as soon as possible, please check out https://lerna.js.org for further guidance.
+
 ## [6.6.2](https://github.com/lerna/lerna/compare/6.6.1...6.6.2) (2023-05-04)
 
 ### Bug Fixes
