@@ -5,9 +5,9 @@ import {
   Tree,
   updateJson,
   updateProjectConfiguration,
-} from "@nrwl/devkit";
-import { addPropertyToJestConfig } from "@nrwl/jest/src/utils/config/update-config";
-import { projectGenerator } from "@nrwl/js/src/generators/library/library";
+} from "@nx/devkit";
+import { addPropertyToJestConfig } from "@nx/jest/src/utils/config/update-config";
+import { projectGenerator } from "@nx/js/src/generators/library/library";
 import { resolve } from "path";
 import { E2eProjectGeneratorSchema } from "./schema";
 
@@ -44,7 +44,7 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
       skipTsConfig: true,
     },
     "./",
-    resolve("node_modules/@nrwl/js/src/generators/library/files")
+    resolve("node_modules/@nx/js/src/generators/library/files")
   );
 
   tree.delete(`${normalizedOptions.projectRoot}/README.md`);
@@ -105,7 +105,7 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
         },
       },
       "run-e2e-tests": {
-        executor: "@nrwl/jest:jest",
+        executor: "@nx/jest:jest",
         options: {
           jestConfig: `${normalizedOptions.projectRoot}/jest.config.ts`,
           passWithNoTests: true,

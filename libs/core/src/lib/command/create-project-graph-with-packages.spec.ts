@@ -1,16 +1,16 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { windowsPathSerializer } from "@lerna/test-helpers";
-import { FileData } from "@nrwl/devkit";
+import { FileData } from "@nx/devkit";
+import { join } from "path";
 import { RawManifest } from "../package";
 import { createProjectGraph, projectNode } from "../test-helpers/create-project-graph";
 import { createProjectGraphWithPackages, resolvePackage } from "./create-project-graph-with-packages";
-import { join } from "path";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fsExtra = require("fs-extra");
 
-jest.mock("@nrwl/devkit", () => ({
-  ...jest.requireActual("@nrwl/devkit"),
+jest.mock("@nx/devkit", () => ({
+  ...jest.requireActual("@nx/devkit"),
   workspaceRoot: "root",
 }));
 
@@ -73,7 +73,7 @@ describe("createProjectGraphWithPackages", () => {
     expect(Object.keys(result.nodes)).toEqual(expected);
   });
 
-  it("should augment dependency metadata and add optional dependencies from raw manifest", async () => {
+  it("should augment dependency metadata", async () => {
     const result = await createProjectGraphWithPackages(projectGraph(), ["packages/*", "other-packages/*"]);
     expect(result.dependencies).toEqual({
       projectA: [
@@ -344,6 +344,16 @@ const projectGraph = () =>
       }),
     ],
     dependencies: [
+      {
+        source: "projectA",
+        target: "otherProjectA",
+        type: "static",
+      },
+      {
+        source: "projectA",
+        target: "otherProjectB",
+        type: "static",
+      },
       {
         source: "projectB",
         target: "projectA",

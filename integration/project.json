@@ -12,7 +12,7 @@
       }
     },
     "integration": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "integration/jest.config.ts",

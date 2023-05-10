@@ -1,4 +1,4 @@
-import { joinPathFragments } from "@nrwl/devkit";
+import { joinPathFragments } from "@nx/devkit";
 import { ensureDirSync } from "fs-extra";
 import isCI from "is-ci";
 import { dirSync } from "tmp";

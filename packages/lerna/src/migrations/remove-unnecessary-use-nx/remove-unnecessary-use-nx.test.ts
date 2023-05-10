@@ -1,5 +1,5 @@
-import { readJson, Tree, writeJson } from "@nrwl/devkit";
-import { createTreeWithEmptyWorkspace } from "@nrwl/devkit/testing";
+import { readJson, Tree, writeJson } from "@nx/devkit";
+import { createTreeWithEmptyWorkspace } from "@nx/devkit/testing";
 import removeUnnecessaryUseNxMigration from "./remove-unnecessary-use-nx";
 
 describe("remove-unnecessary-use-nx migration", () => {

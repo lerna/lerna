@@ -1,4 +1,4 @@
-import { ProjectGraphDependency } from "@nrwl/devkit";
+import { ProjectGraphDependency } from "@nx/devkit";
 
 /**
  * Get all cycles within the given dependencies.

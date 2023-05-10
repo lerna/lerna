@@ -1,4 +1,4 @@
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { gitAdd, initFixtureFactory } from "@lerna/test-helpers";
 import chalk from "chalk";

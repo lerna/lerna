@@ -1,4 +1,4 @@
-import { formatFiles, readJson, Tree, writeJson } from "@nrwl/devkit";
+import { formatFiles, readJson, Tree, writeJson } from "@nx/devkit";
 
 export default async function generator(tree: Tree) {
   const lernaJson = readJson(tree, "lerna.json");

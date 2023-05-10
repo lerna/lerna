@@ -1,4 +1,4 @@
-import { ProjectGraphDependency } from "@nrwl/devkit";
+import { ProjectGraphDependency } from "@nx/devkit";
 import { projectGraphDependency } from "../test-helpers/create-project-graph";
 import { getCycles } from "./get-cycles";
 

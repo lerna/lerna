@@ -1,4 +1,4 @@
-import { createProjectGraphAsync } from "@nrwl/devkit";
+import { createProjectGraphAsync } from "@nx/devkit";
 import cloneDeep from "clone-deep";
 import dedent from "dedent";
 import execa from "execa";

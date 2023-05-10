@@ -1,4 +1,4 @@
-import { ProjectGraphProjectNode } from "@nrwl/devkit";
+import { ProjectGraphProjectNode } from "@nx/devkit";
 import { join, resolve } from "path";
 
 export function getPackageManifestPath(node: ProjectGraphProjectNode): string | undefined {

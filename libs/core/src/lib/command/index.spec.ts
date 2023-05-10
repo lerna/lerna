@@ -17,8 +17,8 @@ const os = require("os");
 jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
 
 // eslint-disable-next-line jest/no-mocks-import
-jest.mock("@nrwl/devkit", () => ({
-  ...jest.requireActual("@nrwl/devkit"),
+jest.mock("@nx/devkit", () => ({
+  ...jest.requireActual("@nx/devkit"),
   createProjectGraphAsync: () =>
     Promise.resolve(
       createProjectGraph({
@@ -29,7 +29,7 @@ jest.mock("@nrwl/devkit", () => ({
 }));
 
 // helpers
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 const { loggingOutput, updateLernaConfig, initFixtureFactory } = require("@lerna/test-helpers");
 const initFixture = initFixtureFactory(__dirname);

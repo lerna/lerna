@@ -9,7 +9,7 @@ jest.mock("./has-tags");
 jest.mock("./make-diff-predicate");
 
 // mocked modules
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { describeRefSync } from "libs/core/src/lib/describe-ref";
 import { hasTags } from "./has-tags";
 import { makeDiffPredicate } from "./make-diff-predicate";

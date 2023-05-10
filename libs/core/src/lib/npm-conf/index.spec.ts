@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const npmConf = require("./npm-conf");
+const npmConf = require("./index");
 
 describe("npm-conf", () => {
   it("exports default factory", () => {
