@@ -204,6 +204,11 @@ const command: CommandModule = {
         describe: "Additional arguments to pass to the npm client when performing 'npm install'.",
         type: "array",
       },
+      "from-remote": {
+        describe:
+          "Set the base version from that of the given package in the remote registry instead of the version in lerna.json",
+        type: "string",
+      },
       y: {
         describe: "Skip all confirmation prompts.",
         alias: "yes",

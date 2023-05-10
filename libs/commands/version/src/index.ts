@@ -32,6 +32,7 @@ import path from "path";
 import semver, { ReleaseType } from "semver";
 import { createRelease, createReleaseClient } from "./lib/create-release";
 import { getCurrentBranch } from "./lib/get-current-branch";
+import { getCurrentVersion } from "./lib/get-current-version";
 import { gitAdd } from "./lib/git-add";
 import { gitCommit } from "./lib/git-commit";
 import { gitPush } from "./lib/git-push";
@@ -81,6 +82,8 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   conventionalBumpPrerelease?: boolean;
   yes?: boolean;
   rejectCycles?: boolean;
+  fromRemote?: string;
+  distTag?: string;
 }
 
 class VersionCommand extends Command {
@@ -113,6 +116,7 @@ class VersionCommand extends Command {
   updatesVersions?: Map<string, string>;
   packagesToVersion?: Package[];
   projectsWithPackage: ProjectGraphProjectNodeWithPackage[] = [];
+  baseVersion?: string;
 
   get otherCommandConfigs() {
     // back-compat
@@ -180,8 +184,22 @@ class VersionCommand extends Command {
   }
 
   async initialize() {
-    if (!this.project.isIndependent()) {
+    if (!this.project.isIndependent() && !this.options.fromRemote) {
       this.logger.info("current version", this.project.version);
+    }
+
+    if (this.project.isIndependent() && this.options.fromRemote) {
+      throw new ValidationError(
+        "EINDEPENDENT",
+        "The --from-remote option is not supported in independent mode."
+      );
+    }
+
+    if (this.options.fromRemote !== undefined && !this.options.fromRemote) {
+      throw new ValidationError(
+        "EFROMREMOTE",
+        "A package name to look up must be provided to the --from-remote option."
+      );
     }
 
     if (this.requiresGit) {
@@ -332,6 +350,17 @@ class VersionCommand extends Command {
       this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");
     }
 
+    if (this.options.fromRemote) {
+      const packageName = this.options.fromRemote;
+      const distTag = this.options.distTag ? this.options.distTag : "latest";
+
+      this.baseVersion = await getCurrentVersion(packageName, distTag);
+      this.logger.info("current version", this.baseVersion);
+      this.logger.silly("version", "Current version of %s@%s is %s", packageName, distTag, this.baseVersion);
+    } else {
+      this.baseVersion = this.project.version;
+    }
+
     const versions = await this.getVersionsForUpdates();
     this.setUpdatesForVersions(versions);
 
@@ -412,9 +441,9 @@ class VersionCommand extends Command {
         );
     } else if (increment) {
       // compute potential prerelease ID once for all fixed updates
-      const prereleaseId = prereleaseIdFromVersion(this.project.version);
+      const prereleaseId = prereleaseIdFromVersion(this.baseVersion);
       const nextVersion = applyBuildMetadata(
-        semver.inc(this.project.version, increment as ReleaseType, resolvePrereleaseId(prereleaseId)),
+        semver.inc(this.baseVersion, increment as ReleaseType, resolvePrereleaseId(prereleaseId)),
         this.options.buildMetadata
       );
 
@@ -427,8 +456,8 @@ class VersionCommand extends Command {
       predicate = makePromptVersion(resolvePrereleaseId, this.options.buildMetadata);
     } else {
       // prompt once with potential prerelease ID
-      const prereleaseId = prereleaseIdFromVersion(this.project.version);
-      const node = { version: this.project.version, prereleaseId };
+      const prereleaseId = prereleaseIdFromVersion(this.baseVersion);
+      const node = { version: this.baseVersion, prereleaseId };
 
       const prompt = makePromptVersion(resolvePrereleaseId, this.options.buildMetadata);
       predicate = prompt(node).then(makeGlobalVersionPredicate);
@@ -508,7 +537,7 @@ class VersionCommand extends Command {
   }
 
   setGlobalVersionFloor() {
-    const globalVersion = this.project.version;
+    const globalVersion = this.baseVersion;
 
     for (const node of this.updates) {
       const pkg = getPackage(node);
@@ -524,7 +553,7 @@ class VersionCommand extends Command {
   }
 
   setGlobalVersionCeiling(versions: Map<string, string>) {
-    let highestVersion = this.project.version;
+    let highestVersion = this.baseVersion;
 
     versions.forEach((bump) => {
       if (bump && semver.gt(bump, highestVersion)) {
