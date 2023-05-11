@@ -69,7 +69,7 @@ This will
 
 - add `lerna` to the root `package.json`
 - generate a `lerna.json`
-- configure a npm/yarn/pnpm workspace
+- configure NPM/YARN workspaces
 
 ```json title="package.json"
 {
@@ -77,22 +77,17 @@ This will
   "private": true,
   "workspaces": ["packages/*"],
   "devDependencies": {
-    "lerna": "6.0.1"
+    "lerna": "6.6.2"
   }
 }
 ```
 
-What makes Lerna 5.1+ so powerful is the task delegation and other features that come with its integration
+What makes Lerna so powerful is the task delegation and other features that come with its integration
 with [Nx](https://nx.dev).
 
 ## Package Dependency Management
 
-When running `lerna init`, Lerna configures the workspace to use NPM/YARN/PNPM workspaces, the built-in solution for local referencing of packages. In this tutorial, in particular, we are leveraging [NPM workspaces](https://docs.npmjs.com/cli/using-npm/workspaces).
-
-:::info
-
-Lerna has historically its own dependency management solution: `lerna bootstrap`. This was required because at the time when Lerna was first released, there were no native solutions available. Nowadays the modern package managers come with a built-in "workspaces" solution, so it is highly recommended to go with that instead. `lerna bootstrap` and other related commands will be officially deprecated in Lerna v7. See https://github.com/lerna/lerna/discussions/3410
-:::
+When running `lerna init`, Lerna configures the workspace to use NPM/YARN workspaces, the built-in solution for local referencing of packages. In this tutorial, in particular, we are leveraging [NPM workspaces](https://docs.npmjs.com/cli/using-npm/workspaces).
 
 You can see this configured in the root-level `package.json` `workspaces` property as well as by having `useWorkspaces` set to `true` in `lerna.json`
 
@@ -120,7 +115,7 @@ To see how it works, let's for example inspect the `package.json` file of `remix
 }
 ```
 
-The `"header": "*"` and `"footer": "*"` tell Lerna to link the contents of the `header` and `footer` as if they were published to the registry. Make sure to run:
+The `"header": "*"` and `"footer": "*"` tell NPM to link the contents of the `header` and `footer` as if they were published to the registry. Make sure to run:
 
 ```bash
 npm install
@@ -376,7 +371,7 @@ their dist folders will be kept as is.
 
 ## Publishing
 
-Finally, let's talk about the third key Lerna feature: publishing to npm. Lerna comes already with a `publish` command
+Finally, let's talk about another key Lerna feature: publishing to npm. Lerna comes already with a `publish` command
 built-in. To publish our packages `header` and `footer`, all we need to do is to run:
 
 ```bash

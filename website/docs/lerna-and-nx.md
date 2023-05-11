@@ -6,9 +6,7 @@ type: explainer
 
 # Lerna and Nx
 
-Nrwl (the company behind the open source build system Nx) has taken over [stewardship of Lerna](https://dev.to/nrwl/lerna-is-dead-long-live-lerna-3jal). [Nx](https://nx.dev) is a build system developed by ex-Googlers and utilizes many of the techniques used by internal Google tools. Lerna v5 is the first release under this new stewardship, updating outdated packages and starting to do some cleanup on the repository itself. Starting with v5.1+, Lerna comes with the new possibility to integrate Nx and defer a lot of the task scheduling work to it.
-
-The following is a high level overview of what each tool provides. Note that all of the existing Lerna commands will continue to function as they have. Adding Nx or Nx Cloud simply improves what you're already doing.
+Nrwl (the company behind the open source build system Nx) has taken over [stewardship of Lerna](https://dev.to/nrwl/lerna-is-dead-long-live-lerna-3jal). [Nx](https://nx.dev) is a build system developed by ex-Googlers and utilizes many of the techniques used by internal Google tools. Lerna uses Nx to detect packages in the workspace and dependencies between them. Lerna defers to Nx's powerful task runner to run scripts, allowing you to run them in parallel, cache results, and distribute them across multiple machines, all while ensuring that dependencies between packages are respected.
 
 ## Lerna
 
@@ -48,7 +46,7 @@ Free and open source
 - Continue using Lerna as usual
 
 :::note
-When Lerna is running tasks with Nx and detects Nx target configuration, it will defer to Nx to detect task dependencies. Some options for `lerna run` will behave differently than older versions of Lerna. See [Using Lerna (Powered by Nx) to Run Tasks](docs/lerna6-obsolete-options.md) for more details.
+Lerna defers to Nx to detect task dependencies. Some options for `lerna run` behave differently than in older versions of Lerna. See [Using Lerna (Powered by Nx) to Run Tasks](docs/lerna6-obsolete-options.md) for more details on what differs from older versions of Lerna.
 :::
 
 ---

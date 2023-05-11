@@ -20,7 +20,7 @@ We knew about this context from afar, but as new stewards of the project we did 
 
 By removing these legacy pieces which have better alternatives natively in package managers, we and the rest of the lerna community will be freed up to concentrate our efforts on things which are uniquely valuable about lerna (such as, but not limited to, versioning and publishing), and making them the best they can be!
 
-From version 7, therefore, we will no longer ship the legacy package management commands (such as lerna bootstrap, lerna add and lerna link) by default with lerna, and instead make them available as an add-on via a separate package (name TBD).
+From version 7, therefore, we will no longer ship the legacy package management commands (such as lerna bootstrap, lerna add and lerna link) by default with lerna, and instead make them available as an add-on via a separate package - `@lerna/legacy-package-management`.
 
 This new package can be thought of as being in maintenance mode only - no new features will be considered for legacy package management concerns (such as lerna bootstrap, lerna add and lerna link), and we will only look to merge critical patches and security updates.
 
@@ -30,66 +30,6 @@ This same context is covered on the [Lerna v7 discussion](https://github.com/ler
 
 :::
 
-## Legacy Bootstrap Command
+### Legacy Bootstrap Command
 
-Lerna's legacy bootstrap command links different projects within the repo so they can import each other without having to publish anything to NPM. To show how Lerna does it, we will take [this repository](https://github.com/lerna/getting-started-example) as an example.
-
-The repo contains three packages or projects:
-
-- `header` (a library of React components)
-- `footer` (a library of React components)
-- `remixapp` (an app written using the Remix framework which depends on both `header` and `footer`)
-
-The Remix app imports the `header` and `footer` libraries as follows:
-
-```typescript jsx title="packages/remixapp/app/routes/index.tsx"
-import { Header } from "header";
-import { Footer } from "footer";
-
-export default function Index() {
-  return (
-    <>
-      <Header />
-      <div>Content!</div>
-      <Footer />
-    </>
-  );
-}
-```
-
-And it depends on them in its `package.json` as follows:
-
-```json title="packages/remixapp/package.json"
-{
-  "dependencies": {
-    "@remix-run/node": "^1.5.1",
-    "@remix-run/react": "^1.5.1",
-    "@remix-run/serve": "^1.5.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "header": "*",
-    "footer": "*"
-  }
-}
-```
-
-To make the `header` and `footer` available inside the `remixapp`, run:
-
-```bash
-lerna bootstrap --use-workspaces
-```
-
-This installs all the dependencies needed for the 3 projects and links the `header` and `footer` projects so that `remixapp` can reference them like npm packages. `--use-workspaces` tells Lerna to delegate package linking process to your package manager. (This feature is supported by npm, yarn and pnpm.)
-
-You can also set `useWorkspaces` as the default behavior in the `lerna.json` file:
-
-```json title="lerna.json"
-{
-    ...
-    "useWorkspaces": true
-}
-```
-
-## Other Bootstrapping Methods
-
-Bootstrapping this way should work for most people, but you can use [Alternate Legacy Bootstrapping Methods](../concepts/alternate-bootstrapping-methods) if needed.
+For details on how use Lerna's legacy bootstrapping functionality, see [Alternate Legacy Bootstrapping Methods](../concepts/alternate-bootstrapping-methods).

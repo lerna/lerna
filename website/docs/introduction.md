@@ -8,9 +8,8 @@ type: explainer
 
 Lerna is the original [monorepo tool](https://monorepo.tools) for TypeScript/JavaScript. It has been around for many years and is used by tens of thousands of projects, including React and Jest.
 
-It solves three of the biggest problems of JavaScript monorepos:
+It solves two of the biggest problems of JavaScript monorepos:
 
-- Lerna links different projects within the repo, so they can import each other without having to publish anything to NPM.
 - Lerna runs a command against any number of projects, and it does it in the most efficient way, in the right order, and with the possibility to distribute that on multiple machines.
 - Lerna manages your publishing process, from version management to publishing to NPM, and it provides a variety of options to make sure any workflow can be accommodated.
 

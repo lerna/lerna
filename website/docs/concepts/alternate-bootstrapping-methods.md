@@ -12,7 +12,9 @@ NOTE: Lerna's legacy package management capabilities are being deprecated in Ler
 
 :::
 
-There are several ways Lerna can set up your monorepo such that an app (`remixapp`) can find libraries in the same repo (`header` and `footer`), and one of them is to make it such that the `header` and `footer` end up in the `node_modules` folder of `remixapp` (or a different folder at the root)--that's what `lerna bootstrap` (without `--use-workspaces`) does.
+## Legacy Bootstrap Command
+
+Lerna's legacy bootstrap command links different projects within the repo so they can import each other without having to publish anything to NPM.
 
 Running `lerna bootstrap` will invoke `npm install` in each of the packages, and will link local package such that the resulting structure will look like this.
 
