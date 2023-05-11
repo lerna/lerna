@@ -8,7 +8,7 @@ Lerna will default to using npm workspaces for new projects. See the [getting st
 
 ## Converting to npm Workspaces
 
-We will go through each of Lerna's legacy package management features and identify how to tell if you are using it and what to replace it with in order to use npm workspaces instead.
+We will go through each of Lerna's legacy package management features and identify what it is doing, how to tell if you are using it, and what to replace it with in order to use npm workspaces instead.
 
 :::info
 If you prefer to use a different package manager, such as yarn or pnpm, then you can still use workspaces. The same concepts apply, but the configuration and commands may be slightly different. See the [yarn workspaces docs](https://yarnpkg.com/features/workspaces/) or the [pnpm workspaces docs](https://pnpm.io/workspaces) for more information.
