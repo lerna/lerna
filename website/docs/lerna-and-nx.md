@@ -8,6 +8,8 @@ type: explainer
 
 Nrwl (the company behind the open source build system Nx) has taken over [stewardship of Lerna](https://dev.to/nrwl/lerna-is-dead-long-live-lerna-3jal). [Nx](https://nx.dev) is a build system developed by ex-Googlers and utilizes many of the techniques used by internal Google tools. Lerna uses Nx to detect packages in the workspace and dependencies between them. Lerna defers to Nx's powerful task runner to run scripts, allowing you to run them in parallel, cache results, and distribute them across multiple machines, all while ensuring that dependencies between packages are respected.
 
+The following is a high level overview of what each tool provides. Lerna can be used by itself, and adding Nx or Nx Cloud can improve what you're already doing.
+
 ## Lerna
 
 ### Features
