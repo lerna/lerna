@@ -63,7 +63,7 @@ const sidebars = {
     {
       type: "category",
       label: "Recipes",
-      items: ["recipes/using-pnpm-with-lerna"],
+      items: ["recipes/switching-to-workspaces", "recipes/using-pnpm-with-lerna"],
     },
     {
       type: "category",

@@ -6,6 +6,10 @@ type: recipe
 
 # Legacy Package Management
 
+:::info
+See [Switching to Workspaces](../recipes/switching-to-workspaces) for a step by step guide on converting your repository to use npm workspaces instead of Lerna's legacy package management features.
+:::
+
 ## Background
 
 Lerna is the original monorepo/workspace tool in the JavaScript ecosystem. When it was created in 2015/2016 the ecosystem looked totally different, and there were no built in capabilities to handle working with multiple packages in a single repository (a "workspace"). Commands like lerna bootstrap, lerna add and lerna link were all a critical part of the lerna project, because there were no other options.
