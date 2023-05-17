@@ -5,10 +5,19 @@ interface DistTagsResponse {
   [key: string]: string;
 }
 
-export async function getCurrentVersion(packageName: string, distTag: string): Promise<string> {
+export async function getCurrentVersion(
+  packageName: string,
+  distTag: string,
+  registry?: string
+): Promise<string> {
+  const args = ["view", packageName, "dist-tags", "--json"];
+  if (registry) {
+    args.push("--registry", registry);
+  }
+
   let result: ExecaReturnValue<string>;
   try {
-    result = await execa("npm", ["view", packageName, "dist-tags", "--json"]);
+    result = await execa("npm", args);
   } catch (e) {
     throw new ValidationError(
       "ENPMVIEW",

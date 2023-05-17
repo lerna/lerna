@@ -84,6 +84,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   rejectCycles?: boolean;
   fromRemote?: string;
   distTag?: string;
+  registry?: string;
 }
 
 class VersionCommand extends Command {
@@ -354,7 +355,7 @@ class VersionCommand extends Command {
       const packageName = this.options.fromRemote;
       const distTag = this.options.distTag ? this.options.distTag : "latest";
 
-      this.baseVersion = await getCurrentVersion(packageName, distTag);
+      this.baseVersion = await getCurrentVersion(packageName, distTag, this.options.registry);
       this.logger.info("current version", this.baseVersion);
       this.logger.silly("version", "Current version of %s@%s is %s", packageName, distTag, this.baseVersion);
     } else {

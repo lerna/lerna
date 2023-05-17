@@ -209,6 +209,16 @@ const command: CommandModule = {
           "Set the base version from that of the given package in the remote registry instead of the version in lerna.json",
         type: "string",
       },
+      "dist-tag": {
+        describe:
+          "For use with --from-remote. Use the specified dist-tag when looking up the package specified by --from-remote.",
+        type: "string",
+      },
+      registry: {
+        describe:
+          "For use with --from-remote. Use the specified registry for looking up the package specified by --from-remote.",
+        type: "string",
+      },
       y: {
         describe: "Skip all confirmation prompts.",
         alias: "yes",
