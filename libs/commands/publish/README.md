@@ -251,7 +251,7 @@ lerna publish --canary --preid next
 ```
 
 When run with this flag, `lerna publish --canary` will increment `premajor`, `preminor`, `prepatch`, or `prerelease` semver
-bumps using the specified [prerelease identifier](http://semver.org/#spec-item-9).
+bumps using the specified [prerelease identifier](http://semver.org/#spec-item-9). The appended numeric modifier (i.e. `.0`) represents the number of commits since the beginning of the repository until the current one. This means amended commits, rebased commits and so on may produce the same appended number as a previously released version, even when the shas or commits themselves differ.
 
 ### `--pre-dist-tag <tag>`
 
