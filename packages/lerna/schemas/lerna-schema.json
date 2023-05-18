@@ -226,34 +226,6 @@
             },
             "yes": {
               "$ref": "#/$defs/globals/yes"
-            },
-
-            "scope": {
-              "$ref": "#/$defs/filters/scope"
-            },
-            "ignore": {
-              "$ref": "#/$defs/filters/ignore"
-            },
-            "private": {
-              "$ref": "#/$defs/filters/private"
-            },
-            "since": {
-              "$ref": "#/$defs/filters/since"
-            },
-            "excludeDependents": {
-              "$ref": "#/$defs/filters/excludeDependents"
-            },
-            "includeDependents": {
-              "$ref": "#/$defs/filters/includeDependents"
-            },
-            "includeDependencies": {
-              "$ref": "#/$defs/filters/includeDependencies"
-            },
-            "includeMergedTags": {
-              "$ref": "#/$defs/filters/includeMergedTags"
-            },
-            "continueIfNoMatch": {
-              "$ref": "#/$defs/filters/continueIfNoMatch"
             }
           }
         },
@@ -373,34 +345,6 @@
             },
             "yes": {
               "$ref": "#/$defs/globals/yes"
-            },
-
-            "scope": {
-              "$ref": "#/$defs/filters/scope"
-            },
-            "ignore": {
-              "$ref": "#/$defs/filters/ignore"
-            },
-            "private": {
-              "$ref": "#/$defs/filters/private"
-            },
-            "since": {
-              "$ref": "#/$defs/filters/since"
-            },
-            "excludeDependents": {
-              "$ref": "#/$defs/filters/excludeDependents"
-            },
-            "includeDependents": {
-              "$ref": "#/$defs/filters/includeDependents"
-            },
-            "includeDependencies": {
-              "$ref": "#/$defs/filters/includeDependencies"
-            },
-            "includeMergedTags": {
-              "$ref": "#/$defs/filters/includeMergedTags"
-            },
-            "continueIfNoMatch": {
-              "$ref": "#/$defs/filters/continueIfNoMatch"
             }
           }
         },
@@ -435,34 +379,6 @@
             },
             "yes": {
               "$ref": "#/$defs/globals/yes"
-            },
-
-            "scope": {
-              "$ref": "#/$defs/filters/scope"
-            },
-            "ignore": {
-              "$ref": "#/$defs/filters/ignore"
-            },
-            "private": {
-              "$ref": "#/$defs/filters/private"
-            },
-            "since": {
-              "$ref": "#/$defs/filters/since"
-            },
-            "excludeDependents": {
-              "$ref": "#/$defs/filters/excludeDependents"
-            },
-            "includeDependents": {
-              "$ref": "#/$defs/filters/includeDependents"
-            },
-            "includeDependencies": {
-              "$ref": "#/$defs/filters/includeDependencies"
-            },
-            "includeMergedTags": {
-              "$ref": "#/$defs/filters/includeMergedTags"
-            },
-            "continueIfNoMatch": {
-              "$ref": "#/$defs/filters/continueIfNoMatch"
             }
           }
         },
@@ -580,34 +496,6 @@
             },
             "yes": {
               "$ref": "#/$defs/globals/yes"
-            },
-
-            "scope": {
-              "$ref": "#/$defs/filters/scope"
-            },
-            "ignore": {
-              "$ref": "#/$defs/filters/ignore"
-            },
-            "private": {
-              "$ref": "#/$defs/filters/private"
-            },
-            "since": {
-              "$ref": "#/$defs/filters/since"
-            },
-            "excludeDependents": {
-              "$ref": "#/$defs/filters/excludeDependents"
-            },
-            "includeDependents": {
-              "$ref": "#/$defs/filters/includeDependents"
-            },
-            "includeDependencies": {
-              "$ref": "#/$defs/filters/includeDependencies"
-            },
-            "includeMergedTags": {
-              "$ref": "#/$defs/filters/includeMergedTags"
-            },
-            "continueIfNoMatch": {
-              "$ref": "#/$defs/filters/continueIfNoMatch"
             }
           }
         },
@@ -801,6 +689,9 @@
             "includePrivate": {
               "$ref": "#/$defs/commandOptions/publish/includePrivate"
             },
+            "fromRemote": {
+              "$ref": "#/$defs/commandOptions/publish/fromRemote"
+            },
 
             "npmClient": {
               "$ref": "#/$defs/globals/npmClient"
@@ -825,37 +716,6 @@
             },
             "yes": {
               "$ref": "#/$defs/globals/yes"
-            },
-
-            "scope": {
-              "$ref": "#/$defs/filters/scope"
-            },
-            "ignore": {
-              "$ref": "#/$defs/filters/ignore"
-            },
-            "private": {
-              "$ref": "#/$defs/filters/private"
-            },
-            "since": {
-              "$ref": "#/$defs/filters/since"
-            },
-            "excludeDependents": {
-              "$ref": "#/$defs/filters/excludeDependents"
-            },
-            "includeDependents": {
-              "$ref": "#/$defs/filters/includeDependents"
-            },
-            "includeDependencies": {
-              "$ref": "#/$defs/filters/includeDependencies"
-            },
-            "includeMergedTags": {
-              "$ref": "#/$defs/filters/includeMergedTags"
-            },
-            "continueIfNoMatch": {
-              "$ref": "#/$defs/filters/continueIfNoMatch"
-            },
-            "summaryFile": {
-              "$ref": "#/$defs/filters/summaryFile"
             }
           }
         },
@@ -1024,6 +884,15 @@
             "tagVersionPrefix": {
               "$ref": "#/$defs/commandOptions/version/tagVersionPrefix"
             },
+            "fromRemote": {
+              "$ref": "#/$defs/commandOptions/version/fromRemote"
+            },
+            "distTag": {
+              "$ref": "#/$defs/commandOptions/version/distTag"
+            },
+            "registry": {
+              "$ref": "#/$defs/commandOptions/version/registry"
+            },
 
             "npmClient": {
               "$ref": "#/$defs/globals/npmClient"
@@ -1051,34 +920,6 @@
             },
             "yes": {
               "$ref": "#/$defs/globals/yes"
-            },
-
-            "scope": {
-              "$ref": "#/$defs/filters/scope"
-            },
-            "ignore": {
-              "$ref": "#/$defs/filters/ignore"
-            },
-            "private": {
-              "$ref": "#/$defs/filters/private"
-            },
-            "since": {
-              "$ref": "#/$defs/filters/since"
-            },
-            "excludeDependents": {
-              "$ref": "#/$defs/filters/excludeDependents"
-            },
-            "includeDependents": {
-              "$ref": "#/$defs/filters/includeDependents"
-            },
-            "includeDependencies": {
-              "$ref": "#/$defs/filters/includeDependencies"
-            },
-            "includeMergedTags": {
-              "$ref": "#/$defs/filters/includeMergedTags"
-            },
-            "continueIfNoMatch": {
-              "$ref": "#/$defs/filters/continueIfNoMatch"
             }
           }
         },
@@ -1603,6 +1444,10 @@
             "type": "string"
           },
           "description": "During `lerna publish`, include specified private packages when publishing by temporarily removing the private property from the package manifest. This should only be used for testing private packages that will become public. The value \"*\" will include all private packages."
+        },
+        "fromRemote": {
+          "type": "string",
+          "description": "When versioning packages with `lerna publish`, set the base version from that of the given package in the remote registry instead of the version in lerna.json. Has no effect when used with the positional arguments 'from-git' or 'from-package'."
         }
       },
       "run": {
@@ -1704,6 +1549,18 @@
         "tagVersionPrefix": {
           "type": "string",
           "description": "During `lerna version`, customize the tag prefix. To remove entirely, pass an empty string."
+        },
+        "fromRemote": {
+          "type": "string",
+          "description": "During `lerna version`, set the base version from that of the given package in the remote registry instead of the version in lerna.json."
+        },
+        "distTag": {
+          "type": "string",
+          "description": "For use with 'fromRemote' for `lerna version`. Use the specified dist-tag when looking up the package specified by 'fromRemote'."
+        },
+        "registry": {
+          "type": "string",
+          "description": "For use with 'fromRemote' for `lerna version`. Use the specified registry for looking up the package specified by 'fromRemote'."
         }
       },
       "shared": {
