@@ -79,6 +79,9 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--sign-git-tag`](#--sign-git-tag)
     - [`--force-git-tag`](#--force-git-tag)
     - [`--tag-version-prefix`](#--tag-version-prefix)
+    - [`--from-remote`](#--from-remote)
+    - [`--dist-tag`](#--dist-tag)
+    - [`--registry`](#--registry)
     - [`--yes`](#--yes)
   - [Deprecated Options](#deprecated-options)
     - [`--cd-version`](#--cd-version)
@@ -510,6 +513,37 @@ lerna version --tag-version-prefix=''
 # on ci
 lerna publish from-git --tag-version-prefix=''
 ```
+
+### `--from-remote`
+
+This option allows Lerna to use `npm view <package>` to pick a version to use as the base instead of the version listed in `lerna.json`. This option cannot be used with independent versioning mode.
+
+A package name must be provided for Lerna to use to in the lookup. 
+
+Examples:
+
+```bash
+# use the version of test-package to pick the next version
+lerna version --from-remote test-package
+
+# use the version of test-package@next to pick the next version
+lerna version --from-remote test-package --dist-tag next
+
+# use the version of test-package on a specific registry to pick the next version
+lerna version --from-remote test-package --registry https://my-npm-registry.com
+```
+
+### `--dist-tag`
+
+When used with `--from-remote`, specifies the dist tag to use when picking a version from the the remote registry.
+
+See [`--from-remote`](#--from-remote).
+
+### `--registry`
+
+When used with `--from-remote`, specifies the registry to use when picking a version from the the remote registry.
+
+See [`--from-remote`](#--from-remote).
 
 ### `--yes`
 
