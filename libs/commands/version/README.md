@@ -518,7 +518,7 @@ lerna publish from-git --tag-version-prefix=''
 
 This option allows Lerna to use `npm view <package>` to pick a version to use as the base instead of the version listed in `lerna.json`. This option cannot be used with independent versioning mode.
 
-A package name must be provided for Lerna to use to in the lookup. 
+A package name must be provided for Lerna to use to in the lookup.
 
 Examples:
 
