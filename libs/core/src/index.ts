@@ -13,9 +13,11 @@ export { applyBuildMetadata, recommendVersion, updateChangelog } from "./lib/con
 export { describeRef, describeRefSync } from "./lib/describe-ref";
 export { FilterOptions, filterOptions } from "./lib/filter-options";
 export { filterProjects } from "./lib/filter-projects";
+export { getCurrentVersion } from "./lib/get-current-version";
 export { getNpmExecOpts } from "./lib/get-npm-exec-opts";
 export { getPackageManifestPath } from "./lib/get-package-manifest-path";
 export * from "./lib/get-packages-for-option";
+export { gitCheckout } from "./lib/git-checkout";
 export { hasNpmVersion } from "./lib/has-npm-version";
 export { listableFormatProjects } from "./lib/listable-format-projects";
 export { ListableOptions, listableOptions } from "./lib/listable-options";

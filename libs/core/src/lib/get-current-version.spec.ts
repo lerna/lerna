@@ -54,7 +54,7 @@ describe("getCurrentVersion", () => {
 
     await expect(getCurrentVersion(packageName, "latest")).rejects.toThrowErrorMatchingInlineSnapshot(`
       "Could not get current version of my-package via \`npm view\`.
-       Please verify that \`npm view my-package\` completes successfully from the root of the workspace."
+      Please verify that \`npm view my-package\` completes successfully from the root of the workspace."
     `);
   });
 });

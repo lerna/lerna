@@ -35,15 +35,19 @@ export interface CommandConfigOptions {
   ci?: boolean;
   useWorkspaces?: boolean;
   since?: string;
+  fixedVersionReferencePackage?: string;
+  distTag?: string;
+  registry?: string;
 }
 
 interface ProjectConfig {
   packages: string[];
   useNx: boolean;
   useWorkspaces: boolean;
-  version: string;
+  version: "fixed" | "independent" | string;
   npmClient: string;
   command?: CommandConfigs;
+  fixedVersionReferencePackage?: string;
 }
 
 interface PnpmWorkspaceConfig {
@@ -161,11 +165,11 @@ export class Project {
     log.verbose("rootPath", this.rootPath);
   }
 
-  get version() {
+  get version(): string {
     return this.config.version;
   }
 
-  set version(val) {
+  set version(val: string) {
     this.config.version = val;
   }
 
@@ -406,6 +410,10 @@ export class Project {
 
   isIndependent() {
     return this.version === "independent";
+  }
+
+  isDynamicFixed() {
+    return this.version === "fixed";
   }
 
   serializeConfig(): string {

@@ -105,7 +105,7 @@ class CreateCommand extends Command {
     }
 
     // allow default init-version when independent versioning enabled
-    if (!this.project.isIndependent()) {
+    if (!this.project.isIndependent() && !this.project.isDynamicFixed()) {
       this.conf.set("init-version", this.project.version);
     }
 

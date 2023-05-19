@@ -204,20 +204,22 @@ const command: CommandModule = {
         describe: "Additional arguments to pass to the npm client when performing 'npm install'.",
         type: "array",
       },
-      "from-remote": {
-        describe:
-          "Set the base version from that of the given package in the remote registry instead of the version in lerna.json",
-        type: "string",
-      },
       "dist-tag": {
-        describe:
-          "For use with --from-remote. Use the specified dist-tag when looking up the package specified by --from-remote.",
+        describe: "Use the specified dist-tag when looking up package versions with `npm view`",
         type: "string",
       },
       registry: {
-        describe:
-          "For use with --from-remote. Use the specified registry for looking up the package specified by --from-remote.",
+        describe: "Use the specified registry for looking up package versions with `npm view`",
         type: "string",
+      },
+      "no-commit": {
+        describe:
+          "Skip changing and committing files, including lerna.json, lockfiles, and package manifests. This will still tag the most recent commit with the new version number(s) and push the tag(s) to the remote unless --no-push is also provided.",
+      },
+      commit: {
+        // proxy for --no-commit
+        hidden: true,
+        type: "boolean",
       },
       y: {
         describe: "Skip all confirmation prompts.",

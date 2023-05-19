@@ -1,26 +1,27 @@
 import {
-  collectProjectUpdates,
   Command,
   CommandConfigOptions,
   Conf,
+  Package,
+  ProjectGraphProjectNodeWithPackage,
+  ValidationError,
+  collectProjectUpdates,
   createRunner,
   describeRef,
   getOneTimePassword,
   getPackage,
+  gitCheckout,
   logPacked,
   npmConf,
   npmDistTag,
   npmPublish,
   output,
-  Package,
   packDirectory,
   prereleaseIdFromVersion,
-  ProjectGraphProjectNodeWithPackage,
   promptConfirmation,
   pulseTillDone,
   runProjectsTopologically,
   throwIfUncommitted,
-  ValidationError,
 } from "@lerna/core";
 import { workspaceRoot } from "@nx/devkit";
 
@@ -35,6 +36,7 @@ import semver, { ReleaseType } from "semver";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const versionCommand = require("@lerna/commands/version");
 
+import npa from "npm-package-arg";
 import { createTempLicenses } from "./lib/create-temp-licenses";
 import { getCurrentSHA } from "./lib/get-current-sha";
 import { getCurrentTags } from "./lib/get-current-tags";
@@ -43,7 +45,6 @@ import { getPackagesWithoutLicense } from "./lib/get-packages-without-license";
 import { getProjectsWithTaggedPackages } from "./lib/get-projects-with-tagged-packages";
 import { getProjectsWithUnpublishedPackages } from "./lib/get-projects-with-unpublished-packages";
 import { getTwoFactorAuthRequired } from "./lib/get-two-factor-auth-required";
-import { gitCheckout } from "./lib/git-checkout";
 import { removeTempLicenses } from "./lib/remove-temp-licenses";
 import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
 
@@ -288,6 +289,14 @@ class PublishCommand extends Command {
       }
     }
 
+    // add missing versions to package.json files
+    this.updates.forEach((node) => {
+      const pkg = getPackage(node);
+      if (!pkg.version) {
+        pkg.version = this.updatesVersions.get(node.name);
+      }
+    });
+
     if (result.needsConfirmation) {
       // only confirm for --canary, bump === "from-git",
       // or bump === "from-package", as VersionCommand
@@ -396,25 +405,32 @@ class PublishCommand extends Command {
     const taggedPackageNames = await getCurrentTags(this.execOpts, matchingPattern);
 
     let updates: ProjectGraphProjectNodeWithPackage[];
+    let updatesVersions: [string, string][];
     if (!taggedPackageNames.length) {
       this.logger.notice("from-git", "No tagged release found");
 
       updates = [];
     } else if (this.project.isIndependent()) {
-      updates = taggedPackageNames.map(
-        (name) => this.projectsWithPackage.find((node) => getPackage(node).name === name) // TODO: improve lookup efficiency
-      );
+      updates = [];
+      updatesVersions = [];
+
+      taggedPackageNames.forEach((tag) => {
+        const npaResult = npa(tag);
+        const node = this.projectsWithPackage.find((node) => getPackage(node).name === npaResult.name);
+
+        updates.push(node);
+        updatesVersions.push([node.name, getPackage(node).version || npaResult.rawSpec]);
+      });
     } else {
-      updates = await getProjectsWithTaggedPackages(
-        this.projectsWithPackage,
-        this.project.rootPath,
-        this.execOpts
-      );
+      updates = await getProjectsWithTaggedPackages(this.projectsWithPackage, this.execOpts);
+
+      const tags = taggedPackageNames.map((tag) => tag.replace(this.tagPrefix, ""));
+      const newVersion = semver.maxSatisfying(tags, "*");
+
+      updatesVersions = updates.map((node) => [node.name, getPackage(node).version || newVersion]);
     }
 
     updates = this.filterPrivatePkgUpdates(updates);
-
-    const updatesVersions: [string, string][] = updates.map((node) => [node.name, getPackage(node).version]);
 
     return {
       updates,
@@ -484,7 +500,7 @@ class PublishCommand extends Command {
     }
 
     // find changed packages since last release, if any
-    const updates: ProjectGraphProjectNodeWithPackage[] = await this.filterPrivatePkgUpdates(
+    const updates: ProjectGraphProjectNodeWithPackage[] = this.filterPrivatePkgUpdates(
       collectProjectUpdates(this.projectsWithPackage, this.projectGraph, this.execOpts, {
         bump: "prerelease",
         canary: true,
@@ -545,10 +561,11 @@ class PublishCommand extends Command {
   }
 
   private confirmPublish() {
-    const count = this.packagesToPublish.length;
-    const message = this.packagesToPublish.map(
-      (pkg) => ` - ${pkg.name} => ${this.updatesVersions.get(pkg.name)}${pkg.private ? " (private!)" : ""}`
-    );
+    const count = this.updates.length;
+    const message = this.updates.map((node) => {
+      const pkg = getPackage(node);
+      return ` - ${pkg.name} => ${this.updatesVersions.get(pkg.name)}${pkg.private ? " (private!)" : ""}`;
+    });
 
     output("");
     output(`Found ${count} ${count === 1 ? "package" : "packages"} to publish:`);

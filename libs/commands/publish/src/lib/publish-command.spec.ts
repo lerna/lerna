@@ -1,6 +1,7 @@
 import {
   collectProjectUpdates as _collectUpdates,
   getOneTimePassword as _getOneTimePassword,
+  gitCheckout as _gitCheckout,
   npmDistTag as _npmDistTag,
   npmPublish as _npmPublish,
   packDirectory as _packDirectory,
@@ -29,7 +30,6 @@ jest.mock("./get-two-factor-auth-required");
 jest.mock("./get-projects-with-unpublished-packages", () => ({
   getProjectsWithUnpublishedPackages: jest.fn(() => Promise.resolve([])),
 }));
-jest.mock("./git-checkout");
 
 // lerna version mocks
 setupLernaVersionMocks();
@@ -45,7 +45,6 @@ const packDirectory = _packDirectory as any;
 
 import { getNpmUsername as _getNpmUsername } from "./get-npm-username";
 import { getTwoFactorAuthRequired as _getTwoFactorAuthRequired } from "./get-two-factor-auth-required";
-import { gitCheckout as _gitCheckout } from "./git-checkout";
 import { verifyNpmPackageAccess } from "./verify-npm-package-access";
 
 const initFixture = initFixtureFactory(__dirname);

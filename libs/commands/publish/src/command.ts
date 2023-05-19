@@ -127,11 +127,6 @@ const command: CommandModule = {
           "Include specified private packages when publishing by temporarily removing the private property from the package manifest. This should only be used for testing private packages that will become public. Private packages should not usually be published. See the npm docs for details (https://docs.npmjs.com/cli/v9/configuring-npm/package-json#private).",
         type: "array",
       },
-      "from-remote": {
-        describe:
-          "Set the base version from that of the given package in the remote registry instead of the version in lerna.json",
-        type: "string",
-      },
     };
 
     composeVersionOptions(yargs);

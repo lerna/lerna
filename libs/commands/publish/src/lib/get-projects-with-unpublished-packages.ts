@@ -15,6 +15,10 @@ export async function getProjectsWithUnpublishedPackages(
 
   const mapper = (node: ProjectGraphProjectNodeWithPackage) => {
     const pkg = getPackage(node);
+    // if a package doesn't have an explicit version, we have nothing to compare against
+    if (!pkg.version) {
+      return undefined;
+    }
     return pacote.packument(pkg.name, opts).then(
       (packument) => {
         if (packument.versions === undefined || packument.versions[pkg.version] === undefined) {

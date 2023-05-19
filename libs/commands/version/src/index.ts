@@ -8,6 +8,7 @@ import {
   createRunner,
   getPackage,
   getPackagesForOption,
+  gitCheckout,
   output,
   Package,
   prereleaseIdFromVersion,
@@ -32,7 +33,6 @@ import path from "path";
 import semver, { ReleaseType } from "semver";
 import { createRelease, createReleaseClient } from "./lib/create-release";
 import { getCurrentBranch } from "./lib/get-current-branch";
-import { getCurrentVersion } from "./lib/get-current-version";
 import { gitAdd } from "./lib/git-add";
 import { gitCommit } from "./lib/git-commit";
 import { gitPush } from "./lib/git-push";
@@ -82,9 +82,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   conventionalBumpPrerelease?: boolean;
   yes?: boolean;
   rejectCycles?: boolean;
-  fromRemote?: string;
-  distTag?: string;
-  registry?: string;
+  commit?: boolean;
 }
 
 class VersionCommand extends Command {
@@ -117,7 +115,7 @@ class VersionCommand extends Command {
   updatesVersions?: Map<string, string>;
   packagesToVersion?: Package[];
   projectsWithPackage: ProjectGraphProjectNodeWithPackage[] = [];
-  baseVersion?: string;
+  commit?: boolean;
 
   get otherCommandConfigs() {
     // back-compat
@@ -150,11 +148,13 @@ class VersionCommand extends Command {
       signGitTag,
       forceGitTag,
       tagVersionPrefix = "v",
+      commit = true,
     } = this.options;
 
     this.gitRemote = gitRemote;
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
+    this.commit = commit;
     this.pushToRemote = gitTagVersion && amend !== true && push;
     // never automatically push to remote when amending a commit
 
@@ -185,22 +185,8 @@ class VersionCommand extends Command {
   }
 
   async initialize() {
-    if (!this.project.isIndependent() && !this.options.fromRemote) {
-      this.logger.info("current version", this.project.version);
-    }
-
-    if (this.project.isIndependent() && this.options.fromRemote) {
-      throw new ValidationError(
-        "EINDEPENDENT",
-        "The --from-remote option is not supported in independent mode."
-      );
-    }
-
-    if (this.options.fromRemote !== undefined && !this.options.fromRemote) {
-      throw new ValidationError(
-        "EFROMREMOTE",
-        "A package name to look up must be provided to the --from-remote option."
-      );
+    if (!this.project.isIndependent()) {
+      this.logger.info("current version", await this.getProjectVersion());
     }
 
     if (this.requiresGit) {
@@ -287,36 +273,47 @@ class VersionCommand extends Command {
 
     this.projectsWithPackage = Object.values(this.projectGraph.nodes).filter((node) => !!node.package);
 
+    if (this.project.isDynamicFixed()) {
+      await this.populateMissingPackageVersions(this.projectsWithPackage.map(getPackage));
+    }
+
     this.updates = collectProjectUpdates(
       this.projectsWithPackage,
       this.projectGraph,
       this.execOpts,
       this.options
-    ).filter((node) => {
-      const pkg = getPackage(node);
-      // --no-private completely removes private packages from consideration
-      if (pkg.private && this.options.private === false) {
-        // TODO: (major) make --no-private the default
-        return false;
-      }
+    );
 
-      if (!pkg.version) {
-        // a package may be unversioned only if it is private
-        if (pkg.private) {
-          this.logger.info("version", "Skipping unversioned private package %j", pkg.name);
-        } else {
-          throw new ValidationError(
-            "ENOVERSION",
-            dedent`
-              A version field is required in ${pkg.name}'s package.json file.
-              If you wish to keep the package unversioned, it must be made private.
-            `
-          );
+    // In dynamic fixed mode, we cannot assume that a missing version indicates
+    // that a package should not be versioned, since it is valid to not commit
+    // the package's version to its package.json file.
+    if (!this.project.isDynamicFixed()) {
+      this.updates = this.updates.filter((node) => {
+        const pkg = getPackage(node);
+        // --no-private completely removes private packages from consideration
+        if (pkg.private && this.options.private === false) {
+          // TODO: (major) make --no-private the default
+          return false;
         }
-      }
 
-      return !!pkg.version;
-    });
+        if (!pkg.version) {
+          // a package may be unversioned only if it is private
+          if (pkg.private) {
+            this.logger.info("version", "Skipping unversioned private package %j", pkg.name);
+          } else {
+            throw new ValidationError(
+              "ENOVERSION",
+              dedent`
+                A version field is required in ${pkg.name}'s package.json file.
+                If you wish to keep the package unversioned, it must be made private.
+              `
+            );
+          }
+        }
+
+        return !!pkg.version;
+      });
+    }
 
     if (!this.updates.length) {
       this.logger.success(`No changed packages to ${this.composed ? "publish" : "version"}`);
@@ -349,17 +346,6 @@ class VersionCommand extends Command {
       await check(this.execOpts);
     } else {
       this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");
-    }
-
-    if (this.options.fromRemote) {
-      const packageName = this.options.fromRemote;
-      const distTag = this.options.distTag ? this.options.distTag : "latest";
-
-      this.baseVersion = await getCurrentVersion(packageName, distTag, this.options.registry);
-      this.logger.info("current version", this.baseVersion);
-      this.logger.silly("version", "Current version of %s@%s is %s", packageName, distTag, this.baseVersion);
-    } else {
-      this.baseVersion = this.project.version;
     }
 
     const versions = await this.getVersionsForUpdates();
@@ -412,7 +398,7 @@ class VersionCommand extends Command {
    * Gets a mapping of project names to their package's new version.
    * @returns {Promise<Record<string, string>>} A map of project names to their package's new versions
    */
-  getVersionsForUpdates() {
+  async getVersionsForUpdates() {
     const independentVersions = this.project.isIndependent();
     const { bump, conventionalCommits, preid } = this.options;
     const repoVersion = bump ? semver.clean(bump) : "";
@@ -441,10 +427,11 @@ class VersionCommand extends Command {
           this.options.buildMetadata
         );
     } else if (increment) {
+      const baseVersion = await this.getProjectVersion();
       // compute potential prerelease ID once for all fixed updates
-      const prereleaseId = prereleaseIdFromVersion(this.baseVersion);
+      const prereleaseId = prereleaseIdFromVersion(baseVersion);
       const nextVersion = applyBuildMetadata(
-        semver.inc(this.baseVersion, increment as ReleaseType, resolvePrereleaseId(prereleaseId)),
+        semver.inc(baseVersion, increment as ReleaseType, resolvePrereleaseId(prereleaseId)),
         this.options.buildMetadata
       );
 
@@ -456,9 +443,11 @@ class VersionCommand extends Command {
       // prompt for each independent update with potential prerelease ID
       predicate = makePromptVersion(resolvePrereleaseId, this.options.buildMetadata);
     } else {
+      const baseVersion = await this.getProjectVersion();
+
       // prompt once with potential prerelease ID
-      const prereleaseId = prereleaseIdFromVersion(this.baseVersion);
-      const node = { version: this.baseVersion, prereleaseId };
+      const prereleaseId = prereleaseIdFromVersion(baseVersion);
+      const node = { version: baseVersion, prereleaseId };
 
       const prompt = makePromptVersion(resolvePrereleaseId, this.options.buildMetadata);
       predicate = prompt(node).then(makeGlobalVersionPredicate);
@@ -512,7 +501,7 @@ class VersionCommand extends Command {
     };
 
     if (type === "fixed") {
-      this.setGlobalVersionFloor();
+      await this.setGlobalVersionFloor();
     }
 
     const versions = await this.reduceVersions((node) => {
@@ -531,14 +520,14 @@ class VersionCommand extends Command {
     });
 
     if (type === "fixed") {
-      this.globalVersion = this.setGlobalVersionCeiling(versions);
+      this.globalVersion = await this.setGlobalVersionCeiling(versions);
     }
 
     return versions;
   }
 
-  setGlobalVersionFloor() {
-    const globalVersion = this.baseVersion;
+  async setGlobalVersionFloor() {
+    const globalVersion = await this.getProjectVersion();
 
     for (const node of this.updates) {
       const pkg = getPackage(node);
@@ -553,8 +542,8 @@ class VersionCommand extends Command {
     }
   }
 
-  setGlobalVersionCeiling(versions: Map<string, string>) {
-    let highestVersion = this.baseVersion;
+  async setGlobalVersionCeiling(versions: Map<string, string>) {
+    let highestVersion = await this.getProjectVersion();
 
     versions.forEach((bump) => {
       if (bump && semver.gt(bump, highestVersion)) {
@@ -652,7 +641,7 @@ class VersionCommand extends Command {
       (node) => {
         const pkg = getPackage(node);
         // set new version
-        pkg.set("version", this.updatesVersions.get(node.name));
+        pkg.version = this.updatesVersions.get(node.name);
 
         // update dependencies
         this.updateDependencies(node);
@@ -706,7 +695,7 @@ class VersionCommand extends Command {
     });
 
     if (!independentVersions) {
-      this.project.version = this.globalVersion;
+      this.setProjectVersion(this.globalVersion);
 
       if (conventionalCommits && changelog) {
         const { logPath, newEntry } = await updateChangelog(this.project.manifest, "root", {
@@ -783,8 +772,12 @@ class VersionCommand extends Command {
       await this.runRootLifecycle("version");
     }
 
-    if (this.commitAndTag) {
+    if (this.commitAndTag && this.commit) {
       await gitAdd(Array.from(changedFiles), this.gitOpts, this.execOpts);
+    }
+
+    if (!this.commit) {
+      await this.resetChanges(Array.from(changedFiles));
     }
   }
 
@@ -807,6 +800,11 @@ class VersionCommand extends Command {
 
   async commitAndTagUpdates() {
     let tags: string[] = [];
+
+    if (!this.commit) {
+      this.logger.info("execute", "Skipping git commit");
+    }
+
     if (this.project.isIndependent()) {
       tags = await this.gitCommitAndTagVersionForUpdates();
     } else {
@@ -824,7 +822,7 @@ class VersionCommand extends Command {
     }
   }
 
-  gitCommitAndTagVersionForUpdates() {
+  async gitCommitAndTagVersionForUpdates() {
     const tags = this.updates.map((node) => {
       const pkg = getPackage(node);
       return `${pkg.name}@${this.updatesVersions.get(node.name)}`;
@@ -832,31 +830,59 @@ class VersionCommand extends Command {
     const subject = this.options.message || "Publish";
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
-    return Promise.resolve()
-      .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() =>
-        Promise.all(tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand)))
-      )
-      .then(() => tags);
+    if (this.commit && (await this.hasChanges())) {
+      await gitCommit(message, this.gitOpts, this.execOpts);
+    }
+    await Promise.all(
+      tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand))
+    );
+
+    return tags;
   }
 
-  gitCommitAndTagVersion() {
+  async gitCommitAndTagVersion() {
     const version = this.globalVersion;
     const tag = `${this.tagPrefix}${version}`;
     const message = this.options.message
       ? this.options.message.replace(/%s/g, tag).replace(/%v/g, version)
       : tag;
 
-    return Promise.resolve()
-      .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand))
-      .then(() => [tag]);
+    if (this.commit && (await this.hasChanges())) {
+      await gitCommit(message, this.gitOpts, this.execOpts);
+    }
+
+    await gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand);
+
+    return [tag];
+  }
+
+  private async hasChanges() {
+    try {
+      await childProcess.exec("git", ["diff", "--staged", "--quiet"], this.execOpts);
+    } catch (e) {
+      // git diff exited with a non-zero exit code, so we assume changes were found
+      return true;
+    }
+    throw new ValidationError(
+      "ENOCHANGES",
+      "Lerna expected to make a version commit, but no files were updated during the versioning process. This is likely due to omitting version numbers from package.json files, using workspace: or file: links for dependencies, and using 'fixed' in lerna.json's version. To tell Lerna to skip trying to make a commit and to apply the tags to the most recent commit instead, use the --no-commit option for `lerna version`."
+    );
   }
 
   gitPushToRemote() {
     this.logger.info("git", "Pushing tags...");
 
     return gitPush(this.gitRemote, this.currentBranch, this.execOpts);
+  }
+
+  private async resetChanges(changedFiles: string[]) {
+    const gitOpts = {
+      granularPathspec: this.options.granularPathspec !== false,
+    };
+
+    await gitCheckout(changedFiles, gitOpts, this.execOpts).catch((err) => {
+      this.logger.silly("EGITCHECKOUT", err.message);
+    });
   }
 }
 

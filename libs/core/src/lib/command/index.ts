@@ -4,6 +4,8 @@ import dedent from "dedent";
 import execa from "execa";
 import log from "npmlog";
 import os from "os";
+import { getCurrentVersion } from "../get-current-version";
+import { Package } from "../package";
 import { CommandConfigOptions, Project } from "../project";
 import { ProjectGraphWithPackages } from "../project-graph-with-packages";
 import { ValidationError } from "../validation-error";
@@ -25,6 +27,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   toposort = false;
   execOpts?: { cwd: string; maxBuffer?: number };
   logger!: log.Logger;
+  private projectVersion!: string;
 
   projectGraph!: ProjectGraphWithPackages;
 
@@ -310,6 +313,10 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     if (!this.composed && this.options.ci) {
       log.info("ci", "enabled");
     }
+
+    if (!this.composed && this.project.isDynamicFixed()) {
+      log.verbose("versioning", "dynamic fixed");
+    }
   }
 
   runCommand() {
@@ -332,5 +339,67 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
 
   execute() {
     throw new ValidationError(this.name, "execute() needs to be implemented.");
+  }
+
+  protected async getProjectVersion(): Promise<string> {
+    if (this.projectVersion) {
+      return this.projectVersion;
+    }
+
+    if (this.project.isDynamicFixed()) {
+      if (!this.options.fixedVersionReferencePackage) {
+        throw new ValidationError(
+          "ENOVERSION",
+          "Property fixedVersionReferencePackage is required in `lerna.json` when version is set to 'fixed'." // TODO: link to docs
+        );
+      }
+
+      this.projectVersion = await getCurrentVersion(
+        this.options.fixedVersionReferencePackage,
+        this.options.distTag || "latest",
+        this.options.registry
+      );
+    } else {
+      // allow commands to handle 'independent' or an explicit semver value
+      this.projectVersion = this.project.version;
+    }
+
+    return this.projectVersion;
+  }
+
+  protected setProjectVersion(version: string): void {
+    if (this.project.isDynamicFixed()) {
+      return; // do nothing since the version is dynamically determined and should not be saved
+    }
+
+    this.project.version = version;
+    this.projectVersion = version;
+  }
+
+  private packagesWithoutVersions: Package[] = [];
+
+  protected async populateMissingPackageVersions(packages: Package[]) {
+    const packagesWithNoVersion = packages.filter((pkg) => !pkg.version);
+    if (!packagesWithNoVersion.length) {
+      return;
+    }
+
+    const projectVersion = await this.getProjectVersion();
+
+    packagesWithNoVersion.forEach((pkg) => {
+      this.packagesWithoutVersions.push(pkg);
+      if (!this.project.isDynamicFixed()) {
+        throw new ValidationError(
+          "ENOVERSION",
+          dedent`
+            A version field is required in ${pkg.name}'s package.json file.
+            If you wish to keep the package unversioned, it must be made private.
+            If you wish for Lerna to set the version for you at runtime, set version to 'fixed' in lerna.json.
+          `
+        );
+      }
+
+      pkg.impliedVersion = projectVersion;
+    });
   }
 }

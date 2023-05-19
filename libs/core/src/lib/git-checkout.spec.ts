@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { initFixtureFactory } from "@lerna/test-helpers";
 import execa from "execa";
 import fs from "fs-extra";

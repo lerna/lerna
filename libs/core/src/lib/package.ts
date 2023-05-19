@@ -43,7 +43,7 @@ function shallowCopy(json: any) {
 
 export interface RawManifest {
   name: string;
-  version: string;
+  version?: string;
   description?: string;
   private?: boolean;
   bin?: Record<string, string> | string;
@@ -77,6 +77,7 @@ export class Package {
   [_contents]: string | undefined;
   licensePath?: string;
   packed?: Packed;
+  impliedVersion?: string;
 
   /**
    * Create a Package instance from parameters, possibly reusing existing instance.
@@ -172,12 +173,16 @@ export class Package {
   }
 
   // accessors
-  get version() {
-    return this[PKG].version;
+  get version(): string {
+    // TODO: refactor codebase to properly treat version as string | undefined
+    // if there is an implied version, then we should use that over what is in package.json
+    return this.impliedVersion || (this[PKG].version as string);
   }
 
-  set version(version) {
-    this[PKG].version = version;
+  set version(version: string) {
+    if (!this.impliedVersion) {
+      this[PKG].version = version;
+    }
   }
 
   get contents() {
