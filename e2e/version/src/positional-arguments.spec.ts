@@ -9,7 +9,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna-version-positional-arguments", () => {
+describe("lerna-version-positional-arguments-npm", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {

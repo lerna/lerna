@@ -22,6 +22,7 @@ import {
 } from "@lerna/core";
 import chalk from "chalk";
 import dedent from "dedent";
+import execa from "execa";
 import fs from "fs";
 import minimatch from "minimatch";
 import os from "os";
@@ -858,7 +859,7 @@ class VersionCommand extends Command {
 
   private async hasChanges() {
     try {
-      await childProcess.exec("git", ["diff", "--staged", "--quiet"], this.execOpts);
+      await execa("git", ["diff", "--staged", "--quiet"], { stdio: "pipe", ...this.execOpts });
     } catch (e) {
       // git diff exited with a non-zero exit code, so we assume changes were found
       return true;
