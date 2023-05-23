@@ -6,8 +6,12 @@
   "properties": {
     "version": {
       "type": "string",
-      "description": "The version of the repository, or \"independent\" for a repository with independently versioned packages.",
+      "description": "The version of the repository, or \"independent\" for a repository with independently versioned packages, or \"fixed\" if Lerna should use `npm view` to determine the version.",
       "default": "0.0.0"
+    },
+    "fixedVersionReferencePackage": {
+      "type": "string",
+      "description": "Required if `version` is \"fixed\". The name of the package that should be used with `npm view` to determine the version of the repository when `version` is set to \"fixed\"."
     },
     "packages": {
       "type": "array",
@@ -689,9 +693,6 @@
             "includePrivate": {
               "$ref": "#/$defs/commandOptions/publish/includePrivate"
             },
-            "fromRemote": {
-              "$ref": "#/$defs/commandOptions/publish/fromRemote"
-            },
 
             "npmClient": {
               "$ref": "#/$defs/globals/npmClient"
@@ -884,14 +885,14 @@
             "tagVersionPrefix": {
               "$ref": "#/$defs/commandOptions/version/tagVersionPrefix"
             },
-            "fromRemote": {
-              "$ref": "#/$defs/commandOptions/version/fromRemote"
-            },
             "distTag": {
               "$ref": "#/$defs/commandOptions/version/distTag"
             },
             "registry": {
               "$ref": "#/$defs/commandOptions/version/registry"
+            },
+            "commit": {
+              "$ref": "#/$defs/commandOptions/version/commit"
             },
 
             "npmClient": {
@@ -1444,10 +1445,6 @@
             "type": "string"
           },
           "description": "During `lerna publish`, include specified private packages when publishing by temporarily removing the private property from the package manifest. This should only be used for testing private packages that will become public. The value \"*\" will include all private packages."
-        },
-        "fromRemote": {
-          "type": "string",
-          "description": "When versioning packages with `lerna publish`, set the base version from that of the given package in the remote registry instead of the version in lerna.json. Has no effect when used with the positional arguments 'from-git' or 'from-package'."
         }
       },
       "run": {
@@ -1550,17 +1547,18 @@
           "type": "string",
           "description": "During `lerna version`, customize the tag prefix. To remove entirely, pass an empty string."
         },
-        "fromRemote": {
-          "type": "string",
-          "description": "During `lerna version`, set the base version from that of the given package in the remote registry instead of the version in lerna.json."
+        "commit": {
+          "type": "boolean",
+          "description": "During `lerna version`, when false, skip committing file changes. The version tag(s) will instead be added to the latest commit instead.",
+          "default": true
         },
         "distTag": {
           "type": "string",
-          "description": "For use with 'fromRemote' for `lerna version`. Use the specified dist-tag when looking up the package specified by 'fromRemote'."
+          "description": "For use with `lerna version` when version is 'fixed' in lerna.json. Use the specified dist-tag when looking up the package specified by 'fixedVersionReferencePackage'."
         },
         "registry": {
           "type": "string",
-          "description": "For use with 'fromRemote' for `lerna version`. Use the specified registry for looking up the package specified by 'fromRemote'."
+          "description": "For use with `lerna version` when version is 'fixed' in lerna.json. Use the specified registry for looking up the package specified by 'fixedVersionReferencePackage'."
         }
       },
       "shared": {

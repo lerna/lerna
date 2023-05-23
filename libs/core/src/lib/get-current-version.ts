@@ -32,7 +32,7 @@ export async function getCurrentVersion(
   if (!version) {
     throw new ValidationError(
       "ENODISTTAG",
-      `No version found for ${packageName}@${distTag}.\n If you are trying to version based on a different tag than 'latest', ensure that it is provided with the --distTag option.`
+      `No version found for ${packageName}@${distTag}.\nIf you are trying to version based on a different tag than 'latest', ensure that it is provided with the --distTag option.`
     );
   }
 

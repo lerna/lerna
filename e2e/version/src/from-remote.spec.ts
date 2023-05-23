@@ -25,6 +25,10 @@ describe("lerna-version-from-remote", () => {
     await fixture.lerna("create from-remote-1 -y");
     await fixture.lerna("create from-remote-2 -y");
     await fixture.lerna("create from-remote-3 -y");
+    await fixture.overrideLernaConfig({
+      version: "fixed",
+      fixedVersionReferencePackage: "from-remote-1",
+    });
 
     await fixture.createInitialGitCommit();
     await fixture.exec("git push origin test-main");
@@ -45,10 +49,9 @@ describe("lerna-version-from-remote", () => {
     await fixture.exec("git reset --hard HEAD~1");
 
     // lerna should ignore lerna.json and pick version 1.3.0 since it is the next minor version after 1.2.4
-    const result = await fixture.lerna(
-      "version minor --from-remote from-remote-1 --registry http://localhost:4872 -y",
-      { allowNetworkRequests: true }
-    );
+    const result = await fixture.lerna("version minor --registry http://localhost:4872 -y", {
+      allowNetworkRequests: true,
+    });
 
     // clean up published packages
     await fixture.exec(`npm unpublish --force from-remote-1 --registry=http://localhost:4872`);
@@ -57,8 +60,8 @@ describe("lerna-version-from-remote", () => {
 
     expect(result.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
-      lerna info Assuming all packages changed
       lerna info current version 1.2.4
+      lerna info Assuming all packages changed
 
       Changes:
        - from-remote-1: 0.0.0 => 1.3.0
@@ -91,7 +94,7 @@ describe("lerna-version-from-remote", () => {
     await fixture.exec("git reset --hard HEAD~1");
 
     // lerna should ignore lerna.json and pick version 1.3.0 since it is the next minor version after 1.2.4
-    const result = await fixture.lerna("version minor --from-remote from-remote-1 -y", {
+    const result = await fixture.lerna("version minor -y", {
       allowNetworkRequests: true,
     });
 
@@ -102,8 +105,8 @@ describe("lerna-version-from-remote", () => {
 
     expect(result.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
-      lerna info Assuming all packages changed
       lerna info current version 1.2.4
+      lerna info Assuming all packages changed
 
       Changes:
        - from-remote-1: 0.0.0 => 1.3.0
@@ -118,41 +121,33 @@ describe("lerna-version-from-remote", () => {
     `);
   });
 
-  it("throws an error when --from-remote is used with independent versioning mode", async () => {
-    await fixture.updateJson("lerna.json", (json) => ({ ...json, version: "independent" }));
+  it("throws an error when fixedVersionReferencePackage is missing", async () => {
+    await fixture.updateJson("lerna.json", (json) => {
+      const newConfig = { ...json };
+      delete newConfig.fixedVersionReferencePackage;
+      return newConfig;
+    });
+    await fixture.exec("git add .");
+    await fixture.exec("git commit -m 'chore: remove fixedVersionReferencePackage'");
+    await fixture.exec("git push origin test-main");
 
-    const result = await fixture.lerna("version minor --from-remote from-remote-1 -y", {
+    const result = await fixture.lerna("version minor -y", {
       allowNetworkRequests: true,
       silenceError: true,
     });
 
     expect(result.combinedOutput).toMatchInlineSnapshot(`
-      lerna notice cli v999.9.9-e2e.0
-      lerna info versioning independent
-      lerna ERR! EINDEPENDENT The --from-remote option is not supported in independent mode.
-
-    `);
-  });
-
-  it("throws an error when --from-remote is passed without an argument", async () => {
-    const result = await fixture.lerna("version minor --from-remote -y", {
-      allowNetworkRequests: true,
-      silenceError: true,
-    });
-
-    expect(result.combinedOutput).toMatchInlineSnapshot(`
-      lerna notice cli v999.9.9-e2e.0
-      lerna info current version 0.0.0
-      lerna ERR! EFROMREMOTE A package name to look up must be provided to the --from-remote option.
+    lerna notice cli v999.9.9-e2e.0
+    lerna ERR! ENOVERSION Property fixedVersionReferencePackage is required in \`lerna.json\` when version is set to 'fixed'.
 
     `);
   });
 
   it("throws an error when version is not found for specified package", async () => {
-    const result = await fixture.lerna(
-      "version minor --from-remote from-remote-1 --registry http://localhost:4872 -y",
-      { allowNetworkRequests: true, silenceError: true }
-    );
+    const result = await fixture.lerna("version minor --registry http://localhost:4872 -y", {
+      allowNetworkRequests: true,
+      silenceError: true,
+    });
     expect(result.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
       lerna info Assuming all packages changed
@@ -203,7 +198,7 @@ describe("lerna-version-from-remote", () => {
     // at this point, `npm view from-remote-1 dist-tags --json` will return { "latest": "1.2.4", "next": "1.2.5-alpha.0" }
 
     const result = await fixture.lerna(
-      "version prerelease --from-remote from-remote-1 --dist-tag next --registry http://localhost:4872 -y",
+      "version prerelease --dist-tag next --registry http://localhost:4872 -y",
       { allowNetworkRequests: true }
     );
 
@@ -214,8 +209,8 @@ describe("lerna-version-from-remote", () => {
 
     expect(result.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
-      lerna info Assuming all packages changed
       lerna info current version 1.2.5-alpha.0
+      lerna info Assuming all packages changed
 
       Changes:
        - from-remote-1: 0.0.0 => 1.2.5-alpha.1
@@ -253,7 +248,7 @@ describe("lerna-version-from-remote", () => {
     // at this point, `npm view from-remote-1 dist-tags --json` will return { "latest": "1.2.4" }
 
     const result = await fixture.lerna(
-      "version prerelease --from-remote from-remote-1 --dist-tag next --registry http://localhost:4872 -y",
+      "version prerelease --dist-tag next --registry http://localhost:4872 -y",
       { allowNetworkRequests: true, silenceError: true }
     );
 
@@ -264,9 +259,8 @@ describe("lerna-version-from-remote", () => {
 
     expect(result.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
-      lerna info Assuming all packages changed
       lerna ERR! ENODISTTAG No version found for from-remote-1@next.
-      lerna ERR! ENODISTTAG  If you are trying to version based on a different tag than 'latest', ensure that it is provided with the --distTag option.
+      lerna ERR! ENODISTTAG If you are trying to version based on a different tag than 'latest', ensure that it is provided with the --distTag option.
 
     `);
   });

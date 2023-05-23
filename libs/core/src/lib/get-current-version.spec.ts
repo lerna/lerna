@@ -45,7 +45,7 @@ describe("getCurrentVersion", () => {
 
     await expect(getCurrentVersion(packageName, "foo")).rejects.toThrowErrorMatchingInlineSnapshot(`
       "No version found for my-package@foo.
-       If you are trying to version based on a different tag than 'latest', ensure that it is provided with the --distTag option."
+      If you are trying to version based on a different tag than 'latest', ensure that it is provided with the --distTag option."
     `);
   });
 
