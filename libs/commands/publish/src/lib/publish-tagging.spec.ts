@@ -6,8 +6,14 @@ import {
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
-// eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+jest.mock("@lerna/core", () => {
+  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
+  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
+  return {
+    ...mockCore,
+    gitCheckout: jest.requireActual("@lerna/core").gitCheckout,
+  };
+});
 
 // lerna publish mocks
 jest.mock("./get-packages-without-license", () => {
