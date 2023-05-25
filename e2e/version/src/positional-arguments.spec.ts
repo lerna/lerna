@@ -18,7 +18,7 @@ describe("lerna-version-positional-arguments", () => {
       name: "lerna-version-positional-arguments",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
     await fixture.lerna("create package-a -y");

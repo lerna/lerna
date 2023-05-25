@@ -1,4 +1,5 @@
 {
   "version": "1.0.0",
-  "registry": "https://my-secure-registry/npm"
+  "registry": "https://my-secure-registry/npm",
+  "packages": ["packages/*"]
 }

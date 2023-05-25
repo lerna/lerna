@@ -522,6 +522,7 @@ Map {
 
       await fs.outputJSON(path.join(cwd, "lerna.json"), {
         version: "1.0.0",
+        packages: ["packages/*"],
         granularPathspec: false,
       });
       await lernaPublish(cwd)();

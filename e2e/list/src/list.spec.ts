@@ -18,7 +18,7 @@ describe("lerna-list", () => {
       name: "lerna-list",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
 

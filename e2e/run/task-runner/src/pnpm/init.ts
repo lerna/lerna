@@ -6,7 +6,7 @@ import { Fixture } from "@lerna/e2e-utils";
     name: "lerna-run",
     packageManager: "pnpm",
     initializeGit: true,
-    runLernaInit: true,
+    lernaInit: { args: [`--packages="packages/*"`] },
     installDependencies: true,
   });
 

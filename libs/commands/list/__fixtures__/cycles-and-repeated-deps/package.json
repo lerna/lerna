@@ -1,3 +1,4 @@
 {
-  "name": "independent"
+  "name": "independent",
+  "workspaces": ["packages/*"]
 }

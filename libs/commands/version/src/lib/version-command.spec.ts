@@ -259,6 +259,7 @@ describe("VersionCommand", () => {
       await setupPreCommitHook(cwd);
       await fs.outputJSON(path.join(cwd, "lerna.json"), {
         version: "1.0.0",
+        packages: ["packages/*"],
         command: {
           publish: {
             commitHooks: false,
@@ -300,6 +301,7 @@ describe("VersionCommand", () => {
 
       await fs.outputJSON(path.join(testDir, "lerna.json"), {
         version: "1.0.0",
+        packages: ["packages/*"],
         command: {
           publish: {
             gitTagVersion: false,
@@ -364,6 +366,7 @@ describe("VersionCommand", () => {
       });
       await fs.outputJSON(path.join(cwd, "lerna.json"), {
         version: "1.0.0",
+        packages: ["packages/*"],
         granularPathspec: false,
       });
       // a "dynamic", intentionally unversioned package must _always_ be forced
@@ -397,6 +400,7 @@ describe("VersionCommand", () => {
 
       await fs.outputJSON(path.join(testDir, "lerna.json"), {
         version: "1.0.0",
+        packages: ["packages/*"],
         command: {
           version: {
             private: false,
@@ -432,6 +436,7 @@ describe("VersionCommand", () => {
 
       await fs.outputJSON(path.join(testDir, "lerna.json"), {
         version: "1.0.0",
+        packages: ["packages/*"],
         command: {
           publish: {
             push: false,
@@ -468,6 +473,7 @@ describe("VersionCommand", () => {
 
       await fs.outputJSON(path.join(testDir, "lerna.json"), {
         version: "1.0.0",
+        packages: ["packages/*"],
         command: {
           publish: {
             tagVersionPrefix: "durable",
@@ -539,6 +545,7 @@ describe("VersionCommand", () => {
 
       await fs.outputJSON(path.join(testDir, "lerna.json"), {
         version: "1.0.0",
+        packages: ["packages/*"],
         command: {
           publish: {
             gitRemote: "durable",

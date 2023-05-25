@@ -1,5 +1,6 @@
 {
   "version": "1.0.0",
   "npmClient": "yarn",
-  "hoist": "**"
+  "hoist": "**",
+  "packages": ["packages/*"]
 }

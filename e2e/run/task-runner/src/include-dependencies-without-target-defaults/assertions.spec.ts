@@ -27,6 +27,7 @@ describe("lerna-run-nx-include-dependencies-without-target-defaults", () => {
 
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
+      lerna verb packageConfigs Explicit "packages" configuration found in lerna.json. Resolving packages using the configured glob(s): ["packages/*"]
       lerna verb rootPath /tmp/lerna-e2e/lerna-run-nx-include-dependencies-without-target-defaults/lerna-workspace
       lerna notice filter including "package-X"
       lerna info filter [ 'package-X' ]

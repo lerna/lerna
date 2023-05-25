@@ -18,10 +18,10 @@ describe("lerna-version-with-workspaces", () => {
       name: "lerna-version-with-workspaces",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: false,
+      lernaInit: false,
       installDependencies: false,
     });
-    await fixture.lernaInit("", { keepDefaultOptions: true });
+    await fixture.lernaInit("");
     await fixture.install();
 
     await fixture.lerna("create package-a -y");

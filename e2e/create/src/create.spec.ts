@@ -24,7 +24,7 @@ describe("lerna-create", () => {
       name: "lerna-create",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
     await fixture.updateJson("lerna.json", (json) => ({

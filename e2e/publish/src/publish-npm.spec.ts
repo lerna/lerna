@@ -25,7 +25,7 @@ describe("lerna-publish-npm", () => {
       name: "lerna-publish",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
   });

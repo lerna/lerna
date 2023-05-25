@@ -18,7 +18,7 @@ describe("lerna-diff", () => {
       name: "lerna-diff",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
 

@@ -1,5 +1,6 @@
 {
   "yes": true,
   "loglevel": "silent",
-  "version": "independent"
+  "version": "independent",
+  "packages": ["packages/*"]
 }

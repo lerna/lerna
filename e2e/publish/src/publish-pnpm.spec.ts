@@ -25,7 +25,7 @@ describe("lerna-publish-pnpm", () => {
       name: "lerna-publish",
       packageManager: "pnpm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
   });

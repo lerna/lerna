@@ -1,208 +1,192 @@
-import { Command, CommandConfigOptions, Package, Project } from "@lerna/core";
-import { writeJsonFile } from "@nx/devkit";
-import fs from "fs-extra";
-import pMap from "p-map";
-import path from "path";
+import { Command, LernaConfig, isGitInitialized } from "@lerna/core";
+import { addDependenciesToPackageJson, joinPathFragments, readJson, writeJson } from "@nx/devkit";
+import { readFileSync } from "fs-extra";
+import log from "npmlog";
+import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
+import yargs from "yargs";
+
+interface InitCommandOptions {
+  lernaVersion: string;
+  packages?: string[];
+  exact?: boolean;
+  loglevel?: string;
+  independent?: boolean;
+  dryRun?: boolean;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
-  return new InitCommand(argv);
+const PACKAGE_GLOB = "packages/*";
+
+module.exports = function factory(args: yargs.ArgumentsCamelCase<InitCommandOptions>) {
+  return new InitCommand(args);
 };
 
-interface InitCommandOptions extends CommandConfigOptions {
-  exact: boolean;
-  lernaVersion: string;
-}
+class InitCommand {
+  name = "init";
+  logger: log.Logger;
+  cwd = process.cwd();
 
-class InitCommand extends Command<InitCommandOptions> {
-  exact?: boolean;
-  lernaVersion = "";
-
-  get requiresGit() {
-    return false;
+  constructor(private args: yargs.ArgumentsCamelCase<InitCommandOptions>) {
+    log.heading = "lerna";
+    this.logger = Command.createLogger(this.name, args.loglevel);
+    this.execute();
   }
 
-  runValidations() {
-    this.logger.verbose(this.name, "skipping validations");
-  }
+  async execute(): Promise<void> {
+    this.logger.notice("cli", `v${this.args.lernaVersion}`);
 
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  runPreparations() {
-    this.logger.verbose(this.name, "skipping preparations");
-  }
+    const tree = new FsTree(this.cwd, false);
+    const task = await this.generate(tree);
+    const changes = tree.listChanges();
 
-  async detectProjects() {
-    this.logger.verbose(this.name, "skipping project detection");
-  }
-
-  override initialize() {
-    this.exact = this.options.exact;
-    this.lernaVersion = this.options.lernaVersion;
-
-    if (!this.gitInitialized()) {
-      this.logger.info("", "Initializing Git repository");
-
-      return childProcess.exec("git", ["init"], this.execOpts);
+    // There must have been an error in the generator, skip all further logs
+    if (!changes.length) {
+      return;
     }
-  }
 
-  override execute() {
-    let chain: Promise<void | Package | void[]> = Promise.resolve();
+    const isDryRun = this.args.dryRun;
 
-    chain = chain.then(() => this.ensureGitIgnore());
-    chain = chain.then(() => this.ensureConfig());
-    chain = chain.then(() => this.ensurePackagesDir());
+    const { default: chalk } = await import("chalk");
+    const { diff } = await import("jest-diff");
 
-    return chain.then(() => {
+    function printDiff(before: string, after: string) {
+      console.error(
+        diff(before, after, {
+          omitAnnotationLines: true,
+          contextLines: 1,
+          expand: false,
+          aColor: chalk.red,
+          bColor: chalk.green,
+          patchColor: (s) => "",
+        })
+      );
+    }
+
+    if (isDryRun) {
+      this.logger.info("", "The following file system updates will be made:");
+    } else {
+      this.logger.info("", "Applying the following file system updates:");
+    }
+
+    // Print the changes
+    const indent = "";
+    changes.forEach((f) => {
+      if (f.type === "CREATE") {
+        console.error(
+          `${indent}${chalk.green("CREATE")} ${f.path}${isDryRun ? chalk.yellow(" [preview]") : ""}`
+        );
+        if (isDryRun) {
+          printDiff("", f.content?.toString() || "");
+        }
+      } else if (f.type === "UPDATE") {
+        console.error(
+          `${indent}${chalk.white("UPDATE")} ${f.path}${isDryRun ? chalk.yellow(" [preview]") : ""}`
+        );
+        if (isDryRun) {
+          const currentContentsOnDisk = readFileSync(joinPathFragments(tree.root, f.path)).toString();
+          printDiff(currentContentsOnDisk, f.content?.toString() || "");
+        }
+      } else if (f.type === "DELETE") {
+        console.error(`${indent}${chalk.yellow("DELETE")} ${f.path}`);
+      }
+    });
+
+    if (!isDryRun) {
+      flushChanges(this.cwd, changes);
+      if (task) {
+        await task();
+      }
       this.logger.success("", "Initialized Lerna files");
       this.logger.info("", "New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started");
-    });
+    } else {
+      this.logger.warn("", `The "dryRun" flag means no changes were made.`);
+    }
   }
 
-  ensureGitIgnore() {
-    const gitIgnorePath = path.join(this.project.rootPath, ".gitignore");
+  async generate(tree: Tree): Promise<void | (() => Promise<void>)> {
+    const defaultLernaJson: LernaConfig = {
+      $schema: "node_modules/lerna/schemas/lerna-schema.json",
+      version: this.args.independent === true ? "independent" : "0.0.0",
+    };
 
-    let chain = Promise.resolve();
-
-    if (!fs.existsSync(gitIgnorePath)) {
-      this.logger.info("", "Creating .gitignore");
-      chain = chain.then(() => fs.writeFile(gitIgnorePath, "node_modules/"));
+    if (tree.exists("lerna.json")) {
+      // Invalid: we will not attempt to modify an existing lerna setup
+      this.logger.error("", "Lerna has already been initialized for this repo.");
+      this.logger.error(
+        "",
+        "If you are looking to ensure that your config is up to date with the latest and greatest, run `lerna repair` instead"
+      );
+      return;
     }
 
-    return chain;
-  }
+    const lernaJson = defaultLernaJson;
+    // The user has explicitly provided one or more packages globs
+    if (this.args.packages) {
+      lernaJson.packages = this.args.packages;
+    }
 
-  ensureConfig() {
-    const hasExistingLernaConfig = !!this.project.version;
-    const hasExistingPackageJson = !!this.project.manifest;
-
-    const useNx = !hasExistingLernaConfig || this.project.config.useNx !== false;
-    const useWorkspaces = !hasExistingLernaConfig || this.project.config.useWorkspaces === true;
-
-    let chain: Promise<void | Package> = Promise.resolve();
-
-    if (!hasExistingPackageJson) {
-      this.logger.info("", "Creating package.json");
-
-      // initialize with default indentation so write-pkg doesn't screw it up with tabs
-      chain = chain.then(() => {
-        const pkg = {
-          name: "root",
-          private: true,
-        };
-
-        if (useWorkspaces) {
-          // TODO: refactor based on TS feedback
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          pkg.workspaces = [Project.PACKAGE_GLOB];
-        }
-
-        return writeJsonFile(path.join(this.project.rootPath, "package.json"), pkg, {
-          spaces: 2,
-        });
+    // Neither a lerna.json nor package.json exists, create a recommended setup
+    if (!tree.exists("package.json")) {
+      // lerna.json
+      writeJson(tree, "lerna.json", lernaJson);
+      // package.json
+      writeJson(tree, "package.json", {
+        name: "root",
+        private: true,
+        workspaces: [PACKAGE_GLOB],
       });
     } else {
-      this.logger.info("", "Updating package.json");
-
-      chain = chain.then(() => {
-        if (useWorkspaces && !this.project.manifest?.get("workspaces")) {
-          this.project.manifest?.set("workspaces", [Project.PACKAGE_GLOB]);
-
-          return this.project.manifest?.serialize();
-        }
-      });
+      /**
+       * package.json already exists.
+       * We need to ensure package manager workspaces are being used, or that --packages is specified.
+       */
+      if (this.args.packages || this.#hasWorkspacesConfigured(tree)) {
+        writeJson(tree, "lerna.json", lernaJson);
+      } else {
+        // Invalid: no package manager workspaces, and --packages not specified
+        this.logger.error(
+          "",
+          "Cannot initialize lerna because your package manager has not been configured to use `workspaces`, and you have not explicitly specified any packages to operate on"
+        );
+        this.logger.error(
+          "",
+          "See https://lerna.js.org/docs/getting-started#adding-lerna-to-an-existing-repo for how to resolve this"
+        );
+        return;
+      }
     }
 
-    // add dependencies to package.json
-    chain = chain.then(() => {
-      const rootPkg = this.project.manifest;
+    // Add lerna as a devDependency and queue install task
+    addDependenciesToPackageJson(
+      tree,
+      {},
+      { lerna: this.args.exact ? this.args.lernaVersion : `^${this.args.lernaVersion}` }
+    );
 
-      const setDependency = ({ name, version }: { name: string; version: string }) => {
-        let targetDependencies;
+    // Ensure minimal .gitignore exists
+    if (!tree.exists(".gitignore")) {
+      tree.write(".gitignore", "node_modules/");
+    }
 
-        if (rootPkg?.dependencies && rootPkg.dependencies[name]) {
-          targetDependencies = rootPkg.dependencies;
-        } else {
-          if (!rootPkg?.devDependencies) {
-            rootPkg?.set("devDependencies", {});
-          }
-
-          targetDependencies = rootPkg?.devDependencies;
-        }
-        if (targetDependencies) {
-          targetDependencies[name] = this.exact ? version : `^${version}`;
-        }
-      };
-
-      setDependency({ name: "lerna", version: this.lernaVersion });
-
-      return rootPkg?.serialize();
-    });
-
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    chain = chain.then(() => {
-      let version;
-
-      if (this.options.independent) {
-        version = "independent";
-      } else if (this.project.version) {
-        version = this.project.version;
-      } else {
-        version = "0.0.0";
+    return () => {
+      if (isGitInitialized(this.cwd)) {
+        this.logger.info("", "Git is already initialized");
+        return;
       }
 
-      if (!hasExistingLernaConfig) {
-        this.logger.info("", "Creating lerna.json");
-      } else {
-        this.logger.info("", "Updating lerna.json");
-
-        if (!useWorkspaces && !this.project.config.packages) {
-          Object.assign(this.project.config, {
-            packages: [Project.PACKAGE_GLOB],
-          });
-        }
-      }
-
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      delete this.project.config.lerna; // no longer relevant
-
-      if (this.exact) {
-        // ensure --exact is preserved for future init commands
-        const commandConfig = this.project.config.command || (this.project.config.command = {});
-        const initConfig = commandConfig.init || (commandConfig.init = {});
-
-        // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        initConfig.exact = true;
-      }
-
-      Object.assign(this.project.config, {
-        $schema: "node_modules/lerna/schemas/lerna-schema.json",
-        useWorkspaces,
-        version,
-        // Only set if explicitly disabling
-        useNx: useNx === false ? false : undefined,
+      this.logger.info("", "Initializing Git repository");
+      return childProcess.exec("git", ["init"], {
+        cwd: this.cwd,
+        maxBuffer: 1024,
       });
-
-      return Promise.resolve(this.project.serializeConfig());
-    });
-
-    return chain;
+    };
   }
 
-  ensurePackagesDir() {
-    this.logger.info("", "Creating packages directory");
-    return pMap(this.project.packageParentDirs, (dir: string) => fs.mkdirp(dir));
+  #hasWorkspacesConfigured(tree: Tree): boolean {
+    const packageJson = readJson(tree, "package.json");
+    return Array.isArray(packageJson.workspaces) || tree.exists("pnpm-workspace.yaml");
   }
 }
 

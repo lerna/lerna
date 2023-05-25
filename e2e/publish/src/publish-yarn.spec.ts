@@ -25,7 +25,7 @@ describe("lerna-publish-yarn", () => {
       name: "lerna-publish",
       packageManager: "yarn",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
   });

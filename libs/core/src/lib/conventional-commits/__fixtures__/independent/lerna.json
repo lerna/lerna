@@ -4,5 +4,6 @@
       "conventionalCommits": true
     }
   },
-  "version": "independent"
+  "version": "independent",
+  "packages": ["packages/*"]
 }

@@ -9,6 +9,7 @@ export {
   ProjectUpdateCollectorOptions,
 } from "./lib/collect-updates";
 export { Command } from "./lib/command";
+export { isGitInitialized } from "./lib/command/is-git-initialized";
 export { applyBuildMetadata, recommendVersion, updateChangelog } from "./lib/conventional-commits";
 export { describeRef, describeRefSync } from "./lib/describe-ref";
 export { filterOptions, FilterOptions } from "./lib/filter-options";
@@ -29,7 +30,7 @@ export { packDirectory, Packed } from "./lib/pack-directory";
 export { ExtendedNpaResult, Package, RawManifest } from "./lib/package";
 export { prereleaseIdFromVersion } from "./lib/prerelease-id-from-version";
 export { generateProfileOutputPath, Profiler } from "./lib/profiler";
-export { CommandConfigOptions, getPackages, Project } from "./lib/project";
+export { CommandConfigOptions, Project, getPackages, LernaConfig } from "./lib/project";
 export {
   getPackage,
   isExternalNpmDependency,
