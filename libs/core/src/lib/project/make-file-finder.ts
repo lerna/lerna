@@ -1,4 +1,4 @@
-import globby from "globby";
+import globby, { Entry } from "globby";
 import pMap from "p-map";
 import path from "path";
 import { ValidationError } from "../validation-error";
@@ -7,7 +7,7 @@ function normalize(results: string[]) {
   return results.map((fp) => path.normalize(fp));
 }
 
-function getGlobOpts(rootPath: string, packageConfigs: any[]) {
+function getGlobOpts(rootPath: string, packageConfigs: any[]): globby.GlobbyOptions {
   const globOpts = {
     cwd: rootPath,
     absolute: true,
@@ -69,23 +69,14 @@ export function makeFileFinder(rootPath: string, packageConfigs: any[]) {
 export function makeSyncFileFinder(rootPath: string, packageConfigs: any[]) {
   const globOpts = getGlobOpts(rootPath, packageConfigs);
 
-  return (fileName: string, fileMapper: any, customGlobOpts: any) => {
-    const options = Object.assign({}, customGlobOpts, globOpts);
+  return <T>(fileName: string, fileMapper: (filePath: string) => T): T[] => {
     const patterns = packageConfigs.map((globPath) => path.posix.join(globPath, fileName)).sort();
 
-    let results = globby.sync(patterns, options);
+    let results = globby.sync(patterns, globOpts);
 
     // POSIX results always need to be normalized
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     results = normalize(results);
 
-    /* istanbul ignore else */
-    if (fileMapper) {
-      results = results.map(fileMapper);
-    }
-
-    return results;
+    return results.map((res) => fileMapper(res));
   };
 }

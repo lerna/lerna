@@ -19,7 +19,7 @@ describe("lerna-run-legacy-task-runner-env-files", () => {
       name: "lerna-run-legacy-task-runner-env-files",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
       /**
        * Because lerna run involves spawning further child processes, the tests would be too flaky

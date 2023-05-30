@@ -61,20 +61,6 @@ class BootstrapCommand extends Command {
       );
     }
 
-    if (
-      npmClient === "yarn" &&
-      this.project.manifest.get("workspaces") &&
-      this.options.useWorkspaces !== true
-    ) {
-      throw new ValidationError(
-        "EWORKSPACES",
-        dedent`
-            Yarn workspaces are configured in package.json, but not enabled in lerna.json!
-            Please choose one: useWorkspaces = true in lerna.json, or remove package.json workspaces config
-          `
-      );
-    }
-
     // postinstall and prepare are commonly used to call `lerna bootstrap`,
     // but we need to avoid recursive execution when `--hoist` is enabled
     const { LERNA_EXEC_PATH = "leaf", LERNA_ROOT_PATH = "root" } = process.env;
@@ -190,7 +176,7 @@ class BootstrapCommand extends Command {
   }
 
   override execute() {
-    if (this.options.useWorkspaces || this.rootHasLocalFileDependencies()) {
+    if (!this.options.packages || this.rootHasLocalFileDependencies()) {
       if (this.options.rejectCycles) {
         this.packageGraph.collapseCycles({ rejectCycles: this.options.rejectCycles });
       }

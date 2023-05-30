@@ -21,7 +21,7 @@ describe("lerna-version-conventional-commits", () => {
         name: "lerna-version-conventional-commits-single-package",
         packageManager: "npm",
         initializeGit: true,
-        runLernaInit: true,
+        lernaInit: { args: [`--packages="packages/*"`] },
         installDependencies: true,
       });
     });
@@ -114,7 +114,7 @@ describe("lerna-version-conventional-commits", () => {
         name: "lerna-version-conventional-commits-multiple-packages",
         packageManager: "npm",
         initializeGit: true,
-        runLernaInit: true,
+        lernaInit: { args: [`--packages="packages/*"`] },
         installDependencies: true,
       });
     });

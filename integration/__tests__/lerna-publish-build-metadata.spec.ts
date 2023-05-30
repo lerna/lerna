@@ -121,9 +121,13 @@ test("lerna publish updates build metadata to fixed versions", async () => {
     index SHA..SHA 100644
     --- a/lerna.json
     +++ b/lerna.json
-    @@ -2 +2 @@
-    -  "version": "1.0.0+001"
-    +  "version": "1.0.1+002"
+    @@ -2,2 +2,4 @@
+    -  "version": "1.0.0+001",
+    -  "packages": ["packages/*"]
+    +  "version": "1.0.1+002",
+    +  "packages": [
+    +    "packages/*"
+    +  ]
     diff --git a/packages/package-1/package.json b/packages/package-1/package.json
     index SHA..SHA 100644
     --- a/packages/package-1/package.json

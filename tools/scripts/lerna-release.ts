@@ -42,7 +42,6 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
     // process.chdir("dist");
     // JH: added alternate package.json and lerna.json in dist
     //     const distLernaJson = `{
-    //   "useWorkspaces": true,
     //   "description": "This lerna.json exists to facilitate publish built packages via tools/scripts/lerna-release.ts",
     //   "version": "0.0.0",
     //   "ignoreChanges": [

@@ -19,7 +19,7 @@ describe("lerna-exec", () => {
       name: "lerna-exec",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
       /**
        * Because lerna exec involves spawning further child processes, the tests would be too flaky
@@ -217,7 +217,7 @@ describe("lerna exec --no-bail", () => {
       name: "lerna-exec-no-bail",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
       /**
        * Because lerna exec involves spawning further child processes, the tests would be too flaky
@@ -226,6 +226,18 @@ describe("lerna exec --no-bail", () => {
        */
       forceDeterministicTerminalOutput: true,
     });
+
+    /**
+     * There seems to be a bug with npm workspaces where the exit code of child scripts are not propagated.
+     * Therefore we need to strip the workspaces config for now, otherwise the exit code will be 1, instead of 100.
+     *
+     * Reported here: https://github.com/npm/cli/issues/6506
+     */
+    await fixture.updateJson("package.json", (json) => {
+      delete json.workspaces;
+      return json;
+    });
+    await fixture.install();
 
     await fixture.lerna("create package-1 -y");
     await fixture.addScriptsToPackage({

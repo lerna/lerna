@@ -56,11 +56,11 @@ describe("lerna-version-yarn-lockfiles", () => {
       name: "lerna-version-yarn-lockfiles",
       packageManager: "yarn",
       initializeGit: true,
-      runLernaInit: false,
+      lernaInit: false,
       installDependencies: false,
     });
 
-    await fixture.lernaInit("", { keepDefaultOptions: true });
+    await fixture.lernaInit("");
     await setupYarnBerry(fixture);
 
     await fixture.lerna("create package-a -y");

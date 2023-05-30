@@ -18,7 +18,7 @@ describe("lerna-version-errors", () => {
       name: "lerna-version-errors",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
   });

@@ -1,4 +1,5 @@
 {
   // Trailing commas and comments are recoverable
   "version": "1.0.0",
+  "packages": ["packages/*"],
 }

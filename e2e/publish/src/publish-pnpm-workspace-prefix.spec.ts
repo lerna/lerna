@@ -24,7 +24,7 @@ describe("lerna-publish-workspace-prefix-pnpm", () => {
       name: "lerna-publish-workspace-prefix",
       packageManager: "pnpm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
   });

@@ -9,8 +9,7 @@ import { printObjectProperties } from "pretty-format/build/collections";
 import { packDirectory } from "./pack-directory";
 import { getPackages } from "./project";
 
-// TODO: remove concatenation workaround once the issue with !test-helpers not being respected is resolved
-require("@lerna" + "/test-helpers/src/lib/silence-logging");
+require("@lerna/test-helpers/src/lib/silence-logging");
 
 // actually _run_ the lifecycles, gorrammit
 jest.unmock("./run-lifecycle");

@@ -18,7 +18,7 @@ describe("lerna-version-npm-client-args", () => {
       name: "lerna-version-npm-client-args",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
     await fixture.lerna("create package-a -y");

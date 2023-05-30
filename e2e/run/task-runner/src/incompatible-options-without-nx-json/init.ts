@@ -7,7 +7,7 @@ import { remove } from "fs-extra";
     name: "lerna-run-nx-incompatible-options-without-nx-json",
     packageManager: "npm",
     initializeGit: true,
-    runLernaInit: true,
+    lernaInit: { args: [`--packages="packages/*"`] },
     installDependencies: true,
   });
 

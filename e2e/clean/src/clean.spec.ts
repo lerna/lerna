@@ -19,7 +19,7 @@ describe("lerna-clean", () => {
       name: "lerna-clean",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
 

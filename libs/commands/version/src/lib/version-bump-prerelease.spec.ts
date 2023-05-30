@@ -143,6 +143,7 @@ describe("version bump prerelease", () => {
       Dir({
         "lerna.json": File({
           version: "independent",
+          packages: ["packages/*"],
         }),
         "package.json": File({
           name: "unrelated-bumps",
@@ -214,6 +215,7 @@ Publish
       Dir({
         "lerna.json": File({
           version: "independent",
+          packages: ["packages/*"],
         }),
         "package.json": File({
           name: "no-private-versioning",

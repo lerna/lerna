@@ -123,9 +123,6 @@
             "strict": {
               "$ref": "#/$defs/commandOptions/bootstrap/strict"
             },
-            "useWorkspaces": {
-              "$ref": "#/$defs/commandOptions/bootstrap/useWorkspaces"
-            },
             "forceLocal": {
               "$ref": "#/$defs/commandOptions/shared/forceLocal"
             },
@@ -608,18 +605,6 @@
             },
             "continueIfNoMatch": {
               "$ref": "#/$defs/filters/continueIfNoMatch"
-            }
-          }
-        },
-        "init": {
-          "type": "object",
-          "description": "Options for the `init` command.",
-          "properties": {
-            "exact": {
-              "$ref": "#/$defs/commandOptions/shared/exact"
-            },
-            "independent": {
-              "$ref": "#/$defs/commandOptions/init/independent"
             }
           }
         },
@@ -1185,9 +1170,6 @@
     "strict": {
       "$ref": "#/$defs/commandOptions/bootstrap/strict"
     },
-    "useWorkspaces": {
-      "$ref": "#/$defs/commandOptions/bootstrap/useWorkspaces"
-    },
 
     "access": {
       "$ref": "#/$defs/commandOptions/create/access"
@@ -1225,10 +1207,6 @@
     },
     "preserveCommit": {
       "$ref": "#/$defs/commandOptions/import/preserveCommit"
-    },
-
-    "independent": {
-      "$ref": "#/$defs/commandOptions/init/independent"
     },
 
     "canary": {
@@ -1485,10 +1463,6 @@
         "strict": {
           "type": "boolean",
           "description": "During `lerna bootstrap`, don't allow warnings when hoisting as it causes longer bootstrap times and other issues."
-        },
-        "useWorkspaces": {
-          "type": "boolean",
-          "description": "During `lerna bootstrap`, enable integration with Yarn workspaces."
         }
       },
       "create": {
@@ -1548,12 +1522,6 @@
         "preserveCommit": {
           "type": "boolean",
           "description": "During `lerna import`, when true, preserve the original committer in additional to original author."
-        }
-      },
-      "init": {
-        "independent": {
-          "type": "boolean",
-          "description": "During `lerna init`, when true, version packages independently."
         }
       },
       "publish": {

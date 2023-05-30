@@ -19,7 +19,7 @@ describe("lerna-watch", () => {
       name: "lerna-watch",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
 
@@ -52,6 +52,7 @@ describe("lerna-watch", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
+      lerna verb packageConfigs Explicit "packages" configuration found in lerna.json. Resolving packages using the configured glob(s): ["packages/*"]
       lerna verb rootPath /tmp/lerna-e2e/lerna-watch/lerna-workspace
       lerna info watch Executing command "echo watch triggered" on changes in 3 packages.
 
@@ -116,6 +117,7 @@ describe("lerna-watch", () => {
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
+        lerna verb packageConfigs Explicit "packages" configuration found in lerna.json. Resolving packages using the configured glob(s): ["packages/*"]
         lerna verb rootPath /tmp/lerna-e2e/lerna-watch/lerna-workspace
         lerna notice filter including ["package-a","@scope/package-c"]
         lerna info filter [ 'package-a', '@scope/package-c' ]
@@ -171,6 +173,7 @@ describe("lerna-watch", () => {
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
           lerna notice cli v999.9.9-e2e.0
+          lerna verb packageConfigs Explicit "packages" configuration found in lerna.json. Resolving packages using the configured glob(s): ["packages/*"]
           lerna verb rootPath /tmp/lerna-e2e/lerna-watch/lerna-workspace
           lerna notice filter including "package-b"
           lerna notice filter including dependencies
@@ -227,6 +230,7 @@ describe("lerna-watch", () => {
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
+      lerna verb packageConfigs Explicit "packages" configuration found in lerna.json. Resolving packages using the configured glob(s): ["packages/*"]
       lerna verb rootPath /tmp/lerna-e2e/lerna-watch/lerna-workspace
       lerna info watch Executing command "echo $LERNA_PACKAGE_NAME: $LERNA_FILE_CHANGES" on changes in 3 packages.
 

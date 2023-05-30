@@ -630,15 +630,6 @@ describe("BootstrapCommand", () => {
         })
       );
     });
-
-    it("errors when package.json workspaces exists but --use-workspaces is not enabled", async () => {
-      const testDir = await initFixture("yarn-workspaces");
-      const command = lernaBootstrap(testDir)("--no-use-workspaces");
-
-      await expect(command).rejects.toThrow(
-        "Yarn workspaces are configured in package.json, but not enabled in lerna.json!"
-      );
-    });
   });
 
   describe("with relative file: specifiers in root dependencies", () => {

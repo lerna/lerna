@@ -1,6 +1,5 @@
 {
   "version": "1.0.0",
-  "useWorkspaces": false,
   "packages": [
     "packages/*"
   ]

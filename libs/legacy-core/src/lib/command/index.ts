@@ -256,18 +256,6 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       throw new ValidationError("ENOGIT", "The git binary was not found, or this is not a git repository.");
     }
 
-    if (!this.project.manifest) {
-      throw new ValidationError("ENOPKG", "`package.json` does not exist, have you run `lerna init`?");
-    }
-
-    if (this.project.configNotFound) {
-      throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
-    }
-
-    if (!this.project.version) {
-      throw new ValidationError("ENOVERSION", "Required property version does not exist in `lerna.json`");
-    }
-
     if (this.options.independent && !this.project.isIndependent()) {
       throw new ValidationError(
         "EVERSIONMODE",
@@ -276,13 +264,6 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
           To use independent mode you need to set lerna.json's "version" property to "independent".
           Then you won't need to pass the --independent or -i flags.
         `
-      );
-    }
-
-    if (this.options.npmClient === "pnpm" && !this.options.useWorkspaces) {
-      throw new ValidationError(
-        "ENOWORKSPACES",
-        "Usage of pnpm without workspaces is not supported. To use pnpm with lerna, set useWorkspaces to true in lerna.json and configure pnpm to use workspaces: https://pnpm.io/workspaces."
       );
     }
   }
