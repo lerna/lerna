@@ -25,16 +25,17 @@ import {
 import { workspaceRoot } from "@nx/devkit";
 
 import crypto from "crypto";
-import fs from "fs";
+import fs, { existsSync } from "fs";
 import os from "os";
 import pMap from "p-map";
 import pPipe from "p-pipe";
-import path from "path";
+import path, { join } from "path";
 import semver, { ReleaseType } from "semver";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const versionCommand = require("@lerna/commands/version");
 
+import { copy } from "fs-extra";
 import { createTempLicenses } from "./lib/create-temp-licenses";
 import { getCurrentSHA } from "./lib/get-current-sha";
 import { getCurrentTags } from "./lib/get-current-tags";
@@ -281,10 +282,13 @@ class PublishCommand extends Command {
 
     this.packagesToPublish = this.updates.map((node) => getPackage(node));
 
-    if (this.options.contents) {
-      // globally override directory to publish
-      for (const pkg of this.packagesToPublish) {
+    // override directory to publish
+    for (const pkg of this.packagesToPublish) {
+      if (this.options.contents) {
         pkg.contents = this.options.contents;
+      }
+      if (pkg.lernaConfig?.publish?.directory) {
+        pkg.contents = pkg.lernaConfig.publish?.directory;
       }
     }
 
@@ -821,7 +825,7 @@ class PublishCommand extends Command {
     const mapper = pPipe(
       ...[
         this.options.requireScripts && ((pkg: Package) => this.execScript(pkg, "prepublish")),
-
+        (pkg: Package) => this.copyAssets(pkg).then(() => pkg),
         (pkg: Package) =>
           pulseTillDone(packDirectory(pkg, pkg.location, opts)).then((packed) => {
             tracker.verbose("packed", path.relative(this.project.rootPath, pkg.contents));
@@ -1024,6 +1028,34 @@ class PublishCommand extends Command {
         privatePackagesToInclude.has("*") ||
         privatePackagesToInclude.has(getPackage(node).name)
     );
+  }
+
+  private async copyAssets(pkg: Package) {
+    const assets = pkg.lernaConfig?.publish?.assets || ["package.json", "README.md"];
+
+    for (const asset of assets) {
+      let from: string;
+      let to: string;
+
+      if (typeof asset === "string") {
+        from = join(pkg.location, asset);
+        to = join(pkg.contents, asset);
+      } else {
+        if (!asset.from || !asset.to) {
+          throw new ValidationError(
+            "EINVALIDASSETS",
+            "Asset configuration must be a plain string or object with both `from` and `to` properties."
+          );
+        }
+        from = join(pkg.location, asset.from);
+        to = join(pkg.contents, asset.to);
+      }
+
+      if (existsSync(from)) {
+        this.logger.verbose("publish", `copying asset ${JSON.stringify(asset)} to ${pkg.contents}`);
+        await copy(from, to);
+      }
+    }
   }
 }
 

@@ -41,6 +41,13 @@ function shallowCopy(json: any) {
   }, {});
 }
 
+export interface RawManifestLernaConfig {
+  publish?: {
+    directory?: string;
+    assets?: (string | { from: string; to: string })[];
+  };
+}
+
 export interface RawManifest {
   name: string;
   version: string;
@@ -56,6 +63,7 @@ export interface RawManifest {
   workspaces?: string[];
   nx?: Record<string, unknown>;
   gitHead?: string;
+  lerna?: RawManifestLernaConfig;
 }
 
 export type ExtendedNpaResult = npa.Result & {
@@ -139,6 +147,10 @@ export class Package {
 
   get scripts() {
     return this[_scripts];
+  }
+
+  get lernaConfig(): RawManifestLernaConfig | undefined {
+    return this[PKG].lerna;
   }
 
   get bin() {
