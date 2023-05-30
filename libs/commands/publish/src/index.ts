@@ -29,13 +29,14 @@ import fs, { existsSync } from "fs";
 import os from "os";
 import pMap from "p-map";
 import pPipe from "p-pipe";
-import path, { join } from "path";
+import path, { basename, join, normalize } from "path";
 import semver, { ReleaseType } from "semver";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const versionCommand = require("@lerna/commands/version");
 
 import { copy } from "fs-extra";
+import globby from "globby";
 import { createTempLicenses } from "./lib/create-temp-licenses";
 import { getCurrentSHA } from "./lib/get-current-sha";
 import { getCurrentTags } from "./lib/get-current-tags";
@@ -1031,29 +1032,62 @@ class PublishCommand extends Command {
   }
 
   private async copyAssets(pkg: Package) {
+    if (normalize(pkg.location) === normalize(pkg.contents)) {
+      // no need to copy assets if publishing from the source location
+      return;
+    }
     const assets = pkg.lernaConfig?.publish?.assets || ["package.json", "README.md"];
+    const filesToCopy: {
+      from: string;
+      to: string;
+    }[] = [];
+
+    const getFiles = (glob: string) =>
+      globby(glob, {
+        cwd: pkg.location,
+        onlyFiles: false,
+        expandDirectories: false,
+      });
 
     for (const asset of assets) {
-      let from: string;
-      let to: string;
-
       if (typeof asset === "string") {
-        from = join(pkg.location, asset);
-        to = join(pkg.contents, asset);
-      } else {
-        if (!asset.from || !asset.to) {
-          throw new ValidationError(
-            "EINVALIDASSETS",
-            "Asset configuration must be a plain string or object with both `from` and `to` properties."
-          );
-        }
-        from = join(pkg.location, asset.from);
-        to = join(pkg.contents, asset.to);
-      }
+        const files = await getFiles(asset);
 
-      if (existsSync(from)) {
-        this.logger.verbose("publish", `copying asset ${JSON.stringify(asset)} to ${pkg.contents}`);
-        await copy(from, to);
+        this.logger.verbose("publish", "Expanded asset glob %s into files %j", asset, files);
+
+        for (const file of files) {
+          filesToCopy.push({
+            from: join(pkg.location, file),
+            to: join(pkg.contents, file),
+          });
+        }
+      } else if (asset.from && typeof asset.from === "string" && asset.to && typeof asset.to === "string") {
+        const files = await getFiles(asset.from);
+
+        this.logger.verbose("publish", "Expanded asset glob %s into files %j", asset.from, files);
+
+        for (const file of files) {
+          filesToCopy.push({
+            from: join(pkg.location, file),
+            to: join(pkg.contents, asset.to, basename(file)),
+          });
+        }
+      } else {
+        throw new ValidationError(
+          "EINVALIDASSETS",
+          "Asset configuration must be a plain string or object with both `from` and `to` string properties."
+        );
+      }
+    }
+
+    for (const file of filesToCopy) {
+      if (normalize(file.from) === normalize(file.to)) {
+        this.logger.warn("EPUBLISHASSET", "Asset %s is already in package directory", file.from);
+      } else if (existsSync(file.from)) {
+        this.logger.verbose("publish", "Copying asset %s to %s", file.from, file.to);
+        await copy(file.from, file.to);
+      } else {
+        this.logger.warn("EPUBLISHASSET", "Asset %s does not exist", file.from);
       }
     }
   }
