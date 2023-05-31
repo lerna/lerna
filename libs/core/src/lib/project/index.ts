@@ -227,52 +227,52 @@ export class Project {
   }
 
   #resolveLernaConfig(cwd?: string) {
-    const explorer = cosmiconfigSync("lerna", {
-      loaders: {
-        ...defaultLoaders,
-        ".json": (filepath, content) => {
-          if (!filepath.endsWith("lerna.json")) {
-            return defaultLoaders[".json"](filepath, content);
-          }
-          /**
-           * This prevents lerna from blowing up on trailing commas and comments in lerna configs,
-           * however it should be noted that we will not be able to respect those things whenever
-           * we perform an automated config migration, e.g. via `lerna repair` and they will be lost.
-           * (Although that will be easy enough for the user to see and updated in their `git diff`)
-           */
-          try {
-            return parseJson(content);
-          } catch (err: unknown) {
-            if (err instanceof Error) {
-              err.name = "JSONError";
-              err.message = `Error in: ${filepath}\n${err.message}`;
-            }
-            throw err;
-          }
-        },
-      },
-      searchPlaces: ["lerna.json", "package.json"],
-      transform(obj) {
-        // cosmiconfig returns null when nothing is found
-        if (!obj) {
-          const configNotFoundResult: CosmiconfigNotFoundResult = {
-            // No need to distinguish between missing and empty,
-            // saves a lot of noisy guards elsewhere
-            config: {},
-            configNotFound: true,
-            // path.resolve(".", ...) starts from process.cwd()
-            filepath: path.resolve(cwd || ".", "lerna.json"),
-          };
-          return configNotFoundResult;
-        }
-
-        obj.config = applyExtends(obj.config, path.dirname(obj.filepath));
-
-        return obj;
-      },
-    });
-
     try {
+      const explorer = cosmiconfigSync("lerna", {
+        loaders: {
+          ...defaultLoaders,
+          ".json": (filepath, content) => {
+            if (!filepath.endsWith("lerna.json")) {
+              return defaultLoaders[".json"](filepath, content);
+            }
+            /**
+             * This prevents lerna from blowing up on trailing commas and comments in lerna configs,
+             * however it should be noted that we will not be able to respect those things whenever
+             * we perform an automated config migration, e.g. via `lerna repair` and they will be lost.
+             * (Although that will be easy enough for the user to see and updated in their `git diff`)
+             */
+            try {
+              return parseJson(content);
+            } catch (err: unknown) {
+              if (err instanceof Error) {
+                err.name = "JSONError";
+                err.message = `Error in: ${filepath}\n${err.message}`;
+              }
+              throw err;
+            }
+          },
+        },
+        searchPlaces: ["lerna.json", "package.json"],
+        transform(obj) {
+          // cosmiconfig returns null when nothing is found
+          if (!obj) {
+            const configNotFoundResult: CosmiconfigNotFoundResult = {
+              // No need to distinguish between missing and empty,
+              // saves a lot of noisy guards elsewhere
+              config: {},
+              configNotFound: true,
+              // path.resolve(".", ...) starts from process.cwd()
+              filepath: path.resolve(cwd || ".", "lerna.json"),
+            };
+            return configNotFoundResult;
+          }
+
+          obj.config = applyExtends(obj.config, path.dirname(obj.filepath));
+
+          return obj;
+        },
+      });
+
       /**
        * We explicitly handle the missing config case in the transform function above,
        * so we can remove null from the types and replace it with the custom ConfigNotFoundResult.

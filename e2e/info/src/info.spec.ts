@@ -5,7 +5,7 @@ expect.addSnapshotSerializer({
     return normalizeEnvironment(
       str
         .replaceAll(/OS: .*\n/g, "OS: {OS}\n")
-        .replaceAll(/CPU: \(\d{1,2}\) x(64|32) .* CPU .*\n/g, "CPU: {CPU}\n")
+        .replaceAll(/CPU: \(\d{1,2}\) x(64|32) .* (CPU|Processor).*\n/g, "CPU: {CPU}\n")
         .replaceAll(/CPU: \(\d{1,2}\) arm64 .*\n/g, "CPU: {CPU}\n")
         .replaceAll(/Node: (\d{1,2})\.(\d{1,2})\.(\d{1,2}) - .*\n/g, "Node: XX.XX.XX - {Node}\n")
         .replaceAll(/Yarn: (\d{1,2})\.(\d{1,2})\.(\d{1,2}) - .*\n/g, "Yarn: XX.XX.XX - {Yarn}\n")
