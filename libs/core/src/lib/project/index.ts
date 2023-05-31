@@ -13,7 +13,6 @@ import path from "path";
 import { Package, RawManifest } from "../package";
 import { ValidationError } from "../validation-error";
 import { applyExtends } from "./apply-extends";
-import { deprecateConfig } from "./deprecate-config";
 import { makeFileFinder, makeSyncFileFinder } from "./make-file-finder";
 
 interface CosmiconfigNotFoundResult {
@@ -266,9 +265,6 @@ export class Project {
           };
           return configNotFoundResult;
         }
-
-        // rename deprecated durable config
-        deprecateConfig(obj.config, obj.filepath);
 
         obj.config = applyExtends(obj.config, path.dirname(obj.filepath));
 

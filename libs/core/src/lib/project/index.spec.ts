@@ -174,62 +174,6 @@ describe("Project", () => {
       });
     });
 
-    it("updates deprecated config recursively", async () => {
-      const cwd = await initFixture("extends-deprecated");
-      const project = new Project(cwd);
-
-      expect(project.config).toMatchInlineSnapshot(`
-        Object {
-          "command": Object {
-            "bootstrap": Object {
-              "hoist": true,
-            },
-            "publish": Object {
-              "bump": "prerelease",
-              "distTag": "next",
-              "ignoreChanges": Array [
-                "ignored-file",
-              ],
-              "loglevel": "success",
-            },
-            "version": Object {
-              "createRelease": "github",
-            },
-          },
-          "packages": Array [
-            "recursive-pkgs/*",
-          ],
-          "version": "1.0.0",
-        }
-      `);
-    });
-
-    // TODO: migrate to repair generator
-    // it("updates command.publish.githubRelease to command.version.createRelease", async () => {
-    //   const cwd = await initFixture("basic");
-
-    //   await fs.writeJSON(path.resolve(cwd, "lerna.json"), {
-    //     command: {
-    //       publish: {
-    //         githubRelease: true,
-    //       },
-    //     },
-    //     version: "1.0.0",
-    //   });
-
-    //   const project = new Project(cwd);
-
-    //   expect(project.config).toEqual({
-    //     command: {
-    //       publish: {},
-    //       version: {
-    //         createRelease: "github",
-    //       },
-    //     },
-    //     version: "1.0.0",
-    //   });
-    // });
-
     it("throws an error when extend target is unresolvable", async () => {
       const cwd = await initFixture("extends-unresolved");
 

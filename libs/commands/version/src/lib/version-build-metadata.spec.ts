@@ -54,16 +54,6 @@ describe("--build-metadata without prompt", () => {
     expect(patch).toMatchSnapshot();
   });
 
-  it("accepts build metadata for repository version", async () => {
-    const testDir = await initFixture("normal");
-    await lernaVersion(testDir)("--repo-version", "1.0.2", "--build-metadata", "21AF26D3--117B344092BD");
-
-    expect(promptSelectOne).not.toHaveBeenCalled();
-
-    const patch = await showCommit(testDir);
-    expect(patch).toMatchSnapshot();
-  });
-
   it("accepts build metadata with semver keyword", async () => {
     const testDir = await initFixture("normal");
     await lernaVersion(testDir)("minor", "--build-metadata", "001");
@@ -74,14 +64,22 @@ describe("--build-metadata without prompt", () => {
     expect(patch).toMatchSnapshot();
   });
 
-  it("accepts build metadata with cd version", async () => {
+  it("should error when --repo-version is used", async () => {
     const testDir = await initFixture("normal");
-    await lernaVersion(testDir)("--cd-version", "premajor", "--build-metadata", "exp.sha.5114f85");
+    await expect(
+      lernaVersion(testDir)("--repo-version", "1.0.2", "--build-metadata", "21AF26D3--117B344092BD")
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"--repo-version was replaced by positional [bump]. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from."`
+    );
+  });
 
-    expect(promptSelectOne).not.toHaveBeenCalled();
-
-    const patch = await showCommit(testDir);
-    expect(patch).toMatchSnapshot();
+  it("should error when --cd-version is used", async () => {
+    const testDir = await initFixture("normal");
+    await expect(
+      lernaVersion(testDir)("--cd-version", "premajor", "--build-metadata", "exp.sha.5114f85")
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"--cd-version was replaced by positional [bump]. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from."`
+    );
   });
 
   it("accepts build metadata with default prerelease id", async () => {
