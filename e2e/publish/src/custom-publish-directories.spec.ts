@@ -69,6 +69,8 @@ describe("lerna-publish-custom-publish-directories", () => {
         },
       }));
 
+      await fixture.lerna("create package-3 -y");
+
       await ensureDir(fixture.getWorkspacePath("packages/package-2/docs"));
       await writeFile(fixture.getWorkspacePath("packages/package-2/docs/doc-1.md"), "doc 1");
       await writeFile(fixture.getWorkspacePath("packages/package-2/docs/doc-2.md"), "doc 2");
@@ -97,6 +99,7 @@ describe("lerna-publish-custom-publish-directories", () => {
       );
       await fixture.exec(`npm unpublish --force package-1@${version} --registry=http://localhost:4872`);
       await fixture.exec(`npm unpublish --force package-2@${version} --registry=http://localhost:4872`);
+      await fixture.exec(`npm unpublish --force package-3@${version} --registry=http://localhost:4872`);
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");
 
@@ -108,15 +111,16 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna verb user-agent lerna/999.9.9-e2e.0/node@v18.15.0+arm64 (darwin)
         lerna verb git-describe undefined => "vXX.XX.XX-0-gXXXXXXXX"
 
-        Found 2 packages to publish:
+        Found 3 packages to publish:
          - package-1 => XX.XX.XX
          - package-2 => XX.XX.XX
+         - package-3 => XX.XX.XX
 
         lerna info auto-confirmed 
         lerna info publish Publishing packages to npm...
         lerna notice Skipping all user and access validation due to third-party registry
         lerna notice Make sure you're authenticated properly ¯\\_(ツ)_/¯
-        lerna WARN ENOLICENSE Packages package-1 and package-2 are missing a license.
+        lerna WARN ENOLICENSE Packages package-1, package-2, and package-3 are missing a license.
         lerna WARN ENOLICENSE One way to fix this is to add a LICENSE.md file to the root of this repository.
         lerna WARN ENOLICENSE See https://choosealicense.com for additional guidance.
         lerna verb getCurrentSHA {FULL_COMMIT_SHA}
@@ -138,14 +142,16 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna verb publish Copying asset /tmp/lerna-e2e/lerna-publish-custom-publish-directories/lerna-workspace/CONTRIBUTING.md to /tmp/lerna-e2e/lerna-publish-custom-publish-directories/lerna-workspace/dist/packages/package-2/CONTRIBUTING.md
         lerna verb pack-directory dist/packages/package-2
         lerna verb packed dist/packages/package-2
+        lerna verb pack-directory packages/package-3
+        lerna verb packed packages/package-3
         lerna verb publish package-1
         lerna success published package-1 XX.XX.XX
         lerna notice 
         lerna notice 📦  package-1@XX.XX.XX
         lerna notice === Tarball Contents === 
-        lerna notice 99B   lib/main.js 
-        lerna notice 1.0kXXXB package.json
-        lerna notice 119B  README.md   
+        lerna notice 99B  lib/main.js 
+        lerna notice XXXB package.json
+        lerna notice 119B README.md   
         lerna notice === Tarball Details === 
         lerna notice name:          package-1                               
         lerna notice version:       XX.XX.XX                                
@@ -162,7 +168,7 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna notice 📦  package-2@XX.XX.XX
         lerna notice === Tarball Contents === 
         lerna notice 99B   lib/main.js 
-        lerna notice 1.3kXXXB package.json
+        lerna notice 1.2kXXXB package.json
         lerna notice === Tarball Details === 
         lerna notice name:          package-2                               
         lerna notice version:       XX.XX.XX                                
@@ -173,10 +179,29 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         lerna notice total files:   2                                       
         lerna notice 
+        lerna verb publish package-3
+        lerna success published package-3 XX.XX.XX
+        lerna notice 
+        lerna notice 📦  package-3@XX.XX.XX
+        lerna notice === Tarball Contents === 
+        lerna notice 99B  lib/package-3.js
+        lerna notice XXXB package.json    
+        lerna notice 119B README.md       
+        lerna notice === Tarball Details === 
+        lerna notice name:          package-3                               
+        lerna notice version:       XX.XX.XX                                
+        lerna notice filename:      package-3-XX.XX.XX.tgz                  
+        lerna notice package size: XXXB                                   
+        lerna notice unpacked size: XXX.XXX kb                                  
+        lerna notice shasum:        {FULL_COMMIT_SHA}
+        lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        lerna notice total files:   3                                       
+        lerna notice 
         Successfully published:
          - package-1@XX.XX.XX
          - package-2@XX.XX.XX
-        lerna success published 2 packages
+         - package-3@XX.XX.XX
+        lerna success published 3 packages
 
       `);
 
