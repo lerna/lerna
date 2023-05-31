@@ -87,7 +87,7 @@ export class Project {
     return new Project(cwd).getPackagesSync();
   }
 
-  constructor(cwd?: string) {
+  constructor(cwd?: string, options?: { skipLernaConfigValidations: boolean }) {
     const { config, configNotFound, filepath } = this.#resolveLernaConfig(cwd);
 
     this.config = config;
@@ -97,7 +97,13 @@ export class Project {
 
     this.manifest = this.#resolveRootPackageJson();
 
-    this.#validateLernaConfig(config);
+    if (this.configNotFound) {
+      throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
+    }
+
+    if (options?.skipLernaConfigValidations !== false) {
+      this.#validateLernaConfig(config);
+    }
 
     this.packageConfigs = this.#resolvePackageConfigs();
 
@@ -290,10 +296,6 @@ export class Project {
   }
 
   #validateLernaConfig(config: LernaConfig): void {
-    if (this.configNotFound) {
-      throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
-    }
-
     if (!this.version) {
       throw new ValidationError("ENOVERSION", "Required property version does not exist in `lerna.json`");
     }

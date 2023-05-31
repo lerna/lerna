@@ -65,7 +65,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       let chain: Promise<unknown> = Promise.resolve();
 
       chain = chain.then(() => {
-        this.project = new Project(argv.cwd);
+        this.project = new Project(argv.cwd, { skipLernaConfigValidations: skipValidations });
       });
       chain = chain.then(() => this.configureEnvironment());
       chain = chain.then(() => this.configureOptions());
