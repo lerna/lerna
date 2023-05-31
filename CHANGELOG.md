@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0-alpha.3](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.3) (2023-05-31)
+
+
+### Bug Fixes
+
+* bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
+* ensure repair command not blocked by config validation ([e237d58](https://github.com/lerna/lerna/commit/e237d585e63a2fb502a8958f15a1efe03d781c57))
+* internal cli.js should not be bundled ([53d73c6](https://github.com/lerna/lerna/commit/53d73c6aa9833e5a5bf60c2c78896456e77fab40))
+* migration building/publishing issues ([27bf800](https://github.com/lerna/lerna/commit/27bf800b6e7670ea1ec5576fdf008e8d09897d4b))
+
+
+### Features
+
+* **publish:** support custom directory per-package ([#3699](https://github.com/lerna/lerna/issues/3699)) ([9da575e](https://github.com/lerna/lerna/commit/9da575e9da221b8be4fbaa2fb1e7676b54d86d4f))
+
+
+
+
+
 # [7.0.0-alpha.2](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.2) (2023-05-31)
 
 

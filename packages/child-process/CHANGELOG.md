@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0-alpha.3](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.3) (2023-05-31)
+
+
+### Bug Fixes
+
+* migration building/publishing issues ([27bf800](https://github.com/lerna/lerna/commit/27bf800b6e7670ea1ec5576fdf008e8d09897d4b))
+
+
+
+
+
 # [7.0.0-alpha.2](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.2) (2023-05-31)
 
 **Note:** Version bump only for package @lerna/child-process
