@@ -49,6 +49,7 @@ const sidebars = {
         "concepts/task-pipeline-configuration",
         "concepts/how-caching-works",
         "concepts/dte-guide",
+        "concepts/configuring-published-files",
         "concepts/alternate-bootstrapping-methods",
         "concepts/hoisting",
       ],

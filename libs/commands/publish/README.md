@@ -101,7 +101,7 @@ Subdirectory to publish. Must apply to ALL packages, and MUST contain a package.
 Package lifecycles will still be run in the original leaf directory.
 You should probably use one of those lifecycles (`prepare`, `prepublishOnly`, or `prepack`) to _create_ the subdirectory and whatnot.
 
-If you're into unnecessarily complicated publishing, this will give you joy.
+See [Configuring Published Files](https://lerna.js.org/docs/concepts#configuring-published-files) for more information on configuring files to publish to npm.
 
 ```sh
 lerna publish --contents dist
