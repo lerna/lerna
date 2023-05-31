@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-/* eslint-disable @typescript-eslint/no-var-requires */
+
+/* eslint-disable */
 
 "use strict";
 
-/* eslint-disable import/no-dynamic-require, global-require */
 const importLocal = require("import-local");
 
 if (importLocal(__filename)) {

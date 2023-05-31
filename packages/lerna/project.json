@@ -20,12 +20,17 @@
         "outputPath": "packages/lerna/dist",
         "main": "packages/lerna/src/index.ts",
         "tsConfig": "packages/lerna/tsconfig.lib.json",
-        "assets": [],
+        "assets": [
+          {
+            "input": "packages/lerna/src",
+            "glob": "cli.js",
+            "output": "."
+          }
+        ],
         "thirdParty": false,
         "platform": "node",
         "format": ["cjs"],
         "additionalEntryPoints": [
-          "packages/lerna/src/cli.ts",
           "packages/lerna/src/commands/changed/command.ts",
           "packages/lerna/src/commands/changed/index.ts",
           "packages/lerna/src/commands/clean/command.ts",
