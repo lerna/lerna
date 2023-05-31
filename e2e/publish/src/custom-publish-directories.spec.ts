@@ -13,7 +13,8 @@ expect.addSnapshotSerializer({
       .replaceAll(/size:\s*\d*\s?B/g, "size: XXXB")
       .replaceAll(/\d*\.\d*\s?kB/g, "XXX.XXX kb")
       .replaceAll(/session\s\w{16}/g, "session XXXXXXXX")
-      .replaceAll(/"vXX\.XX\.XX-0-g[a-f0-9]{7}"/g, '"vXX.XX.XX-0-gXXXXXXXX"');
+      .replaceAll(/"vXX\.XX\.XX-0-g[a-f0-9]{7}"/g, '"vXX.XX.XX-0-gXXXXXXXX"')
+      .replaceAll(/node@v\d+\.\d+\.\d+\+\w+ \(\w+\)/g, "<user agent>");
   },
   test(val: string) {
     return val != null && typeof val === "string";
@@ -108,7 +109,7 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna verb packageConfigs Resolving packages based on package.json "workspaces" configuration.
         lerna verb rootPath /tmp/lerna-e2e/lerna-publish-custom-publish-directories/lerna-workspace
         lerna verb session XXXXXXXX
-        lerna verb user-agent lerna/999.9.9-e2e.0/node@v18.15.0+arm64 (darwin)
+        lerna verb user-agent lerna/999.9.9-e2e.0/<user agent>
         lerna verb git-describe undefined => "vXX.XX.XX-0-gXXXXXXXX"
 
         Found 3 packages to publish:
