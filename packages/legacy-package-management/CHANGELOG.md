@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0-alpha.1](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.1) (2023-05-31)
+
+
+### Bug Fixes
+
+* bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
+
+
+
+
+
 # [7.0.0-alpha.0](https://github.com/lerna/lerna/compare/6.6.2...7.0.0-alpha.0) (2023-05-10)
 
 **Note:** Version bump only for package @lerna/legacy-package-management
