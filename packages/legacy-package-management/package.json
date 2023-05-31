@@ -40,7 +40,6 @@
     "conventional-recommended-bump": "6.1.0",
     "cosmiconfig": "7.0.0",
     "dedent": "0.7.0",
-    "dot-prop": "6.0.1",
     "execa": "5.0.0",
     "file-url": "3.0.0",
     "find-up": "5.0.0",

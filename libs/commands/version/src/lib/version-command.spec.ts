@@ -112,6 +112,13 @@ describe("VersionCommand", () => {
       expect(output.logged()).toMatchSnapshot("console output");
     });
 
+    it("should error when --skip-git is used", async () => {
+      const testDir = await initFixture("normal");
+      await expect(lernaVersion(testDir)("--skip-git")).rejects.toThrowErrorMatchingInlineSnapshot(
+        `"--skip-git was replaced by --no-git-tag-version --no-push. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from."`
+      );
+    });
+
     it("throws an error when --independent is passed", async () => {
       const testDir = await initFixture("normal");
       const command = lernaVersion(testDir)("--independent");
@@ -314,15 +321,6 @@ describe("VersionCommand", () => {
       expect(logMessages).toContain("Skipping git tag/commit");
     });
 
-    it("is implied by --skip-git", async () => {
-      const testDir = await initFixture("normal");
-      await lernaVersion(testDir)("--skip-git");
-
-      const logMessages = loggingOutput();
-      expect(logMessages).toContain("Skipping git tag/commit");
-      expect(logMessages).toContain("--skip-git has been replaced by --no-git-tag-version --no-push");
-    });
-
     it("skips dirty working tree validation", async () => {
       const testDir = await initFixture("normal");
       await fs.outputFile(path.join(testDir, "packages/package-1/hello.js"), "world");
@@ -447,15 +445,6 @@ describe("VersionCommand", () => {
 
       const logMessages = loggingOutput("info");
       expect(logMessages).toContain("Skipping git push");
-    });
-
-    it("is implied by --skip-git", async () => {
-      const testDir = await initFixture("normal");
-      await lernaVersion(testDir)("--skip-git");
-
-      const logMessages = loggingOutput();
-      expect(logMessages).toContain("Skipping git push");
-      expect(logMessages).toContain("--skip-git has been replaced by --no-git-tag-version --no-push");
     });
   });
 
