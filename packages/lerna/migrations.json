@@ -1,10 +1,28 @@
 {
   "generators": {
+    "remove-invalid-init-config": {
+      "cli": "nx",
+      "version": "7.0.0-alpha.2",
+      "description": "Remove invalid `init` config from lerna.json as it is no longer applicable, given init cannot be run on an existing workspace",
+      "implementation": "./dist/migrations/remove-invalid-init-config/remove-invalid-init-config"
+    },
+    "remove-invalid-use-workspaces": {
+      "cli": "nx",
+      "version": "7.0.0-alpha.2",
+      "description": "Remove invalid `useWorkspaces` config from lerna.json as it no longer exists",
+      "implementation": "./dist/migrations/remove-invalid-use-workspaces/remove-invalid-use-workspaces"
+    },
     "remove-unnecessary-use-nx": {
       "cli": "nx",
       "version": "6.0.0-alpha.0",
       "description": "Remove unnecessary `useNx: true` from lerna.json as it is the default",
       "implementation": "./dist/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx"
+    },
+    "update-options-from-legacy-deprecate-config": {
+      "cli": "nx",
+      "version": "7.0.0-alpha.2",
+      "description": "Migrate legacy deprecated config usage to their updated counterparts",
+      "implementation": "./dist/migrations/update-options-from-legacy-deprecate-config/update-options-from-legacy-deprecate-config"
     }
   }
 }

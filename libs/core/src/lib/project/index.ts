@@ -101,7 +101,7 @@ export class Project {
       throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
     }
 
-    if (options?.skipLernaConfigValidations !== false) {
+    if (!options?.skipLernaConfigValidations) {
       this.#validateLernaConfig(config);
     }
 
@@ -373,8 +373,12 @@ export class Project {
     }
 
     const workspaces = this.manifest?.get("workspaces");
+    const isYarnClassicWorkspacesObjectConfig = Boolean(
+      workspaces && typeof workspaces === "object" && Array.isArray((workspaces as any).packages)
+    );
+    const isValidWorkspacesConfig = Array.isArray(workspaces) || isYarnClassicWorkspacesObjectConfig;
 
-    if (!workspaces || !Array.isArray(workspaces)) {
+    if (!workspaces || !isValidWorkspacesConfig) {
       throw new ValidationError(
         "EWORKSPACES",
         dedent`
@@ -385,7 +389,13 @@ export class Project {
     }
 
     log.verbose("packageConfigs", `Resolving packages based on package.json "workspaces" configuration.`);
-    return workspaces;
+
+    if (isYarnClassicWorkspacesObjectConfig) {
+      return (workspaces as any).packages;
+    }
+
+    // TS isn't picking up that this must be an array at this point
+    return workspaces as string[];
   }
 }
 
