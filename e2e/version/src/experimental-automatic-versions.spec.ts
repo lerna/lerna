@@ -69,9 +69,9 @@ describe("lerna-version-experimental-automatic-versions", () => {
         lerna info Assuming all packages changed
 
         Changes:
-         - from-remote-1: 0.0.0 => 1.2.5
-         - from-remote-2: 0.0.0 => 1.2.5
-         - from-remote-3: 0.0.0 => 1.2.5
+         - from-remote-1: 1.2.4 => 1.2.5
+         - from-remote-2: 1.2.4 => 1.2.5
+         - from-remote-3: 1.2.4 => 1.2.5
 
         lerna info auto-confirmed 
         lerna info execute Skipping releases
