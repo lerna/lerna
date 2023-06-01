@@ -162,6 +162,13 @@ class PublishCommand extends Command {
   }
 
   async initialize() {
+    if (this.project.useExperimentalAutomaticVersions() && this.options.bump !== "from-git") {
+      throw new ValidationError(
+        "EAUTOMATICVERSIONS",
+        "Experimental automatic versions are only supported with the `from-git` bump option."
+      );
+    }
+
     if (this.options.verifyAccess === false) {
       this.logger.warn(
         "verify-access",
@@ -423,6 +430,10 @@ class PublishCommand extends Command {
 
       const tags = taggedPackageNames.map((tag) => tag.replace(this.tagPrefix, ""));
       const newVersion = semver.maxSatisfying(tags, "*");
+
+      if (this.project.useExperimentalAutomaticVersions()) {
+        updates.forEach((node) => (getPackage(node).version = newVersion));
+      }
 
       updatesVersions = updates.map((node) => [node.name, getPackage(node).version || newVersion]);
     }

@@ -30,20 +30,9 @@ describe("lerna-publish-experimental-automatic-versions", () => {
     await fixture.lerna("create from-remote-2 -y");
     await fixture.lerna("create from-remote-3 -y");
     await fixture.overrideLernaConfig({
-      version: "fixed",
-      fixedVersionReferencePackage: "from-remote-1",
-    });
-    await fixture.updateJson("packages/from-remote-1/package.json", (json) => {
-      delete json.version;
-      return json;
-    });
-    await fixture.updateJson("packages/from-remote-2/package.json", (json) => {
-      delete json.version;
-      return json;
-    });
-    await fixture.updateJson("packages/from-remote-3/package.json", (json) => {
-      delete json.version;
-      return json;
+      __experimentalAutomaticVersions: {
+        referencePackage: "from-remote-1",
+      },
     });
 
     await fixture.createInitialGitCommit();
@@ -60,12 +49,15 @@ describe("lerna-publish-experimental-automatic-versions", () => {
     });
   });
 
-  // afterEach(() => fixture.destroy());
+  afterEach(() => fixture.destroy());
 
   it("publishes from-git", async () => {
     await fixture.updatePackageVersion({ packagePath: "packages/from-remote-1", newVersion: "1.2.4" });
     await fixture.updatePackageVersion({ packagePath: "packages/from-remote-2", newVersion: "1.2.4" });
     await fixture.updatePackageVersion({ packagePath: "packages/from-remote-3", newVersion: "1.2.4" });
+    await fixture.overrideLernaConfig({
+      __experimentalAutomaticVersions: null,
+    });
     await fixture.exec("git add .");
     await fixture.exec("git commit -m 'chore: set version to 1.2.4'");
 
@@ -73,32 +65,34 @@ describe("lerna-publish-experimental-automatic-versions", () => {
     await fixture.lerna("publish from-package -y --registry http://localhost:4872");
     await fixture.exec("git reset --hard HEAD~1");
 
-    const versionResult = await fixture.lerna(
-      "version patch --no-commit --registry http://localhost:4872 -y",
-      {
-        allowNetworkRequests: true,
-      }
-    );
+    const versionResult = await fixture.lerna("version patch --registry http://localhost:4872 -y", {
+      allowNetworkRequests: true,
+    });
 
     expect(versionResult.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
+      lerna WARN versioning experimental automatic versions enabled
       lerna info current version 1.2.4
       lerna info Assuming all packages changed
+
       Changes:
        - from-remote-1: 1.2.4 => 1.2.5
        - from-remote-2: 1.2.4 => 1.2.5
        - from-remote-3: 1.2.4 => 1.2.5
+
       lerna info auto-confirmed 
       lerna info execute Skipping releases
       lerna info execute Skipping git commit
       lerna info git Pushing tags...
       lerna success version finished
+
     `);
 
     const tags = await fixture.exec("git tag --list --points-at HEAD");
     expect(tags.combinedOutput).toMatchInlineSnapshot(`
-        v1.2.5
-      `);
+      v1.2.5
+
+    `);
 
     const result = await fixture.lerna(
       "publish from-git --registry http://localhost:4872 --concurrency 1 -y",
@@ -109,10 +103,13 @@ describe("lerna-publish-experimental-automatic-versions", () => {
 
     expect(result.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
+      lerna WARN versioning experimental automatic versions enabled
+
       Found 3 packages to publish:
        - from-remote-1 => 1.2.5
        - from-remote-2 => 1.2.5
        - from-remote-3 => 1.2.5
+
       lerna info auto-confirmed 
       lerna info publish Publishing packages to npm...
       lerna notice Skipping all user and access validation due to third-party registry
@@ -176,34 +173,40 @@ describe("lerna-publish-experimental-automatic-versions", () => {
        - from-remote-2@1.2.5
        - from-remote-3@1.2.5
       lerna success published 3 packages
+
     `);
 
     const versionResult2 = await fixture.lerna(
-      "version minor --force-publish --no-commit --registry http://localhost:4872 -y",
+      "version minor --force-publish --registry http://localhost:4872 -y",
       {
         allowNetworkRequests: true,
       }
     );
     expect(versionResult2.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
+      lerna WARN versioning experimental automatic versions enabled
       lerna info current version 1.2.5
       lerna WARN force-publish all packages
       lerna info Assuming all packages changed
+
       Changes:
        - from-remote-1: 1.2.5 => 1.3.0
        - from-remote-2: 1.2.5 => 1.3.0
        - from-remote-3: 1.2.5 => 1.3.0
+
       lerna info auto-confirmed 
       lerna info execute Skipping releases
       lerna info execute Skipping git commit
       lerna info git Pushing tags...
       lerna success version finished
+
     `);
 
     const tags2 = await fixture.exec("git tag --list --points-at HEAD");
     expect(tags2.combinedOutput).toMatchInlineSnapshot(`
       v1.2.5
       v1.3.0
+
     `);
 
     const result2 = await fixture.lerna(
@@ -222,10 +225,13 @@ describe("lerna-publish-experimental-automatic-versions", () => {
 
     expect(result2.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
+      lerna WARN versioning experimental automatic versions enabled
+
       Found 3 packages to publish:
        - from-remote-1 => 1.3.0
        - from-remote-2 => 1.3.0
        - from-remote-3 => 1.3.0
+
       lerna info auto-confirmed 
       lerna info publish Publishing packages to npm...
       lerna notice Skipping all user and access validation due to third-party registry
@@ -289,6 +295,7 @@ describe("lerna-publish-experimental-automatic-versions", () => {
        - from-remote-2@1.3.0
        - from-remote-3@1.3.0
       lerna success published 3 packages
+
     `);
   });
 });

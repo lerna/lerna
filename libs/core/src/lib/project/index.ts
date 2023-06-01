@@ -317,6 +317,13 @@ export class Project {
         `The "useWorkspaces" option has been removed. By default lerna will resolve your packages using your package manager's workspaces configuration. Alternatively, you can manually provide a list of package globs to be used instead via the "packages" option in lerna.json.`
       );
     }
+
+    if (this.isIndependent() && this.config.__experimentalAutomaticVersions) {
+      throw new ValidationError(
+        "EAUTOMATICVERSIONS",
+        "Experimental automatic versioning is not supported in independent mode."
+      );
+    }
   }
 
   #resolvePnpmWorkspaceConfig(): PnpmWorkspaceConfig {

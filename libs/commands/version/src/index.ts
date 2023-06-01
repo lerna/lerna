@@ -270,6 +270,12 @@ class VersionCommand extends Command {
 
     this.projectsWithPackage = Object.values(this.projectGraph.nodes).filter((node) => !!node.package);
 
+    if (this.project.useExperimentalAutomaticVersions()) {
+      for (const node of this.projectsWithPackage) {
+        getPackage(node).version = await this.getProjectVersion();
+      }
+    }
+
     this.updates = collectProjectUpdates(
       this.projectsWithPackage,
       this.projectGraph,

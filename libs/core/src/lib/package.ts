@@ -85,6 +85,7 @@ export class Package {
   [_contents]: string | undefined;
   licensePath?: string;
   packed?: Packed;
+  impliedVersion?: string;
 
   /**
    * Create a Package instance from parameters, possibly reusing existing instance.
@@ -185,11 +186,14 @@ export class Package {
 
   // accessors
   get version() {
-    return this[PKG].version;
+    // implied version should override the one in package.json
+    return this.impliedVersion || this[PKG].version;
   }
 
   set version(version) {
-    this[PKG].version = version;
+    if (!this.impliedVersion) {
+      this[PKG].version = version;
+    }
   }
 
   get contents() {
