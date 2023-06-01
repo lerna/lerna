@@ -425,17 +425,18 @@ class PublishCommand extends Command {
         updates.push(node);
         updatesVersions.push([node.name, getPackage(node).version || npaResult.rawSpec]);
       });
-    } else {
-      updates = await getProjectsWithTaggedPackages(this.projectsWithPackage, this.execOpts);
+    } else if (this.project.useExperimentalAutomaticVersions()) {
+      updates = this.projectsWithPackage;
 
       const tags = taggedPackageNames.map((tag) => tag.replace(this.tagPrefix, ""));
       const newVersion = semver.maxSatisfying(tags, "*");
 
-      if (this.project.useExperimentalAutomaticVersions()) {
-        updates.forEach((node) => (getPackage(node).version = newVersion));
-      }
+      updates.forEach((node) => (getPackage(node).version = newVersion));
 
       updatesVersions = updates.map((node) => [node.name, getPackage(node).version || newVersion]);
+    } else {
+      updates = await getProjectsWithTaggedPackages(this.projectsWithPackage, this.execOpts);
+      updatesVersions = updates.map((node) => [node.name, getPackage(node).version]);
     }
 
     updates = this.filterPrivatePkgUpdates(updates);
