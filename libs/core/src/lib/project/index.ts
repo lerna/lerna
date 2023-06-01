@@ -40,6 +40,8 @@ export interface CommandConfigOptions {
   independent?: boolean;
   ci?: boolean;
   since?: string;
+  distTag?: string;
+  registry?: string;
 }
 
 export interface LernaConfig {
@@ -49,6 +51,9 @@ export interface LernaConfig {
   useNx?: boolean;
   npmClient?: string;
   command?: CommandConfigs;
+  __experimentalAutomaticVersions?: {
+    referencePackage: string;
+  };
 }
 
 interface PnpmWorkspaceConfig {
@@ -204,6 +209,10 @@ export class Project {
 
   isIndependent(): boolean {
     return this.version === "independent";
+  }
+
+  useExperimentalAutomaticVersions(): boolean {
+    return !!this.config.__experimentalAutomaticVersions;
   }
 
   serializeConfig(): string {

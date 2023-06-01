@@ -12,8 +12,11 @@ import _writePkg from "write-pkg";
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
-// eslint-disable-next-line jest/no-mocks-import
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+jest.mock("@lerna/core", () => ({
+  // eslint-disable-next-line jest/no-mocks-import
+  ...require("@lerna/test-helpers/__mocks__/@lerna/core"),
+  gitCheckout: jest.requireActual("@lerna/core").gitCheckout,
+}));
 
 // lerna publish mocks
 jest.mock("./get-packages-without-license", () => ({

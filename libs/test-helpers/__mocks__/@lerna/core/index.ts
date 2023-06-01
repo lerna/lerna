@@ -38,4 +38,5 @@ module.exports = {
   npmInstall: jest.fn(),
   npmInstallDependencies: jest.fn(),
   getOneTimePassword: jest.fn(),
+  gitCheckout: jest.fn(),
 };

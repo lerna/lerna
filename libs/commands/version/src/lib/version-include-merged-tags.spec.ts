@@ -20,6 +20,7 @@ jest.mock("@lerna/core", () => {
     ...mockCore,
     // we're actually testing integration with git
     collectProjectUpdates: jest.requireActual("@lerna/core").collectProjectUpdates,
+    gitCheckout: jest.requireActual("@lerna/core").gitCheckout,
   };
 });
 

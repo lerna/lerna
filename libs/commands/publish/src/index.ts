@@ -37,6 +37,7 @@ const versionCommand = require("@lerna/commands/version");
 
 import { copy } from "fs-extra";
 import globby from "globby";
+import npa from "npm-package-arg";
 import { createTempLicenses } from "./lib/create-temp-licenses";
 import { getCurrentSHA } from "./lib/get-current-sha";
 import { getCurrentTags } from "./lib/get-current-tags";
@@ -401,25 +402,32 @@ class PublishCommand extends Command {
     const taggedPackageNames = await getCurrentTags(this.execOpts, matchingPattern);
 
     let updates: ProjectGraphProjectNodeWithPackage[];
+    let updatesVersions: [string, string][];
     if (!taggedPackageNames.length) {
       this.logger.notice("from-git", "No tagged release found");
 
       updates = [];
     } else if (this.project.isIndependent()) {
-      updates = taggedPackageNames.map(
-        (name) => this.projectsWithPackage.find((node) => getPackage(node).name === name) // TODO: improve lookup efficiency
-      );
+      updates = [];
+      updatesVersions = [];
+
+      taggedPackageNames.forEach((tag) => {
+        const npaResult = npa(tag);
+        const node = this.projectsWithPackage.find((node) => getPackage(node).name === npaResult.name);
+
+        updates.push(node);
+        updatesVersions.push([node.name, getPackage(node).version || npaResult.rawSpec]);
+      });
     } else {
-      updates = await getProjectsWithTaggedPackages(
-        this.projectsWithPackage,
-        this.project.rootPath,
-        this.execOpts
-      );
+      updates = await getProjectsWithTaggedPackages(this.projectsWithPackage, this.execOpts);
+
+      const tags = taggedPackageNames.map((tag) => tag.replace(this.tagPrefix, ""));
+      const newVersion = semver.maxSatisfying(tags, "*");
+
+      updatesVersions = updates.map((node) => [node.name, getPackage(node).version || newVersion]);
     }
 
     updates = this.filterPrivatePkgUpdates(updates);
-
-    const updatesVersions: [string, string][] = updates.map((node) => [node.name, getPackage(node).version]);
 
     return {
       updates,
@@ -489,7 +497,7 @@ class PublishCommand extends Command {
     }
 
     // find changed packages since last release, if any
-    const updates: ProjectGraphProjectNodeWithPackage[] = await this.filterPrivatePkgUpdates(
+    const updates: ProjectGraphProjectNodeWithPackage[] = this.filterPrivatePkgUpdates(
       collectProjectUpdates(this.projectsWithPackage, this.projectGraph, this.execOpts, {
         bump: "prerelease",
         canary: true,

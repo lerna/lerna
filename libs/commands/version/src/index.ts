@@ -8,6 +8,7 @@ import {
   createRunner,
   getPackage,
   getPackagesForOption,
+  gitCheckout,
   output,
   Package,
   prereleaseIdFromVersion,
@@ -21,6 +22,7 @@ import {
 } from "@lerna/core";
 import chalk from "chalk";
 import dedent from "dedent";
+import execa from "execa";
 import fs from "fs";
 import minimatch from "minimatch";
 import os from "os";
@@ -181,7 +183,7 @@ class VersionCommand extends Command {
 
   async initialize() {
     if (!this.project.isIndependent()) {
-      this.logger.info("current version", this.project.version);
+      this.logger.info("current version", await this.getProjectVersion());
     }
 
     if (this.requiresGit) {
@@ -382,7 +384,7 @@ class VersionCommand extends Command {
    * Gets a mapping of project names to their package's new version.
    * @returns {Promise<Record<string, string>>} A map of project names to their package's new versions
    */
-  getVersionsForUpdates() {
+  async getVersionsForUpdates() {
     const independentVersions = this.project.isIndependent();
     const { bump, conventionalCommits, preid } = this.options;
     const repoVersion = bump ? semver.clean(bump) : "";
@@ -411,10 +413,12 @@ class VersionCommand extends Command {
           this.options.buildMetadata
         );
     } else if (increment) {
+      const baseVersion = await this.getProjectVersion();
+
       // compute potential prerelease ID once for all fixed updates
-      const prereleaseId = prereleaseIdFromVersion(this.project.version);
+      const prereleaseId = prereleaseIdFromVersion(baseVersion);
       const nextVersion = applyBuildMetadata(
-        semver.inc(this.project.version, increment as ReleaseType, resolvePrereleaseId(prereleaseId)),
+        semver.inc(baseVersion, increment as ReleaseType, resolvePrereleaseId(prereleaseId)),
         this.options.buildMetadata
       );
 
@@ -426,9 +430,11 @@ class VersionCommand extends Command {
       // prompt for each independent update with potential prerelease ID
       predicate = makePromptVersion(resolvePrereleaseId, this.options.buildMetadata);
     } else {
+      const baseVersion = await this.getProjectVersion();
+
       // prompt once with potential prerelease ID
-      const prereleaseId = prereleaseIdFromVersion(this.project.version);
-      const node = { version: this.project.version, prereleaseId };
+      const prereleaseId = prereleaseIdFromVersion(baseVersion);
+      const node = { version: baseVersion, prereleaseId };
 
       const prompt = makePromptVersion(resolvePrereleaseId, this.options.buildMetadata);
       predicate = prompt(node).then(makeGlobalVersionPredicate);
@@ -482,7 +488,7 @@ class VersionCommand extends Command {
     };
 
     if (type === "fixed") {
-      this.setGlobalVersionFloor();
+      await this.setGlobalVersionFloor();
     }
 
     const versions = await this.reduceVersions((node) => {
@@ -501,14 +507,14 @@ class VersionCommand extends Command {
     });
 
     if (type === "fixed") {
-      this.globalVersion = this.setGlobalVersionCeiling(versions);
+      this.globalVersion = await this.setGlobalVersionCeiling(versions);
     }
 
     return versions;
   }
 
-  setGlobalVersionFloor() {
-    const globalVersion = this.project.version;
+  async setGlobalVersionFloor() {
+    const globalVersion = await this.getProjectVersion();
 
     for (const node of this.updates) {
       const pkg = getPackage(node);
@@ -523,8 +529,8 @@ class VersionCommand extends Command {
     }
   }
 
-  setGlobalVersionCeiling(versions: Map<string, string>) {
-    let highestVersion = this.project.version;
+  async setGlobalVersionCeiling(versions: Map<string, string>) {
+    let highestVersion = await this.getProjectVersion();
 
     versions.forEach((bump) => {
       if (bump && semver.gt(bump, highestVersion)) {
@@ -622,7 +628,7 @@ class VersionCommand extends Command {
       (node) => {
         const pkg = getPackage(node);
         // set new version
-        pkg.set("version", this.updatesVersions.get(node.name));
+        pkg.version = this.updatesVersions.get(node.name);
 
         // update dependencies
         this.updateDependencies(node);
@@ -676,7 +682,7 @@ class VersionCommand extends Command {
     });
 
     if (!independentVersions) {
-      this.project.version = this.globalVersion;
+      this.setProjectVersion(this.globalVersion);
 
       if (conventionalCommits && changelog) {
         const { logPath, newEntry } = await updateChangelog(this.project.manifest, "root", {
@@ -753,8 +759,12 @@ class VersionCommand extends Command {
       await this.runRootLifecycle("version");
     }
 
-    if (this.commitAndTag) {
+    if (this.commitAndTag && !this.project.useExperimentalAutomaticVersions()) {
       await gitAdd(Array.from(changedFiles), this.gitOpts, this.execOpts);
+    }
+
+    if (this.project.useExperimentalAutomaticVersions()) {
+      await this.resetChanges(Array.from(changedFiles));
     }
   }
 
@@ -777,6 +787,11 @@ class VersionCommand extends Command {
 
   async commitAndTagUpdates() {
     let tags: string[] = [];
+
+    if (this.project.useExperimentalAutomaticVersions()) {
+      this.logger.info("execute", "Skipping git commit");
+    }
+
     if (this.project.isIndependent()) {
       tags = await this.gitCommitAndTagVersionForUpdates();
     } else {
@@ -794,7 +809,7 @@ class VersionCommand extends Command {
     }
   }
 
-  gitCommitAndTagVersionForUpdates() {
+  async gitCommitAndTagVersionForUpdates() {
     const tags = this.updates.map((node) => {
       const pkg = getPackage(node);
       return `${pkg.name}@${this.updatesVersions.get(node.name)}`;
@@ -802,31 +817,55 @@ class VersionCommand extends Command {
     const subject = this.options.message || "Publish";
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
-    return Promise.resolve()
-      .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() =>
-        Promise.all(tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand)))
-      )
-      .then(() => tags);
+    if (!this.project.useExperimentalAutomaticVersions() && (await this.hasChanges())) {
+      await gitCommit(message, this.gitOpts, this.execOpts);
+    }
+    await Promise.all(
+      tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand))
+    );
+
+    return tags;
   }
 
-  gitCommitAndTagVersion() {
+  async gitCommitAndTagVersion() {
     const version = this.globalVersion;
     const tag = `${this.tagPrefix}${version}`;
     const message = this.options.message
       ? this.options.message.replace(/%s/g, tag).replace(/%v/g, version)
       : tag;
 
-    return Promise.resolve()
-      .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand))
-      .then(() => [tag]);
+    if (!this.project.useExperimentalAutomaticVersions() && (await this.hasChanges())) {
+      await gitCommit(message, this.gitOpts, this.execOpts);
+    }
+
+    await gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand);
+
+    return [tag];
   }
 
   gitPushToRemote() {
     this.logger.info("git", "Pushing tags...");
 
     return gitPush(this.gitRemote, this.currentBranch, this.execOpts);
+  }
+
+  private async hasChanges() {
+    try {
+      await execa("git", ["diff", "--staged", "--quiet"], { stdio: "pipe", ...this.execOpts });
+    } catch (e) {
+      // git diff exited with a non-zero exit code, so we assume changes were found
+      return true;
+    }
+  }
+
+  private async resetChanges(changedFiles: string[]) {
+    const gitOpts = {
+      granularPathspec: this.options.granularPathspec !== false,
+    };
+
+    await gitCheckout(changedFiles, gitOpts, this.execOpts).catch((err) => {
+      this.logger.silly("EGITCHECKOUT", err.message);
+    });
   }
 }
 
