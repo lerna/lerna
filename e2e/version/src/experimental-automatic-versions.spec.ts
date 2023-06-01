@@ -64,17 +64,21 @@ describe("lerna-version-experimental-automatic-versions", () => {
 
       expect(result.combinedOutput).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
+        lerna WARN versioning experimental automatic versions enabled
         lerna info current version 1.2.4
         lerna info Assuming all packages changed
+
         Changes:
          - from-remote-1: 0.0.0 => 1.2.5
          - from-remote-2: 0.0.0 => 1.2.5
          - from-remote-3: 0.0.0 => 1.2.5
+
         lerna info auto-confirmed 
         lerna info execute Skipping releases
         lerna info execute Skipping git commit
         lerna info git Pushing tags...
         lerna success version finished
+
       `);
 
       const gitCommit = await fixture.exec("git show");
@@ -82,29 +86,29 @@ describe("lerna-version-experimental-automatic-versions", () => {
         commit <hash>
         Author: <author>
         Date: <date>
+
             chore: override lerna config
+
         diff --git a/lerna.json b/lerna.json
         index <hash>..<hash> <mode>
         --- a/lerna.json
         +++ b/lerna.json
-        @@ -1,8 +1,9 @@
+        @@ -1,4 +1,7 @@
          {
            "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-           "useWorkspaces": false,
-           "version": "0.0.0",
-           "packages": [
-             "packages/*"
-        -  ]
-        +  ],
+        -  "version": "0.0.0"
+        +  "version": "0.0.0",
         +  "__experimentalAutomaticVersions": {
-        +     "referencePackage": "from-remote-1"
-        +   }
+        +    "referencePackage": "from-remote-1"
+        +  }
          }
+
       `);
 
       const tags = await fixture.exec("git tag --list --points-at HEAD");
       expect(tags.combinedOutput).toMatchInlineSnapshot(`
         v1.2.5
+
       `);
     });
   });
