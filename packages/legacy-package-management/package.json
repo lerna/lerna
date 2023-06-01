@@ -1,6 +1,6 @@
 {
   "name": "@lerna/legacy-package-management",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.4",
   "description": "Legacy package management concerns provided by lerna. Please migrate to use npm/yarn/pnpm workspaces instead.",
   "keywords": [
     "lerna",
@@ -91,5 +91,5 @@
   "exports": {
     ".": "./dist/index.js"
   },
-  "gitHead": "27bf800b6e7670ea1ec5576fdf008e8d09897d4b"
+  "gitHead": "cdd901485d750a78c9fd6f8d7c22b6b64c0efa4c"
 }

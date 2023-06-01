@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0-alpha.4](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.4) (2023-06-01)
+
+
+### Bug Fixes
+
+* bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
+* internal cli.js should not be bundled ([53d73c6](https://github.com/lerna/lerna/commit/53d73c6aa9833e5a5bf60c2c78896456e77fab40))
+* migration building/publishing issues ([27bf800](https://github.com/lerna/lerna/commit/27bf800b6e7670ea1ec5576fdf008e8d09897d4b))
+* **publish:** use correct version in log messages ([#3702](https://github.com/lerna/lerna/issues/3702)) ([4be9188](https://github.com/lerna/lerna/commit/4be9188e68c5d4c320c0946e6e386cbee95a8efe))
+
+
+
+
+
 # [7.0.0-alpha.3](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.3) (2023-05-31)
 
 ### Bug Fixes

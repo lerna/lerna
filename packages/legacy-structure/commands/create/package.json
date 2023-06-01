@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "7.0.0-alpha.3",
+  "version": "7.0.0-alpha.4",
   "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/create"
   },
   "dependencies": {
-    "@lerna/child-process": "7.0.0-alpha.3",
+    "@lerna/child-process": "7.0.0-alpha.4",
     "dedent": "^0.7.0",
     "fs-extra": "^9.1.0",
     "init-package-json": "^3.0.2",
@@ -66,5 +66,5 @@
       "require": "./dist/lib/lerna-module-data.js"
     }
   },
-  "gitHead": "27bf800b6e7670ea1ec5576fdf008e8d09897d4b"
+  "gitHead": "cdd901485d750a78c9fd6f8d7c22b6b64c0efa4c"
 }
