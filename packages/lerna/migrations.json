@@ -1,5 +1,11 @@
 {
   "generators": {
+    "add-schema-config": {
+      "cli": "nx",
+      "version": "7.0.0-alpha.5",
+      "description": "Add `$schema` config to lerna.json if not already present to allow for IDE validation of lerna.json",
+      "implementation": "./dist/migrations/add-schema-config/add-schema-config"
+    },
     "remove-invalid-init-config": {
       "cli": "nx",
       "version": "7.0.0-alpha.2",

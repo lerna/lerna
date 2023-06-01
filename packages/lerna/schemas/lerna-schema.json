@@ -3,7 +3,12 @@
   "$id": "https://lerna.js.org/docs/getting-started#adding-lerna",
   "title": "JSON schema for Lerna configuration",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "The JSON schema version used to validate this configuration file"
+    },
     "version": {
       "type": "string",
       "description": "The version of the repository, or \"independent\" for a repository with independently versioned packages.",
@@ -25,6 +30,7 @@
     },
     "command": {
       "type": "object",
+      "additionalProperties": false,
       "description": "Options for individual Lerna commands.",
       "properties": {
         "add": {

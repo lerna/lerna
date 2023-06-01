@@ -79,6 +79,7 @@
           "packages/lerna/src/commands/version/lib/prompt-version.ts",
           "packages/lerna/src/commands/version/lib/remote-branch-exists.ts",
           "packages/lerna/src/commands/version/lib/update-lockfile-version.ts",
+          "packages/lerna/src/migrations/add-schema-config/add-schema-config.ts",
           "packages/lerna/src/migrations/remove-invalid-init-config/remove-invalid-init-config.ts",
           "packages/lerna/src/migrations/remove-invalid-use-workspaces/remove-invalid-use-workspaces.ts",
           "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts",
