@@ -769,10 +769,12 @@ class PublishCommand extends Command {
       .concat(this.packagesToPublish)
       .map((pkg) => path.relative(_workspaceRoot, pkg.manifestLocation));
 
-    await gitCheckout(dirtyManifests, gitOpts, this.execOpts).catch((err) => {
+    try {
+      await gitCheckout(dirtyManifests, gitOpts, this.execOpts);
+    } catch (err) {
       this.logger.silly("EGITCHECKOUT", err.message);
       this.logger.notice("FYI", "Unable to reset working tree changes, this probably isn't a git repo.");
-    });
+    }
   }
 
   private execScript(pkg: Package, script: string) {

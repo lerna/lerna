@@ -863,9 +863,11 @@ class VersionCommand extends Command {
       granularPathspec: this.options.granularPathspec !== false,
     };
 
-    await gitCheckout(changedFiles, gitOpts, this.execOpts).catch((err) => {
+    try {
+      await gitCheckout(changedFiles, gitOpts, this.execOpts);
+    } catch (err) {
       this.logger.silly("EGITCHECKOUT", err.message);
-    });
+    }
   }
 }
 
