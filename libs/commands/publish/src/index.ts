@@ -550,10 +550,12 @@ class PublishCommand extends Command {
   }
 
   private confirmPublish() {
-    const count = this.packagesToPublish.length;
-    const message = this.packagesToPublish.map(
-      (pkg) => ` - ${pkg.name} => ${this.updatesVersions.get(pkg.name)}${pkg.private ? " (private!)" : ""}`
-    );
+    const count = this.updates.length;
+    const message = this.updates.map((node) => {
+      const pkg = getPackage(node);
+      const version = this.updatesVersions.get(node.name);
+      return ` - ${pkg.name} => ${version}${pkg.private ? " (private!)" : ""}`;
+    });
 
     output("");
     output(`Found ${count} ${count === 1 ? "package" : "packages"} to publish:`);

@@ -5,37 +5,22 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [7.0.0-alpha.3](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.3) (2023-05-31)
 
-
 ### Bug Fixes
 
-* bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
-* migration building/publishing issues ([27bf800](https://github.com/lerna/lerna/commit/27bf800b6e7670ea1ec5576fdf008e8d09897d4b))
-
-
-
-
+- bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
+- migration building/publishing issues ([27bf800](https://github.com/lerna/lerna/commit/27bf800b6e7670ea1ec5576fdf008e8d09897d4b))
 
 # [7.0.0-alpha.2](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.2) (2023-05-31)
 
-
 ### Bug Fixes
 
-* bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
-
-
-
-
+- bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
 
 # [7.0.0-alpha.1](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.1) (2023-05-31)
 
-
 ### Bug Fixes
 
-* bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
-
-
-
-
+- bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
 
 # [7.0.0-alpha.0](https://github.com/lerna/lerna/compare/6.6.2...7.0.0-alpha.0) (2023-05-10)
 
