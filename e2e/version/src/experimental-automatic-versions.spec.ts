@@ -66,6 +66,7 @@ describe("lerna-version-experimental-automatic-versions", () => {
         lerna notice cli v999.9.9-e2e.0
         lerna WARN versioning experimental automatic versions enabled
         lerna info current version 1.2.4
+        lerna WARN force-publish all packages
         lerna info Assuming all packages changed
 
         Changes:
