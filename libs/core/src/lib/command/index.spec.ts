@@ -75,9 +75,7 @@ describe.skip("command", () => {
   // @ts-ignore
   const testFactory: any = (argv = {}) => new OkCommand(Object.assign({ cwd: testDir }, argv));
 
-  // TODO: figure out native hasher issue in CI with Nx 16.3.0+
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip(".logger", () => {
+  describe(".logger", () => {
     it("should be added to the instance", async () => {
       const command = testFactory();
       await command;
@@ -86,9 +84,7 @@ describe.skip("command", () => {
     });
   });
 
-  // TODO: figure out native hasher issue in CI with Nx 16.3.0+
-  // eslint-disable-next-line jest/no-disabled-tests
-  describe.skip(".concurrency", () => {
+  describe(".concurrency", () => {
     it("should be added to the instance", async () => {
       const command = testFactory({ concurrency: 6 });
       await command;
