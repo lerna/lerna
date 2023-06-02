@@ -3,6 +3,7 @@ import cloneDeep from "clone-deep";
 import dedent from "dedent";
 import { mapValues } from "lodash";
 import log from "npmlog";
+import { daemonClient } from "nx/src/daemon/client/client";
 import os from "os";
 import { CommandConfigOptions, Project } from "../project";
 import { ProjectGraphWithPackages } from "../project-graph-with-packages";
@@ -170,10 +171,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   }
 
   async detectProjects() {
-    const projectGraph = await createProjectGraphAsync({
-      exitOnError: false,
-      resetDaemonClient: true,
-    });
+    const projectGraph = await createProjectGraphAsync();
 
     // if we are using Nx >= 16.3.1, we can use the helper function to create the file map
     // otherwise, we need to use the old "files" property on the node data
@@ -189,6 +187,9 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       this.projectFileMap,
       this.project.packageConfigs
     );
+
+    // Now that we have made our two calls to the daemon, we need it to exit so that the overall process can too
+    daemonClient.reset();
   }
 
   configureEnvironment() {
