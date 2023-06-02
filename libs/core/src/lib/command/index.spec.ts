@@ -37,9 +37,7 @@ const initFixture = initFixtureFactory(__dirname);
 // file under test
 const { Command } = require("./index");
 
-// TODO: figure out native hasher issue in CI with Nx 16.3.0+
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip("command", () => {
+describe("command", () => {
   let testDir: string;
 
   beforeAll(async () => {
