@@ -1,3 +1,8 @@
+// We always need fresh copies of the graph in the unit test fixtures
+process.env.NX_DAEMON = "false";
+process.env.NX_CACHE_PROJECT_GRAPH = "false";
+
+import { fileHasher } from "nx/src/hasher/impl";
 import { ProjectGraphDependency, ProjectGraphProjectNode } from "@nx/devkit";
 import { Package, RawManifest } from "../package";
 import {
@@ -5,6 +10,8 @@ import {
   ProjectGraphWithPackages,
   ProjectGraphWorkspacePackageDependency,
 } from "../project-graph-with-packages";
+
+fileHasher.clear();
 
 export function projectNode(
   projectNode: Partial<ProjectGraphProjectNode>,
