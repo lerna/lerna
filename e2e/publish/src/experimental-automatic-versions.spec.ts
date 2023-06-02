@@ -29,11 +29,6 @@ describe("lerna-publish-experimental-automatic-versions", () => {
     await fixture.lerna("create from-remote-1 -y");
     await fixture.lerna("create from-remote-2 -y");
     await fixture.lerna("create from-remote-3 -y");
-    await fixture.overrideLernaConfig({
-      __experimentalAutomaticVersions: {
-        referencePackage: "from-remote-1",
-      },
-    });
 
     await fixture.createInitialGitCommit();
     await fixture.exec("git push origin test-main");
@@ -51,19 +46,25 @@ describe("lerna-publish-experimental-automatic-versions", () => {
 
   afterEach(() => fixture.destroy());
 
-  it("publishes from-git", async () => {
+  it("publishes all packages, regardless of the actual changes on the latest commit", async () => {
     await fixture.updatePackageVersion({ packagePath: "packages/from-remote-1", newVersion: "1.2.4" });
     await fixture.updatePackageVersion({ packagePath: "packages/from-remote-2", newVersion: "1.2.4" });
     await fixture.updatePackageVersion({ packagePath: "packages/from-remote-3", newVersion: "1.2.4" });
-    await fixture.overrideLernaConfig({
-      __experimentalAutomaticVersions: null,
-    });
     await fixture.exec("git add .");
     await fixture.exec("git commit -m 'chore: set version to 1.2.4'");
 
     // publish packages at version 1.2.4, then reset the local changes.
     await fixture.lerna("publish from-package -y --registry http://localhost:4872");
     await fixture.exec("git reset --hard HEAD~1");
+
+    await fixture.overrideLernaConfig({
+      __experimentalAutomaticVersions: {
+        referencePackage: "from-remote-1",
+      },
+    });
+    await fixture.exec("git add lerna.json");
+    await fixture.exec("git commit -m 'chore: set experimental automatic version config'");
+    await fixture.exec("git push origin test-main");
 
     const versionResult = await fixture.lerna("version patch --registry http://localhost:4872 -y", {
       allowNetworkRequests: true,
@@ -73,6 +74,7 @@ describe("lerna-publish-experimental-automatic-versions", () => {
       lerna notice cli v999.9.9-e2e.0
       lerna WARN versioning experimental automatic versions enabled
       lerna info current version 1.2.4
+      lerna WARN force-publish all packages
       lerna info Assuming all packages changed
 
       Changes:
@@ -176,12 +178,9 @@ describe("lerna-publish-experimental-automatic-versions", () => {
 
     `);
 
-    const versionResult2 = await fixture.lerna(
-      "version minor --force-publish --registry http://localhost:4872 -y",
-      {
-        allowNetworkRequests: true,
-      }
-    );
+    const versionResult2 = await fixture.lerna("version minor --registry http://localhost:4872 -y", {
+      allowNetworkRequests: true,
+    });
     expect(versionResult2.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
       lerna WARN versioning experimental automatic versions enabled

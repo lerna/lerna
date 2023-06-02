@@ -72,7 +72,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   conventionalPrerelease?: string;
   conventionalGraduate?: string;
   private?: boolean;
-  forcePublish?: string | string[];
+  forcePublish?: boolean | string | string[];
   bump?: string;
   preid?: string;
   buildMetadata?: string;
@@ -184,6 +184,10 @@ class VersionCommand extends Command {
   async initialize() {
     if (!this.project.isIndependent()) {
       this.logger.info("current version", await this.getProjectVersion());
+    }
+
+    if (this.project.useExperimentalAutomaticVersions()) {
+      this.options.forcePublish = true;
     }
 
     if (this.requiresGit) {
