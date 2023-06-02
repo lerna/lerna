@@ -435,7 +435,11 @@ class PublishCommand extends Command {
 
       updatesVersions = updates.map((node) => [node.name, getPackage(node).version || newVersion]);
     } else {
-      updates = await getProjectsWithTaggedPackages(this.projectsWithPackage, this.execOpts);
+      updates = await getProjectsWithTaggedPackages(
+        this.projectsWithPackage,
+        this.projectFileMap,
+        this.execOpts
+      );
       updatesVersions = updates.map((node) => [node.name, getPackage(node).version]);
     }
 

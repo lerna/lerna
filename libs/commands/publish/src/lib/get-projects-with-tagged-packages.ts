@@ -1,4 +1,5 @@
 import { ProjectGraphProjectNodeWithPackage } from "@lerna/core";
+import { ProjectFileMap } from "@nx/devkit";
 import { ExecOptions } from "child_process";
 import log from "npmlog";
 
@@ -10,6 +11,7 @@ const childProcess = require("@lerna/child-process");
  */
 export async function getProjectsWithTaggedPackages(
   projectNodes: ProjectGraphProjectNodeWithPackage[],
+  projectFileMap: ProjectFileMap,
   execOpts: ExecOptions
 ): Promise<ProjectGraphProjectNodeWithPackage[]> {
   log.silly("getTaggedPackages", "");
@@ -25,5 +27,5 @@ export async function getProjectsWithTaggedPackages(
   const stdout: string = result.stdout;
   const files = new Set(stdout.split("\n"));
 
-  return projectNodes.filter((node) => node.data.files.some((file) => files.has(file.file)));
+  return projectNodes.filter((node) => projectFileMap[node.name]?.some((file) => files.has(file.file)));
 }
