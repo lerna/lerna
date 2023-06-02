@@ -17,7 +17,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages-other/eee2",
-          files: [],
         },
       }),
       projectNode({
@@ -25,7 +24,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages-other/ooo1",
-          files: [],
         },
       }),
       projectNode({
@@ -33,7 +31,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages-other/ooo2",
-          files: [],
         },
       }),
       projectNode({
@@ -41,7 +38,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/other-1",
-          files: [],
         },
       }),
       projectNode({
@@ -49,7 +45,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/other-2",
-          files: [],
         },
       }),
       projectNode({
@@ -57,7 +52,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/other-with-scope",
-          files: [],
         },
       }),
       projectNode({
@@ -65,7 +59,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-1",
-          files: [],
         },
       }),
       projectNode({
@@ -73,7 +66,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-2",
-          files: [],
         },
       }),
       projectNode({
@@ -81,7 +73,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-base",
-          files: [],
         },
       }),
     ];
@@ -151,7 +142,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-1",
-          files: [],
         },
       }),
       projectNode({
@@ -159,7 +149,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-2",
-          files: [],
         },
       }),
       projectNode({
@@ -167,7 +156,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-3",
-          files: [],
         },
       }),
       projectNode({
@@ -175,7 +163,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-4",
-          files: [],
         },
       }),
       projectNode({
@@ -183,7 +170,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-5",
-          files: [],
         },
       }),
       projectNode({
@@ -191,7 +177,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-6",
-          files: [],
         },
       }),
     ];
@@ -252,7 +237,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-1",
-          files: [],
         },
       }),
       projectNode({
@@ -260,7 +244,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-2",
-          files: [],
         },
       }),
       projectNode({
@@ -268,7 +251,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-3",
-          files: [],
         },
       }),
       projectNode({
@@ -276,7 +258,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-4",
-          files: [],
         },
       }),
       projectNode({
@@ -284,7 +265,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-5",
-          files: [],
         },
       }),
       projectNode({
@@ -292,7 +272,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-6",
-          files: [],
         },
       }),
     ];
@@ -351,7 +330,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages-other/eee2",
-          files: [],
         },
       }),
       projectNode({
@@ -359,7 +337,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages-other/ooo1",
-          files: [],
         },
       }),
       projectNode({
@@ -367,7 +344,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages-other/ooo2",
-          files: [],
         },
       }),
       projectNode({
@@ -375,7 +351,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/cycle-1",
-          files: [],
         },
       }),
       projectNode({
@@ -383,7 +358,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/cycle-2",
-          files: [],
         },
       }),
       projectNode({
@@ -391,7 +365,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/cycle-3",
-          files: [],
         },
       }),
       projectNode({
@@ -399,7 +372,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/other-1",
-          files: [],
         },
       }),
       projectNode({
@@ -407,7 +379,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/other-2",
-          files: [],
         },
       }),
       projectNode({
@@ -415,7 +386,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/other-with-scope",
-          files: [],
         },
       }),
       projectNode({
@@ -423,7 +393,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-1",
-          files: [],
         },
       }),
       projectNode({
@@ -431,7 +400,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-2",
-          files: [],
         },
       }),
       projectNode({
@@ -439,7 +407,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-base",
-          files: [],
         },
       }),
     ];
@@ -542,7 +509,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-1",
-          files: [],
         },
       }),
       projectNode({
@@ -550,7 +516,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-2",
-          files: [],
         },
       }),
       projectNode({
@@ -558,7 +523,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-3",
-          files: [],
         },
       }),
       projectNode({
@@ -566,7 +530,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-4",
-          files: [],
         },
       }),
       projectNode({
@@ -574,7 +537,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-5",
-          files: [],
         },
       }),
       projectNode({
@@ -582,7 +544,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-6",
-          files: [],
         },
       }),
       projectNode({
@@ -590,7 +551,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-7",
-          files: [],
         },
       }),
       projectNode({
@@ -598,7 +558,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-8",
-          files: [],
         },
       }),
       projectNode({
@@ -606,7 +565,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-9",
-          files: [],
         },
       }),
     ];
@@ -790,7 +748,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages-other/eee2",
-          files: [],
         },
       }),
       projectNode({
@@ -798,7 +755,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages-other/ooo1",
-          files: [],
         },
       }),
       projectNode({
@@ -806,7 +762,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages-other/ooo2",
-          files: [],
         },
       }),
       projectNode({
@@ -814,7 +769,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/other-1",
-          files: [],
         },
       }),
       projectNode({
@@ -822,7 +776,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/other-2",
-          files: [],
         },
       }),
       projectNode({
@@ -830,7 +783,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/other-with-scope",
-          files: [],
         },
       }),
       projectNode({
@@ -838,7 +790,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-1",
-          files: [],
         },
       }),
       projectNode({
@@ -846,7 +797,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-2",
-          files: [],
         },
       }),
       projectNode({
@@ -854,7 +804,6 @@ describe("runProjectsTopologically", () => {
         type: "lib",
         data: {
           root: "packages/package-base",
-          files: [],
         },
       }),
     ];

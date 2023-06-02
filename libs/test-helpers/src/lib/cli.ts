@@ -1,5 +1,6 @@
 import execa from "execa";
-import { defaultFileHasher } from "nx/src/hasher/file-hasher";
+// TODO: What is the equivalent of this in Nx 16.3.1+?
+// import { defaultFileHasher } from "nx/src/hasher/file-hasher";
 import { setWorkspaceRoot } from "nx/src/utils/workspace-root";
 import path, { join } from "path";
 import yargs from "yargs";
@@ -45,8 +46,9 @@ export function commandRunner(commandModule: yargs.CommandModule) {
         process.env.NX_WORKSPACE_ROOT_PATH = cwd;
 
         // Reset the Nx file hasher in order to respect the newly set workspaceRoot
-        defaultFileHasher.clear();
-        await defaultFileHasher.ensureInitialized();
+        // TODO: What is the equivalent of this in Nx 16.3.1+?
+        // defaultFileHasher.clear();
+        // await defaultFileHasher.ensureInitialized();
 
         const yargsMeta = {};
 

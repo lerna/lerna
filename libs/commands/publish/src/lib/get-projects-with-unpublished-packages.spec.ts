@@ -1,7 +1,6 @@
 import { getPackages, ProjectGraphProjectNodeWithPackage } from "@lerna/core";
 import { initFixtureFactory } from "@lerna/test-helpers";
 import _pacote from "pacote";
-import { join } from "path";
 
 jest.mock("pacote");
 
@@ -36,7 +35,7 @@ test("getProjectsWithUnpublishedPackages", async () => {
     (pkg): ProjectGraphProjectNodeWithPackage => ({
       name: pkg.name,
       type: "lib",
-      data: { root: pkg.location, files: [{ file: join(pkg.location, "package.json"), hash: "" }] },
+      data: { root: pkg.location },
       package: pkg,
     })
   );
@@ -68,7 +67,7 @@ test("getProjectsWithUnpublishedPackages with private package", async () => {
     (pkg): ProjectGraphProjectNodeWithPackage => ({
       name: pkg.name,
       type: "lib",
-      data: { root: pkg.location, files: [{ file: join(pkg.location, "package.json"), hash: "" }] },
+      data: { root: pkg.location },
       package: pkg,
     })
   );
