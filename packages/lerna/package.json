@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "7.0.0-alpha.5",
+  "version": "7.0.0-alpha.6",
   "description": "Lerna is a fast, modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository",
   "keywords": [
     "lerna",
@@ -37,8 +37,8 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@lerna/child-process": "7.0.0-alpha.5",
-    "@lerna/create": "7.0.0-alpha.5",
+    "@lerna/child-process": "7.0.0-alpha.6",
+    "@lerna/create": "7.0.0-alpha.6",
     "@npmcli/arborist": "6.2.3",
     "@npmcli/run-script": "4.1.7",
     "@nx/devkit": ">=16.1.3 < 17",
@@ -123,5 +123,5 @@
     "./commands/version/lib/*": "./dist/commands/version/lib/*.js",
     "./migrations/**/*": "./dist/migrations/**/*"
   },
-  "gitHead": "73ceac3dc2cf0e1246d4433cb101d1e794b2cca3"
+  "gitHead": "ce4b35213200b07e89a6ab09743f84aa60e5ca2c"
 }
