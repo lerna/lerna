@@ -51,7 +51,8 @@ describe("lerna init", () => {
     const cwd = tempy.directory();
 
     const { stderr } = await cliRunner(cwd)("init", "--dryRun");
-    expect(stderr).toMatchInlineSnapshot(`
+    const stderrWithoutVersion = stderr.replace(/\^[\d.]+-?[\w.]+/g, "<lerna-version>");
+    expect(stderrWithoutVersion).toMatchInlineSnapshot(`
       lerna notice cli __TEST_VERSION__
       lerna info The following file system updates will be made:
       CREATE lerna.json [preview]
@@ -69,7 +70,7 @@ describe("lerna init", () => {
       +   ],
       +   "dependencies": {},
       +   "devDependencies": {
-      +     "lerna": "^7.0.0-alpha.0"
+      +     "lerna": "<lerna-version>"
       +   }
       + }
       +
