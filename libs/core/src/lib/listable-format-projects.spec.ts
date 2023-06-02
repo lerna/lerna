@@ -256,7 +256,6 @@ const createProjectNodes = (cwd: string): ProjectGraphProjectNodeWithPackage[] =
     name: "pkg-1",
     type: "lib",
     data: {
-      files: [],
       root: `${cwd}/pkgs/pkg-1`,
     },
     package: new Package(
@@ -273,7 +272,6 @@ const createProjectNodes = (cwd: string): ProjectGraphProjectNodeWithPackage[] =
     name: "pkg-2",
     type: "lib",
     data: {
-      files: [],
       root: `${cwd}/pkgs/pkg-2`,
     },
     package: new Package(
@@ -289,7 +287,6 @@ const createProjectNodes = (cwd: string): ProjectGraphProjectNodeWithPackage[] =
     name: "pkg-3",
     type: "lib",
     data: {
-      files: [],
       root: `${cwd}/pkgs/pkg-3`,
     },
     package: new Package(

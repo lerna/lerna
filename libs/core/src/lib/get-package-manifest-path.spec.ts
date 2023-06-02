@@ -1,3 +1,4 @@
+import { FileData } from "@nx/devkit";
 import { getPackageManifestPath } from "./get-package-manifest-path";
 import { projectNode } from "./test-helpers/create-project-graph";
 
@@ -7,20 +8,20 @@ describe("getPackageManifestPath", () => {
       name: "package-1",
       data: {
         root: "/root/packages/package-1",
-        files: [
-          {
-            file: "/root/packages/package-1/index.js",
-            hash: "",
-          },
-          {
-            file: "/root/packages/package-1/package.json",
-            hash: "",
-          },
-        ],
       },
     });
+    const files: FileData[] = [
+      {
+        file: "/root/packages/package-1/index.js",
+        hash: "",
+      },
+      {
+        file: "/root/packages/package-1/package.json",
+        hash: "",
+      },
+    ];
 
-    expect(getPackageManifestPath(node)).toEqual("/root/packages/package-1/package.json");
+    expect(getPackageManifestPath(node, files)).toEqual("/root/packages/package-1/package.json");
   });
 
   it("returns undefined when no package.json exists", () => {
@@ -28,15 +29,16 @@ describe("getPackageManifestPath", () => {
       name: "package-1",
       data: {
         root: "/root/packages/package-1",
-        files: [
-          {
-            file: "/root/packages/package-1/index.js",
-            hash: "",
-          },
-        ],
       },
     });
 
-    expect(getPackageManifestPath(node)).toBeUndefined();
+    const files = [
+      {
+        file: "/root/packages/package-1/index.js",
+        hash: "",
+      },
+    ];
+
+    expect(getPackageManifestPath(node, files)).toBeUndefined();
   });
 });

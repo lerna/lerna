@@ -1,4 +1,4 @@
-import { ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nx/devkit";
+import { ProjectFileMap, ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nx/devkit";
 import { readJson } from "fs-extra";
 import { sortBy } from "lodash";
 import minimatch from "minimatch";
@@ -16,6 +16,7 @@ import {
 
 export async function createProjectGraphWithPackages(
   projectGraph: ProjectGraph,
+  projectFileMap: ProjectFileMap,
   packageConfigs: string[]
 ): Promise<ProjectGraphWithPackages> {
   // We respect the NX_WORKSPACE_ROOT_PATH environment variable at runtime in order to support existing unit tests
@@ -30,7 +31,7 @@ export async function createProjectGraphWithPackages(
     projectNodesMatchingPackageConfigs.map(
       (node) =>
         new Promise<[ProjectGraphProjectNode, RawManifest | null]>((resolve) => {
-          const manifestPath = getPackageManifestPath(node);
+          const manifestPath = getPackageManifestPath(node, projectFileMap[node.name]);
           if (manifestPath) {
             const fullManifestPath = join(_workspaceRoot, manifestPath);
             resolve(readJson(fullManifestPath).then((manifest) => [node, manifest]));

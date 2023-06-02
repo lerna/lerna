@@ -1,6 +1,6 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { windowsPathSerializer } from "@lerna/test-helpers";
-import { FileData } from "@nx/devkit";
+import { FileData, ProjectFileMap } from "@nx/devkit";
 import { join } from "path";
 import { RawManifest } from "../package";
 import { createProjectGraph, projectNode } from "../test-helpers/create-project-graph";
@@ -32,7 +32,10 @@ expect.addSnapshotSerializer({
 
 describe("createProjectGraphWithPackages", () => {
   it("should add package objects to project graph nodes", async () => {
-    const result = await createProjectGraphWithPackages(projectGraph(), ["packages/*", "other-packages/*"]);
+    const result = await createProjectGraphWithPackages(projectGraph(), projectFileMap(), [
+      "packages/*",
+      "other-packages/*",
+    ]);
 
     expect(result.nodes.projectA.package?.name).toEqual("projectA");
     expect(result.nodes.projectA.package?.version).toEqual("1.0.0");
@@ -55,7 +58,10 @@ describe("createProjectGraphWithPackages", () => {
   });
 
   it("should order project graph nodes by root directory", async () => {
-    const result = await createProjectGraphWithPackages(projectGraph(), ["packages/*", "other-packages/*"]);
+    const result = await createProjectGraphWithPackages(projectGraph(), projectFileMap(), [
+      "packages/*",
+      "other-packages/*",
+    ]);
     expect(Object.keys(result.nodes)).toEqual([
       "otherProjectB",
       "otherProjectA",
@@ -69,12 +75,15 @@ describe("createProjectGraphWithPackages", () => {
     ["other-packages/*", ["otherProjectB", "otherProjectA"]],
     ["packages/*", ["project", "projectA", "projectB"]],
   ])("should ignore projects that do not match packageConfigs glob", async (glob, expected) => {
-    const result = await createProjectGraphWithPackages(projectGraph(), [glob]);
+    const result = await createProjectGraphWithPackages(projectGraph(), projectFileMap(), [glob]);
     expect(Object.keys(result.nodes)).toEqual(expected);
   });
 
   it("should augment dependency metadata", async () => {
-    const result = await createProjectGraphWithPackages(projectGraph(), ["packages/*", "other-packages/*"]);
+    const result = await createProjectGraphWithPackages(projectGraph(), projectFileMap(), [
+      "packages/*",
+      "other-packages/*",
+    ]);
     expect(result.dependencies).toEqual({
       projectA: [
         {
@@ -307,7 +316,6 @@ const projectGraph = () =>
         type: "lib",
         data: {
           root: "packages/projectB",
-          files: [{ file: "packages/projectB/package.json" } as FileData],
         },
       }),
       projectNode({
@@ -315,7 +323,6 @@ const projectGraph = () =>
         type: "lib",
         data: {
           root: "packages/projectA",
-          files: [{ file: "packages/projectA/package.json" } as FileData],
         },
       }),
       projectNode({
@@ -323,7 +330,6 @@ const projectGraph = () =>
         type: "lib",
         data: {
           root: "other-packages/zzzProjectA",
-          files: [{ file: "other-packages/zzzProjectA/package.json" } as FileData],
         },
       }),
       projectNode({
@@ -331,7 +337,6 @@ const projectGraph = () =>
         type: "lib",
         data: {
           root: "other-packages/projectB",
-          files: [{ file: "other-packages/projectB/package.json" } as FileData],
         },
       }),
       projectNode({
@@ -339,7 +344,6 @@ const projectGraph = () =>
         type: "lib",
         data: {
           root: "packages/project",
-          files: [{ file: "packages/project/package.json" } as FileData],
         },
       }),
     ],
@@ -371,6 +375,14 @@ const projectGraph = () =>
       },
     ],
   });
+
+const projectFileMap = (): ProjectFileMap => ({
+  projectB: [{ file: "packages/projectB/package.json" } as FileData],
+  projectA: [{ file: "packages/projectA/package.json" } as FileData],
+  otherProjectA: [{ file: "other-packages/zzzProjectA/package.json" } as FileData],
+  otherProjectB: [{ file: "other-packages/projectB/package.json" } as FileData],
+  project: [{ file: "packages/project/package.json" } as FileData],
+});
 
 const getManifestForPath = (path: string): RawManifest | null => {
   const packages: Record<string, RawManifest> = {
