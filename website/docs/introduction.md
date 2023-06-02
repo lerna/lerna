@@ -6,15 +6,14 @@ type: explainer
 
 # Introduction
 
-Lerna is the original [monorepo tool](https://monorepo.tools) for TypeScript/JavaScript. It has been around for many years and is used by tens of thousands of projects, including React and Jest.
+Lerna is the original [monorepo tool](https://monorepo.tools) for JavaScript/TypeScript. It has been around for many years and is used by tens of thousands of projects, including React and Jest.
 
-It solves three of the biggest problems of JavaScript monorepos:
+It solves two of the biggest problems of JavaScript/TypeScript monorepos:
 
-- Lerna links different projects within the repo, so they can import each other without having to publish anything to NPM.
 - Lerna runs a command against any number of projects, and it does it in the most efficient way, in the right order, and with the possibility to distribute that on multiple machines.
 - Lerna manages your publishing process, from version management to publishing to NPM, and it provides a variety of options to make sure any workflow can be accommodated.
 
-Nrwl (the company behind the open source build system Nx) has taken over [stewardship of Lerna](https://dev.to/nrwl/lerna-is-dead-long-live-lerna-3jal). [Nx](https://nx.dev) is a build system developed by ex-Googlers and utilizes many of the techniques used by internal Google tools. Lerna v5 is the first release under this new stewardship, updating outdated packages and starting to do some cleanup on the repository itself. Starting with v6+, Lerna delegates task scheduling work to Nx's battle tested, industry-leading task runner, meaning `lerna run` gets the benefits of caching and command distribution for free!
+Nx (the company behind the open source build system of the same name) has taken over [stewardship of Lerna](https://dev.to/nrwl/lerna-is-dead-long-live-lerna-3jal). [Nx](https://nx.dev) is a build system developed by ex-Googlers and utilizes many of the techniques used by internal Google tools. Lerna v5 was the first release under this new stewardship, updating outdated packages and starting to do some cleanup on the repository itself. Starting with v6+, Lerna delegates task scheduling work to Nx's battle tested, industry-leading task runner, meaning `lerna run` gets the benefits of caching and command distribution for free!
 
 ## Why Lerna?
 
