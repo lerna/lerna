@@ -8,7 +8,7 @@ export {
   ProjectCollectorOptions,
   ProjectUpdateCollectorOptions,
 } from "./lib/collect-updates";
-export { Command } from "./lib/command";
+export { Command, PreInitializedProjectData } from "./lib/command";
 export { isGitInitialized } from "./lib/command/is-git-initialized";
 export { applyBuildMetadata, recommendVersion, updateChangelog } from "./lib/conventional-commits";
 export { describeRef, describeRefSync } from "./lib/describe-ref";

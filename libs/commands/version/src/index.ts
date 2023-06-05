@@ -1,23 +1,24 @@
 import {
-  applyBuildMetadata,
-  checkWorkingTree,
-  collectProjects,
-  collectProjectUpdates,
   Command,
   CommandConfigOptions,
+  Package,
+  PreInitializedProjectData,
+  ProjectGraphProjectNodeWithPackage,
+  ValidationError,
+  applyBuildMetadata,
+  checkWorkingTree,
+  collectProjectUpdates,
+  collectProjects,
   createRunner,
   getPackage,
   getPackagesForOption,
   output,
-  Package,
   prereleaseIdFromVersion,
-  ProjectGraphProjectNodeWithPackage,
   promptConfirmation,
   recommendVersion,
   runProjectsTopologically,
   throwIfUncommitted,
   updateChangelog,
-  ValidationError,
 } from "@lerna/core";
 import chalk from "chalk";
 import dedent from "dedent";
@@ -46,8 +47,11 @@ import { updateLockfileVersion } from "./lib/update-lockfile-version";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
-  return new VersionCommand(argv);
+module.exports = function factory(
+  argv: NodeJS.Process["argv"],
+  preInitializedProjectData?: PreInitializedProjectData
+) {
+  return new VersionCommand(argv, preInitializedProjectData);
 };
 
 interface VersionCommandConfigOptions extends CommandConfigOptions {
@@ -126,6 +130,15 @@ class VersionCommand extends Command {
       this.options.allowBranch ||
       this.options.conventionalCommits
     );
+  }
+
+  /**
+   * Due to lerna publish's legacy of being backwards compatible with running versioning and publishing
+   * in a single step, we need to be able to receive any project data which might already exist from the
+   * publish command (in the case that it invokes the version command from within its implementation details).
+   */
+  constructor(argv: NodeJS.Process["argv"], preInitializedProjectData?: PreInitializedProjectData) {
+    super(argv, { skipValidations: false, preInitializedProjectData });
   }
 
   configureProperties() {
