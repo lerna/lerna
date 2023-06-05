@@ -21,7 +21,7 @@ describe("createGitHubClient", () => {
   it("errors if no GH_TOKEN env var", () => {
     expect(() => {
       createGitHubClient();
-    }).toThrow("A GH_TOKEN environment variable is required.");
+    }).toThrow(`A GH_TOKEN environment variable is required when "createRelease" is set to "github"`);
   });
 
   it("doesnt error if GH_TOKEN env var is set", () => {

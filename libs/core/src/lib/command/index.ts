@@ -18,6 +18,11 @@ import { warnIfHanging } from "./warn-if-hanging";
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
+export interface PreInitializedProjectData {
+  projectFileMap: ProjectFileMap;
+  projectGraph: ProjectGraphWithPackages;
+}
+
 export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   name: string;
   composed: boolean;
@@ -44,7 +49,16 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     this._project = project;
   }
 
-  constructor(_argv: any, { skipValidations } = { skipValidations: false }) {
+  constructor(
+    _argv: any,
+    {
+      skipValidations,
+      preInitializedProjectData,
+    }: {
+      skipValidations: boolean;
+      preInitializedProjectData?: PreInitializedProjectData;
+    } = { skipValidations: false }
+  ) {
     log.pause();
     log.heading = "lerna";
 
@@ -84,7 +98,19 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       if (!skipValidations) {
         chain = chain.then(() => this.runValidations());
       }
-      chain = chain.then(() => this.detectProjects());
+      chain = chain.then(() => {
+        /**
+         * Due to lerna publish's legacy of being backwards compatible with running versioning and publishing
+         * in a single step, we need to be able to receive any project data which might already exist from the
+         * publish command (in the case that it invokes the version command from within its implementation details).
+         */
+        if (preInitializedProjectData) {
+          this.projectFileMap = preInitializedProjectData.projectFileMap;
+          this.projectGraph = preInitializedProjectData.projectGraph;
+          return;
+        }
+        return this.detectProjects();
+      });
       chain = chain.then(() => this.runPreparations());
       chain = chain.then(() => this.runCommand());
 
