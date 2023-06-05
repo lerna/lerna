@@ -270,7 +270,14 @@ class PublishCommand extends Command {
     } else if (this.options.canary) {
       result = await this.detectCanaryVersions();
     } else {
-      result = await versionCommand(this.argv);
+      /**
+       * Due to lerna publish's legacy of being backwards compatible with running versioning and publishing
+       * in a single step, we need to be able to pass down the existing project data to the nested version command.
+       */
+      result = await versionCommand(this.argv, {
+        projectFileMap: this.projectFileMap,
+        projectGraph: this.projectGraph,
+      });
     }
 
     if (!result) {

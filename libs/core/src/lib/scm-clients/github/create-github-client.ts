@@ -1,6 +1,7 @@
-import log from "npmlog";
 import { Octokit } from "@octokit/rest";
 import parseGitUrl from "git-url-parse";
+import log from "npmlog";
+import { ValidationError } from "../../validation-error";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
@@ -14,7 +15,10 @@ export function createGitHubClient(): Octokit {
   const { GH_TOKEN, GHE_API_URL, GHE_VERSION } = process.env;
 
   if (!GH_TOKEN) {
-    throw new Error("A GH_TOKEN environment variable is required.");
+    throw new ValidationError(
+      "",
+      `A GH_TOKEN environment variable is required when "createRelease" is set to "github"`
+    );
   }
 
   if (GHE_VERSION) {
@@ -52,7 +56,7 @@ export function parseGitRepo(remote = "origin", opts?: any) {
   const url = childProcess.execSync("git", args, opts);
 
   if (!url) {
-    throw new Error(`Git remote URL could not be found using "${remote}".`);
+    throw new ValidationError("", `Git remote URL could not be found using "${remote}".`);
   }
 
   return parseGitUrl(url);

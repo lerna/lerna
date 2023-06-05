@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0-alpha.7](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.7) (2023-06-05)
+
+
+### Bug Fixes
+
+* migration building/publishing issues ([27bf800](https://github.com/lerna/lerna/commit/27bf800b6e7670ea1ec5576fdf008e8d09897d4b))
+* **publish:** use correct version in log messages ([#3702](https://github.com/lerna/lerna/issues/3702)) ([4be9188](https://github.com/lerna/lerna/commit/4be9188e68c5d4c320c0946e6e386cbee95a8efe))
+* support nx 16.3.1+ ([#3707](https://github.com/lerna/lerna/issues/3707)) ([647dbb5](https://github.com/lerna/lerna/commit/647dbb512bf6a873cab6362c434b420b18af0ad4))
+
+
+
+
+
+# [7.0.0-alpha.6](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.6) (2023-06-02)
+
+### Bug Fixes
+
+- migration building/publishing issues ([27bf800](https://github.com/lerna/lerna/commit/27bf800b6e7670ea1ec5576fdf008e8d09897d4b))
+- **publish:** use correct version in log messages ([#3702](https://github.com/lerna/lerna/issues/3702)) ([4be9188](https://github.com/lerna/lerna/commit/4be9188e68c5d4c320c0946e6e386cbee95a8efe))
+- support nx 16.3.1+ ([#3707](https://github.com/lerna/lerna/issues/3707)) ([647dbb5](https://github.com/lerna/lerna/commit/647dbb512bf6a873cab6362c434b420b18af0ad4))
+
 # [7.0.0-alpha.5](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.5) (2023-06-01)
 
 ### Bug Fixes

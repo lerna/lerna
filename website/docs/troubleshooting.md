@@ -9,26 +9,6 @@ type: recipe
 This document contains solutions for certain issues our users encountered
 in the past while using Lerna.
 
-## Bootstrap Command
-
-### Error when using yarn as an npm client
-
-Prior to the release of Lerna `v2.0.0-rc.3` users of the flag `--npm-client`
-who provided yarn as a client may have suffered from the bootstrap process
-not being able to run properly.
-
-```
-Error running command.
-error Command failed with exit code 1.
-```
-
-If you can upgrade Lerna to said version please do so, or as an alternative
-solution you can add `--concurrency=1`.
-
-### Private npm registry (Artifactory, npm Enterprise, etc.) integration issues
-
-If `lerna bootstrap` is failing because you have repositories on a private server make sure you are including that registry. Example: `lerna bootstrap -- --registry=http://[registry-url]`.
-
 ## Import Command
 
 ### Buffer problems during import

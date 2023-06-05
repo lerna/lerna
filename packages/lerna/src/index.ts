@@ -67,15 +67,30 @@ function applyLegacyPackageManagementCommands(yargsInstance: ReturnType<typeof l
   } catch {
     ["add", "bootstrap", "link"].forEach((commandName) => {
       yargsInstance.command({
-        command: commandName,
-        describe: `The "${commandName}" command was removed in v7, and is no longer maintained.`,
+        command: commandName === "add" ? "add <pkg> [globs..]" : commandName,
+        describe: `The "${commandName}" command was removed by default in v7, and is no longer maintained.`,
+        builder: (yargs) => {
+          /**
+           * Dynamically parse all given flags and apply them as options, so that our handler() is always called,
+           * rather than yargs showing options based validation messaging.
+           */
+          const parsed = require("yargs/yargs")(process.argv.slice(2)).argv;
+          for (const x of Object.keys(parsed)) {
+            if (x !== "_" && x !== "$0") {
+              yargs.option(x, {});
+            }
+          }
+          return yargs;
+        },
         handler() {
           log.error(
             commandName,
-            `The "${commandName}" command was removed in v7, and is no longer maintained.`
+            `The "${commandName}" command was removed by default in v7, and is no longer maintained.`
           );
-          // TODO: in v7 link to a specific guide
-          log.error(commandName, `Learn more about this change at https://lerna.js.org`);
+          log.error(
+            commandName,
+            `Learn more about this change at https://lerna.js.org/docs/legacy-package-management`
+          );
           process.exit(1);
         },
       });

@@ -3,6 +3,7 @@ import cloneDeep from "clone-deep";
 import dedent from "dedent";
 import { mapValues } from "lodash";
 import log from "npmlog";
+import { daemonClient } from "nx/src/daemon/client/client";
 import os from "os";
 import { getCurrentVersion } from "../get-current-version";
 import { CommandConfigOptions, Project } from "../project";
@@ -17,6 +18,11 @@ import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
+
+export interface PreInitializedProjectData {
+  projectFileMap: ProjectFileMap;
+  projectGraph: ProjectGraphWithPackages;
+}
 
 export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   name: string;
@@ -45,7 +51,16 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     this._project = project;
   }
 
-  constructor(_argv: any, { skipValidations } = { skipValidations: false }) {
+  constructor(
+    _argv: any,
+    {
+      skipValidations,
+      preInitializedProjectData,
+    }: {
+      skipValidations: boolean;
+      preInitializedProjectData?: PreInitializedProjectData;
+    } = { skipValidations: false }
+  ) {
     log.pause();
     log.heading = "lerna";
 
@@ -85,7 +100,19 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       if (!skipValidations) {
         chain = chain.then(() => this.runValidations());
       }
-      chain = chain.then(() => this.detectProjects());
+      chain = chain.then(() => {
+        /**
+         * Due to lerna publish's legacy of being backwards compatible with running versioning and publishing
+         * in a single step, we need to be able to receive any project data which might already exist from the
+         * publish command (in the case that it invokes the version command from within its implementation details).
+         */
+        if (preInitializedProjectData) {
+          this.projectFileMap = preInitializedProjectData.projectFileMap;
+          this.projectGraph = preInitializedProjectData.projectGraph;
+          return;
+        }
+        return this.detectProjects();
+      });
       chain = chain.then(() => this.runPreparations());
       chain = chain.then(() => this.runCommand());
 
@@ -172,10 +199,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   }
 
   async detectProjects() {
-    const projectGraph = await createProjectGraphAsync({
-      exitOnError: false,
-      resetDaemonClient: true,
-    });
+    const projectGraph = await createProjectGraphAsync();
 
     // if we are using Nx >= 16.3.1, we can use the helper function to create the file map
     // otherwise, we need to use the old "files" property on the node data
@@ -191,6 +215,9 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       this.projectFileMap,
       this.project.packageConfigs
     );
+
+    // Now that we have made our two calls to the daemon, we need it to exit so that the overall process can too
+    daemonClient.reset();
   }
 
   configureEnvironment() {

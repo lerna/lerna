@@ -47,15 +47,15 @@ A few links to help you get started:
 - [lerna.js.org: Documentation, Guides, Interactive Tutorials](https://lerna.js.org)
 - [Getting Started](https://lerna.js.org/docs/getting-started)
 - [Features](https://lerna.js.org/docs/features)
-- [Official Nrwl YouTube Channel](https://www.youtube.com/c/Nrwl_io)
+- [Official Nx and Lerna YouTube Channel](https://www.youtube.com/@nxdevtools)
 - [Blog Posts About Lerna and Nx](https://blog.nrwl.io/nx/home)
 
 <br />
 
 ## Engage with the Core Team and the Community
 
-- [Nrwl Community Slack, #lerna channel](https://go.nrwl.io/join-slack)
-- [Follow Nrwl on Twitter](https://twitter.com/nrwl_io)
+- [Follow Lerna on Twitter](https://twitter.com/lernajs)
+- [Community Slack, #lerna channel](https://go.nrwl.io/join-slack)
 
 ### Want to help?
 
