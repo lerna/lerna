@@ -2,12 +2,15 @@
 // @ts-nocheck
 import fs from "fs";
 import ini from "ini";
+import { join } from "path";
+import { dirSync } from "tmp";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const CC = require("../index").ConfigChain;
 
-const f1 = "/tmp/f1.ini";
-const f2 = "/tmp/f2.json";
+const tmpDir = dirSync();
+const f1 = join(tmpDir.name, "f1.ini");
+const f2 = join(tmpDir.name, "f2.json");
 
 const f1data = { foo: { bar: "baz" }, bloo: "jaus" };
 const f2data = { oof: { rab: "zab" }, oolb: "suaj" };
