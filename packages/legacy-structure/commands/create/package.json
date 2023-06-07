@@ -41,7 +41,7 @@
     "semver": "^7.3.4",
     "slash": "^3.0.0",
     "validate-npm-package-license": "^3.0.4",
-    "validate-npm-package-name": "^4.0.0",
+    "validate-npm-package-name": "5.0.0",
     "yargs-parser": "20.2.4"
   },
   "exports": {

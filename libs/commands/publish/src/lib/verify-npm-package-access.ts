@@ -18,35 +18,35 @@ export function verifyNpmPackageAccess(
 
   opts.log.silly("verifyNpmPackageAccess", "");
 
-  return pulseTillDone(access.lsPackages(username, opts)).then(success, failure);
+  return pulseTillDone(access.getPackages(username, opts)).then(success, failure);
 
   function success(result) {
-    // when _no_ results received, access.lsPackages returns null
-    // we can only assume that the packages in question have never been published
-    if (result === null) {
+    const userPackages = Object.keys(result || {});
+    if (userPackages.length === 0) {
       opts.log.warn(
         "",
         "The logged-in user does not have any previously-published packages, skipping permission checks..."
       );
-    } else {
-      for (const pkg of packages) {
-        if (pkg.name in result && result[pkg.name] !== "read-write") {
-          throw new ValidationError(
-            "EACCESS",
-            `You do not have write permission required to publish "${pkg.name}"`
-          );
-        }
+      return;
+    }
+
+    for (const pkg of packages) {
+      if (pkg.name in result && result[pkg.name] !== "read-write") {
+        throw new ValidationError(
+          "EACCESS",
+          `You do not have write permission required to publish "${pkg.name}"`
+        );
       }
     }
   }
 
   function failure(err) {
-    // pass if registry does not support ls-packages endpoint
+    // pass if registry does not support the package endpoint
     if (err.code === "E500" || err.code === "E404") {
       // most likely a private registry (npm Enterprise, verdaccio, etc)
       opts.log.warn(
         "EREGISTRY",
-        "Registry %j does not support `npm access ls-packages`, skipping permission checks...",
+        "Registry %j does not support `npm access list packages`, skipping permission checks...",
         // registry
         opts.registry
       );
