@@ -24,6 +24,14 @@ NOTE: Because lerna itself predates the `workspaces` feature in package managers
 
 You can use the [`lerna create`](https://github.com/lerna/lerna/tree/main/libs/commands/create#readme) command to create new packages within your lerna repo.
 
+```sh
+lerna create <packageName>
+```
+
+See the [create docs](https://github.com/lerna/lerna/tree/main/libs/commands/create#readme) for more options.
+
+If you don't want to use `lerna create`, then you can still manually create a package by running `npm init` within a subdirectory of the `packages` folder and Lerna will automatically detect it.
+
 ### Existing packages
 
 You can use [`lerna import <package>`][import] to transfer an existing package
@@ -37,17 +45,9 @@ case you will need to have the repo you wish to link to on your file system.
 
 ## How do I retry publishing if `publish` fails?
 
-Sometimes, `lerna publish` does not work. Your network may have had a hiccup, you may have not been logged on to npm, etc.
+In the case that some packages were successfully published and others were not, lerna publish may have left the repository in an inconsistent state with some changed files. To recover from this, reset any extraneous local changes from the failed run to get back to a clean working tree. Then, retry the same lerna publish command. Lerna will attempt to publish all of the packages again, but will recognize those that have already been published and skip over them with a warning.
 
-If the `lerna.json` has not yet been updated, simply try `lerna publish` again.
-
-If it has been updated, you can force re-publish. `lerna publish --force-publish $(ls packages/)`
-
-### Recovering from a network error
-
-In the case that some packages were successfully published and others were not, `lerna publish` may have left the repository in an inconsistent state with some changed files. To recover from this, reset any extraneous local changes from the failed run to get back to a clean working tree. Then, retry the same `lerna publish` command. Lerna will attempt to publish all of the packages again, but will recognize those that have already been published and skip over them with a warning.
-
-If you used the `lerna publish` command without positional arguments to select a new version for the packages, then you can run `lerna publish from-git` to retry publishing that same already-tagged version instead of having to bump the version again while retrying.
+If you used the lerna publish command without positional arguments to select a new version for the packages, then you can run lerna publish from-git to retry publishing that same already-tagged version instead of having to bump the version again while retrying.
 
 ## How does Lerna detect packages?
 

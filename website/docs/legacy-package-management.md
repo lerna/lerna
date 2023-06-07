@@ -24,6 +24,54 @@ By using `workspaces`, your package manager will perform the same exact linking 
 
 The same thing goes for replacing `lerna add`. Adding and removing dependencies is something your package manager already does for you, and because `workspaces` is a first class use case, you can run an appropriate `install` command to add a dependency to a specific package/workspace and, again, all the relevant local linking will take place automatically.
 
+See below for more concrete comparisons, and before and after usage.
+
+### Replacing your usage of `lerna bootstrap`/`lerna link`
+
+#### What does it do?
+
+`lerna bootstrap` was used in place of `npm install` (or `yarn`/`pnpm`). It would install all external packages and link all internal packages within the workspace. `lerna link` would just perform the internal linking step of this operation.
+
+#### Where would I find it?
+
+It would most likely be in the "scripts" property of `package.json` in the root of your workspace. Also check your CI pipelines, as they might also be calling `lerna bootstrap` in place of `npm install` (or `yarn`/`pnpm`).
+
+#### What do I replace it with?
+
+Replace `lerna bootstrap` with `npm install` (or `yarn`/`pnpm`). If you are already performing your package manager's install command somewhere in your workflow before where you had previously called `lerna bootstrap`, then you can just delete it instead. `lerna link` can just be removed, as the linking step is now handled by your package manager during `npm install`.
+
+### Replacing your usage of `lerna add`
+
+#### What does it do?
+
+`lerna add` was used to add a dependency to packages in the workspace. It would update the `package.json` files of each package to add the dependency.
+
+#### Where would I find it?
+
+Though usually called manually, `lerna add` might be found in some scripts in `package.json` in the root of your workspace.
+
+#### What do I replace it with?
+
+`lerna add` can mostly be replaced with a variation of `npm install` (or `yarn`/`pnpm`). The most common use case for `lerna add` was to add a single dependency to a single package within the workspace. This command looks like:
+
+```sh
+lerna add <dependency> --scope <package>
+```
+
+and can be replaced directly with:
+
+```sh
+npm install <dependency> -w <package>
+```
+
+The `-w` flag tells npm to only install the dependency in the workspace package specified by `<package>`, similar to the `--scope` option for Lerna.
+
+If you need to add a dependency to multiple packages, you can use the `-w` option multiple times:
+
+```sh
+npm install <dependency> -w <package1> -w <package2>
+```
+
 ### Custom Hoisting
 
 One of the nice things about lerna's legacy `bootstrap` command was the control it offered you around hoisting or not hoisting certain dependencies up to the root of the repo, or leaving them in nested locations.

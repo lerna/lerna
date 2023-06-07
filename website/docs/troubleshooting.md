@@ -120,6 +120,10 @@ You may also need to add the following to your `.npmrc` file on the individual p
 registry = https://[registry-url]
 ```
 
+:::info
+Lerna always uses `npm` tooling to publish packages, regardless of the `npmClient` set in the `lerna.json` file. This means that any `yarn` or `pnpm` configuration will not be detected. To ensure successful publishing to a private registry, make sure that `npm` is configured properly with environment variables or a `.npmrc` file.
+:::
+
 ## Jest / Visual Studio Code Debugging
 
 It is possible to debug [Jest](https://facebook.github.io/jest/) tests in a Lerna-managed package using [Visual Studio Code](https://code.visualstudio.com/). Debugging with breakpoints works with the vscode launch configuration below in the monorepo's `<root>/.vscode/launch.json` file. This example launches Jest for a single package `my-package` located in the monorepo.
