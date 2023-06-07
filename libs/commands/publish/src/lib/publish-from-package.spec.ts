@@ -49,9 +49,11 @@ const promptConfirmation = jest.mocked(_promptConfirmation);
 const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
 
 // The mock differs from the real thing
-const npmPublish = _npmPublish as any;
-const writePkg = _writePkg as any;
-const output = _output as any;
+const npmPublish = _npmPublish as jest.MockedFunction<typeof _npmPublish> & { order: () => string[] };
+const writePkg = _writePkg as jest.MockedFunction<typeof _writePkg> & {
+  updatedManifest: (name: string) => { gitHead?: string };
+};
+const output = _output as jest.MockedFunction<typeof _output> & { logged: () => string[] };
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -104,6 +106,27 @@ describe("publish from-package", () => {
       "package-4",
       // package-5 is private
     ]);
+  });
+
+  it("logs the name of the package that fails to be published", async () => {
+    const cwd = await initFixture("independent");
+
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => Array.from(packageGraph.values()));
+
+    npmPublish.mockImplementation(async (pkg) => {
+      if (pkg.name === "package-2") {
+        throw new Error("some-error");
+      }
+    });
+
+    try {
+      await lernaPublish(cwd)("from-package");
+    } catch {
+      // ignore error
+    }
+
+    const logMessages = loggingOutput("notice");
+    expect(logMessages).toContain("Package failed to publish: package-2");
   });
 
   it("exits early when all packages are published", async () => {

@@ -278,6 +278,20 @@ describe("ImportCommand", () => {
       await expect(command).rejects.toThrow(`Target directory already exists "${relativePath}"`);
     });
 
+    it("errors if projectDir is not in repository", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
+      //create a symlinked project
+      const symlinkedLernaPath = path.join(testDir, "symlink");
+      const linkedProject = await initFixture("basic");
+      fs.symlinkSync(linkedProject, symlinkedLernaPath, "dir");
+
+      const command = lernaImport(symlinkedLernaPath)(externalDir);
+
+      await expect(command).rejects.toThrow(
+        `Project root ${symlinkedLernaPath} is not a subdirectory of git root`
+      );
+    });
+
     it("infers correct target directory given packages glob", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
       const targetDir = path.join(testDir, "pkg", path.basename(externalDir));
