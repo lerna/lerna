@@ -19,7 +19,7 @@ import { camelCase } from "yargs-parser";
 const childProcess = require("@lerna/child-process");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const initPackageJson = require("pify")(require("init-package-json"));
+const initPackageJson = require("init-package-json");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { builtinNpmrc } = require("./lib/builtin-npmrc");
@@ -181,36 +181,31 @@ class CreateCommand extends Command {
     );
   }
 
-  execute() {
-    let chain = Promise.resolve();
-
-    chain = chain.then(() => fs.mkdirp(this.libDir));
-    chain = chain.then(() => fs.mkdirp(this.testDir));
-    chain = chain.then(() => Promise.all([this.writeReadme(), this.writeLibFile(), this.writeTestFile()]));
+  async execute() {
+    await fs.mkdirp(this.libDir);
+    await fs.mkdirp(this.testDir);
+    await Promise.all([this.writeReadme(), this.writeLibFile(), this.writeTestFile()]);
 
     if (this.binFileName) {
-      chain = chain.then(() => fs.mkdirp(this.binDir));
-      chain = chain.then(() => Promise.all([this.writeBinFile(), this.writeCliFile(), this.writeCliTest()]));
+      await fs.mkdirp(this.binDir);
+      await Promise.all([this.writeBinFile(), this.writeCliFile(), this.writeCliTest()]);
     }
 
-    chain = chain.then(() => initPackageJson(this.targetDir, LERNA_MODULE_DATA, this.conf));
+    const data = await initPackageJson(this.targetDir, LERNA_MODULE_DATA, this.conf);
 
-    return chain.then((data) => {
-      if (this.options.esModule) {
-        this.logger.notice(
-          "✔",
-          dedent`
+    if (this.options.esModule) {
+      this.logger.notice(
+        "✔",
+        dedent`
               Ensure '${path.relative(".", this.pkgsDir)}/*/${this.outDir}' has been added to ./.gitignore
               Ensure rollup or babel build scripts are in the root
             `
-        );
-      }
-
-      this.logger.success(
-        "create",
-        `New package ${data.name} created at ./${path.relative(".", this.targetDir)}`
       );
-    });
+    }
+    this.logger.success(
+      "create",
+      `New package ${data.name} created at ./${path.relative(".", this.targetDir)}`
+    );
   }
 
   gitConfig(prop) {

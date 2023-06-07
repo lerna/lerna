@@ -54,7 +54,7 @@
     "@types/git-url-parse": "^9.0.1",
     "@types/glob-parent": "^5.1.1",
     "@types/inquirer": "^8.2.5",
-    "@types/is-ci": "^2.0.0",
+    "@types/is-ci": "3.0.0",
     "@types/jest": "29.4.0",
     "@types/js-yaml": "^4.0.5",
     "@types/libnpmpublish": "^4.0.3",

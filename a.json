@@ -2,11 +2,7 @@
   "name": "lerna",
   "version": "7.0.0-alpha.7",
   "description": "Lerna is a fast, modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository",
-  "keywords": [
-    "lerna",
-    "monorepo",
-    "multi-package"
-  ],
+  "keywords": ["lerna", "monorepo", "multi-package"],
   "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
@@ -16,11 +12,7 @@
   "bin": {
     "lerna": "dist/cli.js"
   },
-  "files": [
-    "dist",
-    "schemas/lerna-schema.json",
-    "migrations.json"
-  ],
+  "files": ["dist", "schemas/lerna-schema.json", "migrations.json"],
   "main": "./src/index.js",
   "engines": {
     "node": "^14.17.0 || >=16.0.0"
@@ -52,11 +44,11 @@
     "conventional-changelog-angular": "6.0.0",
     "conventional-changelog-core": "5.0.1",
     "conventional-recommended-bump": "7.0.1",
-    "cosmiconfig": "^8.2.0",
+    "cosmiconfig": "8.1.3",
     "dedent": "0.7.0",
-    "envinfo": "7.8.1",
+    "envinfo": "^7.7.4",
     "execa": "5.0.0",
-    "fs-extra": "^11.1.1",
+    "fs-extra": "9.1.0",
     "get-port": "5.1.1",
     "get-stream": "6.0.0",
     "git-url-parse": "13.1.0",

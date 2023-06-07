@@ -31,9 +31,9 @@
   },
   "dependencies": {
     "@lerna/child-process": "7.0.0-alpha.7",
-    "dedent": "^0.7.0",
-    "fs-extra": "^9.1.0",
-    "init-package-json": "^3.0.2",
+    "dedent": "0.7.0",
+    "fs-extra": "^11.1.1",
+    "init-package-json": "5.0.0",
     "npm-package-arg": "8.1.1",
     "p-reduce": "^2.1.0",
     "pacote": "15.1.1",
