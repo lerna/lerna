@@ -94,7 +94,6 @@
     "jsonc-eslint-parser": "^2.1.0",
     "lerna": "file:packages/lerna",
     "lodash": "^4.17.21",
-    "node-jq": "^2.3.5",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
     "nx": "16.3.2",
