@@ -792,6 +792,12 @@
             "includePrivate": {
               "$ref": "#/$defs/commandOptions/publish/includePrivate"
             },
+            "directory": {
+              "$ref": "#/$defs/commandOptions/publish/directory"
+            },
+            "assets": {
+              "$ref": "#/$defs/commandOptions/publish/assets"
+            },
 
             "npmClient": {
               "$ref": "#/$defs/globals/npmClient"
@@ -1577,6 +1583,34 @@
             "type": "string"
           },
           "description": "During `lerna publish`, include specified private packages when publishing by temporarily removing the private property from the package manifest. This should only be used for testing private packages that will become public. The value \"*\" will include all private packages."
+        },
+        "directory": {
+          "type": "string",
+          "description": "Custom directory to use for the package contents. This can contain dynamic placeholders like `{workspaceRoot}`, `{projectRoot}` and `{projectName}`. See https://lerna.js.org/docs/concepts#configuring-published-files"
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "description": "A specific file or glob pattern that matches files in the source directory"
+                  },
+                  "to": {
+                    "type": "string",
+                    "description": "The path to copy the file to within the publish directory"
+                  }
+                },
+                "required": ["from", "to"]
+              }
+            ]
+          }
         }
       },
       "run": {

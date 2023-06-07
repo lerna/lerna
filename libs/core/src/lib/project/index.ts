@@ -382,7 +382,9 @@ export class Project {
       throw new ValidationError(
         "EWORKSPACES",
         dedent`
-          Lerna is expecting to able to resolve the "workspaces" configuration from your package manager in order to determine what packages to work on, but no "workspaces" config was found. Did you mean to specify a "packages" config manually in lerna.json instead?
+          Lerna is expecting to able to resolve the "workspaces" configuration from your package manager in order to determine what packages to work on, but no "workspaces" config was found.
+          (A) Did you mean to specify a "packages" config manually in lerna.json instead of using your workspaces config?
+          (B) Alternatively, if you are using pnpm as your package manager, make sure you set "npmClient": "pnpm" in your lerna.json so that lerna knows to read from the "pnpm-workspace.yaml" file instead of package.json.
           See: https://lerna.js.org/docs/getting-started
         `
       );
