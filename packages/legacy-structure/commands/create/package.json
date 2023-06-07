@@ -37,7 +37,7 @@
     "npm-package-arg": "8.1.1",
     "p-reduce": "^2.1.0",
     "pacote": "15.1.1",
-    "pify": "^5.0.0",
+    "pify": "5.0.0",
     "semver": "^7.3.4",
     "slash": "^3.0.0",
     "validate-npm-package-license": "^3.0.4",
