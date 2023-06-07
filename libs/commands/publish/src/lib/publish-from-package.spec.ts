@@ -111,7 +111,7 @@ describe("publish from-package", () => {
   it("logs the name of the package that fails to be published", async () => {
     const cwd = await initFixture("independent");
 
-    getUnpublishedPackages.mockImplementationOnce((packageGraph) => Array.from(packageGraph.values()));
+    getProjectsWithUnpublishedPackages.mockImplementationOnce((nodes) => Promise.resolve(nodes));
 
     npmPublish.mockImplementation(async (pkg) => {
       if (pkg.name === "package-2") {
