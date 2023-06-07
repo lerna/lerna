@@ -3,7 +3,7 @@
  * https://github.com/dawsbot/config-chain/blob/0d5fac278bd108e8d9c5f20e4ab8a0a6b3720373/index.js
  *
  * It is a very old module, and we have inlined it so that we have better control over its dependencies,
- * to so that we don't end up pulling in very old transitive dependencies to lerna
+ * to so that we don't end up pulling in very old transitive dependencies to lerna.
  */
 
 /* eslint-disable */
