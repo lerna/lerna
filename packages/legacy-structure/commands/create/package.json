@@ -36,7 +36,7 @@
     "init-package-json": "5.0.0",
     "npm-package-arg": "8.1.1",
     "p-reduce": "^2.1.0",
-    "pacote": "15.1.1",
+    "pacote": "^15.2.0",
     "pify": "5.0.0",
     "semver": "^7.3.4",
     "slash": "^3.0.0",

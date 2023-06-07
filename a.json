@@ -31,24 +31,6 @@
   "dependencies": {
     "config-chain": "1.1.13",
 
-    "glob-parent": "5.1.2",
-
-    "globby": "11.1.0",
-
-    "inquirer": "^8.2.4",
-
-    "minimatch": "3.0.5",
-
-    "multimatch": "5.0.0",
-
-    "node-fetch": "2.6.7",
-
-    "npm-package-arg": "10.1.0",
-
-    "pacote": "^15.2.0",
-
-    "uuid": "8.3.2",
-
     "yargs": "16.2.0",
 
     "yargs-parser": "20.2.4"

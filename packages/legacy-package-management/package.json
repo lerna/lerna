@@ -69,7 +69,7 @@
     "p-map-series": "2.1.0",
     "p-queue": "6.6.2",
     "p-waterfall": "2.1.1",
-    "pacote": "15.1.1",
+    "pacote": "^15.2.0",
     "pify": "5.0.0",
     "pretty-format": "29.4.3",
     "read-cmd-shim": "4.0.0",
@@ -85,7 +85,7 @@
     "temp-dir": "1.0.0",
     "tempy": "1.0.0",
     "upath": "2.0.1",
-    "uuid": "8.3.2",
+    "uuid": "^9.0.0",
     "write-file-atomic": "5.0.1",
     "write-pkg": "4.0.0",
     "yargs": "16.2.0"
