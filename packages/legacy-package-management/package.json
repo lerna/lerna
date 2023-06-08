@@ -1,6 +1,6 @@
 {
   "name": "@lerna/legacy-package-management",
-  "version": "7.0.0-alpha.8",
+  "version": "7.0.0",
   "description": "Legacy package management concerns provided by lerna. Please migrate to use npm/yarn/pnpm workspaces instead.",
   "keywords": [
     "lerna",
@@ -26,7 +26,7 @@
     "directory": "packages/legacy-package-management"
   },
   "dependencies": {
-    "@lerna/child-process": "7.0.0-alpha.8",
+    "@lerna/child-process": "7.0.0",
     "@npmcli/arborist": "6.2.9",
     "@npmcli/run-script": "6.0.2",
     "@nx/devkit": ">=16.1.3 < 17",
