@@ -26,6 +26,7 @@
     "directory": "packages/legacy-package-management"
   },
   "dependencies": {
+    "@lerna/child-process": "6.6.2",
     "@npmcli/arborist": "6.2.3",
     "@npmcli/run-script": "4.1.7",
     "@nrwl/devkit": ">=15.5.2 < 16",
