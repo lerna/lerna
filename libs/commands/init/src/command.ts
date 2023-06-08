@@ -16,6 +16,17 @@ const command: CommandModule = {
       alias: "i",
       type: "boolean",
     },
+    packages: {
+      describe:
+        "A glob pattern matching packages that should be included (instead of defaulting to the package manager's workspaces config)",
+      type: "array",
+    },
+    dryRun: {
+      describe:
+        "Preview the changes that will be made to the file system without actually modifying anything",
+      type: "boolean",
+      default: false,
+    },
   },
   handler(argv) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -23,4 +34,4 @@ const command: CommandModule = {
   },
 };
 
-module.exports = command;
+export = command;

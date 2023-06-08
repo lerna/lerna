@@ -1,14 +1,8 @@
 import semver from "semver";
 
-module.exports.isBreakingChange = isBreakingChange;
-
-/**
- * @param {string} currentVersion
- * @param {string} nextVersion
- */
-function isBreakingChange(currentVersion, nextVersion) {
+export function isBreakingChange(currentVersion: string, nextVersion: string) {
   const releaseType = semver.diff(currentVersion, nextVersion);
-  let breaking;
+  let breaking: boolean;
 
   if (releaseType === "major") {
     // self-evidently

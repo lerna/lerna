@@ -21,7 +21,7 @@ describe("lerna-version-build-metadata", () => {
         name: "lerna-version-build-metadata",
         packageManager: "npm",
         initializeGit: true,
-        runLernaInit: true,
+        lernaInit: { args: [`--packages="packages/*"`] },
         installDependencies: true,
       });
       await fixture.createInitialGitCommit();
@@ -81,7 +81,7 @@ describe("lerna-version-build-metadata", () => {
         name: "lerna-version-build-metadata",
         packageManager: "npm",
         initializeGit: true,
-        runLernaInit: true,
+        lernaInit: { args: [`--packages="packages/*"`] },
         installDependencies: true,
       });
       await fixture.createInitialGitCommit();
@@ -151,7 +151,7 @@ describe("lerna-version-build-metadata", () => {
         name: "lerna-version-build-metadata",
         packageManager: "npm",
         initializeGit: true,
-        runLernaInit: true,
+        lernaInit: { args: [`--packages="packages/*"`] },
         installDependencies: true,
       });
       await fixture.createInitialGitCommit();

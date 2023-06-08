@@ -18,7 +18,7 @@ describe("lerna-version-independent-pnpm", () => {
       name: "lerna-version-independent",
       packageManager: "pnpm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
   });

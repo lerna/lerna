@@ -1,5 +1,5 @@
 import { Fixture, normalizeCommitSHAs, normalizeEnvironment } from "@lerna/e2e-utils";
-import { writeJsonFile } from "@nrwl/devkit";
+import { writeJsonFile } from "@nx/devkit";
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const randomVersion = () => `${randomInt(10, 89)}.${randomInt(10, 89)}.${randomInt(10, 89)}`;
@@ -24,7 +24,7 @@ describe("lerna-publish-workspace-prefix-pnpm", () => {
       name: "lerna-publish-workspace-prefix",
       packageManager: "pnpm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
   });

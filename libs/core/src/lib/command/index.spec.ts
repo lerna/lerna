@@ -1,6 +1,8 @@
 // NOTE: This file can't use ESM without breaking the spyOn() os.cpus() call right now.
 // TODO: refactor the command index.ts to resolve this
 
+import { createProjectGraph } from "../test-helpers/create-project-graph";
+
 /* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require("fs-extra");
 const log = require("npmlog");
@@ -14,8 +16,20 @@ const os = require("os");
 // normalize concurrency across different environments (localhost, CI, etc)
 jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
 
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@nx/devkit", () => ({
+  ...jest.requireActual("@nx/devkit"),
+  createProjectGraphAsync: () =>
+    Promise.resolve(
+      createProjectGraph({
+        projects: [],
+        dependencies: [],
+      })
+    ),
+}));
+
 // helpers
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 const { loggingOutput, updateLernaConfig, initFixtureFactory } = require("@lerna/test-helpers");
 const initFixture = initFixtureFactory(__dirname);
@@ -255,15 +269,6 @@ describe("command", () => {
     });
   });
 
-  describe(".packageGraph", () => {
-    it("returns the graph of packages", async () => {
-      const command = testFactory();
-      await command;
-
-      expect(command.packageGraph).toBeInstanceOf(Map);
-    });
-  });
-
   describe(".options", () => {
     class TestACommand extends Command {}
     class TestBCommand extends Command {}
@@ -346,97 +351,13 @@ describe("command", () => {
     it("throws ENOGIT when repository is not initialized", async () => {
       const cwd = tempy.directory();
 
+      const lernaConfigPath = path.join(cwd, "lerna.json");
+      await fs.writeJson(lernaConfigPath, { version: "1.0.0", packages: [] });
+      await fs.writeJson(path.join(cwd, "package.json"), { name: "root" });
+
       await expect(testFactory({ cwd })).rejects.toThrow(
         expect.objectContaining({
           prefix: "ENOGIT",
-        })
-      );
-    });
-
-    it("throws ENOPKG when root package.json is not found", async () => {
-      const cwd = await initFixture("basic");
-
-      await fs.remove(path.join(cwd, "package.json"));
-
-      await expect(testFactory({ cwd })).rejects.toThrow(
-        expect.objectContaining({
-          prefix: "ENOPKG",
-        })
-      );
-    });
-
-    it("throws JSONError when root package.json has syntax error", async () => {
-      const cwd = await initFixture("basic");
-
-      await fs.writeFile(
-        path.join(cwd, "package.json"), // trailing comma ...v
-        '{ "name": "invalid", "lerna": { "version": "1.0.0" }, }'
-      );
-
-      await expect(testFactory({ cwd })).rejects.toThrow(
-        expect.objectContaining({
-          prefix: "JSONError",
-        })
-      );
-    });
-
-    it("throws ENOLERNA when lerna.json is not found", async () => {
-      const cwd = await initFixture("basic");
-
-      await fs.remove(path.join(cwd, "lerna.json"));
-
-      await expect(testFactory({ cwd })).rejects.toThrow(
-        expect.objectContaining({
-          prefix: "ENOLERNA",
-        })
-      );
-    });
-
-    it("throws ENOVERSION when lerna.json is empty", async () => {
-      const cwd = await initFixture("basic");
-
-      const lernaConfigPath = path.join(cwd, "lerna.json");
-      await fs.writeJson(lernaConfigPath, {});
-
-      await expect(testFactory({ cwd })).rejects.toThrow(
-        expect.objectContaining({
-          prefix: "ENOVERSION",
-        })
-      );
-    });
-
-    it("throws ENOVERSION when no version property exists in lerna.json", async () => {
-      const cwd = await initFixture("basic");
-
-      const lernaConfigPath = path.join(cwd, "lerna.json");
-      const lernaConfig = await fs.readJson(lernaConfigPath);
-      delete lernaConfig.version;
-      await fs.writeJson(lernaConfigPath, {
-        ...lernaConfig,
-      });
-
-      await expect(testFactory({ cwd })).rejects.toThrow(
-        expect.objectContaining({
-          prefix: "ENOVERSION",
-        })
-      );
-    });
-
-    it("throws ENOWORKSPACES when npm client is pnpm and useWorkspaces is not true", async () => {
-      const cwd = await initFixture("pnpm");
-
-      const lernaConfigPath = path.join(cwd, "lerna.json");
-      const lernaConfig = await fs.readJson(lernaConfigPath);
-      await fs.writeJson(lernaConfigPath, {
-        ...lernaConfig,
-        useWorkspaces: false,
-      });
-
-      await expect(testFactory({ cwd })).rejects.toThrow(
-        expect.objectContaining({
-          prefix: "ENOWORKSPACES",
-          message:
-            "Usage of pnpm without workspaces is not supported. To use pnpm with lerna, set useWorkspaces to true in lerna.json and configure pnpm to use workspaces: https://pnpm.io/workspaces.",
         })
       );
     });

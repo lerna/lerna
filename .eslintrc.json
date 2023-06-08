@@ -1,7 +1,7 @@
 {
   "root": true,
   "ignorePatterns": ["website/**/*", "__fixtures__"],
-  "plugins": ["@nrwl/nx"],
+  "plugins": ["@nx"],
   "settings": {
     "import/resolver": {
       "node": {
@@ -13,7 +13,7 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
+        "@nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
@@ -30,14 +30,14 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
+      "extends": ["plugin:@nx/typescript"],
       "rules": {
         "@typescript-eslint/no-empty-function": "off"
       }
     },
     {
       "files": ["*.js", "*.jsx"],
-      "extends": ["airbnb-base", "plugin:node/recommended", "plugin:@nrwl/nx/javascript"],
+      "extends": ["airbnb-base", "plugin:node/recommended", "plugin:@nx/javascript"],
       "rules": {
         "@typescript-eslint/no-empty-function": "off",
         "class-methods-use-this": [

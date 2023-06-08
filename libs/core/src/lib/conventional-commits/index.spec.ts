@@ -3,7 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+/* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { changelogSerializer, gitAdd, gitCommit, gitTag, initFixtureFactory } from "@lerna/test-helpers";
 import fs from "fs-extra";
@@ -13,10 +13,10 @@ import { getPackages } from "../project/index";
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
+import { applyBuildMetadata } from "./apply-build-metadata";
 import { getChangelogConfig } from "./get-changelog-config";
 import { recommendVersion } from "./recommend-version";
 import { updateChangelog } from "./update-changelog";
-import { applyBuildMetadata } from "./apply-build-metadata";
 
 // stabilize changelog commit SHA and datestamp
 // nx-ignore-next-line

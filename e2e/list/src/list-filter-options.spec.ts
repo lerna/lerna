@@ -18,7 +18,7 @@ describe("lerna-list-filter-options", () => {
       name: "lerna-list-filter-options",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
 
@@ -121,7 +121,7 @@ describe("lerna list --since", () => {
       name: "lerna-list-filter-options",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
 

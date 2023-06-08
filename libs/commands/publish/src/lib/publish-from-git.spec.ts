@@ -12,7 +12,7 @@ jest.mock("@lerna/core", () => {
   return {
     ...mockCore,
     // we're actually testing integration with git
-    collectUpdates: jest.requireActual("@lerna/core").collectUpdates,
+    collectProjectUpdates: jest.requireActual("@lerna/core").collectProjectUpdates,
   };
 });
 
@@ -25,7 +25,7 @@ jest.mock("./get-packages-without-license", () => {
 jest.mock("./verify-npm-package-access");
 jest.mock("./get-npm-username");
 jest.mock("./get-two-factor-auth-required");
-jest.mock("./get-unpublished-packages");
+jest.mock("./get-projects-with-unpublished-packages");
 
 // lerna version mocks
 jest.mock("@lerna/commands/version/lib/git-push");

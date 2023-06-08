@@ -6,7 +6,7 @@ import { Fixture } from "@lerna/e2e-utils";
     name: "lerna-run-nx-include-dependencies-with-target-config",
     packageManager: "npm",
     initializeGit: true,
-    runLernaInit: true,
+    lernaInit: { args: [`--packages="packages/*"`] },
     installDependencies: true,
   });
 

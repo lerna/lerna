@@ -3,11 +3,9 @@ import execa from "execa";
 import fs from "fs-extra";
 import path from "path";
 import slash from "slash";
+import { gitAdd } from "./git-add";
 
 const initFixture = initFixtureFactory(__dirname);
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitAdd } = require("./git-add");
 
 const getStagedFile = async (cwd) =>
   execa("git", ["diff", "--cached", "--name-only"], { cwd }).then((result) => slash(result.stdout));

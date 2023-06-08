@@ -19,7 +19,7 @@ describe("lerna-version-formatting", () => {
       name: "lerna-version-formatting",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: false,
     });
 

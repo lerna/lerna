@@ -1,17 +1,11 @@
-import {
-  Command,
-  CommandConfigOptions,
-  Package,
-  PackageGraph,
-  PackageGraphNode,
-  symlinkDependencies,
-  ValidationError,
-} from "@lerna/core";
+import { CommandConfigOptions, Package, ValidationError } from "@lerna/core";
 
+import { Command, PackageGraph, PackageGraphNode, symlinkDependencies } from "@lerna/legacy-core";
+
+import npa from "npm-package-arg";
 import pMap from "p-map";
 import path from "path";
 import slash from "slash";
-import npa from "npm-package-arg";
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new LinkCommand(argv);

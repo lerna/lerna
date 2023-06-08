@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-const collectUpdates = require("./collect-updates");
 const checkWorkingTree = require("./check-working-tree");
 const conventionalCommits = require("./conventional-commits");
 const { output } = require("./output");
@@ -31,7 +30,6 @@ module.exports = {
   createRunner,
   npmPublish,
   packDirectory,
-  createSymlink: jest.fn(),
   npmRunScript: jest.fn(),
   npmRunScriptStreaming: jest.fn(),
   promptConfirmation: jest.fn(),

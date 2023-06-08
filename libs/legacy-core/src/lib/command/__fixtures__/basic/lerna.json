@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "packages": ["packages/*"],
+  "testOption": "default",
+  "command": {
+    "testb": {
+      "testOption": "b",
+      "testOption2": "b"
+    },
+    "testc": {
+      "testOption2": "c"
+    }
+  }
+}

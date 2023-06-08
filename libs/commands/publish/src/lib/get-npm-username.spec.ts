@@ -3,8 +3,7 @@ import _fetch from "npm-registry-fetch";
 
 jest.mock("npm-registry-fetch");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getNpmUsername } = require("./get-npm-username");
+import { getNpmUsername } from "./get-npm-username";
 
 const fetch = jest.mocked(_fetch);
 
@@ -40,7 +39,7 @@ describe("getNpmUsername", () => {
   test("throws an error when successful fetch yields empty username", async () => {
     fetch.json.mockImplementationOnce(() => Promise.resolve({ username: undefined }));
 
-    await expect(getNpmUsername({ stub: true })).rejects.toThrow(
+    await expect(getNpmUsername()).rejects.toThrow(
       "You must be logged in to publish packages. Use `npm login` and try again."
     );
     expect(console.error).not.toHaveBeenCalled();

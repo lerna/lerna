@@ -2,7 +2,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { Command, getFilteredPackages, ValidationError, npmConf } from "@lerna/core";
+import { npmConf, ValidationError } from "@lerna/core";
+import { Command, getFilteredPackages } from "@lerna/legacy-core";
 import dedent from "dedent";
 import npa from "npm-package-arg";
 import pMap from "p-map";

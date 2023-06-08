@@ -1,65 +1,113 @@
-// TODO: refactor based on TS feedback
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 import {
-  collectUpdates,
+  AssetDefinition,
+  collectProjectUpdates,
   Command,
+  CommandConfigOptions,
+  Conf,
   createRunner,
   describeRef,
   getOneTimePassword,
+  getPackage,
   logPacked,
   npmConf,
   npmDistTag,
   npmPublish,
   output,
+  Package,
   packDirectory,
   prereleaseIdFromVersion,
+  ProjectGraphProjectNodeWithPackage,
   promptConfirmation,
   pulseTillDone,
-  runTopologically,
+  runProjectsTopologically,
   throwIfUncommitted,
   ValidationError,
 } from "@lerna/core";
+import { workspaceRoot } from "@nx/devkit";
+
 import crypto from "crypto";
-import fs from "fs";
+import fs, { existsSync } from "fs";
 import os from "os";
 import pMap from "p-map";
 import pPipe from "p-pipe";
-import path from "path";
-import semver from "semver";
+import path, { basename, join, normalize } from "path";
+import semver, { ReleaseType } from "semver";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const versionCommand = require("@lerna/commands/version");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { createTempLicenses } = require("./lib/create-temp-licenses");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getCurrentSHA } = require("./lib/get-current-sha");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getCurrentTags } = require("./lib/get-current-tags");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getUnpublishedPackages } = require("./lib/get-unpublished-packages");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getNpmUsername } = require("./lib/get-npm-username");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getTaggedPackages } = require("./lib/get-tagged-packages");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getPackagesWithoutLicense } = require("./lib/get-packages-without-license");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitCheckout } = require("./lib/git-checkout");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { removeTempLicenses } = require("./lib/remove-temp-licenses");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { verifyNpmPackageAccess } = require("./lib/verify-npm-package-access");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getTwoFactorAuthRequired } = require("./lib/get-two-factor-auth-required");
+import { copy } from "fs-extra";
+import globby from "globby";
+import { createTempLicenses } from "./lib/create-temp-licenses";
+import { getCurrentSHA } from "./lib/get-current-sha";
+import { getCurrentTags } from "./lib/get-current-tags";
+import { getNpmUsername } from "./lib/get-npm-username";
+import { getPackagesWithoutLicense } from "./lib/get-packages-without-license";
+import { getProjectsWithTaggedPackages } from "./lib/get-projects-with-tagged-packages";
+import { getProjectsWithUnpublishedPackages } from "./lib/get-projects-with-unpublished-packages";
+import { getTwoFactorAuthRequired } from "./lib/get-two-factor-auth-required";
+import { gitCheckout } from "./lib/git-checkout";
+import { interpolate } from "./lib/interpolate";
+import { removeTempLicenses } from "./lib/remove-temp-licenses";
+import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new PublishCommand(argv);
 };
 
+interface PublishCommandConfigOptions extends CommandConfigOptions {
+  bump?: string;
+  exact?: boolean;
+  gitHead?: string;
+  gitReset?: boolean;
+  tagVersionPrefix?: string;
+  verifyAccess?: boolean;
+  lernaVersion?: string;
+  includePrivate?: string[];
+  skipNpm?: boolean;
+  buildMetadata?: string;
+  canary?: boolean;
+  requireScripts?: boolean;
+  legacyAuth?: string;
+  otp?: string;
+  registry?: string;
+  ignorePrepublish?: boolean;
+  ignoreScripts?: boolean;
+  preid?: string;
+  ignoreChanges?: string[];
+  forcePublish?: boolean | string | string[];
+  includeMergedTags?: boolean;
+  contents?: string;
+  tempTag?: string;
+  summaryFile?: string;
+  yes?: boolean;
+  granularPathspec?: boolean;
+  rejectCycles?: boolean;
+  distTag?: string;
+  preDistTag?: string;
+}
+
 class PublishCommand extends Command {
+  options: PublishCommandConfigOptions;
+
+  savePrefix?: string;
+  tagPrefix?: string;
+  gitReset?: boolean;
+  npmSession?: string;
+  verifyAccess?: boolean;
+  conf?: Conf;
+  otpCache?: { otp: string };
+  hasRootedLeaf?: boolean;
+  runPackageLifecycle?: (pkg: unknown, script: string) => Promise<void>;
+  runRootLifecycle?: (script: string) => Promise<void> | void;
+  updates?: ProjectGraphProjectNodeWithPackage[];
+  projectsWithPackage?: ProjectGraphProjectNodeWithPackage[];
+  updatesVersions?: Map<string, string>;
+  packagesToPublish?: Package[];
+  publishedPackages?: Package[];
+  privatePackagesToPublish?: Package[];
+  packagesToBeLicensed?: Package[];
+  twoFactorAuthRequired?: boolean;
   private uniqueProvenanceUrls = new Set();
 
   get otherCommandConfigs() {
@@ -114,18 +162,11 @@ class PublishCommand extends Command {
     return `lerna/${this.options.lernaVersion}/node@${process.version}+${process.arch} (${process.platform})`;
   }
 
-  initialize() {
+  async initialize() {
     if (this.options.verifyAccess === false) {
       this.logger.warn(
         "verify-access",
         "--verify-access=false and --no-verify-access are no longer needed, because the legacy preemptive access verification is now disabled by default. Requests will fail with appropriate errors when not authorized correctly."
-      );
-    }
-
-    if (this.options.graphType === "dependencies") {
-      this.logger.warn(
-        "graph-type",
-        "--graph-type=dependencies is deprecated and will be removed in lerna v6. If you have a use-case you feel requires it please open an issue to discuss: https://github.com/lerna/lerna/issues/new/choose"
       );
     }
 
@@ -194,7 +235,7 @@ class PublishCommand extends Command {
     }
 
     // a "rooted leaf" is the regrettable pattern of adding "." to the "packages" config in lerna.json
-    this.hasRootedLeaf = this.packageGraph.has(this.project.manifest.name);
+    this.hasRootedLeaf = !!this.projectGraph.nodes[this.project.manifest.name];
 
     if (this.hasRootedLeaf) {
       this.logger.info("publish", "rooted leaf detected, skipping synthetic root lifecycles");
@@ -209,225 +250,282 @@ class PublishCommand extends Command {
         }
       : (stage) => this.runPackageLifecycle(this.project.manifest, stage);
 
-    let chain = Promise.resolve();
+    this.projectsWithPackage = Object.values(this.projectGraph.nodes).filter((node) => !!node.package);
 
+    let result: {
+      updates?: ProjectGraphProjectNodeWithPackage[];
+      updatesVersions?: [string, string][];
+      needsConfirmation: boolean;
+    };
     if (this.options.bump === "from-git") {
-      chain = chain.then(() => this.detectFromGit());
+      result = await this.detectFromGit();
     } else if (this.options.bump === "from-package") {
-      chain = chain.then(() => this.detectFromPackage());
+      result = await this.detectFromPackage();
     } else if (this.options.canary) {
-      chain = chain.then(() => this.detectCanaryVersions());
+      result = await this.detectCanaryVersions();
     } else {
-      chain = chain.then(() => versionCommand(this.argv));
+      /**
+       * Due to lerna publish's legacy of being backwards compatible with running versioning and publishing
+       * in a single step, we need to be able to pass down the existing project data to the nested version command.
+       */
+      result = await versionCommand(this.argv, {
+        projectFileMap: this.projectFileMap,
+        projectGraph: this.projectGraph,
+      });
     }
 
-    return chain.then((result) => {
-      if (!result) {
-        // early return from nested VersionCommand
-        return false;
+    if (!result) {
+      // early return from nested VersionCommand
+      return false;
+    }
+
+    if (!result.updates.length) {
+      this.logger.success("No changed packages to publish");
+
+      // still exits zero, aka "ok"
+      return false;
+    }
+
+    // (occasionally) redundant private filtering necessary to handle nested VersionCommand
+    this.updates = this.filterPrivatePkgUpdates(result.updates);
+    this.updatesVersions = new Map(result.updatesVersions);
+
+    function interpolateAsset(asset: AssetDefinition, interpolationFn: (str: string) => string) {
+      if (typeof asset === "string") {
+        return interpolationFn(asset);
       }
-
-      if (!result.updates.length) {
-        this.logger.success("No changed packages to publish");
-
-        // still exits zero, aka "ok"
-        return false;
+      if (asset.from) {
+        asset.from = interpolationFn(asset.from);
       }
+      if (asset.to) {
+        asset.to = interpolationFn(asset.to);
+      }
+      return asset;
+    }
 
-      // (occasionally) redundant private filtering necessary to handle nested VersionCommand
-      this.updates = this.filterPrivatePkgUpdates(result.updates);
-      this.updatesVersions = new Map(result.updatesVersions);
+    /**
+     * Determine the relevant configuration for what gets published.
+     * If applicable, using either root level or package level config
+     */
+    this.packagesToPublish = this.updates.map((node) => {
+      const interpolateStr = (str) => {
+        const res = interpolate(str, {
+          projectRoot: node.data.root,
+          projectName: node.name,
+          workspaceRoot: this.project.rootPath,
+        });
+        this.logger.verbose(
+          "silly",
+          `Interpolated string "%s" for node "%s" to produce "%s"`,
+          str,
+          node.name,
+          res
+        );
+        return res;
+      };
 
-      this.packagesToPublish = this.updates.map((node) => node.pkg);
+      const pkg = getPackage(node);
 
       if (this.options.contents) {
-        // globally override directory to publish
-        for (const pkg of this.packagesToPublish) {
-          pkg.contents = this.options.contents;
-        }
+        pkg.contents = this.options.contents;
       }
 
-      if (result.needsConfirmation) {
-        // only confirm for --canary, bump === "from-git",
-        // or bump === "from-package", as VersionCommand
-        // has its own confirmation prompt
-        return this.confirmPublish();
+      if (pkg.lernaConfig?.command?.publish?.directory) {
+        // Package level
+        pkg.contents = interpolateStr(pkg.lernaConfig.command.publish.directory);
+      } else if (this.project.config.command?.publish?.["directory"]) {
+        // Root level
+        pkg.contents = interpolateStr(this.project.config.command.publish["directory"]);
       }
 
-      return true;
+      if (pkg.lernaConfig?.command?.publish?.assets) {
+        // Package level
+        pkg.lernaConfig.command.publish.assets = pkg.lernaConfig.command.publish.assets.map((asset) =>
+          interpolateAsset(asset, interpolateStr)
+        );
+      } else if (this.project.config.command?.publish?.["assets"]) {
+        // Root level
+        const assets = this.project.config.command?.publish?.["assets"].map((asset) =>
+          interpolateAsset(asset, interpolateStr)
+        );
+        pkg.lernaConfig = pkg.lernaConfig || {};
+        pkg.lernaConfig.command = pkg.lernaConfig.command || {};
+        pkg.lernaConfig.command.publish = pkg.lernaConfig.command.publish || {};
+        pkg.lernaConfig.command.publish.assets = assets;
+      }
+
+      return pkg;
     });
+
+    if (result.needsConfirmation) {
+      // only confirm for --canary, bump === "from-git",
+      // or bump === "from-package", as VersionCommand
+      // has its own confirmation prompt
+      return this.confirmPublish();
+    }
+
+    return true;
   }
 
-  execute() {
+  async execute() {
     this.enableProgressBar();
     this.logger.info("publish", "Publishing packages to npm...");
 
-    let chain = Promise.resolve();
-
-    chain = chain.then(() => this.prepareRegistryActions());
-    chain = chain.then(() => this.prepareLicenseActions());
-    chain = chain.then(() => this.preparePrivatePackages());
+    await this.prepareRegistryActions();
+    await this.prepareLicenseActions();
+    this.preparePrivatePackages();
 
     if (this.options.canary) {
-      chain = chain.then(() => this.updateCanaryVersions());
+      await this.updateCanaryVersions();
     }
 
-    chain = chain.then(() => this.resolveLocalDependencyLinks());
-    chain = chain.then(() => this.resolveWorkspaceDependencyLinks());
-    chain = chain.then(() => this.annotateGitHead());
-    chain = chain.then(() => this.serializeChanges());
-    chain = chain.then(() => this.packUpdated());
-    chain = chain.then(() => this.publishPacked());
+    await this.resolveLocalDependencyLinks();
+    await this.resolveWorkspaceDependencyLinks();
+    this.annotateGitHead();
+    await this.serializeChanges();
+    await this.packUpdated();
+    await this.publishPacked();
 
     // restore private: true to published private packages
-    chain = chain.then(() => this.restorePrivatePackages());
-    chain = chain.then(() => this.serializeChanges());
+    this.restorePrivatePackages();
+    await this.serializeChanges();
 
     if (this.gitReset) {
-      chain = chain.then(() => this.resetChanges());
+      await this.resetChanges();
     }
 
     if (this.options.tempTag) {
-      chain = chain.then(() => this.npmUpdateAsLatest());
+      await this.npmUpdateAsLatest();
     }
 
-    return chain.then(() => {
-      const count = this.publishedPackages.length;
-      const publishedPackagesSorted = this.publishedPackages.sort((a, b) => a.name.localeCompare(b.name));
+    const count = this.publishedPackages.length;
+    const publishedPackagesSorted = this.publishedPackages.sort((a, b) => a.name.localeCompare(b.name));
 
-      if (!count) {
-        this.logger.success("All packages have already been published.");
-        return;
+    if (!count) {
+      this.logger.success("All packages have already been published.");
+      return;
+    }
+
+    output("Successfully published:");
+
+    if (this.options.summaryFile !== undefined) {
+      // create a json object and output it to a file location.
+      const filePath = this.options.summaryFile
+        ? `${this.options.summaryFile}/lerna-publish-summary.json`
+        : "./lerna-publish-summary.json";
+      const jsonObject = publishedPackagesSorted.map((pkg) => {
+        return {
+          packageName: pkg.name,
+          version: pkg.version,
+        };
+      });
+      output(jsonObject);
+      try {
+        fs.writeFileSync(filePath, JSON.stringify(jsonObject));
+        output("Publish summary created: ", filePath);
+      } catch (error) {
+        output("Failed to create the summary report", error);
       }
+    } else {
+      const message = publishedPackagesSorted.map((pkg) => ` - ${pkg.name}@${pkg.version}`);
+      output(message.join(os.EOL));
+    }
 
-      output("Successfully published:");
+    this.logger.success("published", "%d %s", count, count === 1 ? "package" : "packages");
 
-      if (this.options.summaryFile !== undefined) {
-        // create a json object and output it to a file location.
-        const filePath = this.options.summaryFile
-          ? `${this.options.summaryFile}/lerna-publish-summary.json`
-          : "./lerna-publish-summary.json";
-        const jsonObject = publishedPackagesSorted.map((pkg) => {
-          return {
-            packageName: pkg.name,
-            version: pkg.version,
-          };
-        });
-        output(jsonObject);
-        try {
-          fs.writeFileSync(filePath, JSON.stringify(jsonObject));
-          output("Publish summary created: ", filePath);
-        } catch (error) {
-          output("Failed to create the summary report", error);
-        }
-      } else {
-        const message = publishedPackagesSorted.map((pkg) => ` - ${pkg.name}@${pkg.version}`);
-        output(message.join(os.EOL));
-      }
-
-      this.logger.success("published", "%d %s", count, count === 1 ? "package" : "packages");
-
-      if (this.uniqueProvenanceUrls.size > 0) {
-        output("The following provenance transparency log entries were created during publishing:");
-        const message = Array.from(this.uniqueProvenanceUrls).map((url) => ` - ${url}`);
-        output(message.join(os.EOL));
-      }
-    });
+    if (this.uniqueProvenanceUrls.size > 0) {
+      output("The following provenance transparency log entries were created during publishing:");
+      const message = Array.from(this.uniqueProvenanceUrls).map((url) => ` - ${url}`);
+      output(message.join(os.EOL));
+    }
   }
 
-  verifyWorkingTreeClean() {
+  private verifyWorkingTreeClean() {
     return describeRef(this.execOpts).then(throwIfUncommitted);
   }
 
-  detectFromGit() {
+  private async detectFromGit() {
     const matchingPattern = this.project.isIndependent() ? "*@*" : `${this.tagPrefix}*.*.*`;
 
-    let chain = Promise.resolve();
-
     // attempting to publish a tagged release with local changes is not allowed
-    chain = chain
-      .then(() => this.verifyWorkingTreeClean())
-      .catch((err) => {
-        // an execa error is thrown when git suffers a fatal error (such as no git repository present)
-        if (err.failed && /git describe/.test(err.command)) {
-          // (we tried)
-          this.logger.silly("EWORKINGTREE", err.message);
-          this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
-        } else {
-          // validation errors should be preserved
-          throw err;
-        }
-      });
-
-    chain = chain.then(() => getCurrentTags(this.execOpts, matchingPattern));
-    chain = chain.then((taggedPackageNames) => {
-      if (!taggedPackageNames.length) {
-        this.logger.notice("from-git", "No tagged release found");
-
-        return [];
+    try {
+      await this.verifyWorkingTreeClean();
+    } catch (err) {
+      // an execa error is thrown when git suffers a fatal error (such as no git repository present)
+      if (err.failed && /git describe/.test(err.command)) {
+        // (we tried)
+        this.logger.silly("EWORKINGTREE", err.message);
+        this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
+      } else {
+        // validation errors should be preserved
+        throw err;
       }
+    }
 
-      if (this.project.isIndependent()) {
-        return taggedPackageNames.map((name) => this.packageGraph.get(name));
-      }
+    const taggedPackageNames = await getCurrentTags(this.execOpts, matchingPattern);
 
-      return getTaggedPackages(this.packageGraph, this.project.rootPath, this.execOpts);
-    });
+    let updates: ProjectGraphProjectNodeWithPackage[];
+    if (!taggedPackageNames.length) {
+      this.logger.notice("from-git", "No tagged release found");
 
-    chain = chain.then((updates) => this.filterPrivatePkgUpdates(updates));
+      updates = [];
+    } else if (this.project.isIndependent()) {
+      updates = taggedPackageNames.map(
+        (name) => this.projectsWithPackage.find((node) => getPackage(node).name === name) // TODO: improve lookup efficiency
+      );
+    } else {
+      updates = await getProjectsWithTaggedPackages(
+        this.projectsWithPackage,
+        this.project.rootPath,
+        this.execOpts
+      );
+    }
 
-    return chain.then((updates) => {
-      const updatesVersions = updates.map((node) => [node.name, node.version]);
+    updates = this.filterPrivatePkgUpdates(updates);
 
-      return {
-        updates,
-        updatesVersions,
-        needsConfirmation: true,
-      };
-    });
+    const updatesVersions: [string, string][] = updates.map((node) => [node.name, getPackage(node).version]);
+
+    return {
+      updates,
+      updatesVersions,
+      needsConfirmation: true,
+    };
   }
 
-  detectFromPackage() {
-    let chain = Promise.resolve();
-
+  private async detectFromPackage() {
     // attempting to publish a release with local changes is not allowed
-    chain = chain
-      .then(() => this.verifyWorkingTreeClean())
-      .catch((err) => {
-        // an execa error is thrown when git suffers a fatal error (such as no git repository present)
-        if (err.failed && /git describe/.test(err.command)) {
-          // (we tried)
-          this.logger.silly("EWORKINGTREE", err.message);
-          this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
-          process.exitCode = 0;
-        } else {
-          // validation errors should be preserved
-          throw err;
-        }
-      });
-
-    chain = chain.then(() => getUnpublishedPackages(this.packageGraph, this.conf.snapshot));
-    chain = chain.then((updates) => this.filterPrivatePkgUpdates(updates));
-    chain = chain.then((unpublished) => {
-      if (!unpublished.length) {
-        this.logger.notice("from-package", "No unpublished release found");
+    try {
+      await this.verifyWorkingTreeClean();
+    } catch (err) {
+      // an execa error is thrown when git suffers a fatal error (such as no git repository present)
+      if (err.failed && /git describe/.test(err.command)) {
+        // (we tried)
+        this.logger.silly("EWORKINGTREE", err.message);
+        this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
+        process.exitCode = 0;
+      } else {
+        // validation errors should be preserved
+        throw err;
       }
+    }
 
-      return unpublished;
-    });
+    let updates: ProjectGraphProjectNodeWithPackage[];
+    updates = await getProjectsWithUnpublishedPackages(this.projectsWithPackage, this.conf.snapshot);
+    updates = this.filterPrivatePkgUpdates(updates);
+    if (!updates.length) {
+      this.logger.notice("from-package", "No unpublished release found");
+    }
 
-    return chain.then((updates) => {
-      const updatesVersions = updates.map((node) => [node.name, node.version]);
+    const updatesVersions: [string, string][] = updates.map((node) => [node.name, getPackage(node).version]);
 
-      return {
-        updates,
-        updatesVersions,
-        needsConfirmation: true,
-      };
-    });
+    return {
+      updates,
+      updatesVersions,
+      needsConfirmation: true,
+    };
   }
 
-  detectCanaryVersions() {
+  private async detectCanaryVersions() {
     const { cwd } = this.execOpts;
     const {
       bump = "prepatch",
@@ -439,98 +537,89 @@ class PublishCommand extends Command {
     // "prerelease" and "prepatch" are identical, for our purposes
     const release = bump.startsWith("pre") ? bump.replace("release", "patch") : `pre${bump}`;
 
-    let chain = Promise.resolve();
-
     // attempting to publish a canary release with local changes is not allowed
-    chain = chain
-      .then(() => this.verifyWorkingTreeClean())
-      .catch((err) => {
-        // an execa error is thrown when git suffers a fatal error (such as no git repository present)
-        if (err.failed && /git describe/.test(err.command)) {
-          // (we tried)
-          this.logger.silly("EWORKINGTREE", err.message);
-          this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
-        } else {
-          // validation errors should be preserved
-          throw err;
-        }
-      });
+    try {
+      await this.verifyWorkingTreeClean();
+    } catch (err) {
+      // an execa error is thrown when git suffers a fatal error (such as no git repository present)
+      if (err.failed && /git describe/.test(err.command)) {
+        // (we tried)
+        this.logger.silly("EWORKINGTREE", err.message);
+        this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
+      } else {
+        // validation errors should be preserved
+        throw err;
+      }
+    }
 
     // find changed packages since last release, if any
-    chain = chain.then(() =>
-      this.filterPrivatePkgUpdates(
-        collectUpdates(this.packageGraph.rawPackageList, this.packageGraph, this.execOpts, {
-          bump: "prerelease",
-          canary: true,
-          ignoreChanges,
-          forcePublish,
-          includeMergedTags,
-        })
-      )
+    const updates: ProjectGraphProjectNodeWithPackage[] = await this.filterPrivatePkgUpdates(
+      collectProjectUpdates(this.projectsWithPackage, this.projectGraph, this.execOpts, {
+        bump: "prerelease",
+        canary: true,
+        ignoreChanges,
+        forcePublish,
+        includeMergedTags,
+      })
     );
 
     const makeVersion =
-      (fallback) =>
+      (fallback: string) =>
       ({ lastVersion = fallback, refCount, sha }) => {
         // the next version is bumped without concern for preid or current index
-        const nextVersion = semver.inc(lastVersion.replace(this.tagPrefix, ""), release.replace("pre", ""));
+        const nextVersion = semver.inc(
+          lastVersion.replace(this.tagPrefix, ""),
+          release.replace("pre", "") as ReleaseType
+        );
 
         // semver.inc() starts a new prerelease at .0, git describe starts at .1
         // and build metadata is always ignored when comparing dependency ranges
         return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
       };
 
+    let updatesVersions: [string, string][];
     if (this.project.isIndependent()) {
       // each package is described against its tags only
-      chain = chain.then((updates) =>
-        pMap(updates, (node) =>
-          describeRef(
-            {
-              match: `${node.name}@*`,
-              cwd,
-            },
-            includeMergedTags
-          )
-            // an unpublished package will have no reachable git tag
-            .then(makeVersion(node.version))
-            .then((version) => [node.name, version])
-        ).then((updatesVersions) => ({
-          updates,
-          updatesVersions,
-        }))
-      );
-    } else {
-      // all packages are described against the last tag
-      chain = chain.then((updates) =>
+      updatesVersions = await pMap(updates, (node) =>
         describeRef(
           {
-            match: `${this.tagPrefix}*.*.*`,
+            match: `${getPackage(node).name}@*`,
             cwd,
           },
           includeMergedTags
         )
-          // a repo with no tags should default to whatever lerna.json claims
-          .then(makeVersion(this.project.version))
-          .then((version) => updates.map((node) => [node.name, version]))
-          .then((updatesVersions) => ({
-            updates,
-            updatesVersions,
-          }))
+          // an unpublished package will have no reachable git tag
+          .then(makeVersion(getPackage(node).version))
+          .then((version) => [node.name, version])
       );
+    } else {
+      // all packages are described against the last tag
+      updatesVersions = await describeRef(
+        {
+          match: `${this.tagPrefix}*.*.*`,
+          cwd,
+        },
+        includeMergedTags
+      )
+        // a repo with no tags should default to whatever lerna.json claims
+        .then(makeVersion(this.project.version))
+        .then((version) => updates.map((node) => [node.name, version]));
     }
 
-    return chain.then(({ updates, updatesVersions }) => ({
+    return {
       updates,
       updatesVersions,
       needsConfirmation: true,
-    }));
+    };
   }
 
-  confirmPublish() {
-    const count = this.packagesToPublish.length;
-    const message = this.packagesToPublish.map(
-      (pkg) => ` - ${pkg.name} => ${this.updatesVersions.get(pkg.name)}${pkg.private ? " (private!)" : ""}`
-    );
+  private confirmPublish() {
+    const count = this.updates.length;
+    const message = this.updates.map((node) => {
+      const pkg = getPackage(node);
+      const version = this.updatesVersions.get(node.name);
+      return ` - ${pkg.name} => ${version}${pkg.private ? " (private!)" : ""}`;
+    });
 
     output("");
     output(`Found ${count} ${count === 1 ? "package" : "packages"} to publish:`);
@@ -538,168 +627,169 @@ class PublishCommand extends Command {
     output("");
 
     if (this.options.yes) {
-      this.logger.info("auto-confirmed");
+      this.logger.info("auto-confirmed", "");
       return true;
     }
 
     return promptConfirmation("Are you sure you want to publish these packages?");
   }
 
-  preparePrivatePackages() {
-    return Promise.resolve().then(() => {
-      this.privatePackagesToPublish = [];
-      this.packagesToPublish.forEach((pkg) => {
-        if (pkg.private) {
-          pkg.removePrivate();
-          this.privatePackagesToPublish.push(pkg);
-        }
-      });
+  private preparePrivatePackages() {
+    this.privatePackagesToPublish = [];
+    this.packagesToPublish.forEach((pkg) => {
+      if (pkg.private) {
+        pkg.removePrivate();
+        this.privatePackagesToPublish.push(pkg);
+      }
     });
   }
 
-  restorePrivatePackages() {
-    return Promise.resolve().then(() => {
-      this.privatePackagesToPublish.forEach((pkg) => {
-        pkg.private = true;
-      });
+  private restorePrivatePackages() {
+    this.privatePackagesToPublish.forEach((pkg) => {
+      pkg.private = true;
     });
   }
 
-  prepareLicenseActions() {
-    return Promise.resolve()
-      .then(() => getPackagesWithoutLicense(this.project, this.packagesToPublish))
-      .then((packagesWithoutLicense) => {
-        if (packagesWithoutLicense.length && !this.project.licensePath) {
-          this.packagesToBeLicensed = [];
+  private async prepareLicenseActions() {
+    const packagesWithoutLicense = await getPackagesWithoutLicense(this.project, this.packagesToPublish);
 
-          const names = packagesWithoutLicense.map((pkg) => pkg.name);
-          const noun = names.length > 1 ? "Packages" : "Package";
-          const verb = names.length > 1 ? "are" : "is";
-          const list =
-            names.length > 1
-              ? `${names.slice(0, -1).join(", ")}${names.length > 2 ? "," : ""} and ${
-                  names[names.length - 1] /* oxford commas _are_ that important */
-                }`
-              : names[0];
+    if (packagesWithoutLicense.length && !this.project.licensePath) {
+      this.packagesToBeLicensed = [];
 
-          this.logger.warn(
-            "ENOLICENSE",
-            "%s %s %s missing a license.\n%s\n%s",
-            noun,
-            list,
-            verb,
-            "One way to fix this is to add a LICENSE.md file to the root of this repository.",
-            "See https://choosealicense.com for additional guidance."
-          );
-        } else {
-          this.packagesToBeLicensed = packagesWithoutLicense;
-        }
-      });
+      const names = packagesWithoutLicense.map((pkg) => pkg.name);
+      const noun = names.length > 1 ? "Packages" : "Package";
+      const verb = names.length > 1 ? "are" : "is";
+      const list =
+        names.length > 1
+          ? `${names.slice(0, -1).join(", ")}${names.length > 2 ? "," : ""} and ${
+              names[names.length - 1] /* oxford commas _are_ that important */
+            }`
+          : names[0];
+
+      this.logger.warn(
+        "ENOLICENSE",
+        "%s %s %s missing a license.\n%s\n%s",
+        noun,
+        list,
+        verb,
+        "One way to fix this is to add a LICENSE.md file to the root of this repository.",
+        "See https://choosealicense.com for additional guidance."
+      );
+    } else {
+      this.packagesToBeLicensed = packagesWithoutLicense;
+    }
   }
 
-  prepareRegistryActions() {
-    let chain = Promise.resolve();
-
+  private async prepareRegistryActions() {
     if (this.conf.get("registry") !== "https://registry.npmjs.org/") {
       this.logger.notice("", "Skipping all user and access validation due to third-party registry");
       this.logger.notice("", "Make sure you're authenticated properly ¯\\_(ツ)_/¯");
 
-      return chain;
+      return;
     }
 
     /* istanbul ignore if */
     if (process.env.LERNA_INTEGRATION) {
-      return chain;
+      return;
     }
 
     if (this.verifyAccess) {
       // validate user has valid npm credentials first,
       // by far the most common form of failed execution
-      chain = chain.then(() => getNpmUsername(this.conf.snapshot));
-      chain = chain.then((username) => {
-        // if no username was retrieved, don't bother validating
-        if (username) {
-          return verifyNpmPackageAccess(this.packagesToPublish, username, this.conf.snapshot);
-        }
-      });
+      const username = await getNpmUsername(this.conf.snapshot);
+      // if no username was retrieved, don't bother validating
+      if (username) {
+        await verifyNpmPackageAccess(this.packagesToPublish, username, this.conf.snapshot);
+      }
 
       // read profile metadata to determine if account-level 2FA is enabled
-      chain = chain.then(() => getTwoFactorAuthRequired(this.conf.snapshot));
-      chain = chain.then((isRequired) => {
-        // notably, this still doesn't handle package-level 2FA requirements
-        this.twoFactorAuthRequired = isRequired;
-      });
+      // notably, this still doesn't handle package-level 2FA requirements
+      this.twoFactorAuthRequired = await getTwoFactorAuthRequired(this.conf.snapshot);
     }
-
-    return chain;
   }
 
-  updateCanaryVersions() {
-    return pMap(this.updates, (node) => {
-      node.pkg.set("version", this.updatesVersions.get(node.name));
+  private async updateCanaryVersions() {
+    await pMap(this.updates, (node) => {
+      const pkg = getPackage(node);
+      pkg.set("version", this.updatesVersions.get(node.name));
 
-      for (const [depName, resolved] of node.localDependencies) {
+      const dependencies = this.projectGraph.localPackageDependencies[node.name] || [];
+
+      dependencies.forEach((dep) => {
+        const depPkg = getPackage(this.projectGraph.nodes[dep.target]);
         // other canary versions need to be updated, non-canary is a no-op
-        const depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
+        const depVersion = this.updatesVersions.get(dep.target) || depPkg.version;
 
         // it no longer matters if we mutate the shared Package instance
-        node.pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
-      }
+        pkg.updateLocalDependency(dep.targetResolvedNpaResult, depVersion, this.savePrefix);
+      });
 
       // writing changes to disk handled in serializeChanges()
     });
   }
 
-  resolveLocalDependencyLinks() {
+  private async resolveLocalDependencyLinks() {
     // resolve relative file: links to their actual version range
-    const updatesWithLocalLinks = this.updates.filter((node) =>
-      Array.from(node.localDependencies.values()).some((resolved) => resolved.type === "directory")
-    );
+    const updatesWithLocalLinks = this.updates.filter((node) => {
+      const dependencies = this.projectGraph.localPackageDependencies[node.name] || [];
+      return dependencies.some((dep) => dep.targetResolvedNpaResult.type === "directory");
+    });
 
-    return pMap(updatesWithLocalLinks, (node) => {
-      for (const [depName, resolved] of node.localDependencies) {
+    await pMap(updatesWithLocalLinks, (node) => {
+      const pkg = getPackage(node);
+      const dependencies = this.projectGraph.localPackageDependencies[node.name] || [];
+
+      dependencies.forEach((dep) => {
+        const depPkg = getPackage(this.projectGraph.nodes[dep.target]);
         // regardless of where the version comes from, we can't publish "file:../sibling-pkg" specs
-        const depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
+        const depVersion = this.updatesVersions.get(dep.target) || depPkg.version;
 
         // it no longer matters if we mutate the shared Package instance
-        node.pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
-      }
-
-      // writing changes to disk handled in serializeChanges()
+        pkg.updateLocalDependency(dep.targetResolvedNpaResult, depVersion, this.savePrefix);
+      });
     });
+
+    // writing changes to disk handled in serializeChanges()
   }
 
-  resolveWorkspaceDependencyLinks() {
+  private async resolveWorkspaceDependencyLinks() {
     // resolve relative workspace: links to their actual version range
-    const updatesWithWorkspaceLinks = this.updates.filter((node) =>
-      Array.from(node.localDependencies.values()).some((resolved) => !!resolved.workspaceSpec)
-    );
+    const updatesWithWorkspaceLinks = this.updates.filter((node) => {
+      const dependencies = this.projectGraph.localPackageDependencies[node.name] || [];
+      return dependencies.some((dep) => !!dep.targetResolvedNpaResult.workspaceSpec);
+    });
 
-    return pMap(updatesWithWorkspaceLinks, (node) => {
-      for (const [depName, resolved] of node.localDependencies) {
+    await pMap(updatesWithWorkspaceLinks, (node) => {
+      const pkg = getPackage(node);
+      const dependencies = this.projectGraph.localPackageDependencies[node.name] || [];
+
+      dependencies.forEach((dep) => {
         // only update local dependencies with workspace: links
+        const depPkg = getPackage(this.projectGraph.nodes[dep.target]);
+        const resolved = dep.targetResolvedNpaResult;
+
         if (resolved.workspaceSpec) {
           let depVersion: string;
           let savePrefix: string;
           if (resolved.workspaceAlias) {
-            depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
+            depVersion = this.updatesVersions.get(dep.target) || depPkg.version;
             savePrefix = resolved.workspaceAlias === "*" ? "" : resolved.workspaceAlias;
           } else {
             const specMatch = resolved.workspaceSpec.match(/^workspace:([~^]?)(.*)/);
             savePrefix = specMatch[1];
-            depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
+            depVersion = this.updatesVersions.get(dep.target) || depPkg.version;
           }
 
           // it no longer matters if we mutate the shared Package instance
-          node.pkg.updateLocalDependency(resolved, depVersion, savePrefix, { retainWorkspacePrefix: false });
+          pkg.updateLocalDependency(resolved, depVersion, savePrefix, { retainWorkspacePrefix: false });
         }
-      }
+      });
 
       // writing changes to disk handled in serializeChanges()
     });
   }
 
-  annotateGitHead() {
+  private annotateGitHead() {
     try {
       const gitHead = this.options.gitHead || getCurrentSHA(this.execOpts);
 
@@ -719,28 +809,29 @@ class PublishCommand extends Command {
     // writing changes to disk handled in serializeChanges()
   }
 
-  serializeChanges() {
-    return pMap(this.packagesToPublish, (pkg) => pkg.serialize());
+  private async serializeChanges() {
+    await pMap(this.packagesToPublish, (pkg) => pkg.serialize());
   }
 
-  resetChanges() {
+  private async resetChanges() {
     // the package.json files are changed (by gitHead if not --canary)
     // and we should always __attempt_ to leave the working tree clean
-    const { cwd } = this.execOpts;
+    const _workspaceRoot = process.env["NX_WORKSPACE_ROOT_PATH"] || workspaceRoot;
+
     const gitOpts = {
       granularPathspec: this.options.granularPathspec !== false,
     };
     const dirtyManifests = [this.project.manifest]
       .concat(this.packagesToPublish)
-      .map((pkg) => path.relative(cwd, pkg.manifestLocation));
+      .map((pkg) => path.relative(_workspaceRoot, pkg.manifestLocation));
 
-    return gitCheckout(dirtyManifests, gitOpts, this.execOpts).catch((err) => {
+    await gitCheckout(dirtyManifests, gitOpts, this.execOpts).catch((err) => {
       this.logger.silly("EGITCHECKOUT", err.message);
       this.logger.notice("FYI", "Unable to reset working tree changes, this probably isn't a git repo.");
     });
   }
 
-  execScript(pkg, script) {
+  private execScript(pkg: Package, script: string) {
     const scriptLocation = path.join(pkg.location, "scripts", script);
 
     try {
@@ -753,80 +844,56 @@ class PublishCommand extends Command {
     return pkg;
   }
 
-  removeTempLicensesOnError(error) {
-    return Promise.resolve()
-      .then(() =>
-        removeTempLicenses(this.packagesToBeLicensed).catch((removeError) => {
-          this.logger.error(
-            "licenses",
-            "error removing temporary license files",
-            removeError.stack || removeError
-          );
-        })
-      )
-      .then(() => {
-        // restore original error into promise chain
-        throw error;
-      });
+  private async removeTempLicensesOnError() {
+    await removeTempLicenses(this.packagesToBeLicensed).catch((removeError) => {
+      this.logger.error(
+        "licenses",
+        "error removing temporary license files",
+        removeError.stack || removeError
+      );
+    });
   }
 
-  requestOneTimePassword() {
+  private async requestOneTimePassword() {
     // if OTP has already been provided, skip prompt
     if (this.otpCache.otp) {
       return;
     }
 
-    return Promise.resolve()
-      .then(() => getOneTimePassword("Enter OTP:"))
-      .then((otp) => {
-        this.otpCache.otp = otp;
-      });
+    const otp = await getOneTimePassword("Enter OTP:");
+    this.otpCache.otp = otp;
   }
 
-  topoMapPackages(mapper) {
-    return runTopologically(this.packagesToPublish, mapper, {
+  private topoMapPackages(mapper: (pkg: Package) => Promise<unknown>) {
+    return runProjectsTopologically(this.updates, this.projectGraph, (node) => mapper(getPackage(node)), {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
-      /**
-       * Previously `publish` had unique default behavior for graph creation vs other commands: it would only consider dependencies when finding
-       * edges by default (i.e. relationships between packages specified via devDependencies would be ignored). It was documented to be the case
-       * in order to try and reduce the chance of dependency cycles.
-       *
-       * We are removing this behavior altogether in v6 because we do not want to have different ways of constructing the graph,
-       * only different ways of utilizing it (e.g. --no-sort vs topological sort).
-       *
-       * Therefore until we remove graphType altogether in v6, we provide a way for users to opt into the old default behavior
-       * by setting the `graphType` option to `dependencies`.
-       */
-      graphType: this.options.graphType === "dependencies" ? "dependencies" : "allDependencies",
     });
   }
 
-  packUpdated() {
+  private async packUpdated() {
     const tracker = this.logger.newItem("npm pack");
 
     tracker.addWork(this.packagesToPublish.length);
 
-    let chain = Promise.resolve();
-
-    chain = chain.then(() => createTempLicenses(this.project.licensePath, this.packagesToBeLicensed));
+    await createTempLicenses(this.project.licensePath, this.packagesToBeLicensed);
 
     if (!this.hasRootedLeaf) {
       // despite being deprecated for years...
-      chain = chain.then(() => this.runRootLifecycle("prepublish"));
+      await this.runRootLifecycle("prepublish");
 
       // these lifecycles _should_ never be employed to run `lerna publish`...
-      chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepare"));
-      chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
-      chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
+      await this.runPackageLifecycle(this.project.manifest, "prepare");
+      await this.runPackageLifecycle(this.project.manifest, "prepublishOnly");
+      await this.runPackageLifecycle(this.project.manifest, "prepack");
     }
 
     const opts = this.conf.snapshot;
     const mapper = pPipe(
       ...[
-        this.options.requireScripts && ((pkg) => this.execScript(pkg, "prepublish")),
-
-        (pkg) =>
+        this.options.requireScripts && ((pkg: Package) => this.execScript(pkg, "prepublish")),
+        (pkg: Package) => this.copyAssets(pkg).then(() => pkg),
+        (pkg: Package) =>
           pulseTillDone(packDirectory(pkg, pkg.location, opts)).then((packed) => {
             tracker.verbose("packed", path.relative(this.project.rootPath, pkg.contents));
             tracker.completeWork(1);
@@ -840,33 +907,33 @@ class PublishCommand extends Command {
       ].filter(Boolean)
     );
 
-    chain = chain.then(() => {
-      if (this.toposort) {
-        return this.topoMapPackages(mapper);
-      }
-      return pMap(this.packagesToPublish, mapper, { concurrency: this.concurrency });
-    });
-
-    chain = chain.then(() => removeTempLicenses(this.packagesToBeLicensed));
-
-    // remove temporary license files if _any_ error occurs _anywhere_ in the promise chain
-    chain = chain.catch((error) => this.removeTempLicensesOnError(error));
-
-    if (!this.hasRootedLeaf) {
-      chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpack"));
+    if (this.toposort) {
+      await this.topoMapPackages(mapper).catch((err) => {
+        // remove temporary license files if _any_ error occurs _anywhere_
+        this.removeTempLicensesOnError();
+        throw err;
+      });
+    } else {
+      await pMap(this.packagesToPublish, mapper, { concurrency: this.concurrency });
     }
 
-    return chain.finally(() => tracker.finish());
+    await removeTempLicenses(this.packagesToBeLicensed);
+
+    if (!this.hasRootedLeaf) {
+      await this.runPackageLifecycle(this.project.manifest, "postpack");
+    }
+
+    tracker.finish();
   }
 
-  publishPacked() {
+  private async publishPacked() {
     this.publishedPackages = [];
 
     const tracker = this.logger.newItem("publish");
 
     tracker.addWork(this.packagesToPublish.length);
 
-    let chain = Promise.resolve();
+    let chain: Promise<unknown> = Promise.resolve();
 
     // if account-level 2FA is enabled, prime the OTP cache
     if (this.twoFactorAuthRequired) {
@@ -897,7 +964,7 @@ class PublishCommand extends Command {
 
     const mapper = pPipe(
       ...[
-        (pkg) => {
+        (pkg: Package) => {
           const preDistTag = this.getPreDistTag(pkg);
           const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
           const pkgOpts = Object.assign({}, opts, { tag });
@@ -941,8 +1008,9 @@ class PublishCommand extends Command {
     chain = chain.then(() => {
       if (this.toposort) {
         return this.topoMapPackages(mapper);
+      } else {
+        return pMap(this.packagesToPublish, mapper, { concurrency: this.concurrency });
       }
-      return pMap(this.packagesToPublish, mapper, { concurrency: this.concurrency });
     });
 
     if (!this.hasRootedLeaf) {
@@ -957,13 +1025,11 @@ class PublishCommand extends Command {
     });
   }
 
-  npmUpdateAsLatest() {
+  private async npmUpdateAsLatest() {
     const tracker = this.logger.newItem("npmUpdateAsLatest");
 
-    tracker.addWork(this.packagesToPublish.length);
+    tracker.addWork(this.updates.length);
     tracker.showProgress();
-
-    let chain = Promise.resolve();
 
     const opts = this.conf.snapshot;
     const getDistTag = (publishConfig) => {
@@ -973,7 +1039,7 @@ class PublishCommand extends Command {
 
       return opts.tag;
     };
-    const mapper = (pkg) => {
+    const mapper = (pkg: Package) => {
       const spec = `${pkg.name}@${pkg.version}`;
       const preDistTag = this.getPreDistTag(pkg);
       const distTag = preDistTag || getDistTag(pkg.get("publishConfig"));
@@ -989,17 +1055,16 @@ class PublishCommand extends Command {
         });
     };
 
-    chain = chain.then(() => {
-      if (this.toposort) {
-        return this.topoMapPackages(mapper);
-      }
-      return pMap(this.packagesToPublish, mapper, { concurrency: this.concurrency });
-    });
+    if (this.toposort) {
+      await this.topoMapPackages(mapper);
+    } else {
+      await pMap(this.packagesToPublish, mapper, { concurrency: this.concurrency });
+    }
 
-    return chain.finally(() => tracker.finish());
+    tracker.finish();
   }
 
-  getDistTag() {
+  private getDistTag(): string | undefined {
     if (this.options.distTag) {
       return this.options.distTag;
     }
@@ -1009,9 +1074,10 @@ class PublishCommand extends Command {
     }
 
     // undefined defaults to "latest" OR whatever is in pkg.publishConfig.tag
+    return undefined;
   }
 
-  getPreDistTag(pkg) {
+  private getPreDistTag(pkg: Package): string | undefined {
     if (!this.options.preDistTag) {
       return;
     }
@@ -1022,12 +1088,91 @@ class PublishCommand extends Command {
   }
 
   // filter out private packages, respecting the --include-private option
-  filterPrivatePkgUpdates(updates) {
+  private filterPrivatePkgUpdates(updates: ProjectGraphProjectNodeWithPackage[]) {
     const privatePackagesToInclude = new Set(this.options.includePrivate || []);
     return updates.filter(
       (node) =>
-        !node.pkg.private || privatePackagesToInclude.has("*") || privatePackagesToInclude.has(node.pkg.name)
+        !getPackage(node).private ||
+        privatePackagesToInclude.has("*") ||
+        privatePackagesToInclude.has(getPackage(node).name)
     );
+  }
+
+  private async copyAssets(pkg: Package) {
+    if (normalize(pkg.location) === normalize(pkg.contents)) {
+      // no need to copy assets if publishing from the source location
+      return;
+    }
+
+    const _workspaceRoot = process.env["NX_WORKSPACE_ROOT_PATH"] || workspaceRoot;
+
+    const assets = pkg.lernaConfig?.command?.publish?.assets || ["package.json", "README.md"];
+    const filesToCopy: {
+      from: string;
+      to: string;
+    }[] = [];
+
+    const getFiles = (glob: string) =>
+      globby(glob, {
+        cwd: pkg.location,
+        onlyFiles: false,
+        expandDirectories: false,
+      });
+
+    for (const asset of assets) {
+      if (typeof asset === "string") {
+        const files = await getFiles(asset);
+
+        this.logger.verbose("publish", "Expanded asset glob %s into files %j", asset, files);
+
+        for (const file of files) {
+          filesToCopy.push({
+            from: join(pkg.location, file),
+            to: join(pkg.contents, file),
+          });
+        }
+      } else if (asset.from && typeof asset.from === "string" && asset.to && typeof asset.to === "string") {
+        const files = await getFiles(asset.from);
+
+        this.logger.verbose("publish", "Expanded asset glob %s into files %j", asset.from, files);
+
+        for (const file of files) {
+          filesToCopy.push({
+            from: join(pkg.location, file),
+            to: join(pkg.contents, asset.to, basename(file)),
+          });
+        }
+      } else {
+        throw new ValidationError(
+          "EINVALIDASSETS",
+          "Asset configuration must be a plain string or object with both `from` and `to` string properties."
+        );
+      }
+    }
+
+    for (const file of filesToCopy) {
+      if (normalize(file.from) === normalize(file.to)) {
+        this.logger.warn(
+          "EPUBLISHASSET",
+          "Asset %s is already in package directory",
+          file.from.replace(`${_workspaceRoot}/`, "")
+        );
+      } else if (existsSync(file.from)) {
+        this.logger.verbose(
+          "publish",
+          "Copying asset %s to %s",
+          file.from.replace(`${_workspaceRoot}/`, ""),
+          file.to.replace(`${_workspaceRoot}/`, "")
+        );
+        await copy(file.from, file.to);
+      } else {
+        this.logger.warn(
+          "EPUBLISHASSET",
+          "Asset %s does not exist",
+          file.from.replace(`${_workspaceRoot}/`, "")
+        );
+      }
+    }
   }
 }
 

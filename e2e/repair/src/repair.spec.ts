@@ -18,7 +18,7 @@ describe("lerna-repair", () => {
       name: "lerna-repair",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
   });

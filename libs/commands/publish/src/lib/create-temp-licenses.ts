@@ -1,15 +1,12 @@
+import { Package } from "@lerna/core";
 import fs from "fs-extra";
 import pMap from "p-map";
 import path from "path";
 
-module.exports.createTempLicenses = createTempLicenses;
-
 /**
  * Create temporary license files.
- * @param {string} srcLicensePath
- * @param {Packages[]} packagesToBeLicensed
  */
-function createTempLicenses(srcLicensePath, packagesToBeLicensed) {
+export function createTempLicenses(srcLicensePath: string, packagesToBeLicensed: Package[]) {
   if (!srcLicensePath || !packagesToBeLicensed.length) {
     return Promise.resolve();
   }
@@ -27,8 +24,5 @@ function createTempLicenses(srcLicensePath, packagesToBeLicensed) {
     pkg.licensePath = path.join(pkg.contents, licenseFileName);
   });
 
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   return pMap(packagesToBeLicensed, (pkg) => fs.copy(srcLicensePath, pkg.licensePath, options));
 }

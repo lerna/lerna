@@ -6,23 +6,20 @@ type: reference
 
 # Commands
 
-- [`lerna publish`](https://github.com/lerna/lerna/tree/main/libs/commands/publish#readme)
-- [`lerna version`](https://github.com/lerna/lerna/tree/main/libs/commands/version#readme)
-- [`lerna bootstrap`](https://github.com/lerna/lerna/tree/main/libs/commands/bootstrap#readme)
-- [`lerna list`](https://github.com/lerna/lerna/tree/main/libs/commands/list#readme)
+- [`lerna add-caching`](https://github.com/lerna/lerna/tree/main/packages/lerna/src/commands/add-caching#readme)
 - [`lerna changed`](https://github.com/lerna/lerna/tree/main/libs/commands/changed#readme)
+- [`lerna clean`](https://github.com/lerna/lerna/tree/main/libs/commands/clean#readme)
+- [`lerna create`](https://github.com/lerna/lerna/tree/main/libs/commands/create#readme)
 - [`lerna diff`](https://github.com/lerna/lerna/tree/main/libs/commands/diff#readme)
 - [`lerna exec`](https://github.com/lerna/lerna/tree/main/libs/commands/exec#readme)
-- [`lerna run`](https://github.com/lerna/lerna/tree/main/libs/commands/run#readme)
-- [`lerna init`](https://github.com/lerna/lerna/tree/main/libs/commands/init#readme)
-- [`lerna add`](https://github.com/lerna/lerna/tree/main/libs/commands/add#readme)
-- [`lerna clean`](https://github.com/lerna/lerna/tree/main/libs/commands/clean#readme)
 - [`lerna import`](https://github.com/lerna/lerna/tree/main/libs/commands/import#readme)
-- [`lerna link`](https://github.com/lerna/lerna/tree/main/libs/commands/link#readme)
-- [`lerna create`](https://github.com/lerna/lerna/tree/main/libs/commands/create#readme)
 - [`lerna info`](https://github.com/lerna/lerna/tree/main/libs/commands/info#readme)
-- [`lerna add-caching`](https://github.com/lerna/lerna/tree/main/packages/lerna/src/commands/add-caching#readme)
+- [`lerna init`](https://github.com/lerna/lerna/tree/main/libs/commands/init#readme)
+- [`lerna list`](https://github.com/lerna/lerna/tree/main/libs/commands/list#readme)
+- [`lerna publish`](https://github.com/lerna/lerna/tree/main/libs/commands/publish#readme)
 - [`lerna repair`](https://github.com/lerna/lerna/tree/main/packages/lerna/src/commands/repair#readme)
+- [`lerna run`](https://github.com/lerna/lerna/tree/main/libs/commands/run#readme)
+- [`lerna version`](https://github.com/lerna/lerna/tree/main/libs/commands/version#readme)
 - [`lerna watch`](https://github.com/lerna/lerna/tree/main/packages/lerna/src/commands/watch#readme)
 
 ## Filter Options

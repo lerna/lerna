@@ -53,7 +53,6 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--contents <dir>`](#--contents-dir)
 - [`--dist-tag <tag>`](#--dist-tag-tag)
 - [`--git-head <sha>`](#--git-head-sha)
-- [`--graph-type <all|dependencies>`](#--graph-type-alldependencies)
 - [`--ignore-scripts`](#--ignore-scripts)
 - [`--ignore-prepublish`](#--ignore-prepublish)
 - [`--include-private`](#--include-private)
@@ -102,7 +101,7 @@ Subdirectory to publish. Must apply to ALL packages, and MUST contain a package.
 Package lifecycles will still be run in the original leaf directory.
 You should probably use one of those lifecycles (`prepare`, `prepublishOnly`, or `prepack`) to _create_ the subdirectory and whatnot.
 
-If you're into unnecessarily complicated publishing, this will give you joy.
+See [Configuring Published Files](https://lerna.js.org/docs/concepts#configuring-published-files) for more information on configuring files to publish to npm.
 
 ```sh
 lerna publish --contents dist
@@ -145,28 +144,6 @@ lerna publish from-package --git-head ${CODEBUILD_RESOLVED_SOURCE_VERSION}
 ```
 
 Under all other circumstances, this value is derived from a local `git` command.
-
-### `--graph-type <all|dependencies>`
-
-Set which kind of dependencies to use when building a package graph. The default value is `dependencies`, whereby only packages listed in the `dependencies` section of a package's `package.json` are included. Pass `all` to include both `dependencies` _and_ `devDependencies` when constructing the package graph and determining topological order.
-
-When using traditional peer + dev dependency pairs, this option should be configured to `all` so the peers are always published before their dependents.
-
-```sh
-lerna publish --graph-type all
-```
-
-Configured via `lerna.json`:
-
-```json
-{
-  "command": {
-    "publish": {
-      "graphType": "all"
-    }
-  }
-}
-```
 
 ### `--ignore-scripts`
 

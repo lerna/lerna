@@ -1,20 +1,13 @@
 import { ValidationError } from "@lerna/core";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getFetchConfig } = require("./fetch-config");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getProfileData } = require("./get-profile-data");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getWhoAmI } = require("./get-whoami");
-
-module.exports.getNpmUsername = getNpmUsername;
+import { FetchConfig, getFetchConfig } from "./fetch-config";
+import { getProfileData } from "./get-profile-data";
+import { getWhoAmI } from "./get-whoami";
 
 /**
  * Retrieve username of logged-in user.
- * @param {import("./fetch-config").FetchConfig} options
- * @returns {Promise<string>}
  */
-function getNpmUsername(options) {
+export function getNpmUsername(options: Partial<FetchConfig> = {}): Promise<string> {
   const opts = getFetchConfig(options, {
     // don't wait forever for third-party failures to be dealt with
     fetchRetries: 0,

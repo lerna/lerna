@@ -14,7 +14,7 @@
       }
     },
     "compile": {
-      "executor": "@nrwl/esbuild:esbuild",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "packages/legacy-package-management/dist",

@@ -1,8 +1,0 @@
-{
-  "packages": [
-    "./",
-    "packages/node_modules/*",
-    "packages/node_modules/@scoped/*"
-  ],
-  "version": "1.0.0"
-}

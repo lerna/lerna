@@ -20,6 +20,7 @@ jest.mock("./remote-branch-exists", () => ({
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const promptSelectOne = _promptSelectOne as any;
 
 // test command
@@ -35,21 +36,6 @@ describe("version bump", () => {
 
     const message = await getCommitMessage(testDir);
     expect(message).toBe("v1.0.1-beta.25");
-  });
-
-  it("receives --repo-version <value> as explicit [bump]", async () => {
-    const testDir = await initFixture("normal");
-    await lernaVersion(testDir)("--repo-version", "1.0.1-beta.25");
-
-    const message = await getCommitMessage(testDir);
-    expect(message).toBe("v1.0.1-beta.25");
-  });
-
-  it("errors when --repo-version and [bump] positional passed", async () => {
-    const testDir = await initFixture("normal");
-    const command = lernaVersion(testDir)("v1.0.1-beta.25", "--repo-version", "v1.0.1-beta.25");
-
-    await expect(command).rejects.toThrow("Arguments repo-version and bump are mutually exclusive");
   });
 
   it("strips invalid semver information from explicit value", async () => {
@@ -68,21 +54,6 @@ describe("version bump", () => {
 
     const message = await getCommitMessage(testDir);
     expect(message).toBe("v1.1.0");
-  });
-
-  it("receives --cd-version <bump>", async () => {
-    const testDir = await initFixture("normal");
-    await lernaVersion(testDir)("--cd-version", "premajor");
-
-    const message = await getCommitMessage(testDir);
-    expect(message).toBe("v2.0.0-alpha.0");
-  });
-
-  it("errors when --cd-version and [bump] positional passed", async () => {
-    const testDir = await initFixture("normal");
-    const command = lernaVersion(testDir)("minor", "--cd-version", "minor");
-
-    await expect(command).rejects.toThrow("Arguments cd-version and bump are mutually exclusive");
   });
 
   it("throws an error when an invalid semver keyword is used", async () => {

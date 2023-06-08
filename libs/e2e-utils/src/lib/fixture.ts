@@ -1,6 +1,6 @@
-import { joinPathFragments, readJsonFile, writeJsonFile } from "@nrwl/devkit";
+import { joinPathFragments, readJsonFile, writeJsonFile } from "@nx/devkit";
 import { exec, spawn } from "child_process";
-import { ensureDir, existsSync, readFile, remove, writeFile } from "fs-extra";
+import { WriteStream, createWriteStream, ensureDir, existsSync, readFile, remove, writeFile } from "fs-extra";
 import { dump } from "js-yaml";
 
 interface RunCommandOptions {
@@ -15,7 +15,7 @@ type PackageManager = "npm" | "yarn" | "pnpm";
 interface FixtureCreateOptions {
   name: string;
   packageManager: PackageManager;
-  runLernaInit: boolean;
+  lernaInit: boolean | { args?: string[] };
   initializeGit: boolean;
   installDependencies: boolean;
   e2eRoot: string;
@@ -27,6 +27,10 @@ type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string
 const PNPM_STORE = "pnpm.store";
 const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4872/";
+
+const noopWriteStream = {
+  write(...x: any[]) {},
+} as WriteStream;
 
 /**
  * A initialized Fixture creates an entry within /tmp/lerna-e2e for the given fixture name with the following structure:
@@ -41,6 +45,10 @@ export class Fixture {
   private readonly fixtureWorkspacePath = joinPathFragments(this.fixtureRootPath, "lerna-workspace");
   private readonly fixtureOriginPath = joinPathFragments(this.fixtureRootPath, ORIGIN_GIT);
   private readonly fixturePnpmStorePath = joinPathFragments(this.fixtureRootPath, PNPM_STORE);
+  debugWriteStream: WriteStream =
+    process.env.LERNA_E2E_DEBUG === "true"
+      ? createWriteStream(joinPathFragments(this.fixtureRootPath, "debug.log"), { flags: "a" })
+      : noopWriteStream;
 
   constructor(
     private readonly e2eRoot: string,
@@ -52,7 +60,7 @@ export class Fixture {
   static async create({
     name,
     packageManager,
-    runLernaInit,
+    lernaInit,
     initializeGit,
     installDependencies,
     e2eRoot,
@@ -77,9 +85,9 @@ export class Fixture {
 
     await fixture.setNpmRegistry();
 
-    if (runLernaInit) {
-      const initOptions = packageManager === "pnpm" ? ({ keepDefaultOptions: true } as const) : {};
-      await fixture.lernaInit("", initOptions);
+    if (lernaInit) {
+      // Use custom lerna init args if provided
+      await fixture.lernaInit(lernaInit === true ? "" : lernaInit.args?.join(" "));
     }
 
     await fixture.initializeNpmEnvironment();
@@ -146,6 +154,12 @@ export class Fixture {
    * Tear down the entirety of the fixture including the git origin and the lerna workspace under test.
    */
   async destroy(): Promise<void> {
+    // Leave the fixtures untouched if in debug mode so that logs can be inspected etc
+    if (process.env.LERNA_E2E_DEBUG === "true") {
+      console.log(`NOTE: Skipping destruction of fixture ${this.name} due to LERNA_E2E_DEBUG=true`);
+      console.log(`You can review the fixture here: ${this.fixtureRootPath}`);
+      return;
+    }
     await remove(this.fixtureRootPath);
   }
 
@@ -181,14 +195,15 @@ export class Fixture {
       env: undefined,
     }
   ): Promise<RunCommandResult> {
+    this.debugWriteStream.write(`\n> Fixture.exec() -> ${command}\n`);
     return this.execImpl(command, { ...opts, cwd: opts.cwd ?? this.fixtureWorkspacePath });
   }
 
   /**
    * Resolve the locally published version of lerna and run the `init` command, with an optionally
-   * provided arguments. Reverts useNx and useWorkspaces to false when options.keepDefaultOptions is not provided, since those options are off for most users.
+   * provided arguments.
    */
-  async lernaInit(args?: string, options?: { keepDefaultOptions?: true }): Promise<RunCommandResult> {
+  async lernaInit(args?: string): Promise<RunCommandResult> {
     let execCommandResult: Promise<RunCommandResult>;
     switch (this.packageManager) {
       case "npm":
@@ -208,31 +223,15 @@ export class Fixture {
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
 
-    const initResult = await execCommandResult;
-    if (!options?.keepDefaultOptions) {
-      await this.revertDefaultInitOptions();
-    }
-
-    return initResult;
+    return await execCommandResult;
   }
 
   async overrideLernaConfig(lernaConfig: Record<string, any>): Promise<void> {
+    this.debugWriteStream.write(`\n> Fixture.overrideLernaConfig() -> ${JSON.stringify(lernaConfig)}\n`);
     return this.updateJson("lerna.json", (json) => ({
       ...json,
       ...lernaConfig,
     }));
-  }
-
-  private async revertDefaultInitOptions(): Promise<void> {
-    await this.overrideLernaConfig({
-      useWorkspaces: false,
-      packages: ["packages/*"],
-    });
-    await this.updateJson("package.json", (json) => {
-      const newJson = { ...json };
-      delete newJson.workspaces;
-      return newJson;
-    });
   }
 
   /**
@@ -336,6 +335,7 @@ export class Fixture {
   }
 
   async addNxJsonToWorkspace(): Promise<void> {
+    this.debugWriteStream.write(`\n> Fixture.addNxJsonToWorkspace()\n`);
     writeJsonFile(this.getWorkspacePath("nx.json"), {
       extends: "nx/presets/npm.json",
       tasksRunnerOptions: {
@@ -347,6 +347,7 @@ export class Fixture {
   }
 
   async addPackagesDirectory(path: string): Promise<void> {
+    this.debugWriteStream.write(`\n> Fixture.addNxJsonToWorkspace() -> ${path}\n`);
     await this.updateJson("lerna.json", (json) => ({
       ...json,
       packages: [...(json.packages as string[]), `${path}/*`],
@@ -362,6 +363,13 @@ export class Fixture {
     dependencyName: string;
     version: string;
   }): Promise<void> {
+    this.debugWriteStream.write(
+      `\n> Fixture.addDependencyToPackage() -> ${JSON.stringify({
+        packagePath,
+        dependencyName,
+        version,
+      })}\n`
+    );
     await this.updateJson(`${packagePath}/package.json`, (json) => ({
       ...json,
       dependencies: {
@@ -378,6 +386,12 @@ export class Fixture {
     packagePath: string;
     scripts: Record<string, string>;
   }): Promise<void> {
+    this.debugWriteStream.write(
+      `\n> Fixture.addScriptsToPackage() -> ${JSON.stringify({
+        packagePath,
+        scripts,
+      })}\n`
+    );
     await this.updateJson(`${packagePath}/package.json`, (json) => ({
       ...json,
       scripts: {
@@ -394,6 +408,12 @@ export class Fixture {
     packagePath: string;
     newVersion: string;
   }): Promise<void> {
+    this.debugWriteStream.write(
+      `\n> Fixture.updatePackageVersion() -> ${JSON.stringify({
+        packagePath,
+        newVersion,
+      })}\n`
+    );
     await this.updateJson(`${packagePath}/package.json`, (json) => ({
       ...json,
       version: newVersion,

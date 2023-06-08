@@ -6,10 +6,9 @@ jest.mock("libnpmaccess");
 
 const initFixture = initFixtureFactory(__dirname);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { verifyNpmPackageAccess } = require("./verify-npm-package-access");
+import { verifyNpmPackageAccess } from "./verify-npm-package-access";
 
-access.lsPackages.mockImplementation(() =>
+access.getPackages.mockImplementation(() =>
   Promise.resolve({
     "package-1": "read-write",
     "package-2": "read-write",
@@ -39,7 +38,7 @@ describe("verifyNpmPackageAccess", () => {
 
     await verifyNpmPackageAccess(packages, "lerna-test", opts);
 
-    expect(access.lsPackages).toHaveBeenLastCalledWith(
+    expect(access.getPackages).toHaveBeenLastCalledWith(
       "lerna-test",
       expect.objectContaining({
         registry: "https://registry.npmjs.org/",
@@ -52,7 +51,7 @@ describe("verifyNpmPackageAccess", () => {
     const packages = await getPackages(cwd);
     const opts = { registry: "https://registry.npmjs.org/" };
 
-    access.lsPackages.mockImplementationOnce(() =>
+    access.getPackages.mockImplementationOnce(() =>
       Promise.resolve({
         "package-1": "read-write",
         // unpublished packages don't show up in ls-packages
@@ -62,16 +61,16 @@ describe("verifyNpmPackageAccess", () => {
 
     await verifyNpmPackageAccess(packages, "lerna-test", opts);
 
-    expect(access.lsPackages).toHaveBeenCalled();
+    expect(access.getPackages).toHaveBeenCalled();
   });
 
-  test("allows null result to pass with warning", async () => {
+  test("allows no results to pass with warning", async () => {
     const packages = await getPackages(cwd);
     const opts = { registry: "https://registry.npmjs.org/" };
 
-    access.lsPackages.mockImplementationOnce(() =>
-      // access.lsPackages() returns null when _no_ results returned
-      Promise.resolve(null)
+    access.getPackages.mockImplementationOnce(() =>
+      // access.getPackages() returns an empty object when no results returned
+      Promise.resolve({})
     );
 
     await verifyNpmPackageAccess(packages, "lerna-test", opts);
@@ -86,7 +85,7 @@ describe("verifyNpmPackageAccess", () => {
     const packages = await getPackages(cwd);
     const opts = { registry: "https://registry.npmjs.org/" };
 
-    access.lsPackages.mockImplementationOnce(() =>
+    access.getPackages.mockImplementationOnce(() =>
       Promise.resolve({
         "package-1": "read-write",
         "package-2": "read-only",
@@ -103,7 +102,7 @@ describe("verifyNpmPackageAccess", () => {
     const registry = "http://outdated-npm-enterprise.mycompany.com:12345/";
     const opts = { registry };
 
-    access.lsPackages.mockImplementationOnce(() => {
+    access.getPackages.mockImplementationOnce(() => {
       const err = new Error("npm-enterprise-what") as any;
       err.code = "E500";
       return Promise.reject(err);
@@ -113,7 +112,7 @@ describe("verifyNpmPackageAccess", () => {
 
     const [logMessage] = loggingOutput("warn");
     expect(logMessage).toMatch(
-      `Registry "${registry}" does not support \`npm access ls-packages\`, skipping permission checks...`
+      `Registry "${registry}" does not support \`npm access list packages\`, skipping permission checks...`
     );
     expect(console.error).not.toHaveBeenCalled();
   });
@@ -123,7 +122,7 @@ describe("verifyNpmPackageAccess", () => {
     const registry = "https://artifactory-partial-implementation.corpnet.mycompany.com/";
     const opts = { registry };
 
-    access.lsPackages.mockImplementationOnce(() => {
+    access.getPackages.mockImplementationOnce(() => {
       const err = new Error("artifactory-why") as any;
       err.code = "E404";
       return Promise.reject(err);
@@ -133,7 +132,7 @@ describe("verifyNpmPackageAccess", () => {
 
     const [logMessage] = loggingOutput("warn");
     expect(logMessage).toMatch(
-      `Registry "${registry}" does not support \`npm access ls-packages\`, skipping permission checks...`
+      `Registry "${registry}" does not support \`npm access list packages\`, skipping permission checks...`
     );
     expect(console.error).not.toHaveBeenCalled();
   });
@@ -142,7 +141,7 @@ describe("verifyNpmPackageAccess", () => {
     const packages = await getPackages(cwd);
     const opts = {};
 
-    access.lsPackages.mockImplementationOnce(() => {
+    access.getPackages.mockImplementationOnce(() => {
       const err = new Error("gonna-need-a-bigger-boat");
 
       return Promise.reject(err);

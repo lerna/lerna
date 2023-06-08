@@ -104,13 +104,23 @@ Successfully published:
 lerna success published 2 packages
 ```
 
+### from-package
+
+Another way Lerna can determine which packages to publish is with `from-package`. Lerna will compare the version of every package in the repository with the version of it that is published to npm. For each package that has a version that is greater than the published version, Lerna will publish that package to npm.
+
+This mode does not explicitly require that the packages have been versioned with `lerna version`, which makes it great for workspaces that have their own versioning scripts.
+
+```bash
+lerna publish from-package
+```
+
 ## Versioning strategies
 
 Lerna allows you to manage your project using one of two modes: Fixed or Independent.
 
 ### Fixed/Locked mode (default)
 
-Fixed mode Lerna projects operate on a single version line. The version is kept in the `lerna.json` file at the root of your project under the `version` key. When you run `lerna publish`, if a module has been updated since the last time a release was made, it will be updated to the new version you're releasing. This means that you only publish a new version of a package when you need to.
+Fixed mode Lerna projects operate on a single version line. The version is kept in the `lerna.json` file at the root of your project under the `version` key. When you run `lerna publish`, if a package has been updated since the last time a release was made, it will be updated to the new version you're releasing. This means that you only publish a new version of a package when you need to.
 
 > Note: If you have a major version zero, all updates are [considered breaking](https://semver.org/#spec-item-4). Because of that, running `lerna publish` with a major version zero and choosing any non-prerelease version number will cause new versions to be published for all packages, even if not all packages have changed since the last release.
 
@@ -118,7 +128,7 @@ Use this if you want to automatically tie all package versions together. One iss
 
 #### Synchronized Versions
 
-Lerna will only version and publish packages that have changed since the previous release, causing package versions to drift apart over time. To prevent this, use the `--force-publish` option with `lerna version` and `lerna publish`. This will force Lerna to always version and publish all packages, regardless of if they have changed since the previous release. As a result, all package versions will stay synchronized to the version in `lerna.json`.
+Lerna will only version and publish packages that have changed since the previous release, causing package versions to drift apart over time. To prevent this, use the `--force-publish` option with `lerna version`. This will force Lerna to always version all packages, regardless of if they have changed since the previous release. Then they will all be published to the registry by `lerna publish from-git`. As a result, all package versions will stay synchronized to the version in `lerna.json`.
 
 ### Independent mode
 

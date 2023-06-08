@@ -1,11 +1,11 @@
 import {
-  createSymlink as _createSymlink,
   hasNpmVersion as _hasNpmVersion,
   npmInstall as _npmInstall,
   npmInstallDependencies as _npmInstallDependencies,
   rimrafDir as _rimrafDir,
   runLifecycle as _runLifecycle,
 } from "@lerna/core";
+import { createSymlink as _createSymlink } from "@lerna/legacy-core";
 import {
   commandRunner,
   initFixtureFactory,
@@ -17,6 +17,8 @@ import path from "path";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+// eslint-disable-next-line jest/no-mocks-import
+jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 const npmInstall = jest.mocked(_npmInstall);
 const npmInstallDependencies = jest.mocked(_npmInstallDependencies);
@@ -626,15 +628,6 @@ describe("BootstrapCommand", () => {
           npmClient: "yarn",
           mutex: expect.stringMatching(/^network:\d+$/),
         })
-      );
-    });
-
-    it("errors when package.json workspaces exists but --use-workspaces is not enabled", async () => {
-      const testDir = await initFixture("yarn-workspaces");
-      const command = lernaBootstrap(testDir)("--no-use-workspaces");
-
-      await expect(command).rejects.toThrow(
-        "Yarn workspaces are configured in package.json, but not enabled in lerna.json!"
       );
     });
   });

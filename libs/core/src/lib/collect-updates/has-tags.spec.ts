@@ -1,5 +1,3 @@
-"use strict";
-
 jest.mock("@lerna/child-process");
 
 // mocked modules

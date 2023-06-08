@@ -3,7 +3,12 @@
   "$id": "https://lerna.js.org/docs/getting-started#adding-lerna",
   "title": "JSON schema for Lerna configuration",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "The JSON schema version used to validate this configuration file"
+    },
     "version": {
       "type": "string",
       "description": "The version of the repository, or \"independent\" for a repository with independently versioned packages.",
@@ -25,6 +30,7 @@
     },
     "command": {
       "type": "object",
+      "additionalProperties": false,
       "description": "Options for individual Lerna commands.",
       "properties": {
         "add": {
@@ -122,9 +128,6 @@
             },
             "strict": {
               "$ref": "#/$defs/commandOptions/bootstrap/strict"
-            },
-            "useWorkspaces": {
-              "$ref": "#/$defs/commandOptions/bootstrap/useWorkspaces"
             },
             "forceLocal": {
               "$ref": "#/$defs/commandOptions/shared/forceLocal"
@@ -611,18 +614,6 @@
             }
           }
         },
-        "init": {
-          "type": "object",
-          "description": "Options for the `init` command.",
-          "properties": {
-            "exact": {
-              "$ref": "#/$defs/commandOptions/shared/exact"
-            },
-            "independent": {
-              "$ref": "#/$defs/commandOptions/init/independent"
-            }
-          }
-        },
         "link": {
           "type": "object",
           "description": "Options for the `link` command.",
@@ -771,9 +762,6 @@
             "gitHead": {
               "$ref": "#/$defs/commandOptions/publish/gitHead"
             },
-            "graphType": {
-              "$ref": "#/$defs/commandOptions/publish/graphType"
-            },
             "ignorePrepublish": {
               "$ref": "#/$defs/commandOptions/shared/ignorePrepublish"
             },
@@ -803,6 +791,12 @@
             },
             "includePrivate": {
               "$ref": "#/$defs/commandOptions/publish/includePrivate"
+            },
+            "directory": {
+              "$ref": "#/$defs/commandOptions/publish/directory"
+            },
+            "assets": {
+              "$ref": "#/$defs/commandOptions/publish/assets"
             },
 
             "npmClient": {
@@ -1188,9 +1182,6 @@
     "strict": {
       "$ref": "#/$defs/commandOptions/bootstrap/strict"
     },
-    "useWorkspaces": {
-      "$ref": "#/$defs/commandOptions/bootstrap/useWorkspaces"
-    },
 
     "access": {
       "$ref": "#/$defs/commandOptions/create/access"
@@ -1230,10 +1221,6 @@
       "$ref": "#/$defs/commandOptions/import/preserveCommit"
     },
 
-    "independent": {
-      "$ref": "#/$defs/commandOptions/init/independent"
-    },
-
     "canary": {
       "$ref": "#/$defs/commandOptions/publish/canary"
     },
@@ -1248,9 +1235,6 @@
     },
     "gitHead": {
       "$ref": "#/$defs/commandOptions/publish/gitHead"
-    },
-    "graphType": {
-      "$ref": "#/$defs/commandOptions/publish/graphType"
     },
     "otp": {
       "$ref": "#/$defs/commandOptions/publish/otp"
@@ -1491,10 +1475,6 @@
         "strict": {
           "type": "boolean",
           "description": "During `lerna bootstrap`, don't allow warnings when hoisting as it causes longer bootstrap times and other issues."
-        },
-        "useWorkspaces": {
-          "type": "boolean",
-          "description": "During `lerna bootstrap`, enable integration with Yarn workspaces."
         }
       },
       "create": {
@@ -1556,12 +1536,6 @@
           "description": "During `lerna import`, when true, preserve the original committer in additional to original author."
         }
       },
-      "init": {
-        "independent": {
-          "type": "boolean",
-          "description": "During `lerna init`, when true, version packages independently."
-        }
-      },
       "publish": {
         "canary": {
           "type": "boolean",
@@ -1582,13 +1556,6 @@
         "gitHead": {
           "type": "string",
           "description": "For `lerna publish`, the explicit SHA to set as gitHead when packing tarballs, only allowed with 'from-package' positional."
-        },
-        "graphType": {
-          "type": "string",
-          "enum": ["all", "dependencies"],
-          "description": "DEPRECATED: For `lerna publish`, if you want to ignore devDependencies when considering the package graph you can set this property equal to 'dependencies'. This will be removed in v6 of lerna.",
-          "default": "all",
-          "deprecated": true
         },
         "otp": {
           "type": "string",
@@ -1616,6 +1583,34 @@
             "type": "string"
           },
           "description": "During `lerna publish`, include specified private packages when publishing by temporarily removing the private property from the package manifest. This should only be used for testing private packages that will become public. The value \"*\" will include all private packages."
+        },
+        "directory": {
+          "type": "string",
+          "description": "Custom directory to use for the package contents. This can contain dynamic placeholders like `{workspaceRoot}`, `{projectRoot}` and `{projectName}`. See https://lerna.js.org/docs/concepts#configuring-published-files"
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string",
+                    "description": "A specific file or glob pattern that matches files in the source directory"
+                  },
+                  "to": {
+                    "type": "string",
+                    "description": "The path to copy the file to within the publish directory"
+                  }
+                },
+                "required": ["from", "to"]
+              }
+            ]
+          }
         }
       },
       "run": {

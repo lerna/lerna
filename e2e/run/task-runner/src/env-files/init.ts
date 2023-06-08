@@ -7,7 +7,7 @@ import { writeFile } from "fs-extra";
     name: "lerna-run-nx-env-files",
     packageManager: "npm",
     initializeGit: true,
-    runLernaInit: true,
+    lernaInit: { args: [`--packages="packages/*"`] },
     installDependencies: true,
   });
 

@@ -1,5 +1,6 @@
 import { tempWrite as _tempWrite } from "@lerna/core";
 import { EOL } from "os";
+import { gitCommit } from "./git-commit";
 
 jest.mock("@lerna/child-process");
 
@@ -13,9 +14,6 @@ const tempWrite = jest.mocked(_tempWrite);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { gitCommit } = require("./git-commit");
 
 describe("git commit", () => {
   childProcess.exec.mockResolvedValue();

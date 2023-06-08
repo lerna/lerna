@@ -3,8 +3,7 @@ import { initFixtureFactory } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import path from "path";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { createTempLicenses } = require("./create-temp-licenses");
+import { createTempLicenses } from "./create-temp-licenses";
 
 const initFixture = initFixtureFactory(__dirname);
 

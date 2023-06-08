@@ -2,7 +2,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { Command, getFilteredPackages, promptConfirmation, pulseTillDone, rimrafDir } from "@lerna/core";
+import { promptConfirmation, pulseTillDone, rimrafDir } from "@lerna/core";
+import { Command, getFilteredPackages } from "@lerna/legacy-core";
 import pMap from "p-map";
 import path from "path";
 

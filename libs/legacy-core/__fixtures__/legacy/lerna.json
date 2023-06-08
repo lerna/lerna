@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "testOption": "default",
+  "bootstrapConfig": {
+    "ignore": "package-a"
+  },
+  "publishConfig": {
+    "ignore": "package-b"
+  }
+}

@@ -1,20 +1,20 @@
+import { ExecOptions } from "child_process";
 import log from "npmlog";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-module.exports.gitCheckout = gitCheckout;
-
 /**
  * Reset files modified by publish steps.
- * @param {string[]} stagedFiles
- * @param {{ granularPathspec: boolean; }} gitOpts
- * @param {import("@lerna/child-process").ExecOpts} execOpts
  */
-function gitCheckout(stagedFiles, gitOpts, execOpts) {
+export function gitCheckout(
+  stagedFiles: string[],
+  gitOpts: { granularPathspec: boolean },
+  execOpts: ExecOptions
+): Promise<void> {
   const files = gitOpts.granularPathspec ? stagedFiles : ".";
 
-  log.silly("gitCheckout", files);
+  log.silly("gitCheckout", files as string);
 
   return childProcess.exec("git", ["checkout", "--"].concat(files), execOpts);
 }

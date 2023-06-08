@@ -14,25 +14,23 @@
       }
     },
     "compile": {
-      "executor": "@nrwl/esbuild:esbuild",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "packages/lerna/dist",
         "main": "packages/lerna/src/index.ts",
         "tsConfig": "packages/lerna/tsconfig.lib.json",
-        "assets": [],
+        "assets": [
+          {
+            "input": "packages/lerna/src",
+            "glob": "cli.js",
+            "output": "."
+          }
+        ],
         "thirdParty": false,
         "platform": "node",
         "format": ["cjs"],
         "additionalEntryPoints": [
-          "packages/lerna/src/cli.ts",
-          "packages/lerna/src/commands/add/command.ts",
-          "packages/lerna/src/commands/add/index.ts",
-          "packages/lerna/src/commands/add/lib/get-range-to-reference.ts",
-          "packages/lerna/src/commands/bootstrap/command.ts",
-          "packages/lerna/src/commands/bootstrap/index.ts",
-          "packages/lerna/src/commands/bootstrap/lib/has-dependency-installed.ts",
-          "packages/lerna/src/commands/bootstrap/lib/is-hoisted-package.ts",
           "packages/lerna/src/commands/changed/command.ts",
           "packages/lerna/src/commands/changed/index.ts",
           "packages/lerna/src/commands/clean/command.ts",
@@ -49,8 +47,6 @@
           "packages/lerna/src/commands/info/index.ts",
           "packages/lerna/src/commands/init/command.ts",
           "packages/lerna/src/commands/init/index.ts",
-          "packages/lerna/src/commands/link/command.ts",
-          "packages/lerna/src/commands/link/index.ts",
           "packages/lerna/src/commands/list/command.ts",
           "packages/lerna/src/commands/list/index.ts",
           "packages/lerna/src/commands/publish/command.ts",
@@ -62,9 +58,7 @@
           "packages/lerna/src/commands/publish/lib/get-npm-username.ts",
           "packages/lerna/src/commands/publish/lib/get-packages-without-license.ts",
           "packages/lerna/src/commands/publish/lib/get-profile-data.ts",
-          "packages/lerna/src/commands/publish/lib/get-tagged-packages.ts",
           "packages/lerna/src/commands/publish/lib/get-two-factor-auth-required.ts",
-          "packages/lerna/src/commands/publish/lib/get-unpublished-packages.ts",
           "packages/lerna/src/commands/publish/lib/get-whoami.ts",
           "packages/lerna/src/commands/publish/lib/git-checkout.ts",
           "packages/lerna/src/commands/publish/lib/remove-temp-licenses.ts",
@@ -85,7 +79,11 @@
           "packages/lerna/src/commands/version/lib/prompt-version.ts",
           "packages/lerna/src/commands/version/lib/remote-branch-exists.ts",
           "packages/lerna/src/commands/version/lib/update-lockfile-version.ts",
-          "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts"
+          "packages/lerna/src/migrations/add-schema-config/add-schema-config.ts",
+          "packages/lerna/src/migrations/remove-invalid-init-config/remove-invalid-init-config.ts",
+          "packages/lerna/src/migrations/remove-invalid-use-workspaces/remove-invalid-use-workspaces.ts",
+          "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts",
+          "packages/lerna/src/migrations/update-options-from-legacy-deprecate-config/update-options-from-legacy-deprecate-config.ts"
         ],
         "esbuildOptions": {
           "external": [
@@ -111,7 +109,7 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "packages/lerna/jest.config.ts",

@@ -22,8 +22,11 @@ jest.mock("./remote-branch-exists", () => ({
 }));
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createGitHubClient = _createGitHubClient as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createGitLabClient = _createGitLabClient as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const recommendVersion = _recommendVersion as any;
 
 const initFixture = initFixtureFactory(__dirname);
@@ -144,12 +147,13 @@ describe.each([
 });
 
 describe("legacy option --github-release", () => {
-  it("is translated into --create-release=github", async () => {
-    const cwd = await initFixture("normal");
-
-    await lernaVersion(cwd)("--github-release", "--conventional-commits");
-
-    expect(createGitHubClient.releases.size).toBe(1);
+  it("should error when --github-release is used", async () => {
+    const testDir = await initFixture("normal");
+    await expect(
+      lernaVersion(testDir)("--github-release", "--conventional-commits")
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"--github-release was replaced by --create-release=github. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from."`
+    );
   });
 });
 

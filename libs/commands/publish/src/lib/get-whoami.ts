@@ -1,28 +1,20 @@
 import { pulseTillDone } from "@lerna/core";
 import fetch from "npm-registry-fetch";
+import { FetchConfig } from "./fetch-config";
 
-module.exports.getWhoAmI = getWhoAmI;
-
-/**
- * Retrieve logged-in user's username via legacy API.
- * @param {import("./fetch-config").FetchConfig} opts
- * @returns {WhoIAm}
- */
-function getWhoAmI(opts) {
-  opts.log.verbose("", "Retrieving npm username");
-
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return pulseTillDone(fetch.json("/-/whoami", opts)).then((data) => {
-    opts.log.silly("npm whoami", "received %j", data);
-
-    // { username: String }
-    return data;
-  });
+export interface WhoIAm {
+  username: string;
 }
 
 /**
- * @typedef {object} WhoIAm
- * @property {string} username
+ * Retrieve logged-in user's username via legacy API.
  */
+export function getWhoAmI(opts: FetchConfig): WhoIAm {
+  opts.log.verbose("", "Retrieving npm username");
+
+  return pulseTillDone(fetch.json("/-/whoami", opts)).then((data: WhoIAm) => {
+    opts.log.silly("npm whoami", "received %j", data);
+
+    return data;
+  });
+}

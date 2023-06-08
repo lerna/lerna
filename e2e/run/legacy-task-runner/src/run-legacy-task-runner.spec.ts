@@ -19,7 +19,7 @@ describe("lerna-run-legacy-task-runner", () => {
       name: "lerna-run-legacy-task-runner",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
       /**
        * Because lerna run involves spawning further child processes, the tests would be too flaky
@@ -299,10 +299,22 @@ describe("--no-bail", () => {
       name: "lerna-run-legacy-task-runner-no-bail",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
-      installDependencies: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
+      installDependencies: false,
       forceDeterministicTerminalOutput: true,
     });
+
+    /**
+     * There seems to be a bug with npm workspaces where the exit code of child scripts are not propagated.
+     * Therefore we need to strip the workspaces config for now, otherwise the exit code will be 1, instead of 100.
+     *
+     * Reported here: https://github.com/npm/cli/issues/6506
+     */
+    await fixture.updateJson("package.json", (json) => {
+      delete json.workspaces;
+      return json;
+    });
+    await fixture.install();
 
     // Enable legacy task runner
     await fixture.overrideLernaConfig({

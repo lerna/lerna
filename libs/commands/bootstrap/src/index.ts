@@ -3,20 +3,22 @@
 // @ts-nocheck
 
 import {
-  Command,
   createRunner,
-  getFilteredPackages,
   hasNpmVersion,
   npmInstall,
   npmInstallDependencies,
-  PackageGraph,
   pulseTillDone,
   rimrafDir,
+  ValidationError,
+} from "@lerna/core";
+import {
+  Command,
+  getFilteredPackages,
+  PackageGraph,
   runTopologically,
   symlinkBinary,
   symlinkDependencies,
-  ValidationError,
-} from "@lerna/core";
+} from "@lerna/legacy-core";
 import dedent from "dedent";
 import getPort from "get-port";
 import npa from "npm-package-arg";
@@ -55,20 +57,6 @@ class BootstrapCommand extends Command {
         dedent`
             --hoist is not supported with --npm-client=yarn, use yarn workspaces instead
             A guide is available at https://yarnpkg.com/blog/2017/08/02/introducing-workspaces/
-          `
-      );
-    }
-
-    if (
-      npmClient === "yarn" &&
-      this.project.manifest.get("workspaces") &&
-      this.options.useWorkspaces !== true
-    ) {
-      throw new ValidationError(
-        "EWORKSPACES",
-        dedent`
-            Yarn workspaces are configured in package.json, but not enabled in lerna.json!
-            Please choose one: useWorkspaces = true in lerna.json, or remove package.json workspaces config
           `
       );
     }
@@ -188,7 +176,7 @@ class BootstrapCommand extends Command {
   }
 
   override execute() {
-    if (this.options.useWorkspaces || this.rootHasLocalFileDependencies()) {
+    if (!this.options.packages || this.rootHasLocalFileDependencies()) {
       if (this.options.rejectCycles) {
         this.packageGraph.collapseCycles({ rejectCycles: this.options.rejectCycles });
       }

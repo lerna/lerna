@@ -1,18 +1,23 @@
 import { tempWrite } from "@lerna/core";
+import { ExecOptions } from "child_process";
 import log from "npmlog";
 import { EOL } from "os";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-module.exports.gitCommit = gitCommit;
+export interface GitCommitOptions {
+  amend?: boolean;
+  commitHooks?: boolean;
+  signGitCommit?: boolean;
+  signoffGitCommit?: boolean;
+}
 
-/**
- * @param {string} message
- * @param {{ amend: boolean; commitHooks: boolean; signGitCommit: boolean; }} gitOpts
- * @param {import("@lerna/child-process").ExecOpts} opts
- */
-function gitCommit(message, { amend, commitHooks, signGitCommit, signoffGitCommit }, opts) {
+export function gitCommit(
+  message: string,
+  { amend, commitHooks, signGitCommit, signoffGitCommit }: GitCommitOptions,
+  opts: ExecOptions
+) {
   log.silly("gitCommit", message);
   const args = ["commit"];
 

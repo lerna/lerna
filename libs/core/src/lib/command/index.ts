@@ -1,18 +1,27 @@
+import { ProjectFileMap, createProjectFileMapUsingProjectGraph, createProjectGraphAsync } from "@nx/devkit";
 import cloneDeep from "clone-deep";
 import dedent from "dedent";
-import execa from "execa";
+import { mapValues } from "lodash";
 import log from "npmlog";
+import { daemonClient } from "nx/src/daemon/client/client";
 import os from "os";
-import { PackageGraph } from "../package-graph";
 import { CommandConfigOptions, Project } from "../project";
+import { ProjectGraphWithPackages } from "../project-graph-with-packages";
 import { ValidationError } from "../validation-error";
 import { writeLogFile } from "../write-log-file";
 import { cleanStack } from "./clean-stack";
+import { createProjectGraphWithPackages } from "./create-project-graph-with-packages";
 import { defaultOptions } from "./default-options";
+import { isGitInitialized } from "./is-git-initialized";
 import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
+
+export interface PreInitializedProjectData {
+  projectFileMap: ProjectFileMap;
+  projectGraph: ProjectGraphWithPackages;
+}
 
 export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   name: string;
@@ -22,8 +31,11 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   concurrency?: number;
   toposort = false;
   execOpts?: { cwd: string; maxBuffer?: number };
-  packageGraph?: PackageGraph;
   logger!: log.Logger;
+  envDefaults: any;
+  argv: any;
+  projectGraph!: ProjectGraphWithPackages;
+  projectFileMap!: ProjectFileMap;
 
   private _project?: Project;
   get project(): Project {
@@ -37,7 +49,16 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     this._project = project;
   }
 
-  constructor(_argv: any, { skipValidations } = { skipValidations: false }) {
+  constructor(
+    _argv: any,
+    {
+      skipValidations,
+      preInitializedProjectData,
+    }: {
+      skipValidations: boolean;
+      preInitializedProjectData?: PreInitializedProjectData;
+    } = { skipValidations: false }
+  ) {
     log.pause();
     log.heading = "lerna";
 
@@ -58,19 +79,38 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     // launch the command
     let runner = new Promise((resolve, reject) => {
       // run everything inside a Promise chain
-      let chain = Promise.resolve();
+      let chain: Promise<unknown> = Promise.resolve();
 
       chain = chain.then(() => {
-        this.project = new Project(argv.cwd);
+        this.project = new Project(argv.cwd, { skipLernaConfigValidations: skipValidations });
       });
       chain = chain.then(() => this.configureEnvironment());
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureProperties());
-      chain = chain.then(() => this.configureLogging());
+      chain = chain.then(() => {
+        // create logger that subclasses use
+        const logger = Command.createLogger(this.name, this.options.loglevel);
+        Object.defineProperty(this, "logger", {
+          value: logger,
+        });
+      });
       // For the special "repair" command we want to initialize everything but don't want to run validations as that will end up becoming cyclical
       if (!skipValidations) {
         chain = chain.then(() => this.runValidations());
       }
+      chain = chain.then(() => {
+        /**
+         * Due to lerna publish's legacy of being backwards compatible with running versioning and publishing
+         * in a single step, we need to be able to receive any project data which might already exist from the
+         * publish command (in the case that it invokes the version command from within its implementation details).
+         */
+        if (preInitializedProjectData) {
+          this.projectFileMap = preInitializedProjectData.projectFileMap;
+          this.projectGraph = preInitializedProjectData.projectGraph;
+          return;
+        }
+        return this.detectProjects();
+      });
       chain = chain.then(() => this.runPreparations());
       chain = chain.then(() => this.runCommand());
 
@@ -125,6 +165,17 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     this.runner = runner;
   }
 
+  static createLogger(name: string, loglevel?: string): log.Logger {
+    if (loglevel) {
+      log.level = loglevel;
+    }
+    // handle log.success()
+    log.addLevel("success", 3001, { fg: "green", bold: true });
+    // emit all buffered logs at configured level and higher
+    log.resume();
+    return log["newGroup"](name);
+  }
+
   // proxy "Promise" methods to "private" instance
   then(onResolved: () => void, onRejected: (err: string | Error) => void) {
     return this.runner.then(onResolved, onRejected);
@@ -143,6 +194,28 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   // For example `changed` inherits config from `publish`.
   get otherCommandConfigs() {
     return [];
+  }
+
+  async detectProjects() {
+    const projectGraph = await createProjectGraphAsync();
+
+    // if we are using Nx >= 16.3.1, we can use the helper function to create the file map
+    // otherwise, we need to use the old "files" property on the node data
+    if (createProjectFileMapUsingProjectGraph) {
+      this.projectFileMap = await createProjectFileMapUsingProjectGraph(projectGraph);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.projectFileMap = mapValues(projectGraph.nodes, (node) => (node.data as any).files);
+    }
+
+    this.projectGraph = await createProjectGraphWithPackages(
+      projectGraph,
+      this.projectFileMap,
+      this.project.packageConfigs
+    );
+
+    // Now that we have made our two calls to the daemon, we need it to exit so that the overall process can too
+    daemonClient.reset();
   }
 
   configureEnvironment() {
@@ -195,42 +268,15 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       this.options.loglevel = "verbose";
     }
   }
-  argv(argv: any, arg1: any, config: any, envDefaults: any): any {
-    throw new Error("Method not implemented.");
-  }
-  envDefaults(argv: any, arg1: any, config: any, envDefaults: any): any {
-    throw new Error("Method not implemented.");
-  }
 
   configureProperties() {
     const { concurrency = 0, sort, maxBuffer } = this.options;
     this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
     this.toposort = sort === undefined || sort;
-
-    /** @type {import("@lerna/child-process").ExecOpts} */
     this.execOpts = {
       cwd: this.project.rootPath,
       maxBuffer,
     };
-  }
-
-  configureLogging() {
-    const { loglevel } = this.options;
-
-    if (loglevel) {
-      log.level = loglevel;
-    }
-
-    // handle log.success()
-    log.addLevel("success", 3001, { fg: "green", bold: true });
-
-    // create logger that subclasses use
-    Object.defineProperty(this, "logger", {
-      value: log["newGroup"](this.name),
-    });
-
-    // emit all buffered logs at configured level and higher
-    log.resume();
   }
 
   enableProgressBar() {
@@ -240,33 +286,9 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     }
   }
 
-  gitInitialized() {
-    const opts: execa.SyncOptions = {
-      cwd: this.project.rootPath,
-      // don't throw, just want boolean
-      reject: false,
-      // only return code, no stdio needed
-      stdio: "ignore",
-    };
-
-    return execa.sync("git", ["rev-parse"], opts).exitCode === 0;
-  }
-
   runValidations() {
-    if ((this.options.since !== undefined || this.requiresGit) && !this.gitInitialized()) {
+    if ((this.options.since !== undefined || this.requiresGit) && !isGitInitialized(this.project.rootPath)) {
       throw new ValidationError("ENOGIT", "The git binary was not found, or this is not a git repository.");
-    }
-
-    if (!this.project.manifest) {
-      throw new ValidationError("ENOPKG", "`package.json` does not exist, have you run `lerna init`?");
-    }
-
-    if (this.project.configNotFound) {
-      throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
-    }
-
-    if (!this.project.version) {
-      throw new ValidationError("ENOVERSION", "Required property version does not exist in `lerna.json`");
     }
 
     if (this.options.independent && !this.project.isIndependent()) {
@@ -277,13 +299,6 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
           To use independent mode you need to set lerna.json's "version" property to "independent".
           Then you won't need to pass the --independent or -i flags.
         `
-      );
-    }
-
-    if (this.options.npmClient === "pnpm" && !this.options.useWorkspaces) {
-      throw new ValidationError(
-        "ENOWORKSPACES",
-        "Usage of pnpm without workspaces is not supported. To use pnpm with lerna, set useWorkspaces to true in lerna.json and configure pnpm to use workspaces: https://pnpm.io/workspaces."
       );
     }
   }
@@ -297,42 +312,24 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     if (!this.composed && this.options.ci) {
       log.info("ci", "enabled");
     }
-
-    let chain = Promise.resolve();
-
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    chain = chain.then(() => this.project.getPackages());
-    chain = chain.then((packages) => {
-      // TODO: refactor to address type issues
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.packageGraph = new PackageGraph(packages);
-    });
-
-    return chain;
   }
 
-  runCommand() {
-    return Promise.resolve()
-      .then(() => this.initialize())
-      .then((proceed) => {
-        // TODO: refactor to address type issues
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        if (proceed !== false) {
-          return this.execute();
-        }
-        // early exits set their own exitCode (if non-zero)
-      });
+  async runCommand(): Promise<unknown> {
+    const proceed = await this.initialize();
+    if (proceed !== false) {
+      return this.execute();
+    }
+    return undefined;
   }
 
-  initialize() {
+  initialize(): void | boolean | Promise<void | boolean> {
     throw new ValidationError(this.name, "initialize() needs to be implemented.");
   }
 
-  execute() {
+  /**
+   * The execute() method can return a value in some cases (e.g. on the version command)
+   */
+  execute(): void | Promise<unknown> {
     throw new ValidationError(this.name, "execute() needs to be implemented.");
   }
 }

@@ -19,7 +19,7 @@ describe("lerna-changed", () => {
         name: "lerna-changed-with-no-prior-release-tags",
         packageManager: "npm",
         initializeGit: true,
-        runLernaInit: true,
+        lernaInit: { args: [`--packages="packages/*"`] },
         installDependencies: true,
       });
 
@@ -76,7 +76,7 @@ describe("lerna-changed", () => {
         name: "lerna-changed-with-a-change-to-package-c-since-last-release",
         packageManager: "npm",
         initializeGit: true,
-        runLernaInit: true,
+        lernaInit: { args: [`--packages="packages/*"`] },
         installDependencies: true,
       });
 
@@ -329,7 +329,7 @@ describe("lerna-changed", () => {
         name: "lerna-changed-include-merged-tags",
         packageManager: "npm",
         initializeGit: true,
-        runLernaInit: true,
+        lernaInit: { args: [`--packages="packages/*"`] },
         installDependencies: true,
       });
 

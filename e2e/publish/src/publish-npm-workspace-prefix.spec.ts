@@ -1,5 +1,5 @@
 import { Fixture, normalizeCommitSHAs, normalizeEnvironment } from "@lerna/e2e-utils";
-import { writeJsonFile } from "@nrwl/devkit";
+import { writeJsonFile } from "@nx/devkit";
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const randomVersion = () => `${randomInt(10, 89)}.${randomInt(10, 89)}.${randomInt(10, 89)}`;
@@ -24,14 +24,21 @@ describe("lerna-publish-workspace-prefix", () => {
       name: "lerna-publish-workspace-prefix",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
-      installDependencies: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
+      installDependencies: false,
     });
   });
   afterEach(() => fixture.destroy());
 
   describe("from-git", () => {
     it("should publish to the remote registry, removing workspace: prefix from dependencies", async () => {
+      // npm does not natively support the `workspace:` protocol with workspaces, so we need to strip it before installing dependencies
+      await fixture.updateJson("package.json", (json) => {
+        delete json.workspaces;
+        return json;
+      });
+      await fixture.install();
+
       await fixture.lerna("create test-workspace-alias-star -y");
       await fixture.lerna("create test-workspace-alias-tilde -y");
       await fixture.lerna("create test-workspace-alias-caret -y");

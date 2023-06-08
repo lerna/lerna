@@ -1,10 +1,8 @@
 import { cloneFixtureFactory } from "@lerna/test-helpers";
 import execa from "execa";
+import { isBehindUpstream } from "./is-behind-upstream";
 
 const cloneFixture = cloneFixtureFactory(__dirname);
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { isBehindUpstream } = require("./is-behind-upstream");
 
 test("isBehindUpstream", async () => {
   const { cwd } = await cloneFixture("root-manifest-only");

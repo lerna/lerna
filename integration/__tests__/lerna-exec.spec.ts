@@ -1,12 +1,22 @@
 import { cliRunner, initFixtureFactory } from "@lerna/test-helpers";
 import path from "path";
-import pathKey from "path-key";
+
+function getPathKey() {
+  if (process.platform !== "win32") {
+    return "PATH";
+  }
+  return (
+    Object.keys(process.env)
+      .reverse()
+      .find((key) => key.toUpperCase() === "PATH") || "Path"
+  );
+}
 
 const initFixture = initFixtureFactory(__dirname);
 
 const EXEC_TEST_COMMAND = process.platform === "win32" ? "exec-test.cmd" : "exec-test";
 
-const pathName = pathKey(); // PATH (POSIX) or PATH/path/Path (Windows)
+const pathName = getPathKey(); // PATH (POSIX) or PATH/path/Path (Windows)
 const existingPath = process.env[pathName];
 const fixturePath = path.resolve(__dirname, "__fixtures__");
 

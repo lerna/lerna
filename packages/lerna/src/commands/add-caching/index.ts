@@ -1,11 +1,11 @@
-import { Command } from "@lerna/core";
+import { Command } from "@lerna/legacy-core";
 import {
   joinPathFragments,
   NxJsonConfiguration,
   readJsonFile,
   workspaceRoot,
   writeJsonFile,
-} from "@nrwl/devkit";
+} from "@nx/devkit";
 import inquirer from "inquirer";
 import log from "npmlog";
 

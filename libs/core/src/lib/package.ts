@@ -1,7 +1,9 @@
+import { workspaceRoot } from "@nx/devkit";
 import loadJsonFile from "load-json-file";
 import npa from "npm-package-arg";
 import path from "path";
 import writePkg from "write-pkg";
+import { Packed } from "./pack-directory";
 
 // symbol used to "hide" internal state
 const PKG = Symbol("pkg");
@@ -40,9 +42,22 @@ function shallowCopy(json: any) {
   }, {});
 }
 
+export type AssetDefinition = string | { from: string; to: string };
+
+// Only a small subset of lerna configuration can be specified on a package's own package.json
+export interface RawManifestLernaConfig {
+  command?: {
+    publish?: {
+      directory?: string;
+      assets?: AssetDefinition[];
+    };
+  };
+}
+
 export interface RawManifest {
   name: string;
   version: string;
+  description?: string;
   private?: boolean;
   bin?: Record<string, string> | string;
   scripts?: Record<string, string>;
@@ -52,9 +67,12 @@ export interface RawManifest {
   peerDependencies?: Record<string, string>;
   publishConfig?: Record<"directory" | "registry" | "tag", string>;
   workspaces?: string[];
+  nx?: Record<string, unknown>;
+  gitHead?: string;
+  lerna?: RawManifestLernaConfig;
 }
 
-type ExtendedNpaResult = npa.Result & {
+export type ExtendedNpaResult = npa.Result & {
   workspaceSpec?: string;
   workspaceAlias?: string;
 };
@@ -71,6 +89,8 @@ export class Package {
   [_rootPath]: string;
   [_scripts]: Record<string, string>;
   [_contents]: string | undefined;
+  licensePath?: string;
+  packed?: Packed;
 
   /**
    * Create a Package instance from parameters, possibly reusing existing instance.
@@ -135,6 +155,14 @@ export class Package {
     return this[_scripts];
   }
 
+  get lernaConfig(): RawManifestLernaConfig | undefined {
+    return this[PKG].lerna;
+  }
+
+  set lernaConfig(config: RawManifestLernaConfig | undefined) {
+    this[PKG].lerna = config;
+  }
+
   get bin() {
     const pkg = this[PKG];
     return typeof pkg.bin === "string"
@@ -190,6 +218,12 @@ export class Package {
   }
 
   set contents(subDirectory) {
+    // If absolute path starting with workspace root, set it directly, otherwise join with package location (historical behavior)
+    const _workspaceRoot = process.env["NX_WORKSPACE_ROOT_PATH"] || workspaceRoot;
+    if (subDirectory.startsWith(_workspaceRoot)) {
+      this[_contents] = subDirectory;
+      return;
+    }
     this[_contents] = path.join(this.location, subDirectory);
   }
 
@@ -250,6 +284,30 @@ export class Package {
    */
   serialize() {
     return writePkg(this.manifestLocation, this[PKG] as any).then(() => this);
+  }
+
+  getLocalDependency(
+    depName: string
+  ): { collection: "dependencies" | "devDependencies" | "optionalDependencies"; spec: string } | null {
+    if (this.dependencies && this.dependencies[depName]) {
+      return {
+        collection: "dependencies",
+        spec: this.dependencies[depName],
+      };
+    }
+    if (this.devDependencies && this.devDependencies[depName]) {
+      return {
+        collection: "devDependencies",
+        spec: this.devDependencies[depName],
+      };
+    }
+    if (this.optionalDependencies && this.optionalDependencies[depName]) {
+      return {
+        collection: "optionalDependencies",
+        spec: this.optionalDependencies[depName],
+      };
+    }
+    return null;
   }
 
   /**

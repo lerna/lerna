@@ -1,13 +1,15 @@
-import { promptSelectOne as _promptSelectOne, promptTextInput as _promtTextInput } from "@lerna/core";
+import { promptSelectOne as _promptSelectOne, promptTextInput as _promptTextInput } from "@lerna/core";
 import { commandRunner, initFixtureFactory, showCommit } from "@lerna/test-helpers";
 import path from "path";
+import { makePromptVersion } from "./prompt-version";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
-const promptTextInput = jest.mocked(_promtTextInput);
+const promptTextInput = jest.mocked(_promptTextInput);
 
 // The mocked version isn't the same as the real one
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const promptSelectOne = _promptSelectOne as any;
 
 jest.mock("./git-push");
@@ -20,9 +22,6 @@ jest.mock("./is-behind-upstream", () => ({
 jest.mock("./remote-branch-exists", () => ({
   remoteBranchExists: jest.fn().mockResolvedValue(true),
 }));
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { makePromptVersion } = require("./prompt-version");
 
 const resolvePrereleaseId = jest.fn(() => "alpha");
 const versionPrompt = (buildMetadata) => makePromptVersion(resolvePrereleaseId, buildMetadata);
@@ -55,16 +54,6 @@ describe("--build-metadata without prompt", () => {
     expect(patch).toMatchSnapshot();
   });
 
-  it("accepts build metadata for repository version", async () => {
-    const testDir = await initFixture("normal");
-    await lernaVersion(testDir)("--repo-version", "1.0.2", "--build-metadata", "21AF26D3--117B344092BD");
-
-    expect(promptSelectOne).not.toHaveBeenCalled();
-
-    const patch = await showCommit(testDir);
-    expect(patch).toMatchSnapshot();
-  });
-
   it("accepts build metadata with semver keyword", async () => {
     const testDir = await initFixture("normal");
     await lernaVersion(testDir)("minor", "--build-metadata", "001");
@@ -75,14 +64,22 @@ describe("--build-metadata without prompt", () => {
     expect(patch).toMatchSnapshot();
   });
 
-  it("accepts build metadata with cd version", async () => {
+  it("should error when --repo-version is used", async () => {
     const testDir = await initFixture("normal");
-    await lernaVersion(testDir)("--cd-version", "premajor", "--build-metadata", "exp.sha.5114f85");
+    await expect(
+      lernaVersion(testDir)("--repo-version", "1.0.2", "--build-metadata", "21AF26D3--117B344092BD")
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"--repo-version was replaced by positional [bump]. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from."`
+    );
+  });
 
-    expect(promptSelectOne).not.toHaveBeenCalled();
-
-    const patch = await showCommit(testDir);
-    expect(patch).toMatchSnapshot();
+  it("should error when --cd-version is used", async () => {
+    const testDir = await initFixture("normal");
+    await expect(
+      lernaVersion(testDir)("--cd-version", "premajor", "--build-metadata", "exp.sha.5114f85")
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"--cd-version was replaced by positional [bump]. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from."`
+    );
   });
 
   it("accepts build metadata with default prerelease id", async () => {

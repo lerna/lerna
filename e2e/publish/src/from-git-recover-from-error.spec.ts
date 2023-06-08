@@ -25,7 +25,7 @@ describe("lerna-publish-from-git-recover-from-error", () => {
       name: "lerna-publish-from-git-recover-from-error",
       packageManager: "npm",
       initializeGit: true,
-      runLernaInit: true,
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
   });

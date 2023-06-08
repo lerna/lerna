@@ -1,19 +1,29 @@
 import { pulseTillDone } from "@lerna/core";
 import fetch from "npm-registry-fetch";
+import { FetchConfig } from "./fetch-config";
 
-module.exports.getProfileData = getProfileData;
+export interface ProfileData {
+  tfa: {
+    pending: boolean;
+    mode: "auth-and-writes" | "auth-only";
+  };
+  name: string;
+  username: string; // legacy field alias of `name`
+  email: string;
+  email_verified: boolean;
+  created: string;
+  updated: string;
+  fullname?: string;
+  twitter?: string;
+  github?: string;
+}
 
 /**
  * Retrieve profile data of logged-in user.
- * @param {import("./fetch-config").FetchConfig} opts
- * @returns {Promise<ProfileData>}
  */
-function getProfileData(opts) {
+export function getProfileData(opts: FetchConfig): Promise<ProfileData> {
   opts.log.verbose("", "Retrieving npm user profile");
 
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   return pulseTillDone(fetch.json("/-/npm/v1/user", opts)).then((data) => {
     opts.log.silly("npm profile get", "received %j", data);
 
@@ -24,17 +34,3 @@ function getProfileData(opts) {
     );
   });
 }
-
-/**
- * @typedef {object} ProfileData
- * @property {{ pending: boolean; mode: 'auth-and-writes' | 'auth-only' }} tfa
- * @property {string} name
- * @property {string} username legacy field alias of `name`
- * @property {string} email
- * @property {boolean} email_verified
- * @property {string} created
- * @property {string} updated
- * @property {string} [fullname]
- * @property {string} [twitter]
- * @property {string} [github]
- */
