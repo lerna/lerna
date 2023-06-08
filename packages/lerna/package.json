@@ -122,5 +122,5 @@
     "./commands/version/lib/*": "./dist/commands/version/lib/*.js",
     "./migrations/**/*": "./dist/migrations/**/*"
   },
-  "gitHead": "5095b04f872b463e06524fae9ebfd02d6c74d29e"
+  "gitHead": "3900fe95f8bc5a3907156126bcac6989260e1082"
 }

@@ -5,10 +5,56 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [7.0.0](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0) (2023-06-08)
 
+## BREAKING CHANGES
+
+> After updating we strongly recommend running `lerna repair` in your project. This will migrate your `lerna.json` to the latest and greatest and remove any outdated options.
+
+As this is a major release there are a few breaking changes to be aware of, which may or may not affect your lerna repos, depending on how you are using the tool.
+
+- **legacy package management commands have been removed**
+
+We no longer include the `bootstrap`, `add`, and `link` commands by default. We strongly recommend using your package manager (`npm`, `yarn`, `pnpm`) for package management related concerns such as installing and linking dependencies.
+
+There will not be any active work done on these commands and you should look to migrate as soon as possible.
+
+For full context how why we made this change and how you can migrate your projects, please read our detailed guide here: https://lerna.js.org/docs/legacy-package-management
+
+- **Workspaces are used by default and `useWorkspaces` has been removed**
+
+We now use your package manager's workspaces configuration by default in order to resolve packages for lerna to operate on. If you wish to customize the packages that lerna will operate on, you can still use a `packages` property in your `lerna.json` just as you did before, but there is no longer any need for a `useWorkspaces` flag. If the `packages` property is present, lerna will use that, otherwise it will try and read your workspaces configuration.
+
+Running `lerna repair` will automatically remove `useWorkspaces` from your `lerna.json` for you.
+
+NOTE: If you are using `pnpm` as your package manager, it is important to set `"npmClient": "pnpm"` in your `lerna.json` so that lerna knows to look for a `pnpm-workspaces.yaml` file and not just check your root `package.json`.
+
+- **lerna init can no longer be run on an existing lerna repo**
+
+It was a confusing behavior that `lerna init` could be run on an existing lerna repo and would attempt to coerce its setup to something closer to a fresh repo, so we have removed this behavior and lerna will hard error if it detects the directory is already initialized.
+
+You can run `lerna repair` at any time to update your configuration to the latest and greatest.
+
+- **long deprecated options have been removed**
+
+The following options (on the left of the => in each case) have been deprecated for many years (since before we took over stewardship of the project) and have finally been removed. If you are using them in your `lerna.json` all you need to do is run `lerna repair` and it will automatically migrate you to their modern equivalent. If you are passing them in on the command line, you will need to update your usage as follows:
+
+- `--includeFilteredDependencies` => `--includeDependencies`
+- `--includeFilteredDependents` => `--includeDependents`
+- `--githubRelease` => `--createRelease=github`
+- `--skipGit` => `--push=false --gitTagVersion=false`
+- `--repoVersion` => `[positional bump]`
+- `--cdVersion` => `[positional bump]`
+- `--npmTag` => `--distTag`
+- `--ignore` => `--ignoreChanges`
+
+### Features
+
+- add migration for adding $schema, increase some strictness ([73ceac3](https://github.com/lerna/lerna/commit/73ceac3dc2cf0e1246d4433cb101d1e794b2cca3))
+- **publish:** support custom directory per-package ([#3699](https://github.com/lerna/lerna/issues/3699)) ([9da575e](https://github.com/lerna/lerna/commit/9da575e9da221b8be4fbaa2fb1e7676b54d86d4f))
+- **init:** support --dryRun flag and preview file system changes
+
 ### Bug Fixes
 
 - bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
-- daemon communication ([e82618b](https://github.com/lerna/lerna/commit/e82618bf1a8aaea6d3d7f74f9afb8f1c5afe04ad))
 - ensure repair command not blocked by config validation ([e237d58](https://github.com/lerna/lerna/commit/e237d585e63a2fb502a8958f15a1efe03d781c57))
 - improve github client missing env var error ([ce4b352](https://github.com/lerna/lerna/commit/ce4b35213200b07e89a6ab09743f84aa60e5ca2c))
 - internal cli.js should not be bundled ([53d73c6](https://github.com/lerna/lerna/commit/53d73c6aa9833e5a5bf60c2c78896456e77fab40))
@@ -16,12 +62,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 - **publish:** use correct version in log messages ([#3702](https://github.com/lerna/lerna/issues/3702)) ([4be9188](https://github.com/lerna/lerna/commit/4be9188e68c5d4c320c0946e6e386cbee95a8efe))
 - share project data when nesting commands ([#3709](https://github.com/lerna/lerna/issues/3709)) ([53e71e4](https://github.com/lerna/lerna/commit/53e71e4746604aa3fbaada3dad58b02904769759))
 - support nx 16.3.1+ ([#3707](https://github.com/lerna/lerna/issues/3707)) ([647dbb5](https://github.com/lerna/lerna/commit/647dbb512bf6a873cab6362c434b420b18af0ad4))
-
-### Features
-
-- add migration for adding $schema, increase some strictness ([73ceac3](https://github.com/lerna/lerna/commit/73ceac3dc2cf0e1246d4433cb101d1e794b2cca3))
-- Add name of package that fails to publish ([#3644](https://github.com/lerna/lerna/issues/3644)) ([11d8473](https://github.com/lerna/lerna/commit/11d847308bb8f4078e47a30a14b4d883948c4530))
-- **publish:** support custom directory per-package ([#3699](https://github.com/lerna/lerna/issues/3699)) ([9da575e](https://github.com/lerna/lerna/commit/9da575e9da221b8be4fbaa2fb1e7676b54d86d4f))
 
 # [7.0.0-alpha.8](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0-alpha.8) (2023-06-07)
 
