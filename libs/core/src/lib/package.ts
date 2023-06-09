@@ -1,3 +1,4 @@
+import { workspaceRoot } from "@nx/devkit";
 import loadJsonFile from "load-json-file";
 import npa from "npm-package-arg";
 import path from "path";
@@ -41,10 +42,15 @@ function shallowCopy(json: any) {
   }, {});
 }
 
+export type AssetDefinition = string | { from: string; to: string };
+
+// Only a small subset of lerna configuration can be specified on a package's own package.json
 export interface RawManifestLernaConfig {
-  publish?: {
-    directory?: string;
-    assets?: (string | { from: string; to: string })[];
+  command?: {
+    publish?: {
+      directory?: string;
+      assets?: AssetDefinition[];
+    };
   };
 }
 
@@ -154,6 +160,10 @@ export class Package {
     return this[PKG].lerna;
   }
 
+  set lernaConfig(config: RawManifestLernaConfig | undefined) {
+    this[PKG].lerna = config;
+  }
+
   get bin() {
     const pkg = this[PKG];
     return typeof pkg.bin === "string"
@@ -212,6 +222,12 @@ export class Package {
   }
 
   set contents(subDirectory) {
+    // If absolute path starting with workspace root, set it directly, otherwise join with package location (historical behavior)
+    const _workspaceRoot = process.env["NX_WORKSPACE_ROOT_PATH"] || workspaceRoot;
+    if (subDirectory.startsWith(_workspaceRoot)) {
+      this[_contents] = subDirectory;
+      return;
+    }
     this[_contents] = path.join(this.location, subDirectory);
   }
 

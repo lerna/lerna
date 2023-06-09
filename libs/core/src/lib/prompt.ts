@@ -23,7 +23,7 @@ export function promptConfirmation(message: string): Promise<boolean> {
     .then((answers) => {
       log.resume();
 
-      return answers.confirm;
+      return answers["confirm"];
     });
 }
 
@@ -83,6 +83,6 @@ export function promptTextInput(
     .then((answers) => {
       log.resume();
 
-      return answers.input;
+      return answers["input"];
     });
 }

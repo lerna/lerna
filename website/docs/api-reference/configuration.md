@@ -10,20 +10,13 @@ Lerna's configuration is split into two files: `lerna.json` and `nx.json`.
 
 # Lerna.json
 
-### useWorkspaces & packages
+### npmClient
 
-Since Lerna was created, all major package managers (npm, yarn, and pnpm) have added the ability to cross-link packages
-in the same repo and dedupe node modules. If you'd like Lerna to delegate this process to the package manager you use,
-set `useWorkspaces: true` in `lerna.json`.
+It is important to set this value if you are not using `npm` as your package manager (e.g. if you are using `yarn` or `pnpm`) so that lerna can adjust some of its internal logic when resolving configuration and packages. This is particularly true in the case of `pnpm` because it uses a separate `pnpm-workspaces.yaml` file to define its workspaces configuration.
 
-```json title="lerna.json"
-{
-  "useWorkspaces": true
-}
-```
+### packages
 
-If you don't have `useWorkspaces` set to true, you need to set the `packages` property which will tell Lerna where to
-look for `package.json` files.
+By default, lerna will try and reuse any `workspaces` configuration you may have from your package manager of choice. If you prefer to specify a subset of your available packages for lerna to operate on, you can use the `packages` property which will tell Lerna where to look for `package.json` files.
 
 ```json title="lerna.json"
 {
@@ -33,8 +26,7 @@ look for `package.json` files.
 
 ### version
 
-Lerna has two modes of publishing packages: `fixed` and `independent`. When using the fixed mode, all the packages will
-be published using the same version. The last published version is recorded in `lerna.json` as follows:
+Lerna has two modes of publishing packages: `fixed` and `independent`. When using the fixed mode, all the affected packages will be published using the same version. The last published version is recorded in `lerna.json` as follows:
 
 ```json title="lerna.json"
 {
@@ -50,9 +42,11 @@ When using the independent mode, every package is versioned separately, and `ler
 }
 ```
 
+See the [version and publish docs](../features/version-and-publish.md) for more details.
+
 ### commands
 
-The `lerna.json` files can also encode commands options, as follows:
+The `lerna.json` files can also encode options for each command like so:
 
 ```json
 {

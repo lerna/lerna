@@ -11,7 +11,7 @@ export async function getProjectsWithUnpublishedPackages(
   projectNodes: ProjectGraphProjectNodeWithPackage[],
   opts: Partial<FetchConfig>
 ): Promise<ProjectGraphProjectNodeWithPackage[]> {
-  log.silly("getUnpublishedPackages", "");
+  log.silly("getProjectsWithUnpublishedPackages", "");
 
   const mapper = (node: ProjectGraphProjectNodeWithPackage) => {
     const pkg = getPackage(node);

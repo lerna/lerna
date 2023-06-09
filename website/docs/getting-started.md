@@ -6,6 +6,8 @@ type: tutorial
 
 # Getting Started
 
+<iframe width="690" height="400" src="https://www.youtube.com/embed/hRe-_GCMfYQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+
 Lerna comes with a dedicated `init` command to assist you with both adding lerna to an existing repo, or creating one from scratch.
 
 ## Starting from scratch

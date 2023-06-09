@@ -28,7 +28,7 @@ export { npmRunScript, npmRunScriptStreaming } from "./lib/npm-run-script";
 export { getOneTimePassword } from "./lib/otplease";
 export { output } from "./lib/output";
 export { Packed, packDirectory } from "./lib/pack-directory";
-export { ExtendedNpaResult, Package, RawManifest } from "./lib/package";
+export { AssetDefinition, ExtendedNpaResult, Package, RawManifest } from "./lib/package";
 export { prereleaseIdFromVersion } from "./lib/prerelease-id-from-version";
 export { Profiler, generateProfileOutputPath } from "./lib/profiler";
 export { CommandConfigOptions, LernaConfig, Project, getPackages } from "./lib/project";
