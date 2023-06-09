@@ -6,6 +6,8 @@ type: explainer
 
 # Legacy Package Management
 
+<iframe height="400" src="https://www.youtube.com/embed/NEFJNz4wx1k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+
 ## Migrating from `lerna bootstrap`, `lerna add` and `lerna link` in lerna v7 and later
 
 In lerna v7.0.0, we removed the `lerna bootstrap`, `lerna add` and `lerna link` commands in lerna by default.
