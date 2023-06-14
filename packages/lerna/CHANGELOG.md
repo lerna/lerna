@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.1](https://github.com/lerna/lerna/compare/7.0.0...7.0.1) (2023-06-13)
+
+**Note:** Version bump only for package lerna
+
 # [7.0.0](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0) (2023-06-08)
 
 ### Bug Fixes

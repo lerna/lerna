@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.1](https://github.com/lerna/lerna/compare/7.0.0...7.0.1) (2023-06-13)
+
+### Bug Fixes
+
+- **core:** reset nx daemon after command finishes ([#3726](https://github.com/lerna/lerna/issues/3726)) ([c0de66a](https://github.com/lerna/lerna/commit/c0de66a64dc74c43031db4eb4772ae7d70bc9211))
+
 # [7.0.0](https://github.com/lerna/lerna/compare/7.0.0-alpha.0...7.0.0) (2023-06-08)
 
 ## BREAKING CHANGES

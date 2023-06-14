@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "Lerna is a fast, modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository",
   "keywords": [
     "lerna",
@@ -37,8 +37,8 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@lerna/child-process": "7.0.0",
-    "@lerna/create": "7.0.0",
+    "@lerna/child-process": "7.0.1",
+    "@lerna/create": "7.0.1",
     "@npmcli/run-script": "6.0.2",
     "@nx/devkit": ">=16.1.3 < 17",
     "@octokit/plugin-enterprise-rest": "6.0.1",

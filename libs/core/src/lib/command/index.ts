@@ -120,6 +120,9 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
         (result) => {
           warnIfHanging();
 
+          // Now that we have made our calls to the daemon, we need it to exit so that the overall process can too
+          daemonClient.reset();
+
           resolve(result);
         },
         (err) => {
@@ -138,6 +141,9 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
           }
 
           warnIfHanging();
+
+          // Now that we have made our calls to the daemon, we need it to exit so that the overall process can too
+          daemonClient.reset();
 
           // error code is handled by cli.fail()
           reject(err);
@@ -215,9 +221,6 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       this.projectFileMap,
       this.project.packageConfigs
     );
-
-    // Now that we have made our two calls to the daemon, we need it to exit so that the overall process can too
-    daemonClient.reset();
   }
 
   configureEnvironment() {
