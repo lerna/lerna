@@ -164,10 +164,13 @@ class PublishCommand extends Command {
   }
 
   async initialize() {
-    if (this.project.useExperimentalAutomaticVersions() && this.options.bump !== "from-git") {
+    if (
+      this.project.useExperimentalAutomaticVersions() &&
+      (this.options.bump === "from-package" || this.options.canary)
+    ) {
       throw new ValidationError(
         "EAUTOMATICVERSIONS",
-        "Experimental automatic versions are only supported with the `from-git` bump option."
+        "Experimental automatic versions are not supported with --canary or the from-package positional."
       );
     }
 
