@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.2](https://github.com/lerna/lerna/compare/7.0.1...7.0.2) (2023-06-15)
+
+### Bug Fixes
+
+- **publish:** revert auto-copying of assets to custom contents/directory ([#3732](https://github.com/lerna/lerna/issues/3732)) ([70d4438](https://github.com/lerna/lerna/commit/70d4438a977c1017c8ec7a3b65d057f7b8169d64))
+
 ## [7.0.1](https://github.com/lerna/lerna/compare/7.0.0...7.0.1) (2023-06-13)
 
 ### Bug Fixes
