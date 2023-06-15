@@ -1099,6 +1099,11 @@ class PublishCommand extends Command {
   }
 
   private async copyAssets(pkg: Package) {
+    // Do not copy assets if no custom assets are defined (root level config will have been applied to the pkg by this point)
+    if (!pkg.lernaConfig?.command?.publish?.assets) {
+      return;
+    }
+
     if (normalize(pkg.location) === normalize(pkg.contents)) {
       // no need to copy assets if publishing from the source location
       return;
@@ -1106,7 +1111,7 @@ class PublishCommand extends Command {
 
     const _workspaceRoot = process.env["NX_WORKSPACE_ROOT_PATH"] || workspaceRoot;
 
-    const assets = pkg.lernaConfig?.command?.publish?.assets || ["package.json", "README.md"];
+    const assets = pkg.lernaConfig?.command?.publish?.assets;
     const filesToCopy: {
       from: string;
       to: string;
