@@ -31,7 +31,7 @@ export async function createProjectGraphWithPackages(
     projectNodesMatchingPackageConfigs.map(
       (node) =>
         new Promise<[ProjectGraphProjectNode, RawManifest | null]>((resolve) => {
-          const manifestPath = getPackageManifestPath(node, projectFileMap[node.name]);
+          const manifestPath = getPackageManifestPath(node, projectFileMap[node.name] || []);
           if (manifestPath) {
             const fullManifestPath = join(_workspaceRoot, manifestPath);
             resolve(readJson(fullManifestPath).then((manifest) => [node, manifest]));

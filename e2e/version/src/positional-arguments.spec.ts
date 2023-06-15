@@ -9,13 +9,13 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna-version-positional-arguments", () => {
+describe("lerna-version-positional-arguments-npm", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {
     fixture = await Fixture.create({
       e2eRoot: process.env.E2E_ROOT,
-      name: "lerna-version-positional-arguments",
+      name: "lerna-version-positional-arguments-npm",
       packageManager: "npm",
       initializeGit: true,
       lernaInit: { args: [`--packages="packages/*"`] },

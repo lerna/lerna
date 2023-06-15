@@ -4,6 +4,7 @@ import {
   recommendVersion as _recommendVersion,
 } from "@lerna/core";
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
+import { isEqual } from "lodash";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
@@ -20,6 +21,21 @@ jest.mock("./is-behind-upstream", () => ({
 jest.mock("./remote-branch-exists", () => ({
   remoteBranchExists: jest.fn().mockResolvedValue(true),
 }));
+
+jest.mock("execa", () => {
+  const execa = jest.requireActual("execa");
+
+  const mockExeca = (...args) => {
+    // assume there are changes if git diff is called
+    if (args[0] === "git" && isEqual(args[1], ["diff", "--staged", "--quiet"])) {
+      return Promise.reject(new Error("Changes found"));
+    }
+
+    return execa(...args);
+  };
+
+  return Object.assign(mockExeca, execa);
+});
 
 // The mocked version isn't the same as the real one
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

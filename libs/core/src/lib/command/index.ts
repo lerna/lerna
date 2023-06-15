@@ -5,6 +5,7 @@ import { mapValues } from "lodash";
 import log from "npmlog";
 import { daemonClient } from "nx/src/daemon/client/client";
 import os from "os";
+import { getCurrentVersion } from "../get-current-version";
 import { CommandConfigOptions, Project } from "../project";
 import { ProjectGraphWithPackages } from "../project-graph-with-packages";
 import { ValidationError } from "../validation-error";
@@ -36,6 +37,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   argv: any;
   projectGraph!: ProjectGraphWithPackages;
   projectFileMap!: ProjectFileMap;
+  private projectVersion!: string;
 
   private _project?: Project;
   get project(): Project {
@@ -312,6 +314,10 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       log.info("versioning", "independent");
     }
 
+    if (!this.composed && this.project.useExperimentalAutomaticVersions()) {
+      log.warn("versioning", "experimental automatic versions enabled");
+    }
+
     if (!this.composed && this.options.ci) {
       log.info("ci", "enabled");
     }
@@ -334,5 +340,40 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
    */
   execute(): void | Promise<unknown> {
     throw new ValidationError(this.name, "execute() needs to be implemented.");
+  }
+
+  protected async getProjectVersion(): Promise<string> {
+    if (this.projectVersion) {
+      return this.projectVersion;
+    }
+
+    if (this.project.useExperimentalAutomaticVersions()) {
+      if (!this.project.config.__experimentalAutomaticVersions?.referencePackage) {
+        throw new ValidationError(
+          "ENOVERSION",
+          "Property __experimentalAutomaticVersions.referencePackage is required in `lerna.json` when __experimentalAutomaticVersions is provided."
+        );
+      }
+
+      this.projectVersion = await getCurrentVersion(
+        this.project.config.__experimentalAutomaticVersions.referencePackage,
+        this.options.distTag || "latest",
+        this.options.registry
+      );
+    } else {
+      // allow commands to handle 'independent' or an explicit semver value
+      this.projectVersion = this.project.version;
+    }
+
+    return this.projectVersion;
+  }
+
+  protected setProjectVersion(version: string): void {
+    if (this.project.useExperimentalAutomaticVersions()) {
+      return; // do nothing since the version is dynamically determined and should not be saved
+    }
+
+    this.project.version = version;
+    this.projectVersion = version;
   }
 }

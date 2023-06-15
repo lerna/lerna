@@ -16,6 +16,7 @@ export { FilterOptions, filterOptions } from "./lib/filter-options";
 export { filterProjects } from "./lib/filter-projects";
 export { getPackageManifestPath } from "./lib/get-package-manifest-path";
 export * from "./lib/get-packages-for-option";
+export { gitCheckout } from "./lib/git-checkout";
 export { hasNpmVersion } from "./lib/has-npm-version";
 export { listableFormatProjects } from "./lib/listable-format-projects";
 export { ListableOptions, listableOptions } from "./lib/listable-options";

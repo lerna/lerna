@@ -38,6 +38,7 @@ const versionCommand = require("@lerna/commands/version");
 
 import { copy } from "fs-extra";
 import globby from "globby";
+import npa from "npm-package-arg";
 import { createTempLicenses } from "./lib/create-temp-licenses";
 import { getCurrentSHA } from "./lib/get-current-sha";
 import { getCurrentTags } from "./lib/get-current-tags";
@@ -163,6 +164,16 @@ class PublishCommand extends Command {
   }
 
   async initialize() {
+    if (
+      this.project.useExperimentalAutomaticVersions() &&
+      (this.options.bump === "from-package" || this.options.canary)
+    ) {
+      throw new ValidationError(
+        "EAUTOMATICVERSIONS",
+        "Experimental automatic versions are not supported with --canary or the from-package positional."
+      );
+    }
+
     if (this.options.verifyAccess === false) {
       this.logger.warn(
         "verify-access",
@@ -465,25 +476,41 @@ class PublishCommand extends Command {
     const taggedPackageNames = await getCurrentTags(this.execOpts, matchingPattern);
 
     let updates: ProjectGraphProjectNodeWithPackage[];
+    let updatesVersions: [string, string][];
     if (!taggedPackageNames.length) {
       this.logger.notice("from-git", "No tagged release found");
 
       updates = [];
     } else if (this.project.isIndependent()) {
-      updates = taggedPackageNames.map(
-        (name) => this.projectsWithPackage.find((node) => getPackage(node).name === name) // TODO: improve lookup efficiency
-      );
+      updates = [];
+      updatesVersions = [];
+
+      taggedPackageNames.forEach((tag) => {
+        const npaResult = npa(tag);
+        const node = this.projectsWithPackage.find((node) => getPackage(node).name === npaResult.name);
+
+        updates.push(node);
+        updatesVersions.push([node.name, getPackage(node).version || npaResult.rawSpec]);
+      });
+    } else if (this.project.useExperimentalAutomaticVersions()) {
+      updates = this.projectsWithPackage;
+
+      const tags = taggedPackageNames.map((tag) => tag.replace(this.tagPrefix, ""));
+      const newVersion = semver.maxSatisfying(tags, "*");
+
+      updates.forEach((node) => (getPackage(node).version = newVersion));
+
+      updatesVersions = updates.map((node) => [node.name, getPackage(node).version || newVersion]);
     } else {
       updates = await getProjectsWithTaggedPackages(
         this.projectsWithPackage,
-        this.project.rootPath,
+        this.projectFileMap,
         this.execOpts
       );
+      updatesVersions = updates.map((node) => [node.name, getPackage(node).version]);
     }
 
     updates = this.filterPrivatePkgUpdates(updates);
-
-    const updatesVersions: [string, string][] = updates.map((node) => [node.name, getPackage(node).version]);
 
     return {
       updates,
@@ -553,7 +580,7 @@ class PublishCommand extends Command {
     }
 
     // find changed packages since last release, if any
-    const updates: ProjectGraphProjectNodeWithPackage[] = await this.filterPrivatePkgUpdates(
+    const updates: ProjectGraphProjectNodeWithPackage[] = this.filterPrivatePkgUpdates(
       collectProjectUpdates(this.projectsWithPackage, this.projectGraph, this.execOpts, {
         bump: "prerelease",
         canary: true,
@@ -825,10 +852,12 @@ class PublishCommand extends Command {
       .concat(this.packagesToPublish)
       .map((pkg) => path.relative(_workspaceRoot, pkg.manifestLocation));
 
-    await gitCheckout(dirtyManifests, gitOpts, this.execOpts).catch((err) => {
+    try {
+      await gitCheckout(dirtyManifests, gitOpts, this.execOpts);
+    } catch (err) {
       this.logger.silly("EGITCHECKOUT", err.message);
       this.logger.notice("FYI", "Unable to reset working tree changes, this probably isn't a git repo.");
-    });
+    }
   }
 
   private execScript(pkg: Package, script: string) {
