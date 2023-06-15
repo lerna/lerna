@@ -84,7 +84,8 @@
           "packages/lerna/src/migrations/remove-invalid-lerna-config/remove-invalid-lerna-config.ts",
           "packages/lerna/src/migrations/remove-invalid-use-workspaces/remove-invalid-use-workspaces.ts",
           "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts",
-          "packages/lerna/src/migrations/update-options-from-legacy-deprecate-config/update-options-from-legacy-deprecate-config.ts"
+          "packages/lerna/src/migrations/update-options-from-legacy-deprecate-config/update-options-from-legacy-deprecate-config.ts",
+          "packages/lerna/src/utils/index.ts"
         ],
         "esbuildOptions": {
           "external": [
