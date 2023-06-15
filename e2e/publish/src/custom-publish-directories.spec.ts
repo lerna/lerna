@@ -43,7 +43,11 @@ describe("lerna-publish-custom-publish-directories", () => {
       await fixture.updateJson("packages/package-1/package.json", (pkg) => ({
         ...pkg,
         main: "main.js",
-        scripts: { build: "cp ./lib/package-1.js ../../dist/packages/package-1/lib/main.js" },
+        scripts: {
+          // Case where user manually ensures package.json is present inn publish directory
+          build:
+            "cp ./lib/package-1.js ../../dist/packages/package-1/lib/main.js && cp ./package.json ../../dist/packages/package-1/package.json",
+        },
         lerna: {
           command: {
             publish: { directory: "../../dist/packages/package-1" },
@@ -140,10 +144,6 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna WARN ENOLICENSE One way to fix this is to add a LICENSE.md file to the root of this repository.
         lerna WARN ENOLICENSE See https://choosealicense.com for additional guidance.
         lerna verb getCurrentSHA {FULL_COMMIT_SHA}
-        lerna verb publish Expanded asset glob package.json into files ["package.json"]
-        lerna verb publish Expanded asset glob README.md into files ["README.md"]
-        lerna verb publish Copying asset packages/package-1/package.json to dist/packages/package-1/package.json
-        lerna verb publish Copying asset packages/package-1/README.md to dist/packages/package-1/README.md
         lerna verb pack-directory dist/packages/package-1
         lerna verb packed dist/packages/package-1
         lerna verb publish Expanded asset glob package.json into files ["package.json"]
@@ -167,7 +167,6 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna notice === Tarball Contents === 
         lerna notice 99B   lib/main.js 
         lerna notice XXXkb package.json
-        lerna notice 119B  README.md   
         lerna notice === Tarball Details === 
         lerna notice name:          package-1                               
         lerna notice version:       XX.XX.XX                                
@@ -176,7 +175,7 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna notice unpacked size: XXX.XXX kb                                  
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
+        lerna notice total files:   2                                       
         lerna notice 
         lerna verb publish package-2
         lerna success published package-2 XX.XX.XX
@@ -229,7 +228,6 @@ describe("lerna-publish-custom-publish-directories", () => {
       expect(files.sort().join("\n")).toMatchInlineSnapshot(`
         packages
         packages/package-1
-        packages/package-1/README.md
         packages/package-1/lib
         packages/package-1/lib/main.js
         packages/package-1/package.json
