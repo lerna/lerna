@@ -22,7 +22,7 @@ This is only useful for publishing if the packages in your monorepo have a simpl
 
 In v7, we introduced a more powerful, more focused `--directory` option for `lerna publish`. Please prefer that over the `--contents` option, which will likely be deprecated in future.
 
-## `--directory"`
+## `--directory`
 
 In v7, we introduced a more powerful, more focused `--directory` option for `lerna publish`.
 
@@ -73,6 +73,11 @@ An example configuration for a package that publishes from a `dist/packages/foo`
 }
 ```
 
+:::info
+You will need to make sure that your custom directory location contains a valid `package.json` which will be used for the registry publish. You could create this via a lifecycle script such as `prepare`, `prepublishOnly`, or `prepack` if you need more complex custom logic involved, or simply have it copied for you from the package's source automatically by configuring it as an asset. See the upcoming section on **Including Additional Assets in Published Packages** for full details.
+
+:::
+
 If you wanted to make one of your packages behave like a standard lerna package and publish from source, you could override its publish config like so:
 
 ```json
@@ -83,8 +88,7 @@ If you wanted to make one of your packages behave like a standard lerna package 
   "lerna": {
     "command": {
       "publish": {
-        "directory": ".",
-        "assets": []
+        "directory": "."
       }
     }
   }
@@ -94,8 +98,6 @@ If you wanted to make one of your packages behave like a standard lerna package 
 # Including Additional Assets in Published Packages
 
 Lerna can copy files from your source directory to the directory specified for publishing. Just as with the `directory` option, this can be configured in the `lerna.json` (including using dynamic placeholders within asset definitions), or within the `package.json` of a particular package.
-
-By default, Lerna will copy the `README.md` and `package.json` files. If you decided to override the `assets` configuration, you must make sure to include `"package.json"` in your asset definitions.
 
 Regardless of which file it is configured in, the `"assets"` property should be an array of glob patterns or objects with a `"from"` and `"to"` property. The `"from"` property should be a specific file or glob pattern that matches files in the source directory, and the `"to"` property is the path to copy the file to within the publish directory.
 
