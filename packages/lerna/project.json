@@ -81,6 +81,7 @@
           "packages/lerna/src/commands/version/lib/update-lockfile-version.ts",
           "packages/lerna/src/migrations/add-schema-config/add-schema-config.ts",
           "packages/lerna/src/migrations/remove-invalid-init-config/remove-invalid-init-config.ts",
+          "packages/lerna/src/migrations/remove-invalid-lerna-config/remove-invalid-lerna-config.ts",
           "packages/lerna/src/migrations/remove-invalid-use-workspaces/remove-invalid-use-workspaces.ts",
           "packages/lerna/src/migrations/remove-unnecessary-use-nx/remove-unnecessary-use-nx.ts",
           "packages/lerna/src/migrations/update-options-from-legacy-deprecate-config/update-options-from-legacy-deprecate-config.ts"
