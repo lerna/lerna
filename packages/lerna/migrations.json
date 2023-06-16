@@ -12,6 +12,12 @@
       "description": "Remove invalid `init` config from lerna.json as it is no longer applicable, given init cannot be run on an existing workspace",
       "implementation": "./dist/migrations/remove-invalid-init-config/remove-invalid-init-config"
     },
+    "remove-invalid-lerna-config": {
+      "cli": "nx",
+      "version": "7.0.0-alpha.2",
+      "description": "Remove invalid `lerna` config from lerna.json as it is no longer used for anything",
+      "implementation": "./dist/migrations/remove-invalid-lerna-config/remove-invalid-lerna-config"
+    },
     "remove-invalid-use-workspaces": {
       "cli": "nx",
       "version": "7.0.0-alpha.2",
