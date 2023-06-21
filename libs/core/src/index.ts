@@ -9,7 +9,7 @@ export {
   collectProjects,
 } from "./lib/collect-updates";
 export { Command, PreInitializedProjectData } from "./lib/command";
-export { createProjectGraphWithPackages } from "./lib/command/create-project-graph-with-packages";
+export { detectProjects } from "./lib/command/detect-projects";
 export { isGitInitialized } from "./lib/command/is-git-initialized";
 export { applyBuildMetadata, recommendVersion, updateChangelog } from "./lib/conventional-commits";
 export { describeRef, describeRefSync } from "./lib/describe-ref";

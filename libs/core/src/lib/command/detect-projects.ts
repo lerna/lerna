@@ -1,20 +1,8 @@
-import {
-  Project,
-  ProjectGraphWithPackages,
-  createProjectGraphWithPackages as _createProjectGraphWithPackages,
-} from "@lerna/core";
 import { ProjectFileMap, createProjectFileMapUsingProjectGraph, createProjectGraphAsync } from "@nx/devkit";
+import { ProjectGraphWithPackages } from "../project-graph-with-packages";
+import { createProjectGraphWithPackages } from "./create-project-graph-with-packages";
 
-/**
- * @async
- * @function createProjectGraphWithPackages
- * Creates a project graph with package metadata and returns it along with a corresponding mapping of projects to files.
- *
- * @param {Project} [project=new Project(process.cwd())] - The Lerna Project instance for which the graph is being generated. If not provided, a new project is created using the current working directory.
- * @returns {Promise<{projectGraph: ProjectGraphWithPackages, projectFileMap: ProjectFileMap}>}
- */
-
-export async function createProjectGraphWithPackages(project: Project = new Project(process.cwd())): Promise<{
+export async function detectProjects(packageConfigs: string[]): Promise<{
   projectGraph: ProjectGraphWithPackages;
   projectFileMap: ProjectFileMap;
 }> {
@@ -37,11 +25,7 @@ export async function createProjectGraphWithPackages(project: Project = new Proj
     );
   }
 
-  const projectGraph = await _createProjectGraphWithPackages(
-    _projectGraph,
-    projectFileMap,
-    project.packageConfigs
-  );
+  const projectGraph = await createProjectGraphWithPackages(_projectGraph, projectFileMap, packageConfigs);
 
   return {
     projectGraph,

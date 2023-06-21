@@ -66,7 +66,7 @@ const sidebars = {
     {
       type: "category",
       label: "API Reference",
-      items: ["api-reference/commands", "api-reference/configuration"],
+      items: ["api-reference/commands", "api-reference/configuration", "api-reference/utilities"],
     },
     "legacy-package-management",
     "faq",
