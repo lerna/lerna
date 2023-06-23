@@ -1024,7 +1024,7 @@ class PublishCommand extends Command {
               // avoid dumping logs, this isn't a lerna problem
               err.name = "ValidationError";
               // ensure process exits non-zero
-              process.exitCode = "errno" in err ? err.errno : 1;
+              process.exitCode = "errno" in err && typeof err.errno === "number" ? err.errno : 1;
 
               throw err;
             });
