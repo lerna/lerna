@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import * as yargs from "yargs";
 import { execSync } from "child_process";
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { URL } from "url";
 import { join } from "path";
+import { URL } from "url";
+import * as yargs from "yargs";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const version = require("lerna/commands/version");
@@ -65,7 +65,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
     writeFileSync("./package.json", distPackageJson);
 
     // Force all projects to be not private
-    const projects = JSON.parse(execSync("npx lerna list --json --all").toString());
+    const projects = JSON.parse(execSync("npx lerna@^6 list --json --all").toString());
     for (const proj of projects) {
       if (proj.private) {
         console.log("Publishing private package locally:", proj.name);
