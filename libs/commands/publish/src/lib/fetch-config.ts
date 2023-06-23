@@ -1,6 +1,7 @@
 import log from "npmlog";
 
 export interface FetchConfig {
+  [key: string]: unknown;
   fetchRetries?: number;
   log: typeof log;
   registry?: string;

@@ -82,3 +82,26 @@ test("getProjectsWithUnpublishedPackages with private package", async () => {
     }),
   ]);
 });
+
+test("getProjectsWithUnpublishedPackages with strict-ssl = false", async () => {
+  const cwd = await initFixture("public-private");
+  const packages = await getPackages(cwd);
+  const projectNodes = packages.map(
+    (pkg): ProjectGraphProjectNodeWithPackage => ({
+      name: pkg.name,
+      type: "lib",
+      data: { root: pkg.location },
+      package: pkg,
+    })
+  );
+
+  const opts = {'strict-ssl': false};
+  const pkgs = await getProjectsWithUnpublishedPackages(projectNodes, opts);
+
+  expect(pacote.packument).toHaveBeenCalledWith("package-1", {'strict-ssl': false, 'strictSSL': false});
+  expect(pkgs).toEqual([
+    expect.objectContaining({
+      name: "package-1",
+    }),
+  ]);
+});
