@@ -1668,6 +1668,10 @@
           ],
           "description": "For `lerna version`, the custom conventional-changelog preset."
         },
+        "changelogEntryAdditionalMarkdown": {
+          "type": "string",
+          "description": "Additional markdown to add to CHANGELOG.md entries."
+        },
         "gitRemote": {
           "type": "string",
           "description": "During `lerna version`, push git changes to the specified remote."

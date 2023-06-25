@@ -11,7 +11,13 @@ import { readExistingChangelog } from "./read-existing-changelog";
 export function updateChangelog(
   pkg: Package,
   type: ChangelogType,
-  { changelogPreset, rootPath, tagPrefix = "v", version }: BaseChangelogOptions & { version?: string }
+  {
+    changelogPreset,
+    changelogEntryAdditionalMarkdown,
+    rootPath,
+    tagPrefix = "v",
+    version,
+  }: BaseChangelogOptions & { version?: string }
 ) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
@@ -62,6 +68,16 @@ export function updateChangelog(
       getStream(changelogStream).then(makeBumpOnlyFilter(pkg)),
       readExistingChangelog(pkg),
     ]).then(([newEntry, [changelogFileLoc, changelogContents]]) => {
+      // Append any additional markdown to the new entry, if provided
+      if (changelogEntryAdditionalMarkdown) {
+        // capture trailing whitespace on the newEntry and apply the additional markdown before it and reapply it
+        const trailingWhitespace = newEntry.match(/\s*$/);
+        newEntry = newEntry.replace(
+          /\s*$/,
+          BLANK_LINE + changelogEntryAdditionalMarkdown + trailingWhitespace
+        );
+      }
+
       log.silly(type, "writing new entry: %j", newEntry);
 
       const content = [CHANGELOG_HEADER, newEntry, changelogContents].join(BLANK_LINE);

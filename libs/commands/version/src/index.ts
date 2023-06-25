@@ -84,6 +84,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   message?: string;
   npmClientArgs?: string[];
   changelogPreset?: string;
+  changelogEntryAdditionalMarkdown?: string;
   conventionalBumpPrerelease?: boolean;
   yes?: boolean;
   rejectCycles?: boolean;
@@ -626,7 +627,12 @@ class VersionCommand extends Command {
   }
 
   async updatePackageVersions() {
-    const { conventionalCommits, changelogPreset, changelog = true } = this.options;
+    const {
+      conventionalCommits,
+      changelogPreset,
+      changelogEntryAdditionalMarkdown,
+      changelog = true,
+    } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
     const changedFiles = new Set<string>();
@@ -678,6 +684,7 @@ class VersionCommand extends Command {
       actions.push((node) =>
         updateChangelog(getPackage(node), type, {
           changelogPreset,
+          changelogEntryAdditionalMarkdown,
           rootPath,
           tagPrefix: this.tagPrefix,
         }).then(({ logPath, newEntry }) => {
@@ -710,6 +717,7 @@ class VersionCommand extends Command {
       if (conventionalCommits && changelog) {
         const { logPath, newEntry } = await updateChangelog(this.project.manifest, "root", {
           changelogPreset,
+          changelogEntryAdditionalMarkdown,
           rootPath,
           tagPrefix: this.tagPrefix,
           version: this.globalVersion,
