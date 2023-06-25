@@ -717,6 +717,7 @@ class VersionCommand extends Command {
       if (conventionalCommits && changelog) {
         const { logPath, newEntry } = await updateChangelog(this.project.manifest, "root", {
           changelogPreset,
+          changelogEntryAdditionalMarkdown,
           rootPath,
           tagPrefix: this.tagPrefix,
           version: this.globalVersion,
