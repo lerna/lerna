@@ -120,7 +120,8 @@
     "./commands/diff/lib/*": "./dist/commands/diff/lib/*.js",
     "./commands/publish/lib/*": "./dist/commands/publish/lib/*.js",
     "./commands/version/lib/*": "./dist/commands/version/lib/*.js",
-    "./migrations/**/*": "./dist/migrations/**/*"
+    "./migrations/**/*": "./dist/migrations/**/*",
+    "./utils": "./dist/utils/index.js"
   },
   "gitHead": "3900fe95f8bc5a3907156126bcac6989260e1082"
 }
