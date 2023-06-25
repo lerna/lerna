@@ -970,6 +970,9 @@
             "changelogPreset": {
               "$ref": "#/$defs/commandOptions/version/changelogPreset"
             },
+            "changelogEntryAdditionalMarkdown": {
+              "$ref": "#/$defs/commandOptions/version/changelogEntryAdditionalMarkdown"
+            },
             "exact": {
               "$ref": "#/$defs/commandOptions/shared/exact"
             },
