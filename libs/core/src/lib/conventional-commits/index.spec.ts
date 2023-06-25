@@ -715,6 +715,64 @@ describe("conventional-commits", () => {
         * **thing:** added ([SHA](COMMIT_URL))
       `);
     });
+
+    it("supports changelogEntryAdditionalMarkdown", async () => {
+      const cwd = await initFixture("fixed");
+      const rootPkg = {
+        // no name
+        location: cwd,
+      };
+
+      await gitTag(cwd, "v1.0.0");
+
+      const [pkg1] = await getPackages(cwd);
+
+      // make a change in package-1
+      await pkg1.set("changed", 1).serialize();
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix: A second commit for our CHANGELOG");
+
+      // update version
+      await pkg1.set("version", "1.0.1").serialize();
+
+      const [rootChangelogContent] = await Promise.all([
+        updateChangelog(rootPkg, "root", {
+          version: "1.0.1",
+          changelogEntryAdditionalMarkdown: "#### Some title\n\nSome *paragraph*",
+        }).then(getFileContent),
+      ]);
+
+      expect(rootChangelogContent).toMatchInlineSnapshot(`
+        # Change Log
+
+        All notable changes to this project will be documented in this file.
+        See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+        ## [1.0.1](/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
+
+
+        ### Bug Fixes
+
+        * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
+
+        #### Some title
+
+        Some *paragraph*
+
+
+
+
+
+        <a name="1.0.0"></a>
+
+        # 1.0.0 (YYYY-MM-DD)
+
+        ### Features
+
+        * I should be placed in the CHANGELOG
+
+      `);
+    });
   });
 
   describe("applyBuildMetadata", () => {

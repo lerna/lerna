@@ -3,6 +3,7 @@ export type ChangelogType = "fixed" | "independent" | "root";
 export type ChangelogPresetConfig = string | { name: string; [key: string]: unknown };
 export type BaseChangelogOptions = {
   changelogPreset?: ChangelogPresetConfig;
+  changelogEntryAdditionalMarkdown?: string;
   rootPath: string;
   tagPrefix?: string;
   conventionalBumpPrerelease?: boolean;

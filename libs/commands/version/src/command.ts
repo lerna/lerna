@@ -69,6 +69,10 @@ const command: CommandModule = {
         requiresArg: true,
         defaultDescription: "angular",
       },
+      "changelog-entry-additional-markdown": {
+        describe: "Additional markdown to add to CHANGELOG.md entries.",
+        type: "string",
+      },
       exact: {
         describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
         type: "boolean",
