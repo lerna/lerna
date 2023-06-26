@@ -1025,10 +1025,10 @@ class PublishCommand extends Command {
               err.name = "ValidationError";
 
               // ensure process exits non-zero
-              if ("errno" in err && typeof err.errno === "number") {
+              if ("errno" in err && typeof err.errno === "number" && Number.isFinite(err.errno)) {
                 process.exitCode = err.errno;
               } else {
-                this.logger.error("", `errno \"${err.errno}\" is not a number - exiting with code 1`);
+                this.logger.error("", `errno "${err.errno}" is not a valid exit code - exiting with code 1`);
                 process.exitCode = 1;
               }
 
