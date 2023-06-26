@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.1.0](https://github.com/lerna/lerna/compare/7.0.2...7.1.0) (2023-06-25)
+
+### Features
+
+- **core:** export detectProjects utility function ([#3740](https://github.com/lerna/lerna/issues/3740)) ([641fecb](https://github.com/lerna/lerna/commit/641fecbe7c83602fe5bb792d6db86ab57eecfd9b))
+- **repair:** add migration to remove unused "lerna" field from lerna.json ([#3734](https://github.com/lerna/lerna/issues/3734)) ([4fb0427](https://github.com/lerna/lerna/commit/4fb042755c52d87ff33d04fb1cd45e99ba0c0f61))
+- **version:** add --changelog-entry-additional-markdown option ([#3751](https://github.com/lerna/lerna/issues/3751)) ([63671df](https://github.com/lerna/lerna/commit/63671df05a02429d39144df632f958ec8bf4a455))
+
 ## [7.0.2](https://github.com/lerna/lerna/compare/7.0.1...7.0.2) (2023-06-15)
 
 ### Bug Fixes

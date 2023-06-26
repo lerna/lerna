@@ -970,6 +970,9 @@
             "changelogPreset": {
               "$ref": "#/$defs/commandOptions/version/changelogPreset"
             },
+            "changelogEntryAdditionalMarkdown": {
+              "$ref": "#/$defs/commandOptions/version/changelogEntryAdditionalMarkdown"
+            },
             "exact": {
               "$ref": "#/$defs/commandOptions/shared/exact"
             },
@@ -1667,6 +1670,10 @@
             }
           ],
           "description": "For `lerna version`, the custom conventional-changelog preset."
+        },
+        "changelogEntryAdditionalMarkdown": {
+          "type": "string",
+          "description": "Additional markdown to add to CHANGELOG.md entries."
         },
         "gitRemote": {
           "type": "string",

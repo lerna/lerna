@@ -53,6 +53,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--amend`](#--amend)
     - [`--build-metadata <buildMetadata>`](#--build-metadata)
     - [`--changelog-preset`](#--changelog-preset)
+    - [`--changelog-entry-additional-markdown`](#--changelog-entry-additional-markdown)
     - [`--conventional-commits`](#--conventional-commits)
     - [`--conventional-graduate`](#--conventional-graduate)
     - [`--conventional-prerelease`](#--conventional-prerelease)
@@ -174,6 +175,26 @@ If the preset exports a builder function (e.g. `conventional-changelog-conventio
   "changelogPreset": {
     "name": "conventionalcommits",
     "issueUrlFormat": "{{host}}/{{owner}}/{{repository}}/issues/{{id}}"
+  }
+}
+```
+
+### `--changelog-entry-additional-markdown`
+
+```sh
+lerna version --conventional-commits --changelog-entry-additional-markdown "### Some title\n\nSome *paragraph*"
+```
+
+This option allows you to optionally append additional markdown contents to the new changelog entry for the current release, for example if you want to add additional documentation, or link off to a reference site or video.
+
+If your text is static, and does not change from release to release, you could choose to set it in your `lerna.json`.
+
+```json
+{
+  "command": {
+    "version": {
+      "changelogEntryAdditionalMarkdown": "### Some title\n\nSome *paragraph*"
+    }
   }
 }
 ```

@@ -1,7 +1,6 @@
-import { ProjectFileMap, createProjectFileMapUsingProjectGraph, createProjectGraphAsync } from "@nx/devkit";
+import { ProjectFileMap } from "@nx/devkit";
 import cloneDeep from "clone-deep";
 import dedent from "dedent";
-import { mapValues } from "lodash";
 import log from "npmlog";
 import { daemonClient } from "nx/src/daemon/client/client";
 import os from "os";
@@ -11,8 +10,8 @@ import { ProjectGraphWithPackages } from "../project-graph-with-packages";
 import { ValidationError } from "../validation-error";
 import { writeLogFile } from "../write-log-file";
 import { cleanStack } from "./clean-stack";
-import { createProjectGraphWithPackages } from "./create-project-graph-with-packages";
 import { defaultOptions } from "./default-options";
+import { detectProjects } from "./detect-projects";
 import { isGitInitialized } from "./is-git-initialized";
 import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
@@ -205,22 +204,10 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   }
 
   async detectProjects() {
-    const projectGraph = await createProjectGraphAsync();
+    const { projectGraph, projectFileMap } = await detectProjects(this.project.packageConfigs);
 
-    // if we are using Nx >= 16.3.1, we can use the helper function to create the file map
-    // otherwise, we need to use the old "files" property on the node data
-    if (createProjectFileMapUsingProjectGraph) {
-      this.projectFileMap = await createProjectFileMapUsingProjectGraph(projectGraph);
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.projectFileMap = mapValues(projectGraph.nodes, (node) => (node.data as any).files);
-    }
-
-    this.projectGraph = await createProjectGraphWithPackages(
-      projectGraph,
-      this.projectFileMap,
-      this.project.packageConfigs
-    );
+    this.projectGraph = projectGraph;
+    this.projectFileMap = projectFileMap;
   }
 
   configureEnvironment() {
