@@ -95,10 +95,10 @@ test("getProjectsWithUnpublishedPackages with strict-ssl = false", async () => {
     })
   );
 
-  const opts = {'strict-ssl': false};
+  const opts = { "strict-ssl": false };
   const pkgs = await getProjectsWithUnpublishedPackages(projectNodes, opts);
 
-  expect(pacote.packument).toHaveBeenCalledWith("package-1", {'strict-ssl': false, 'strictSSL': false});
+  expect(pacote.packument).toHaveBeenCalledWith("package-1", { "strict-ssl": false, strictSSL: false });
   expect(pkgs).toEqual([
     expect.objectContaining({
       name: "package-1",
