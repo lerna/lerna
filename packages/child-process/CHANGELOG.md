@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.1](https://github.com/lerna/lerna/compare/7.1.0...7.1.1) (2023-06-28)
+
+### Bug Fixes
+
+- **schema:** add missing ref to changelogEntryAdditionalMarkdown ([b41afab](https://github.com/lerna/lerna/commit/b41afabf2ade02cd03bafbc043fa5ed445843640))
+
 # [7.1.0](https://github.com/lerna/lerna/compare/7.0.2...7.1.0) (2023-06-25)
 
 **Note:** Version bump only for package @lerna/child-process

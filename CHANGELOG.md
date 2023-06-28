@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.1](https://github.com/lerna/lerna/compare/7.1.0...7.1.1) (2023-06-28)
+
+### Bug Fixes
+
+- fix strict-ssl mapping for node-fetch-registry during unpublished projects lookup ([#3747](https://github.com/lerna/lerna/issues/3747)) ([5fcf94e](https://github.com/lerna/lerna/commit/5fcf94e5718507dfea8821f806041ca41d8905a8))
+- **publish:** catch publish conflict 403 error from npm ([#3753](https://github.com/lerna/lerna/issues/3753)) ([6123e86](https://github.com/lerna/lerna/commit/6123e86cff9cad425d23f66332e0442ca9ceb8b1))
+- **publish:** ensure that error code is valid ([#3748](https://github.com/lerna/lerna/issues/3748)) ([c59b45b](https://github.com/lerna/lerna/commit/c59b45b3dec05762a40bda19bdb9bb4fa08230a8))
+- **schema:** add missing ref to changelogEntryAdditionalMarkdown ([b41afab](https://github.com/lerna/lerna/commit/b41afabf2ade02cd03bafbc043fa5ed445843640))
+
 # [7.1.0](https://github.com/lerna/lerna/compare/7.0.2...7.1.0) (2023-06-25)
 
 ### Features
