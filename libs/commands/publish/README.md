@@ -20,13 +20,17 @@ When run, this command does one of the following things:
 - Publish packages in the latest commit where the version is not present in the registry (`from-package`).
 - Publish an unversioned "canary" release of packages (and their dependents) updated in the previous commit.
 
-> Lerna will not publish packages which are marked as private (`"private": true` in the `package.json`). This is consistent with the behavior of `npm publish`. See the [package.json docs](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#private) for more information. To override this behavior, see the [`--include-private` option](#--include-private).
-
 During all publish operations, appropriate [lifecycle scripts](#lifecycle-scripts) are called in the root and per-package (unless disabled by [`--ignore-scripts](#--ignore-scripts)).
 
 Check out [Per-Package Configuration](#per-package-configuration) for more details about publishing scoped packages, custom registries, and custom dist-tags.
 
-> Note: See the [FAQ](https://lerna.js.org/docs/faq#how-do-i-retry-publishing-if-publish-fails) for information on how to recover from a failed publish.
+See the [FAQ](https://lerna.js.org/docs/faq#how-do-i-retry-publishing-if-publish-fails) for information on how to recover from a failed publish.
+
+## Important Notes
+
+- Lerna will not publish packages which are marked as private (`"private": true` in the `package.json`). This is consistent with the behavior of `npm publish`. See the [package.json docs](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#private) for more information. To override this behavior, see the [`--include-private` option](#--include-private).
+
+- Lerna _always_ uses `npm` to publish packages. If you use a package manager other than `npm`, you will need to still add the appropriate publishing configuration to `.npmrc`, even if `npmClient` is set to something other than `npm` in `lerna.json`.
 
 ## Positionals
 
