@@ -114,6 +114,10 @@ This mode does not explicitly require that the packages have been versioned with
 lerna publish from-package
 ```
 
+:::info
+Lerna _always_ uses `npm` to publish packages. If you use a package manager other than `npm`, you will need to still add the appropriate publishing configuration to `.npmrc`, even if `npmClient` is set to something other than `npm` in `lerna.json`.
+:::
+
 ## Versioning strategies
 
 Lerna allows you to manage your project using one of two modes: Fixed or Independent.
