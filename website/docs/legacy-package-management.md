@@ -42,6 +42,10 @@ It would most likely be in the "scripts" property of `package.json` in the root 
 
 Replace `lerna bootstrap` with `npm install` (or `yarn`/`pnpm`). If you are already performing your package manager's install command somewhere in your workflow before where you had previously called `lerna bootstrap`, then you can just delete it instead. `lerna link` can just be removed, as the linking step is now handled by your package manager during `npm install`.
 
+:::info
+If you are using `yarn` and depend on linking binaries, then you may need to delete your `node_modules` folder once after switching to workspaces. For details, see [this yarn issue](https://github.com/yarnpkg/yarn/issues/4964#issuecomment-358709008).
+:::
+
 ### Replacing your usage of `lerna add`
 
 #### What does it do?
