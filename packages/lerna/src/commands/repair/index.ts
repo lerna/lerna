@@ -1,6 +1,15 @@
 import { Command } from "@lerna/core";
 import log from "npmlog";
-import { repair } from "nx/src/command-line/repair";
+
+let repair: typeof import("nx/src/command-line/repair/repair").repair;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  repair = require("nx/src/command-line/repair/repair").repair;
+} catch (_) {
+  // default to old import for previous versions of Nx
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  repair = require("nx/src/command-line/repair").repair;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const migrationsJson = require("../../../migrations.json");

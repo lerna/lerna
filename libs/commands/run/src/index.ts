@@ -17,11 +17,29 @@ import {
 } from "@lerna/core";
 import { TargetDependencyConfig } from "@nx/devkit";
 import { existsSync } from "fs-extra";
-import { runMany } from "nx/src/command-line/run-many";
-import { runOne } from "nx/src/command-line/run-one";
 import pMap from "p-map";
 import path from "path";
 import { performance } from "perf_hooks";
+
+let runMany: typeof import("nx/src/command-line/run-many/run-many").runMany;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  runMany = require("nx/src/command-line/run-many/run-many").runMany;
+} catch (_) {
+  // default to old import for previous versions of Nx
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  runMany = require("nx/src/command-line/run-many").runMany;
+}
+
+let runOne: typeof import("nx/src/command-line/run/run-one").runOne;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  runOne = require("nx/src/command-line/run/run-one").runOne;
+} catch (_) {
+  // default to old import for previous versions of Nx
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  runOne = require("nx/src/command-line/run-one").runOne;
+}
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new RunCommand(argv);

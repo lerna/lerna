@@ -5,7 +5,16 @@ import {
   ProjectGraphProjectNodeWithPackage,
   ValidationError,
 } from "@lerna/core";
-import { watch } from "nx/src/command-line/watch";
+
+let watch: typeof import("nx/src/command-line/watch/watch").watch;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  watch = require("nx/src/command-line/watch/watch").watch;
+} catch (_) {
+  // default to old import for previous versions of Nx
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  watch = require("nx/src/command-line/watch").watch;
+}
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new WatchCommand(argv);
