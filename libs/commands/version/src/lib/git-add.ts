@@ -28,16 +28,18 @@ function resolvePrettier() {
   return resolvedPrettier;
 }
 
-function maybeFormatFile(filePath) {
+async function maybeFormatFile(filePath) {
   const prettier = resolvePrettier();
   if (!prettier) {
     return;
   }
-  const config = resolvedPrettier.resolveConfig.sync(filePath);
+  const config = await resolvedPrettier.resolveConfig(filePath);
   const ignorePath = path.join(workspaceRoot, ".prettierignore");
   const fullFilePath = path.join(workspaceRoot, filePath);
 
-  if (resolvedPrettier.getFileInfo.sync(fullFilePath, { ignorePath }).ignored) {
+  const fileInfo = await resolvedPrettier.getFileInfo(fullFilePath, { ignorePath });
+
+  if (fileInfo.ignored) {
     log.silly("version", `Skipped applying prettier to ignored file: ${filePath}`);
     return;
   }
@@ -54,7 +56,7 @@ function maybeFormatFile(filePath) {
   }
 }
 
-export function gitAdd(
+export async function gitAdd(
   changedFiles: string[],
   gitOpts: { granularPathspec?: boolean },
   execOpts: ExecOptions
@@ -62,7 +64,7 @@ export function gitAdd(
   let files: string | string[] = [];
   for (const file of changedFiles) {
     const filePath = slash(path.relative(execOpts.cwd as string, path.resolve(execOpts.cwd as string, file)));
-    maybeFormatFile(filePath);
+    await maybeFormatFile(filePath);
     if (gitOpts.granularPathspec) {
       files.push(filePath);
     }
