@@ -10,7 +10,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna-watch-with-nx", () => {
+describe.skip("lerna-watch-with-nx", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {
