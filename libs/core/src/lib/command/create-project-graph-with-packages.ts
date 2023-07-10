@@ -1,6 +1,6 @@
 import { ProjectFileMap, ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nx/devkit";
 import { readJson } from "fs-extra";
-import { sortBy } from "lodash";
+import { reduce, sortBy } from "lodash";
 import minimatch from "minimatch";
 import { resolve } from "npm-package-arg";
 import { join } from "path";
@@ -61,6 +61,13 @@ export async function createProjectGraphWithPackages(
       package: pkg,
     };
   });
+
+  // order dependencies to create consistent results when iterating over them
+  projectGraphWithOrderedNodes.dependencies = reduce(
+    sortBy(Object.keys(projectGraphWithOrderedNodes.dependencies)),
+    (prev, next) => ({ ...prev, [next]: projectGraphWithOrderedNodes.dependencies[next] }),
+    {}
+  );
 
   // populate local npm package dependencies
   Object.values(projectGraphWithOrderedNodes.dependencies).forEach((projectDeps) => {
