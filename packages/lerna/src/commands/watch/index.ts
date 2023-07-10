@@ -5,7 +5,7 @@ import {
   ProjectGraphProjectNodeWithPackage,
   ValidationError,
 } from "@lerna/core";
-import { watch } from "nx/src/command-line/watch";
+import { watch } from "nx/src/command-line/watch/watch";
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new WatchCommand(argv);

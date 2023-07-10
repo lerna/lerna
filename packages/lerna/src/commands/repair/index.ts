@@ -1,6 +1,6 @@
 import { Command } from "@lerna/core";
 import log from "npmlog";
-import { repair } from "nx/src/command-line/repair";
+import { repair } from "nx/src/command-line/repair/repair";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const migrationsJson = require("../../../migrations.json");
