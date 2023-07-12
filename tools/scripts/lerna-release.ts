@@ -81,7 +81,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
     forcePublish: true,
     createRelease: options.tag !== "next" ? "github" : undefined,
     noChangelog: options.tag === "next",
-    tagVersionPrefix: "",
+    tagVersionPrefix: "v",
     exact: true,
     gitRemote: options.gitRemote,
     gitTagVersion: options.tag !== "next",
