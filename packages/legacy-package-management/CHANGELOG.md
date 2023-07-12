@@ -5,19 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [7.1.2](https://github.com/lerna/lerna/compare/v6.4.1...v7.1.2) (2023-07-12)
 
-### Bug Fixes
-
-- bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
-- **deps:** bump pacote to latest to remove install warning ([#3624](https://github.com/lerna/lerna/issues/3624)) ([7c34521](https://github.com/lerna/lerna/commit/7c34521b9987b064638dd218b0b417546257d5f3))
-- **deps:** update to rimraf v4, remove path-exists ([#3616](https://github.com/lerna/lerna/issues/3616)) ([2f2ee2a](https://github.com/lerna/lerna/commit/2f2ee2a02091e2c9e35feaabc8f202f77407a408))
-- migration building/publishing issues ([27bf800](https://github.com/lerna/lerna/commit/27bf800b6e7670ea1ec5576fdf008e8d09897d4b))
-- **publish:** use correct version in log messages ([#3702](https://github.com/lerna/lerna/issues/3702)) ([4be9188](https://github.com/lerna/lerna/commit/4be9188e68c5d4c320c0946e6e386cbee95a8efe))
-- **schema:** add missing ref to changelogEntryAdditionalMarkdown ([b41afab](https://github.com/lerna/lerna/commit/b41afabf2ade02cd03bafbc043fa5ed445843640))
-- support nx 16.3.1+ ([#3707](https://github.com/lerna/lerna/issues/3707)) ([647dbb5](https://github.com/lerna/lerna/commit/647dbb512bf6a873cab6362c434b420b18af0ad4))
-
-### Features
-
-- add @lerna/legacy-package-management package ([#3602](https://github.com/lerna/lerna/issues/3602)) ([4a03dd5](https://github.com/lerna/lerna/commit/4a03dd5f02c118eb683cf2ed525715b4d8e5221b))
+**Note:** Version bump only for package @lerna/legacy-package-management
 
 ## [7.1.1](https://github.com/lerna/lerna/compare/7.1.0...7.1.1) (2023-06-28)
 

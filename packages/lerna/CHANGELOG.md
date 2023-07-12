@@ -5,41 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [7.1.2](https://github.com/lerna/lerna/compare/v6.4.1...v7.1.2) (2023-07-12)
 
-### Bug Fixes
-
-- add missing dependency on js-yaml ([187f480](https://github.com/lerna/lerna/commit/187f4804b8406a6472425de21dd89482c382b1b4))
-- build-metadata reference in lerna schema ([e2349ad](https://github.com/lerna/lerna/commit/e2349ad4f529c307ea69d21698a2ab53f5a9d6b4))
-- bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
-- **deps:** bump pacote to latest to remove install warning ([#3624](https://github.com/lerna/lerna/issues/3624)) ([7c34521](https://github.com/lerna/lerna/commit/7c34521b9987b064638dd218b0b417546257d5f3))
-- **deps:** update to rimraf v4, remove path-exists ([#3616](https://github.com/lerna/lerna/issues/3616)) ([2f2ee2a](https://github.com/lerna/lerna/commit/2f2ee2a02091e2c9e35feaabc8f202f77407a408))
-- internal cli.js should not be bundled ([53d73c6](https://github.com/lerna/lerna/commit/53d73c6aa9833e5a5bf60c2c78896456e77fab40))
-- lerna schema type for contents should be string ([1625757](https://github.com/lerna/lerna/commit/162575758e9422f2c05fc741ead370eaf793cb57))
-- migration building/publishing issues ([27bf800](https://github.com/lerna/lerna/commit/27bf800b6e7670ea1ec5576fdf008e8d09897d4b))
-- **publish:** use correct version in log messages ([#3702](https://github.com/lerna/lerna/issues/3702)) ([4be9188](https://github.com/lerna/lerna/commit/4be9188e68c5d4c320c0946e6e386cbee95a8efe))
-- remove non-functional schema properties starting with "no" ([#3645](https://github.com/lerna/lerna/issues/3645)) ([43c2a48](https://github.com/lerna/lerna/commit/43c2a48fbba9e02675032aba15e1b4bb1f89a0ef))
-- **schema:** add missing ref to changelogEntryAdditionalMarkdown ([b41afab](https://github.com/lerna/lerna/commit/b41afabf2ade02cd03bafbc043fa5ed445843640))
-- support nx 16.3.1+ ([#3707](https://github.com/lerna/lerna/issues/3707)) ([647dbb5](https://github.com/lerna/lerna/commit/647dbb512bf6a873cab6362c434b420b18af0ad4))
-- update arborist package to get rid of deprecated warning ([#3559](https://github.com/lerna/lerna/issues/3559)) ([aff38a7](https://github.com/lerna/lerna/commit/aff38a7a0f5e5eea04d1743e78add9b2e052de3a))
-
-### Features
-
-- add @lerna/legacy-package-management package ([#3602](https://github.com/lerna/lerna/issues/3602)) ([4a03dd5](https://github.com/lerna/lerna/commit/4a03dd5f02c118eb683cf2ed525715b4d8e5221b))
-- add migration for adding $schema, increase some strictness ([73ceac3](https://github.com/lerna/lerna/commit/73ceac3dc2cf0e1246d4433cb101d1e794b2cca3))
-- **core:** convert commands to use nx project graph instead of legacy package graph ([#3667](https://github.com/lerna/lerna/issues/3667)) ([8e813c4](https://github.com/lerna/lerna/commit/8e813c46c543aa8e002a8982ca0b7f6afcee539e))
-- **core:** export detectProjects utility function ([#3740](https://github.com/lerna/lerna/issues/3740)) ([641fecb](https://github.com/lerna/lerna/commit/641fecbe7c83602fe5bb792d6db86ab57eecfd9b))
-- do not include bootstrap, add, link commands by default ([#3658](https://github.com/lerna/lerna/issues/3658)) ([487d475](https://github.com/lerna/lerna/commit/487d4755e8602ab3694992dd7702a2dd08f55861))
-- **publish:** add --include-private option for testing private packages ([#3503](https://github.com/lerna/lerna/issues/3503)) ([fa1f490](https://github.com/lerna/lerna/commit/fa1f4900a658982d87888c1c7c5eef3697c5b31b))
-- **repair:** add migration to remove unused "lerna" field from lerna.json ([#3734](https://github.com/lerna/lerna/issues/3734)) ([4fb0427](https://github.com/lerna/lerna/commit/4fb042755c52d87ff33d04fb1cd45e99ba0c0f61))
-- **version:** add --changelog-entry-additional-markdown option ([#3751](https://github.com/lerna/lerna/issues/3751)) ([63671df](https://github.com/lerna/lerna/commit/63671df05a02429d39144df632f958ec8bf4a455))
-- **version:** add user-defined build metadata to bumped packages ([#2880](https://github.com/lerna/lerna/issues/2880)) ([0b0e2a6](https://github.com/lerna/lerna/commit/0b0e2a62257ad8728835057dc37654626cbd621e))
-
-### BREAKING CHANGES
-
-- We no longer include the bootstrap, add, and link commands by default. We strongly recommend using your package manager (npm, yarn, pnpm) for package management related concerns such as installing and linking dependencies.
-
-If you want to temporarily continue to use those commands in v7 you can do so by installing the @lerna/legacy-package-management package at the same version as your lerna version.
-
-There will not be any active work done on these commands and you should look to migrate as soon as possible, please check out https://lerna.js.org for further guidance.
+- **version:** use async functions to support prettier 3+ ([#3766](https://github.com/lerna/lerna/issues/3766)) ([8026a7b](https://github.com/lerna/lerna/commit/8026a7b34c1cdf45135f5a556b8dd162c0cd2207))
 
 ## [7.1.1](https://github.com/lerna/lerna/compare/7.1.0...7.1.1) (2023-06-28)
 
