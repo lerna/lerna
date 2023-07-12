@@ -3,6 +3,74 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.2](https://github.com/lerna/lerna/compare/v6.4.1...v7.1.2) (2023-07-12)
+
+### Bug Fixes
+
+- add missing dependency on js-yaml ([187f480](https://github.com/lerna/lerna/commit/187f4804b8406a6472425de21dd89482c382b1b4))
+- build-metadata reference in lerna schema ([e2349ad](https://github.com/lerna/lerna/commit/e2349ad4f529c307ea69d21698a2ab53f5a9d6b4))
+- bump cosmiconfig to v8 ([#3701](https://github.com/lerna/lerna/issues/3701)) ([898923d](https://github.com/lerna/lerna/commit/898923d198319d76ed5e37e553bfe3b27e43604c))
+- **core:** reset nx daemon after command finishes ([#3726](https://github.com/lerna/lerna/issues/3726)) ([c0de66a](https://github.com/lerna/lerna/commit/c0de66a64dc74c43031db4eb4772ae7d70bc9211))
+- correct links to command docs ([#3598](https://github.com/lerna/lerna/issues/3598)) ([b90b684](https://github.com/lerna/lerna/commit/b90b684976e33b18f1a856657dbc9a9546fe2c66))
+- **create:** normalize quotes and indents in generated test and lib files ([#3529](https://github.com/lerna/lerna/issues/3529)) ([ad39fe2](https://github.com/lerna/lerna/commit/ad39fe2e4ca4e76cb7be6af83e8fbbc60d0935ce))
+- daemon communication ([e82618b](https://github.com/lerna/lerna/commit/e82618bf1a8aaea6d3d7f74f9afb8f1c5afe04ad))
+- **deps:** bump pacote to latest to remove install warning ([#3624](https://github.com/lerna/lerna/issues/3624)) ([7c34521](https://github.com/lerna/lerna/commit/7c34521b9987b064638dd218b0b417546257d5f3))
+- **deps:** update to rimraf v4, remove path-exists ([#3616](https://github.com/lerna/lerna/issues/3616)) ([2f2ee2a](https://github.com/lerna/lerna/commit/2f2ee2a02091e2c9e35feaabc8f202f77407a408))
+- ensure repair command not blocked by config validation ([e237d58](https://github.com/lerna/lerna/commit/e237d585e63a2fb502a8958f15a1efe03d781c57))
+- ensure rimraf bin dir can always be resolved ([#3614](https://github.com/lerna/lerna/issues/3614)) ([0fe5faf](https://github.com/lerna/lerna/commit/0fe5fafb28a47cb80c7d8ea4fb4e152b6ed0d978))
+- fix strict-ssl mapping for node-fetch-registry during unpublished projects lookup ([#3747](https://github.com/lerna/lerna/issues/3747)) ([5fcf94e](https://github.com/lerna/lerna/commit/5fcf94e5718507dfea8821f806041ca41d8905a8))
+- handle trailing commas and comments in lerna.json files ([#3603](https://github.com/lerna/lerna/issues/3603)) ([b826398](https://github.com/lerna/lerna/commit/b826398b6da61b6b3a0e972211fb3a8ec68654f3))
+- improve github client missing env var error ([ce4b352](https://github.com/lerna/lerna/commit/ce4b35213200b07e89a6ab09743f84aa60e5ca2c))
+- internal cli.js should not be bundled ([53d73c6](https://github.com/lerna/lerna/commit/53d73c6aa9833e5a5bf60c2c78896456e77fab40))
+- lerna schema type for contents should be string ([1625757](https://github.com/lerna/lerna/commit/162575758e9422f2c05fc741ead370eaf793cb57))
+- migration building/publishing issues ([27bf800](https://github.com/lerna/lerna/commit/27bf800b6e7670ea1ec5576fdf008e8d09897d4b))
+- **publish:** catch publish conflict 403 error from npm ([#3753](https://github.com/lerna/lerna/issues/3753)) ([6123e86](https://github.com/lerna/lerna/commit/6123e86cff9cad425d23f66332e0442ca9ceb8b1))
+- **publish:** ensure that error code is valid ([#3748](https://github.com/lerna/lerna/issues/3748)) ([c59b45b](https://github.com/lerna/lerna/commit/c59b45b3dec05762a40bda19bdb9bb4fa08230a8))
+- **publish:** ensure zero exit code when EWORKINGTREE warning occurs ([#3327](https://github.com/lerna/lerna/issues/3327)) ([9c00a33](https://github.com/lerna/lerna/commit/9c00a33b18046b6f0a5a20d7043a4f0bb309d9c4))
+- **publish:** revert auto-copying of assets to custom contents/directory ([#3732](https://github.com/lerna/lerna/issues/3732)) ([70d4438](https://github.com/lerna/lerna/commit/70d4438a977c1017c8ec7a3b65d057f7b8169d64))
+- **publish:** use correct version in log messages ([#3702](https://github.com/lerna/lerna/issues/3702)) ([4be9188](https://github.com/lerna/lerna/commit/4be9188e68c5d4c320c0946e6e386cbee95a8efe))
+- **publish:** use updated version with pnpm workspaces ([#3606](https://github.com/lerna/lerna/issues/3606)) ([cd7ad21](https://github.com/lerna/lerna/commit/cd7ad211212bd18e4876703a26d53df4b77f2d38))
+- remove non-functional schema properties starting with "no" ([#3645](https://github.com/lerna/lerna/issues/3645)) ([43c2a48](https://github.com/lerna/lerna/commit/43c2a48fbba9e02675032aba15e1b4bb1f89a0ef))
+- **repair:** re-enable repair generators ([#3497](https://github.com/lerna/lerna/issues/3497)) ([510c3e9](https://github.com/lerna/lerna/commit/510c3e993be09f8f070dd07ca3ee7d352d00e491))
+- **run:** only use run-one when not passing multiple scripts ([#3620](https://github.com/lerna/lerna/issues/3620)) ([9db1572](https://github.com/lerna/lerna/commit/9db157242fe08fabd126e03571a5a1ac98f9f966))
+- **schema:** add missing ref to changelogEntryAdditionalMarkdown ([b41afab](https://github.com/lerna/lerna/commit/b41afabf2ade02cd03bafbc043fa5ed445843640))
+- share project data when nesting commands ([#3709](https://github.com/lerna/lerna/issues/3709)) ([53e71e4](https://github.com/lerna/lerna/commit/53e71e4746604aa3fbaada3dad58b02904769759))
+- support nx 16.3.1+ ([#3707](https://github.com/lerna/lerna/issues/3707)) ([647dbb5](https://github.com/lerna/lerna/commit/647dbb512bf6a873cab6362c434b420b18af0ad4))
+- update `troubleshooting.md` typo ([#3581](https://github.com/lerna/lerna/issues/3581)) ([a174cd7](https://github.com/lerna/lerna/commit/a174cd78165c5e9f05bf160891d927177ed7b948))
+- update arborist package to get rid of deprecated warning ([#3559](https://github.com/lerna/lerna/issues/3559)) ([aff38a7](https://github.com/lerna/lerna/commit/aff38a7a0f5e5eea04d1743e78add9b2e052de3a))
+- **version:** handle deps property missing due to outdated lockfile ([#3549](https://github.com/lerna/lerna/issues/3549)) ([fdbbab9](https://github.com/lerna/lerna/commit/fdbbab9c2cb96ac9e97018129bbdb5347c0e6171))
+- **version:** update yarn lock for versions of yarn >= 2.0.0 ([#3555](https://github.com/lerna/lerna/issues/3555)) ([ce2ceca](https://github.com/lerna/lerna/commit/ce2ceca7defd06fc2c8abf0241cbb2c3dcfaf0f3))
+- **version:** use async functions to support prettier 3+ ([#3766](https://github.com/lerna/lerna/issues/3766)) ([8026a7b](https://github.com/lerna/lerna/commit/8026a7b34c1cdf45135f5a556b8dd162c0cd2207))
+
+### Features
+
+- add @lerna/legacy-package-management package ([#3602](https://github.com/lerna/lerna/issues/3602)) ([4a03dd5](https://github.com/lerna/lerna/commit/4a03dd5f02c118eb683cf2ed525715b4d8e5221b))
+- add migration for adding $schema, increase some strictness ([73ceac3](https://github.com/lerna/lerna/commit/73ceac3dc2cf0e1246d4433cb101d1e794b2cca3))
+- Add name of package that fails to publish ([#3644](https://github.com/lerna/lerna/issues/3644)) ([11d8473](https://github.com/lerna/lerna/commit/11d847308bb8f4078e47a30a14b4d883948c4530))
+- **core:** convert commands to use nx project graph instead of legacy package graph ([#3667](https://github.com/lerna/lerna/issues/3667)) ([8e813c4](https://github.com/lerna/lerna/commit/8e813c46c543aa8e002a8982ca0b7f6afcee539e))
+- **core:** export detectProjects utility function ([#3740](https://github.com/lerna/lerna/issues/3740)) ([641fecb](https://github.com/lerna/lerna/commit/641fecbe7c83602fe5bb792d6db86ab57eecfd9b))
+- do not include bootstrap, add, link commands by default ([#3658](https://github.com/lerna/lerna/issues/3658)) ([487d475](https://github.com/lerna/lerna/commit/487d4755e8602ab3694992dd7702a2dd08f55861))
+- **publish:** add --include-private option for testing private packages ([#3503](https://github.com/lerna/lerna/issues/3503)) ([fa1f490](https://github.com/lerna/lerna/commit/fa1f4900a658982d87888c1c7c5eef3697c5b31b))
+- **publish:** recover from network failure ([#3513](https://github.com/lerna/lerna/issues/3513)) ([f03ee3e](https://github.com/lerna/lerna/commit/f03ee3e2efe052d3b21dcb3b15cdad15f5ded499))
+- **publish:** support custom directory per-package ([#3699](https://github.com/lerna/lerna/issues/3699)) ([9da575e](https://github.com/lerna/lerna/commit/9da575e9da221b8be4fbaa2fb1e7676b54d86d4f))
+- **publish:** support npm provenance ([9c8bb4e](https://github.com/lerna/lerna/commit/9c8bb4ebde45791cdbade52a846f16c8fbd6f872))
+- **repair:** add migration to remove unused "lerna" field from lerna.json ([#3734](https://github.com/lerna/lerna/issues/3734)) ([4fb0427](https://github.com/lerna/lerna/commit/4fb042755c52d87ff33d04fb1cd45e99ba0c0f61))
+- **run:** allow multiple script targets to be triggered at once ([#3527](https://github.com/lerna/lerna/issues/3527)) ([937b02a](https://github.com/lerna/lerna/commit/937b02aea4b3a62236aa8998eef127753f47c87c))
+- **version:** add --changelog-entry-additional-markdown option ([#3751](https://github.com/lerna/lerna/issues/3751)) ([63671df](https://github.com/lerna/lerna/commit/63671df05a02429d39144df632f958ec8bf4a455))
+- **version:** add user-defined build metadata to bumped packages ([#2880](https://github.com/lerna/lerna/issues/2880)) ([0b0e2a6](https://github.com/lerna/lerna/commit/0b0e2a62257ad8728835057dc37654626cbd621e))
+
+### Reverts
+
+- Revert "chore: bump nx-cloud" (#3539) ([3360981](https://github.com/lerna/lerna/commit/3360981000fc483e7202c975f0ef0b7e8b8ff74d)), closes [#3539](https://github.com/lerna/lerna/issues/3539) [#3537](https://github.com/lerna/lerna/issues/3537)
+
+### BREAKING CHANGES
+
+- We no longer include the bootstrap, add, and link commands by default. We strongly recommend using your package manager (npm, yarn, pnpm) for package management related concerns such as installing and linking dependencies.
+
+If you want to temporarily continue to use those commands in v7 you can do so by installing the @lerna/legacy-package-management package at the same version as your lerna version.
+
+There will not be any active work done on these commands and you should look to migrate as soon as possible, please check out https://lerna.js.org for further guidance.
+
 ## [7.1.1](https://github.com/lerna/lerna/compare/7.1.0...7.1.1) (2023-06-28)
 
 ### Bug Fixes
