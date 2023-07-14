@@ -33,17 +33,19 @@ async function maybeFormatFile(filePath) {
   if (!prettier) {
     return;
   }
-  const config = await resolvedPrettier.resolveConfig(filePath);
-  const ignorePath = path.join(workspaceRoot, ".prettierignore");
-  const fullFilePath = path.join(workspaceRoot, filePath);
 
-  const fileInfo = await resolvedPrettier.getFileInfo(fullFilePath, { ignorePath });
-
-  if (fileInfo.ignored) {
-    log.silly("version", `Skipped applying prettier to ignored file: ${filePath}`);
-    return;
-  }
   try {
+    const config = await resolvedPrettier.resolveConfig(filePath);
+    const ignorePath = path.join(workspaceRoot, ".prettierignore");
+    const fullFilePath = path.join(workspaceRoot, filePath);
+
+    const fileInfo = await resolvedPrettier.getFileInfo(fullFilePath, { ignorePath });
+
+    if (fileInfo.ignored) {
+      log.silly("version", `Skipped applying prettier to ignored file: ${filePath}`);
+      return;
+    }
+
     const input = fs.readFileSync(fullFilePath, "utf8");
     fs.writeFileSync(
       fullFilePath,
