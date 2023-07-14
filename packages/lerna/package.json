@@ -74,6 +74,7 @@
     "libnpmaccess": "7.0.2",
     "libnpmpublish": "7.3.0",
     "load-json-file": "6.2.0",
+    "lodash": "^4.17.21",
     "make-dir": "3.1.0",
     "minimatch": "3.0.5",
     "multimatch": "5.0.0",
