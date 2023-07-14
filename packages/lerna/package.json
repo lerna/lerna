@@ -120,6 +120,7 @@
     "./commands/diff/lib/*": "./dist/commands/diff/lib/*.js",
     "./commands/publish/lib/*": "./dist/commands/publish/lib/*.js",
     "./commands/version/lib/*": "./dist/commands/version/lib/*.js",
+    "./dist/cli.js": "./dist/cli.js",
     "./migrations/**/*": "./dist/migrations/**/*",
     "./utils": "./dist/utils/index.js"
   },
