@@ -1,5 +1,5 @@
 import execa from "execa";
-import { fileHasher } from "nx/src/hasher/impl";
+import { fileHasher } from "nx/src/hasher/file-hasher";
 import { setWorkspaceRoot } from "nx/src/utils/workspace-root";
 import path, { join } from "path";
 import yargs from "yargs";

@@ -2,8 +2,8 @@
 process.env.NX_DAEMON = "false";
 process.env.NX_CACHE_PROJECT_GRAPH = "false";
 
-import { fileHasher } from "nx/src/hasher/impl";
 import { ProjectGraphDependency, ProjectGraphProjectNode } from "@nx/devkit";
+import { fileHasher } from "nx/src/hasher/file-hasher";
 import { Package, RawManifest } from "../package";
 import {
   ProjectGraphProjectNodeWithPackage,

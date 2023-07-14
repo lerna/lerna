@@ -17,8 +17,8 @@ import {
 } from "@lerna/core";
 import { TargetDependencyConfig } from "@nx/devkit";
 import { existsSync } from "fs-extra";
-import { runMany } from "nx/src/command-line/run-many";
-import { runOne } from "nx/src/command-line/run-one";
+import { runMany } from "nx/src/command-line/run-many/run-many";
+import { runOne } from "nx/src/command-line/run/run-one";
 import pMap from "p-map";
 import path from "path";
 import { performance } from "perf_hooks";
