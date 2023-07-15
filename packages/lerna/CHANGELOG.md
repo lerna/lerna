@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.4](https://github.com/lerna/lerna/compare/v7.1.3...v7.1.4) (2023-07-15)
+
+### Bug Fixes
+
+- add missing lodash dependency ([#3778](https://github.com/lerna/lerna/issues/3778)) ([ef935c7](https://github.com/lerna/lerna/commit/ef935c7bfa9fdca00424e05a25a7e4d5454764d8))
+- bump nx to >=16.5.1 ([#3767](https://github.com/lerna/lerna/issues/3767)) ([0bbd74d](https://github.com/lerna/lerna/commit/0bbd74db8fb29dd914d2387f4c138ac81aad1d9e))
+- **core:** export cli.js for global installs ([#3780](https://github.com/lerna/lerna/issues/3780)) ([e2e1629](https://github.com/lerna/lerna/commit/e2e1629fae00d191e01c1a9e1b49eadbdc67f1aa))
+
 ## [7.1.3](https://github.com/lerna/lerna/compare/v7.1.2...v7.1.3) (2023-07-12)
 
 ### Bug Fixes
