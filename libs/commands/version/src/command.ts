@@ -140,6 +140,10 @@ const command: CommandModule = {
         hidden: true,
         type: "boolean",
       },
+      "sync-dist-version": {
+        describe: "Update the version of the package.json of the contents directory.",
+        type: "boolean",
+      },
       // TODO: (major) make --no-granular-pathspec the default
       "no-granular-pathspec": {
         describe: "Do not stage changes file-by-file, but globally.",

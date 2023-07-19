@@ -62,6 +62,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   commitHooks?: boolean;
   gitRemote?: string;
   gitTagVersion?: boolean;
+  syncDistVersion?: boolean;
   granularPathspec?: boolean;
   push?: boolean;
   signGitCommit?: boolean;
@@ -621,6 +622,7 @@ class VersionCommand extends Command {
       changelogPreset,
       changelogEntryAdditionalMarkdown,
       changelog = true,
+      syncDistVersion = false,
     } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
@@ -651,7 +653,11 @@ class VersionCommand extends Command {
         // update dependencies
         this.updateDependencies(node);
 
-        return Promise.all([updateLockfileVersion(pkg), pkg.serialize()]).then(([lockfilePath]) => {
+        return Promise.all([
+          updateLockfileVersion(pkg),
+          pkg.serialize(),
+          pkg.syncDistVersion(syncDistVersion),
+        ]).then(([lockfilePath]) => {
           // commit the updated manifest
           changedFiles.add(pkg.manifestLocation);
 
