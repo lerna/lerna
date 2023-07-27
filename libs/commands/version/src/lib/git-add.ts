@@ -47,7 +47,7 @@ async function maybeFormatFile(filePath) {
     const input = fs.readFileSync(fullFilePath, "utf8");
     fs.writeFileSync(
       fullFilePath,
-      resolvedPrettier.format(input, { ...config, filepath: fullFilePath }),
+      await resolvedPrettier.format(input, { ...config, filepath: fullFilePath }),
       "utf8"
     );
     log.silly("version", `Successfully applied prettier to updated file: ${filePath}`);
