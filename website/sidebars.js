@@ -68,6 +68,7 @@ const sidebars = {
       label: "API Reference",
       items: ["api-reference/commands", "api-reference/configuration", "api-reference/utilities"],
     },
+    "lerna-and-nx-version-matrix",
     "legacy-package-management",
     "faq",
     "lerna6-obsolete-options",
