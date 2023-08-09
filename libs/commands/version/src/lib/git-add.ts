@@ -18,9 +18,8 @@ function resolvePrettier() {
       if (!hasPrettier) {
         return;
       }
-      const prettierPath = path.join(workspaceRoot, "node_modules", "prettier");
       // eslint-disable-next-line import/no-dynamic-require, global-require
-      resolvedPrettier = require(prettierPath);
+      resolvedPrettier = require("prettier");
     } catch {
       return;
     }
