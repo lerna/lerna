@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.5](https://github.com/lerna/lerna/compare/v7.1.4...v7.1.5) (2023-08-09)
+
+### Bug Fixes
+
+- **create:** declare dependencies of @lerna/create ([#3799](https://github.com/lerna/lerna/issues/3799)) ([b5dcbf4](https://github.com/lerna/lerna/commit/b5dcbf4ed97286720892ca73748964c7e8df6588))
+
 ## [7.1.4](https://github.com/lerna/lerna/compare/v7.1.3...v7.1.4) (2023-07-15)
 
 **Note:** Version bump only for package @lerna/create

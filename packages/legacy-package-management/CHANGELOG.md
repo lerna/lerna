@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.5](https://github.com/lerna/lerna/compare/v7.1.4...v7.1.5) (2023-08-09)
+
+### Bug Fixes
+
+- **deps:** bump semver from 7.3.8 to 7.5.2 ([#3750](https://github.com/lerna/lerna/issues/3750)) ([26031ca](https://github.com/lerna/lerna/commit/26031ca07d8f042d63d7cdacf879720b99010619))
+
 ## [7.1.4](https://github.com/lerna/lerna/compare/v7.1.3...v7.1.4) (2023-07-15)
 
 **Note:** Version bump only for package @lerna/legacy-package-management

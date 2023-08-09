@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "7.1.4",
+  "version": "7.1.5",
   "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/create"
   },
   "dependencies": {
-    "@lerna/child-process": "7.1.4",
+    "@lerna/child-process": "7.1.5",
     "@npmcli/run-script": "6.0.2",
     "@nx/devkit": ">=16.5.1 < 17",
     "@octokit/plugin-enterprise-rest": "6.0.1",
@@ -52,8 +52,8 @@
     "globby": "11.1.0",
     "graceful-fs": "4.2.11",
     "has-unicode": "2.0.1",
-    "init-package-json": "5.0.0",
     "ini": "^1.3.8",
+    "init-package-json": "5.0.0",
     "inquirer": "^8.2.4",
     "is-stream": "2.0.0",
     "js-yaml": "4.1.0",

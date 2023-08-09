@@ -1,6 +1,6 @@
 {
   "name": "@lerna/child-process",
-  "version": "7.1.4",
+  "version": "7.1.5",
   "description": "Lerna's internal child_process wrapper",
   "keywords": [
     "lerna",
