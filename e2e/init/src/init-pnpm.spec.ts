@@ -28,7 +28,6 @@ describe("lerna-init-pnpm", () => {
       JSON.stringify({
         name: "root",
         private: true,
-        workspaces: ["packages/*"],
       })
     );
 
