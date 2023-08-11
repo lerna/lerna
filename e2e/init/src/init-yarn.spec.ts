@@ -32,7 +32,7 @@ describe("lerna-init-yarn", () => {
       })
     );
 
-    fixture.install();
+    await fixture.install();
   });
 
   afterEach(() => fixture.destroy());

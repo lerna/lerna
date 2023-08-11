@@ -32,7 +32,7 @@ describe("lerna-init-npm", () => {
       })
     );
 
-    fixture.install();
+    await fixture.install();
   });
 
   afterEach(() => fixture.destroy());

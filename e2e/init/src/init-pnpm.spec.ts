@@ -31,7 +31,7 @@ describe("lerna-init-pnpm", () => {
       })
     );
 
-    fixture.install();
+    await fixture.install();
   });
 
   afterEach(() => fixture.destroy());
