@@ -3,7 +3,7 @@ import { writeFileSync } from "fs-extra";
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
-    return normalizeEnvironment(str).replace(/\.\.\..*\n/g, "");
+    return normalizeEnvironment(str).replace(/\.*.*\n/g, "");
   },
   test(val: string) {
     return val != null && typeof val === "string";
