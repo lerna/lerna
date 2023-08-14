@@ -25,6 +25,7 @@ describe("lerna-init", () => {
       CREATE package.json
       CREATE .gitignore
       lerna info Initializing Git repository
+      lerna info Using npm to install packages
       lerna success Initialized Lerna files
       lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
       "
@@ -65,6 +66,7 @@ describe("lerna-init", () => {
         CREATE package.json
         CREATE .gitignore
         lerna info Initializing Git repository
+        lerna info Using npm to install packages
         lerna success Initialized Lerna files
         lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
         "
@@ -106,6 +108,7 @@ describe("lerna-init", () => {
         CREATE package.json
         CREATE .gitignore
         lerna info Initializing Git repository
+        lerna info Using npm to install packages
         lerna success Initialized Lerna files
         lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
         "
@@ -147,6 +150,7 @@ describe("lerna-init", () => {
         CREATE package.json
         CREATE .gitignore
         lerna info Initializing Git repository
+        lerna info Using npm to install packages
         lerna success Initialized Lerna files
         lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
         "
@@ -188,6 +192,7 @@ describe("lerna-init", () => {
         CREATE package.json
         CREATE .gitignore
         lerna info Initializing Git repository
+        lerna info Using npm to install packages
         lerna success Initialized Lerna files
         lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
         "

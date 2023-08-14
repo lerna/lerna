@@ -42,7 +42,7 @@ describe("lerna-init-pnpm", () => {
   afterEach(() => fixture.destroy());
 
   it("should set npmClient to pnpm in lerna.json", async () => {
-    const result = await fixture.lernaInit("--loglevel verbose");
+    const result = await fixture.lernaInit();
 
     expect(result.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
@@ -51,7 +51,7 @@ describe("lerna-init-pnpm", () => {
       UPDATE package.json
       CREATE .gitignore
       lerna info Initializing Git repository
-      lerna verb Using pnpm to install packages
+      lerna info Using pnpm to install packages
       lerna success Initialized Lerna files
       lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
 

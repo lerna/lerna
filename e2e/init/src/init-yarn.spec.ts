@@ -38,7 +38,7 @@ describe("lerna-init-yarn", () => {
   afterEach(() => fixture.destroy());
 
   it("should set npmClient to yarn in lerna.json", async () => {
-    const result = await fixture.lernaInit("--loglevel verbose");
+    const result = await fixture.lernaInit();
 
     expect(result.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
@@ -47,7 +47,7 @@ describe("lerna-init-yarn", () => {
       UPDATE package.json
       CREATE .gitignore
       lerna info Initializing Git repository
-      lerna verb Using yarn to install packages
+      lerna info Using yarn to install packages
       lerna success Initialized Lerna files
       lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
 

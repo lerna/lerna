@@ -38,7 +38,7 @@ describe("lerna-init-npm", () => {
   afterEach(() => fixture.destroy());
 
   it("should not set npmClient in lerna.json", async () => {
-    const result = await fixture.lernaInit("--loglevel verbose");
+    const result = await fixture.lernaInit();
 
     expect(result.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
@@ -47,7 +47,7 @@ describe("lerna-init-npm", () => {
       UPDATE package.json
       CREATE .gitignore
       lerna info Initializing Git repository
-      lerna verb Using npm to install packages
+      lerna info Using npm to install packages
       lerna success Initialized Lerna files
       lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
 
@@ -66,7 +66,7 @@ describe("lerna-init-npm", () => {
 
   describe("--skip-install", () => {
     it("should not install packages", async () => {
-      const result = await fixture.lernaInit("--loglevel verbose --skip-install");
+      const result = await fixture.lernaInit("--skip-install");
 
       expect(result.combinedOutput).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0

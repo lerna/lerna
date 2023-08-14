@@ -198,7 +198,7 @@ class InitCommand {
       }
 
       if (this.args.skipInstall === undefined) {
-        this.logger.verbose("", `Using ${this.packageManager} to install packages`);
+        this.logger.info("", `Using ${this.packageManager} to install packages`);
 
         const [command, ...args] = this.packageManagerCommand.install.split(" ");
 
