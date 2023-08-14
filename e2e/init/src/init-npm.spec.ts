@@ -63,4 +63,32 @@ describe("lerna-init-npm", () => {
 
     `);
   });
+
+  describe("--skip-install", () => {
+    it("should not install packages", async () => {
+      const result = await fixture.lernaInit("--loglevel verbose --skip-install");
+
+      expect(result.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna info Applying the following file system updates:
+        CREATE lerna.json
+        UPDATE package.json
+        CREATE .gitignore
+        lerna info Initializing Git repository
+        lerna success Initialized Lerna files
+        lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
+
+      `);
+
+      const lernaJson = await fixture.readWorkspaceFile("lerna.json");
+
+      expect(lernaJson).toMatchInlineSnapshot(`
+        {
+          "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+          "version": "0.0.0"
+        }
+
+      `);
+    });
+  });
 });

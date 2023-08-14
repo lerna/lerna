@@ -62,3 +62,7 @@ It will configure `lerna.json` to enforce exact match for all subsequent executi
   "version": "0.0.0"
 }
 ```
+
+### `--skip-install`
+
+Skip running `npm/yarn/pnpm install` after initializing Lerna in the repo.

@@ -12,6 +12,8 @@ import log from "npmlog";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
 import yargs from "yargs";
 
+const LARGE_BUFFER = 1024 * 1000000;
+
 interface InitCommandOptions {
   lernaVersion: string;
   packages?: string[];
@@ -19,6 +21,7 @@ interface InitCommandOptions {
   loglevel?: string;
   independent?: boolean;
   dryRun?: boolean;
+  skipInstall?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -186,23 +189,24 @@ class InitCommand {
     return async () => {
       if (isGitInitialized(this.cwd)) {
         this.logger.info("", "Git is already initialized");
-        return;
+      } else {
+        this.logger.info("", "Initializing Git repository");
+        await childProcess.exec("git", ["init"], {
+          cwd: this.cwd,
+          maxBuffer: 1024,
+        });
       }
 
-      this.logger.info("", "Initializing Git repository");
-      await childProcess.exec("git", ["init"], {
-        cwd: this.cwd,
-        maxBuffer: 1024,
-      });
+      if (this.args.skipInstall === undefined) {
+        this.logger.verbose("", `Using ${this.packageManager} to install packages`);
 
-      this.logger.verbose("", `Using ${this.packageManager} to install packages`);
+        const [command, ...args] = this.packageManagerCommand.install.split(" ");
 
-      const [command, ...args] = this.packageManagerCommand.install.split(" ");
-
-      await childProcess.exec(command, args, {
-        cwd: this.cwd,
-        maxBuffer: 1024 * 10000,
-      });
+        await childProcess.exec(command, args, {
+          cwd: this.cwd,
+          maxBuffer: LARGE_BUFFER,
+        });
+      }
     };
   }
 

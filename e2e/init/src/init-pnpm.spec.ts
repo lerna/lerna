@@ -1,9 +1,11 @@
-import { Fixture, normalizeEnvironment } from "@lerna/e2e-utils";
+import { Fixture, getPublishedVersion, normalizeEnvironment } from "@lerna/e2e-utils";
 import { writeFileSync } from "fs-extra";
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
-    return normalizeEnvironment(str).replace(/\.*.*\n/g, "");
+    return normalizeEnvironment(str)
+      .replace(/\.+\/\.?pnpm.*\n/g, "")
+      .replace("info cli using local version of lerna\n", "");
   },
   test(val: string) {
     return val != null && typeof val === "string";
@@ -28,6 +30,9 @@ describe("lerna-init-pnpm", () => {
       JSON.stringify({
         name: "root",
         private: true,
+        devDependencies: {
+          lerna: getPublishedVersion(),
+        },
       })
     );
 
