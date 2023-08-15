@@ -27,6 +27,10 @@ const command: CommandModule = {
       type: "boolean",
       default: false,
     },
+    skipInstall: {
+      describe: "Skip installation of dependencies after initialization",
+      type: "boolean",
+    },
   },
   handler(argv) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires

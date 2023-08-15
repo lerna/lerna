@@ -1,9 +1,18 @@
 import { Command, LernaConfig, isGitInitialized } from "@lerna/core";
-import { addDependenciesToPackageJson, joinPathFragments, readJson, writeJson } from "@nx/devkit";
+import {
+  addDependenciesToPackageJson,
+  detectPackageManager,
+  getPackageManagerCommand,
+  joinPathFragments,
+  readJson,
+  writeJson,
+} from "@nx/devkit";
 import { readFileSync } from "fs-extra";
 import log from "npmlog";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
 import yargs from "yargs";
+
+const LARGE_BUFFER = 1024 * 1000000;
 
 interface InitCommandOptions {
   lernaVersion: string;
@@ -12,6 +21,7 @@ interface InitCommandOptions {
   loglevel?: string;
   independent?: boolean;
   dryRun?: boolean;
+  skipInstall?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -27,6 +37,8 @@ class InitCommand {
   name = "init";
   logger: log.Logger;
   cwd = process.cwd();
+  packageManager = detectPackageManager();
+  packageManagerCommand = getPackageManagerCommand(this.packageManager);
 
   constructor(private args: yargs.ArgumentsCamelCase<InitCommandOptions>) {
     log.heading = "lerna";
@@ -127,6 +139,10 @@ class InitCommand {
       lernaJson.packages = this.args.packages;
     }
 
+    if (this.packageManager !== "npm") {
+      lernaJson.npmClient = this.packageManager;
+    }
+
     // Neither a lerna.json nor package.json exists, create a recommended setup
     if (!tree.exists("package.json")) {
       // lerna.json
@@ -170,17 +186,27 @@ class InitCommand {
       tree.write(".gitignore", "node_modules/");
     }
 
-    return () => {
+    return async () => {
       if (isGitInitialized(this.cwd)) {
         this.logger.info("", "Git is already initialized");
-        return;
+      } else {
+        this.logger.info("", "Initializing Git repository");
+        await childProcess.exec("git", ["init"], {
+          cwd: this.cwd,
+          maxBuffer: 1024,
+        });
       }
 
-      this.logger.info("", "Initializing Git repository");
-      return childProcess.exec("git", ["init"], {
-        cwd: this.cwd,
-        maxBuffer: 1024,
-      });
+      if (this.args.skipInstall === undefined) {
+        this.logger.info("", `Using ${this.packageManager} to install packages`);
+
+        const [command, ...args] = this.packageManagerCommand.install.split(" ");
+
+        await childProcess.exec(command, args, {
+          cwd: this.cwd,
+          maxBuffer: LARGE_BUFFER,
+        });
+      }
     };
   }
 
