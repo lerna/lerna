@@ -28,7 +28,7 @@ const command: CommandModule = {
       default: false,
     },
     skipInstall: {
-      describe: "Skip installation of npm dependencies after initialization",
+      describe: "Skip installation of dependencies after initialization",
       type: "boolean",
     },
   },

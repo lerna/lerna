@@ -19,15 +19,22 @@ When run, this command will:
 1. Add `lerna` as a [`devDependency`](https://docs.npmjs.com/files/package.json#devdependencies) in `package.json` if it doesn't already exist.
 2. Create a `lerna.json` config file to store the `version` number.
 3. Generate a `.gitignore` file if one doesn't already exist.
+4. Initialize a git repository if one doesn't already exist.
+5. Install dependencies with the `npmClient` set in `lerna.json`, or `npm` if unspecified.
 
 Example output on a new git repo:
 
 ```sh
 $ lerna init
-lerna info version v2.0.0
-lerna info Updating package.json
-lerna info Creating lerna.json
+lerna info version v7.1.4
+lerna info Applying the following file system updates:
+CREATE lerna.json
+CREATE package.json
+CREATE .gitignore
+lerna info Initializing Git repository
+lerna info Using npm to install packages
 lerna success Initialized Lerna files
+lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
 ```
 
 ## Options
