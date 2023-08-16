@@ -85,14 +85,6 @@ function globalOptions(argv: yargs.Argv) {
       type: "number",
       requiresArg: true,
     },
-    "dist-tag": {
-      describe: "Use the specified dist-tag when looking up package versions with `npm view`",
-      type: "string",
-    },
-    registry: {
-      describe: "Use the specified registry for looking up package versions with `npm view`",
-      type: "string",
-    },
   };
 
   // group options under "Global Options:" header
