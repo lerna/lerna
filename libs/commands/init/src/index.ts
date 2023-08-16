@@ -1,12 +1,13 @@
 import { Command, LernaConfig, isGitInitialized } from "@lerna/core";
 import {
+  PackageManager,
   addDependenciesToPackageJson,
-  detectPackageManager,
   getPackageManagerCommand,
   joinPathFragments,
   readJson,
   writeJson,
 } from "@nx/devkit";
+import { existsSync } from "fs";
 import { readFileSync } from "fs-extra";
 import log from "npmlog";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
@@ -37,18 +38,17 @@ class InitCommand {
   name = "init";
   logger: log.Logger;
   cwd = process.cwd();
-  packageManager = detectPackageManager();
-  packageManagerCommand = getPackageManagerCommand(this.packageManager);
+  packageManager: PackageManager;
 
   constructor(private args: yargs.ArgumentsCamelCase<InitCommandOptions>) {
     log.heading = "lerna";
     this.logger = Command.createLogger(this.name, args.loglevel);
+    this.logger.notice("cli", `v${this.args.lernaVersion}`);
+    this.packageManager = this.detectPackageManager() || this.detectInvokedPackageManager() || "npm";
     this.execute();
   }
 
   async execute(): Promise<void> {
-    this.logger.notice("cli", `v${this.args.lernaVersion}`);
-
     const tree = new FsTree(this.cwd, false);
     const task = await this.generate(tree);
     const changes = tree.listChanges();
@@ -200,7 +200,8 @@ class InitCommand {
       if (this.args.skipInstall === undefined) {
         this.logger.info("", `Using ${this.packageManager} to install packages`);
 
-        const [command, ...args] = this.packageManagerCommand.install.split(" ");
+        const packageManagerCommand = getPackageManagerCommand(this.packageManager);
+        const [command, ...args] = packageManagerCommand.install.split(" ");
 
         await childProcess.exec(command, args, {
           cwd: this.cwd,
@@ -213,6 +214,47 @@ class InitCommand {
   #hasWorkspacesConfigured(tree: Tree): boolean {
     const packageJson = readJson(tree, "package.json");
     return Array.isArray(packageJson.workspaces) || tree.exists("pnpm-workspace.yaml");
+  }
+
+  private detectPackageManager(): PackageManager | null {
+    const packageManager = existsSync("yarn.lock")
+      ? "yarn"
+      : existsSync("pnpm-lock.yaml")
+      ? "pnpm"
+      : existsSync("package-lock.json")
+      ? "npm"
+      : null;
+    if (packageManager) {
+      this.logger.verbose("", `Detected lock file for ${packageManager}`);
+    }
+    return packageManager;
+  }
+
+  /**
+   * Detects which package manager was used to invoke lerna init command
+   * based on the main Module process that invokes the command
+   * - npx returns 'npm'
+   * - pnpx returns 'pnpm'
+   * - yarn create returns 'yarn'
+   */
+  private detectInvokedPackageManager(): PackageManager | null {
+    let detectedPackageManager: PackageManager | null = null;
+    // mainModule is deprecated since Node 14, fallback for older versions
+    const invoker = require.main || process["mainModule"];
+
+    if (!invoker) {
+      this.logger.verbose("", "Could not detect package manager from process");
+      return detectedPackageManager;
+    }
+    for (const pkgManager of ["pnpm", "yarn", "npm"] as const) {
+      if (invoker.path.includes(pkgManager)) {
+        this.logger.verbose("", `Detected package manager ${pkgManager} from process`);
+        detectedPackageManager = pkgManager;
+        break;
+      }
+    }
+
+    return detectedPackageManager;
   }
 }
 
