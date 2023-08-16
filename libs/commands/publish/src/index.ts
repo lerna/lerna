@@ -164,16 +164,6 @@ class PublishCommand extends Command {
   }
 
   async initialize() {
-    if (
-      this.project.useExperimentalAutomaticVersions() &&
-      (this.options.bump === "from-package" || this.options.canary)
-    ) {
-      throw new ValidationError(
-        "EAUTOMATICVERSIONS",
-        "Experimental automatic versions are not supported with --canary or the from-package positional."
-      );
-    }
-
     if (this.options.verifyAccess === false) {
       this.logger.warn(
         "verify-access",
@@ -492,15 +482,6 @@ class PublishCommand extends Command {
         updates.push(node);
         updatesVersions.push([node.name, getPackage(node).version || npaResult.rawSpec]);
       });
-    } else if (this.project.useExperimentalAutomaticVersions()) {
-      updates = this.projectsWithPackage;
-
-      const tags = taggedPackageNames.map((tag) => tag.replace(this.tagPrefix, ""));
-      const newVersion = semver.maxSatisfying(tags, "*");
-
-      updates.forEach((node) => (getPackage(node).version = newVersion));
-
-      updatesVersions = updates.map((node) => [node.name, getPackage(node).version || newVersion]);
     } else {
       updates = await getProjectsWithTaggedPackages(
         this.projectsWithPackage,

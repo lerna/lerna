@@ -40,8 +40,6 @@ export interface CommandConfigOptions {
   independent?: boolean;
   ci?: boolean;
   since?: string;
-  distTag?: string;
-  registry?: string;
 }
 
 export interface LernaConfig {
@@ -51,9 +49,6 @@ export interface LernaConfig {
   useNx?: boolean;
   npmClient?: string;
   command?: CommandConfigs;
-  __experimentalAutomaticVersions?: {
-    referencePackage: string;
-  };
 }
 
 interface PnpmWorkspaceConfig {
@@ -211,10 +206,6 @@ export class Project {
     return this.version === "independent";
   }
 
-  useExperimentalAutomaticVersions(): boolean {
-    return !!this.config.__experimentalAutomaticVersions;
-  }
-
   serializeConfig(): string {
     // TODO: might be package.json prop
     writeJsonFile(this.rootConfigLocation, this.config, { spaces: 2 });
@@ -315,13 +306,6 @@ export class Project {
       throw new ValidationError(
         "ECONFIGWORKSPACES",
         `The "useWorkspaces" option has been removed. By default lerna will resolve your packages using your package manager's workspaces configuration. Alternatively, you can manually provide a list of package globs to be used instead via the "packages" option in lerna.json.`
-      );
-    }
-
-    if (this.isIndependent() && this.config.__experimentalAutomaticVersions) {
-      throw new ValidationError(
-        "EAUTOMATICVERSIONS",
-        "Experimental automatic versioning is not supported in independent mode."
       );
     }
   }
