@@ -43,13 +43,12 @@ class InitCommand {
   constructor(private args: yargs.ArgumentsCamelCase<InitCommandOptions>) {
     log.heading = "lerna";
     this.logger = Command.createLogger(this.name, args.loglevel);
-    this.packageManager = detectPackageManager() || detectInvokedPackageManager() || "npm";
+    this.logger.notice("cli", `v${this.args.lernaVersion}`);
+    this.packageManager = this.detectPackageManager() || this.detectInvokedPackageManager() || "npm";
     this.execute();
   }
 
   async execute(): Promise<void> {
-    this.logger.notice("cli", `v${this.args.lernaVersion}`);
-
     const tree = new FsTree(this.cwd, false);
     const task = await this.generate(tree);
     const changes = tree.listChanges();
@@ -216,41 +215,47 @@ class InitCommand {
     const packageJson = readJson(tree, "package.json");
     return Array.isArray(packageJson.workspaces) || tree.exists("pnpm-workspace.yaml");
   }
+
+  private detectPackageManager(): PackageManager | null {
+    const packageManager = existsSync("yarn.lock")
+      ? "yarn"
+      : existsSync("pnpm-lock.yaml")
+      ? "pnpm"
+      : existsSync("package-lock.json")
+      ? "npm"
+      : null;
+    if (packageManager) {
+      this.logger.verbose("", `Detected lock file for ${packageManager}`);
+    }
+    return packageManager;
+  }
+
+  /**
+   * Detects which package manager was used to invoke lerna init command
+   * based on the main Module process that invokes the command
+   * - npx returns 'npm'
+   * - pnpx returns 'pnpm'
+   * - yarn create returns 'yarn'
+   */
+  private detectInvokedPackageManager(): PackageManager | null {
+    let detectedPackageManager: PackageManager | null = null;
+    // mainModule is deprecated since Node 14, fallback for older versions
+    const invoker = require.main || process["mainModule"];
+
+    if (!invoker) {
+      this.logger.verbose("", "Could not detect package manager from process");
+      return detectedPackageManager;
+    }
+    for (const pkgManager of ["pnpm", "yarn", "npm"] as const) {
+      if (invoker.path.includes(pkgManager)) {
+        this.logger.verbose("", `Detected package manager ${pkgManager} from process`);
+        detectedPackageManager = pkgManager;
+        break;
+      }
+    }
+
+    return detectedPackageManager;
+  }
 }
 
 module.exports.InitCommand = InitCommand;
-
-function detectPackageManager(): PackageManager | null {
-  return existsSync("yarn.lock")
-    ? "yarn"
-    : existsSync("pnpm-lock.yaml")
-    ? "pnpm"
-    : existsSync("package-lock.json")
-    ? "npm"
-    : null;
-}
-
-/**
- * Detects which package manager was used to invoke lerna init command
- * based on the main Module process that invokes the command
- * - npx returns 'npm'
- * - pnpx returns 'pnpm'
- * - yarn create returns 'yarn'
- */
-function detectInvokedPackageManager(): PackageManager | null {
-  let detectedPackageManager: PackageManager | null = null;
-  // mainModule is deprecated since Node 14, fallback for older versions
-  const invoker = require.main || process["mainModule"];
-
-  if (!invoker) {
-    return detectedPackageManager;
-  }
-  for (const pkgManager of ["pnpm", "yarn", "npm"] as const) {
-    if (invoker.path.includes(pkgManager)) {
-      detectedPackageManager = pkgManager;
-      break;
-    }
-  }
-
-  return detectedPackageManager;
-}
