@@ -555,4 +555,59 @@ describe("lerna-publish-custom-publish-directories", () => {
       `);
     });
   });
+
+  describe("version", () => {
+    it("should sync the version of the contents directory", async () => {
+      await fixture.updateJson("lerna.json", (lernaJson) => {
+        return {
+          ...lernaJson,
+          command: {
+            publish: {
+              directory: "{workspaceRoot}/dist/{projectRoot}",
+              syncDistVersion: true,
+            },
+          },
+        };
+      });
+
+      const version = randomVersion();
+
+      await fixture.lerna("create package-1 -y");
+      await fixture.updateJson("packages/package-1/package.json", (pkg) => ({
+        ...pkg,
+        main: "main.js",
+        version,
+        scripts: {
+          build: "cp ./lib/package-1.js ../../dist/packages/package-1/lib/main.js",
+          copyManifest: "cp ./package.json ../../dist/packages/package-1/package.json",
+        },
+      }));
+
+      // Make sure dist location exists before running mini build target
+      await ensureDir(fixture.getWorkspacePath("dist/packages/package-1/lib"));
+
+      await fixture.exec("git checkout -b test-main");
+      await writeFile(fixture.getWorkspacePath(".gitignore"), "node_modules\n.DS_Store\ndist");
+      await fixture.exec("git add .gitignore");
+      await fixture.exec("git add .");
+      await fixture.exec('git commit -m "initial-commit"');
+      await fixture.exec("git push origin test-main");
+
+      await fixture.lerna("run build,copyManifest");
+
+      await fixture.lerna(
+        `publish ${version} --registry=http://localhost:4872 --loglevel verbose --concurrency 1 -y`
+      );
+
+      const distVersion = JSON.parse(
+        await fixture.readWorkspaceFile("dist/packages/package-1/package.json")
+      ).version;
+
+      await fixture.exec(`npm unpublish --force package-1@${version} --registry=http://localhost:4872`);
+
+      expect(JSON.parse(await fixture.readWorkspaceFile("packages/package-1/package.json")).version).toEqual(
+        distVersion
+      );
+    });
+  });
 });
