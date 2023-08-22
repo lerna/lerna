@@ -17,7 +17,7 @@ To set up pnpm with Lerna:
 
 1. If not installed already, install `pnpm`: https://pnpm.io/installation.
 2. Remove the `node_modules/` folder in the root, if it exists. If not already using workspaces, run `lerna clean` to remove the `node_modules/` folder in all packages.
-3. Set `"npmClient": "pnpm"` and `"useWorkspaces": true` in `lerna.json`.
+3. Set `"npmClient": "pnpm"` in `lerna.json`.
 4. Create a `pnpm-workspace.yaml` file in the root of your project.
    If you are already using npm or yarn workspaces, move the "workspaces" property from `package.json` to `pnpm-workspace.yaml`. If you were not already using workspaces, move the "packages" property from `lerna.json` to `pnpm-workspace.yaml`. For example:
 
