@@ -42,7 +42,7 @@ $ lerna run --scope "toolbar-*" test
 $ lerna run --scope package-1 --scope "*-2" lint
 ```
 
-**Note:** For certain globs, it may be necesssary to quote the option argument to avoid premature shell expansion.
+**Note:** For certain globs, it may be necessary to quote the option argument to avoid premature shell expansion.
 
 ### **Running with `npx`**
 
