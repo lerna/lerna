@@ -37,9 +37,9 @@ Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` C
 Include only packages with names matching the given glob.
 
 ```sh
-$ lerna exec --scope my-component -- ls -la
-$ lerna run --scope "toolbar-*" test
-$ lerna run --scope package-1 --scope "*-2" lint
+lerna exec --scope my-component -- ls -la
+lerna run --scope "toolbar-*" test
+lerna run --scope package-1 --scope "*-2" lint
 ```
 
 **Note:** For certain globs, it may be necessary to quote the option argument to avoid premature shell expansion.
@@ -51,8 +51,8 @@ When running `lerna` with `npx`, it is necessary to use an explicit "=" when pas
 For example:
 
 ```sh
-$ npx lerna run --scope="toolbar-*" test
-$ npx lerna run --scope="package-{1,2,5}" test
+npx lerna run --scope="toolbar-*" test
+npx lerna run --scope="package-{1,2,5}" test
 ```
 
 ### `--ignore <glob>`
@@ -60,9 +60,9 @@ $ npx lerna run --scope="package-{1,2,5}" test
 Exclude packages with names matching the given glob.
 
 ```sh
-$ lerna exec --ignore "package-{1,2,5}"  -- ls -la
-$ lerna run --ignore package-1 test
-$ lerna run --ignore "package-@(1|2)" --ignore package-3 lint
+lerna exec --ignore "package-{1,2,5}"  -- ls -la
+lerna run --ignore package-1 test
+lerna run --ignore "package-@(1|2)" --ignore package-3 lint
 ```
 
 More examples of filtering can be found [here](https://github.com/lerna/lerna/blob/c0a750e0f482c16dda2f922f235861283efbe94d/commands/list/__tests__/list-command.test.js#L305-L356).
@@ -125,7 +125,11 @@ $ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-depend
 ### `--include-merged-tags`
 
 ```sh
-$ lerna exec --since --include-merged-tags -- ls -la
+lerna exec --since --include-merged-tags -- ls -la
 ```
 
 Include tags from merged branches when running a command with `--since`. This is only useful if you do a lot of publishing from feature branches, which is not generally recommended.
+
+## Limitations
+
+Even though you can run Lerna without installing the project dependencies first, for instance with [pnpm dlx](https://pnpm.io/cli/dlx) or [npx](https://www.npmjs.com/package/npx), it is not recommended. The command may work, but its output may not be 100% accurate. See [this issue](https://github.com/lerna/lerna/issues/3807#issuecomment-1686841507) for more details.
