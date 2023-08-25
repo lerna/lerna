@@ -21,7 +21,7 @@ The repo contains three packages or projects:
 We are going to publish the `header` and the `footer` packages.
 
 > It's common to publish only a subset of the projects. Some projects can be private (e.g., used only for tests), some
-> can be demo apps. In this repo, `remixapp` is private, it just doesn't get published to NPM.
+> can be demo apps. In this repo, `remixapp` isn't "conceptually private", it is just using the `"private": true` setting in order to not get published to NPM.
 
 ## Versioning
 
