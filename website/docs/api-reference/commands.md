@@ -129,3 +129,7 @@ $ lerna exec --since --include-merged-tags -- ls -la
 ```
 
 Include tags from merged branches when running a command with `--since`. This is only useful if you do a lot of publishing from feature branches, which is not generally recommended.
+
+## Limitations
+
+Even though you can run Lerna without installing the project dependencies first, for instance with [pnpm dlx](https://pnpm.io/cli/dlx) or [npx](https://www.npmjs.com/package/npx), it is not recommended. The command may work, but its output may not be 100% accurate. See [this issue](https://github.com/lerna/lerna/issues/3807#issuecomment-1686841507) for more details.
