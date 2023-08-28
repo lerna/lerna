@@ -499,6 +499,200 @@ describe("runProjectsTopologically", () => {
     ]);
   });
 
+  // https://github.com/lerna/lerna/issues/3803
+  it("should gracefully ignore cycles outside the scope of projects to run", async () => {
+    const projects: ProjectGraphProjectNodeWithPackage[] = [
+      projectNode({
+        name: "ppp2",
+        type: "lib",
+        data: {
+          root: "packages-other/eee2",
+        },
+      }),
+      projectNode({
+        name: "ooo1",
+        type: "lib",
+        data: {
+          root: "packages-other/ooo1",
+        },
+      }),
+      projectNode({
+        name: "ooo2",
+        type: "lib",
+        data: {
+          root: "packages-other/ooo2",
+        },
+      }),
+      projectNode({
+        name: "cycle-1",
+        type: "lib",
+        data: {
+          root: "packages/cycle-1",
+        },
+      }),
+      projectNode({
+        name: "cycle-2",
+        type: "lib",
+        data: {
+          root: "packages/cycle-2",
+        },
+      }),
+      projectNode({
+        name: "cycle-3",
+        type: "lib",
+        data: {
+          root: "packages/cycle-3",
+        },
+      }),
+      projectNode({
+        name: "other-1",
+        type: "lib",
+        data: {
+          root: "packages/other-1",
+        },
+      }),
+      projectNode({
+        name: "other-2",
+        type: "lib",
+        data: {
+          root: "packages/other-2",
+        },
+      }),
+      projectNode({
+        name: "other-with-scope",
+        type: "lib",
+        data: {
+          root: "packages/other-with-scope",
+        },
+      }),
+      projectNode({
+        name: "package-1",
+        type: "lib",
+        data: {
+          root: "packages/package-1",
+        },
+      }),
+      projectNode({
+        name: "package-2",
+        type: "lib",
+        data: {
+          root: "packages/package-2",
+        },
+      }),
+      projectNode({
+        name: "package-base",
+        type: "lib",
+        data: {
+          root: "packages/package-base",
+        },
+      }),
+    ];
+    const dependencies: ProjectGraphWorkspacePackageDependency[] = [
+      projectGraphDependency({
+        source: "cycle-1",
+        target: "cycle-2",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "cycle-1",
+        target: "ooo1",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "cycle-2",
+        target: "cycle-3",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "cycle-2",
+        target: "ooo1",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "cycle-3",
+        target: "cycle-1",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "other-1",
+        target: "other-2",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "package-1",
+        target: "package-2",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "package-1",
+        target: "package-base",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "package-2",
+        target: "package-base",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "package-2",
+        target: "cycle-1",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "ooo1",
+        target: "ooo2",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "ooo1",
+        target: "ppp2",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+
+      // these projects are not passed to runProjectsTopologically
+      projectGraphDependency({
+        source: "cycle-1a",
+        target: "cycle-2a",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "cycle-2a",
+        target: "cycle-3a",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "cycle-3a",
+        target: "cycle-1a",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+    ];
+
+    const projectGraph = createProjectGraph({ projects, dependencies });
+
+    const result: string[] = [];
+    const runner = (node: ProjectGraphProjectNode) => {
+      result.push(node.name);
+      return Promise.resolve();
+    };
+
+    await runProjectsTopologically(projects, projectGraph, runner, { concurrency: 4 });
+
+    expect(result).toEqual([
+      "ppp2",
+      "ooo2",
+      "other-2",
+      "other-with-scope",
+      "package-base",
+      "ooo1",
+      "other-1",
+      "cycle-1",
+      "cycle-2",
+      "cycle-3",
+      "package-2",
+      "package-1",
+    ]);
+  });
+
   it("should handle nested cycles", async () => {
     const projects: ProjectGraphProjectNodeWithPackage[] = [
       // the order of this array is by root path
