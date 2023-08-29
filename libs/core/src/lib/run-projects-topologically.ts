@@ -72,7 +72,7 @@ export async function runProjectsTopologically<T>(
         const cycleHasExternalDependencies = cycle.some((project) => {
           const projectDeps = dependenciesBySource[project];
           const depIsNotInCycle = (dep: string) => cycle.indexOf(dep) === -1;
-          return Array.from(projectDeps).filter(depIsNotInCycle).length > 0;
+          return !!projectDeps && Array.from(projectDeps).filter(depIsNotInCycle).length > 0;
         });
         return !cycleHasExternalDependencies;
       });
