@@ -207,8 +207,8 @@ const config = {
                 href: "https://go.nrwl.io/nx-newsletter?utm_source=lerna.js.org",
               },
               {
-                label: "Slack",
-                href: "https://go.nrwl.io/join-slack?utm_source=lerna.js.org",
+                label: "Community Discord",
+                href: "https://go.nx.dev/community?utm_source=lerna.js.org",
               },
               {
                 label: "Help Us",

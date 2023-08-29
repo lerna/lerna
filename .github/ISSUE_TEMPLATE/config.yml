@@ -7,5 +7,5 @@ contact_links:
     about: "Want to start a thread to discuss an idea? Use the discussions feature provided by GitHub."
     url: https://github.com/lerna/lerna/discussions
   - name: Have a question?
-    url: https://go.nrwl.io/join-slack
-    about: "The Community Slack is a great place for questions to be asked and answered. Please use the #lerna channel if you need help with your workspace!"
+    url: http://go.nx.dev/community
+    about: "The Nx Official Discord Server is a great place for questions to be asked and answered. Please use the #forum if you need help with your workspace!"
