@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.2.0](https://github.com/lerna/lerna/compare/v7.1.5...v7.2.0) (2023-08-29)
+
+### Bug Fixes
+
+- **core:** gracefully ignore cycles outside scope to run ([#3819](https://github.com/lerna/lerna/issues/3819)) ([480943b](https://github.com/lerna/lerna/commit/480943b4e2055de8bf66db0bff9eba3e3be84d2d))
+- **version:** remove explicit node_modules require ([#3804](https://github.com/lerna/lerna/issues/3804)) ([1a113f7](https://github.com/lerna/lerna/commit/1a113f7c6fc2111920dcd768bb1c31d80e2e700e))
+
+### Features
+
+- **init:** detect existing package manager and auto-install packages ([#3805](https://github.com/lerna/lerna/issues/3805)) ([2204c34](https://github.com/lerna/lerna/commit/2204c34b8b70e9971f144292cc05f1e23873d050))
+- **init:** infer invoked pkg mgr ([#3810](https://github.com/lerna/lerna/issues/3810)) ([a29a48c](https://github.com/lerna/lerna/commit/a29a48cefc9cdbe5a42a645c7293118c78eef662))
+
 ## [7.1.5](https://github.com/lerna/lerna/compare/v7.1.4...v7.1.5) (2023-08-09)
 
 ### Bug Fixes

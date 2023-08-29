@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.2.0](https://github.com/lerna/lerna/compare/v7.1.5...v7.2.0) (2023-08-29)
+
+### Features
+
+- **init:** detect existing package manager and auto-install packages ([#3805](https://github.com/lerna/lerna/issues/3805)) ([2204c34](https://github.com/lerna/lerna/commit/2204c34b8b70e9971f144292cc05f1e23873d050))
+
 ## [7.1.5](https://github.com/lerna/lerna/compare/v7.1.4...v7.1.5) (2023-08-09)
 
 ### Bug Fixes
