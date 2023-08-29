@@ -33,8 +33,8 @@ Lerna is a fast, modern build system for managing and publishing multiple JavaSc
     <a href="https://commitizen.github.io/cz-cli/">
       <img alt="Commitizen friendly" src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg">
     </a>
-    <a href="https://go.nrwl.io/join-slack">
-      <img alt="CI Status" src="https://img.shields.io/badge/slack-%40nrwl%2Fcommunity-brightgreen?style=flat">
+    <a href="http://go.nx.dev/community">
+      <img alt="Discord" src="https://img.shields.io/discord/1143497901675401286?label=Community%20Discord&labelColor=404eee">
     </a>
 </p>
 
@@ -55,7 +55,7 @@ A few links to help you get started:
 ## Engage with the Core Team and the Community
 
 - [Follow Lerna on Twitter](https://twitter.com/lernajs)
-- [Community Slack, #lerna channel](https://go.nrwl.io/join-slack)
+- [Community Discord, #forum channel](https://go.nx.dev/community)
 
 ### Want to help?
 
