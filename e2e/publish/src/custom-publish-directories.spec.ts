@@ -121,7 +121,6 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna verb rootPath /tmp/lerna-e2e/lerna-publish-custom-publish-directories/lerna-workspace
         lerna verb session XXXXXXXX
         lerna verb user-agent lerna/999.9.9-e2e.0/<user agent>
-        lerna verb git-describe undefined => "vXX.XX.XX-0-gXXXXXXXX"
         lerna verb silly Interpolated string "../../dist/packages/package-1" for node "package-1" to produce "../../dist/packages/package-1"
         lerna verb silly Interpolated string "../../dist/packages/package-2" for node "package-2" to produce "../../dist/packages/package-2"
         lerna verb silly Interpolated string "package.json" for node "package-2" to produce "package.json"
@@ -130,6 +129,7 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna verb silly Interpolated string "assets" for node "package-2" to produce "assets"
         lerna verb silly Interpolated string "../../CONTRIBUTING.md" for node "package-2" to produce "../../CONTRIBUTING.md"
         lerna verb silly Interpolated string "./" for node "package-2" to produce "./"
+        lerna verb git-describe undefined => "vXX.XX.XX-0-gXXXXXXXX"
 
         Found 3 packages to publish:
          - package-1 => XX.XX.XX
@@ -311,13 +311,13 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna verb rootPath /tmp/lerna-e2e/lerna-publish-custom-publish-directories/lerna-workspace
         lerna verb session XXXXXXXX
         lerna verb user-agent lerna/999.9.9-e2e.0/<user agent>
-        lerna verb git-describe undefined => "vXX.XX.XX-0-gXXXXXXXX"
         lerna verb silly Interpolated string "{workspaceRoot}/dist/{projectRoot}" for node "package-1" to produce "/tmp/lerna-e2e/lerna-publish-custom-publish-directories/lerna-workspace/dist/packages/package-1"
         lerna verb silly Interpolated string "package.json" for node "package-1" to produce "package.json"
         lerna verb silly Interpolated string "{projectName}.txt" for node "package-1" to produce "package-1.txt"
         lerna verb silly Interpolated string "{workspaceRoot}/dist/{projectRoot}" for node "package-2" to produce "/tmp/lerna-e2e/lerna-publish-custom-publish-directories/lerna-workspace/dist/packages/package-2"
         lerna verb silly Interpolated string "package.json" for node "package-2" to produce "package.json"
         lerna verb silly Interpolated string "{projectName}.txt" for node "package-2" to produce "package-2.txt"
+        lerna verb git-describe undefined => "vXX.XX.XX-0-gXXXXXXXX"
 
         Found 2 packages to publish:
          - package-1 => XX.XX.XX
@@ -472,11 +472,11 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna verb rootPath /tmp/lerna-e2e/lerna-publish-custom-publish-directories/lerna-workspace
         lerna verb session XXXXXXXX
         lerna verb user-agent lerna/999.9.9-e2e.0/<user agent>
-        lerna verb git-describe undefined => "vXX.XX.XX-0-gXXXXXXXX"
         lerna verb silly Interpolated string "{workspaceRoot}/dist/{projectRoot}" for node "package-1" to produce "/tmp/lerna-e2e/lerna-publish-custom-publish-directories/lerna-workspace/dist/packages/package-1"
         lerna verb silly Interpolated string "package.json" for node "package-1" to produce "package.json"
         lerna verb silly Interpolated string "{projectName}.txt" for node "package-1" to produce "package-1.txt"
         lerna verb silly Interpolated string "." for node "package-2" to produce "."
+        lerna verb git-describe undefined => "vXX.XX.XX-0-gXXXXXXXX"
 
         Found 2 packages to publish:
          - package-1 => XX.XX.XX
