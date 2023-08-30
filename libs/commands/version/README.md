@@ -78,6 +78,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--signoff-git-commit`](#--signoff-git-commit)
     - [`--sign-git-commit`](#--sign-git-commit)
     - [`--sign-git-tag`](#--sign-git-tag)
+    - [`--sync-dist-version`](#--sync-dist-version)
     - [`--force-git-tag`](#--force-git-tag)
     - [`--tag-version-prefix`](#--tag-version-prefix)
     - [`--yes`](#--yes)
@@ -514,6 +515,10 @@ This option is analogous to the `npm version` [option](https://docs.npmjs.com/mi
 ### `--sign-git-tag`
 
 This option is analogous to the `npm version` [option](https://docs.npmjs.com/misc/config#sign-git-tag) of the same name.
+
+### `--sync-dist-version`
+
+Updates the version of the `package.json` of the contents directory.
 
 ### `--force-git-tag`
 

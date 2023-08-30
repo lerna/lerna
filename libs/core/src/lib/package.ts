@@ -1,4 +1,5 @@
 import { workspaceRoot } from "@nx/devkit";
+import fs from "fs";
 import loadJsonFile from "load-json-file";
 import npa from "npm-package-arg";
 import path from "path";
@@ -284,6 +285,23 @@ export class Package {
    */
   serialize() {
     return writePkg(this.manifestLocation, this[PKG] as any).then(() => this);
+  }
+
+  /**
+   * Sync dist manifest version
+   */
+  async syncDistVersion(doSync: boolean) {
+    if (doSync) {
+      const distPkg = path.join(this.contents, "package.json");
+
+      if (distPkg !== this.manifestLocation && fs.existsSync(distPkg)) {
+        const pkg = await loadJsonFile<RawManifest>(distPkg);
+        pkg.version = this[PKG].version;
+        await writePkg(distPkg, pkg as any);
+      }
+    }
+
+    return this;
   }
 
   getLocalDependency(

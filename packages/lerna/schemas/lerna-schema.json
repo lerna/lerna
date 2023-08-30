@@ -1003,6 +1003,9 @@
             "gitTagVersion": {
               "$ref": "#/$defs/commandOptions/version/gitTagVersion"
             },
+            "syncDistVersion": {
+              "$ref": "#/$defs/commandOptions/version/syncDistVersion"
+            },
             "granularPathspec": {
               "$ref": "#/$defs/commandOptions/shared/granularPathspec"
             },
@@ -1699,6 +1702,10 @@
         "gitTagVersion": {
           "type": "boolean",
           "description": "During `lerna version`, when true, commit and tag version changes."
+        },
+        "syncDistVersion": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, updates the version of the contents directory."
         },
         "push": {
           "type": "boolean",

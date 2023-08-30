@@ -253,6 +253,58 @@ class PublishCommand extends Command {
 
     this.projectsWithPackage = Object.values(this.projectGraph.nodes).filter((node) => !!node.package);
 
+    /**
+     * Determine the relevant configuration for the packages.
+     * If applicable, using either root level or package level config
+     */
+    this.projectsWithPackage.map((node) => {
+      const interpolateStr = (str) => {
+        const res = interpolate(str, {
+          projectRoot: node.data.root,
+          projectName: node.name,
+          workspaceRoot: this.project.rootPath,
+        });
+        this.logger.verbose(
+          "silly",
+          `Interpolated string "%s" for node "%s" to produce "%s"`,
+          str,
+          node.name,
+          res
+        );
+        return res;
+      };
+
+      const pkg = getPackage(node);
+
+      if (this.options.contents) {
+        pkg.contents = this.options.contents;
+      }
+
+      if (pkg.lernaConfig?.command?.publish?.directory) {
+        // Package level
+        pkg.contents = interpolateStr(pkg.lernaConfig.command.publish.directory);
+      } else if (this.project.config.command?.publish?.["directory"]) {
+        // Root level
+        pkg.contents = interpolateStr(this.project.config.command.publish["directory"]);
+      }
+
+      if (pkg.lernaConfig?.command?.publish?.assets) {
+        // Package level
+        pkg.lernaConfig.command.publish.assets = pkg.lernaConfig.command.publish.assets.map((asset) =>
+          interpolateAsset(asset, interpolateStr)
+        );
+      } else if (this.project.config.command?.publish?.["assets"]) {
+        // Root level
+        const assets = this.project.config.command?.publish?.["assets"].map((asset) =>
+          interpolateAsset(asset, interpolateStr)
+        );
+        pkg.lernaConfig = pkg.lernaConfig || {};
+        pkg.lernaConfig.command = pkg.lernaConfig.command || {};
+        pkg.lernaConfig.command.publish = pkg.lernaConfig.command.publish || {};
+        pkg.lernaConfig.command.publish.assets = assets;
+      }
+    });
+
     let result: {
       updates?: ProjectGraphProjectNodeWithPackage[];
       updatesVersions?: [string, string][];
@@ -304,59 +356,7 @@ class PublishCommand extends Command {
       return asset;
     }
 
-    /**
-     * Determine the relevant configuration for what gets published.
-     * If applicable, using either root level or package level config
-     */
-    this.packagesToPublish = this.updates.map((node) => {
-      const interpolateStr = (str) => {
-        const res = interpolate(str, {
-          projectRoot: node.data.root,
-          projectName: node.name,
-          workspaceRoot: this.project.rootPath,
-        });
-        this.logger.verbose(
-          "silly",
-          `Interpolated string "%s" for node "%s" to produce "%s"`,
-          str,
-          node.name,
-          res
-        );
-        return res;
-      };
-
-      const pkg = getPackage(node);
-
-      if (this.options.contents) {
-        pkg.contents = this.options.contents;
-      }
-
-      if (pkg.lernaConfig?.command?.publish?.directory) {
-        // Package level
-        pkg.contents = interpolateStr(pkg.lernaConfig.command.publish.directory);
-      } else if (this.project.config.command?.publish?.["directory"]) {
-        // Root level
-        pkg.contents = interpolateStr(this.project.config.command.publish["directory"]);
-      }
-
-      if (pkg.lernaConfig?.command?.publish?.assets) {
-        // Package level
-        pkg.lernaConfig.command.publish.assets = pkg.lernaConfig.command.publish.assets.map((asset) =>
-          interpolateAsset(asset, interpolateStr)
-        );
-      } else if (this.project.config.command?.publish?.["assets"]) {
-        // Root level
-        const assets = this.project.config.command?.publish?.["assets"].map((asset) =>
-          interpolateAsset(asset, interpolateStr)
-        );
-        pkg.lernaConfig = pkg.lernaConfig || {};
-        pkg.lernaConfig.command = pkg.lernaConfig.command || {};
-        pkg.lernaConfig.command.publish = pkg.lernaConfig.command.publish || {};
-        pkg.lernaConfig.command.publish.assets = assets;
-      }
-
-      return pkg;
-    });
+    this.packagesToPublish = this.updates.map((node) => getPackage(node));
 
     if (result.needsConfirmation) {
       // only confirm for --canary, bump === "from-git",
