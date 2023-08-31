@@ -147,12 +147,24 @@ class InitCommand {
     if (!tree.exists("package.json")) {
       // lerna.json
       writeJson(tree, "lerna.json", lernaJson);
-      // package.json
-      writeJson(tree, "package.json", {
+
+      const basePackageJson = {
         name: "root",
         private: true,
-        workspaces: [PACKAGE_GLOB],
-      });
+      };
+
+      // package.json
+      if (this.packageManager === "pnpm") {
+        writeJson(tree, "package.json", basePackageJson);
+        if (!tree.exists("pnpm-workspace.yaml")) {
+          tree.write("pnpm-workspace.yaml", `packages:\n  - '${PACKAGE_GLOB}'\n`);
+        }
+      } else {
+        writeJson(tree, "package.json", {
+          ...basePackageJson,
+          workspaces: [PACKAGE_GLOB],
+        });
+      }
     } else {
       /**
        * package.json already exists.
