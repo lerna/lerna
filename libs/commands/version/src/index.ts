@@ -83,6 +83,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   gitTagCommand?: string;
   message?: string;
   npmClientArgs?: string[];
+  runScriptsOnLockfileUpdate?: boolean;
   changelogPreset?: string;
   changelogEntryAdditionalMarkdown?: string;
   conventionalBumpPrerelease?: boolean;
@@ -622,6 +623,7 @@ class VersionCommand extends Command {
       changelogPreset,
       changelogEntryAdditionalMarkdown,
       changelog = true,
+      runScriptsOnLockfileUpdate = false,
       syncDistVersion = false,
     } = this.options;
     const independentVersions = this.project.isIndependent();
@@ -740,7 +742,12 @@ class VersionCommand extends Command {
       this.logger.verbose("version", "Updating root pnpm-lock.yaml");
       await childProcess.exec(
         "pnpm",
-        ["install", "--lockfile-only", "--ignore-scripts", ...npmClientArgs],
+        [
+          "install",
+          "--lockfile-only",
+          !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
+          ...npmClientArgs,
+        ].filter(Boolean),
         this.execOpts
       );
 
@@ -773,7 +780,12 @@ class VersionCommand extends Command {
         this.logger.verbose("version", "Updating root package-lock.json");
         await childProcess.exec(
           "npm",
-          ["install", "--package-lock-only", "--ignore-scripts", ...npmClientArgs],
+          [
+            "install",
+            "--package-lock-only",
+            !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
+            ...npmClientArgs,
+          ].filter(Boolean),
           this.execOpts
         );
         changedFiles.add(lockfilePath);

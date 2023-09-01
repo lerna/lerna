@@ -1003,6 +1003,9 @@
             "gitTagVersion": {
               "$ref": "#/$defs/commandOptions/version/gitTagVersion"
             },
+            "runScriptsOnLockfileUpdate": {
+              "$ref": "#/$defs/commandOptions/version/runScriptsOnLockfileUpdate"
+            },
             "syncDistVersion": {
               "$ref": "#/$defs/commandOptions/version/syncDistVersion"
             },
@@ -1702,6 +1705,10 @@
         "gitTagVersion": {
           "type": "boolean",
           "description": "During `lerna version`, when true, commit and tag version changes."
+        },
+        "runScriptsOnLockfileUpdate": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, runs lifecycle scripts when syncing the lock file after the version bump."
         },
         "syncDistVersion": {
           "type": "boolean",
