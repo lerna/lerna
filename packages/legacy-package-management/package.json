@@ -57,7 +57,7 @@
     "is-stream": "2.0.0",
     "libnpmpublish": "7.3.0",
     "load-json-file": "6.2.0",
-    "make-dir": "3.1.0",
+    "make-dir": "4.0.0",
     "minimatch": "3.0.5",
     "multimatch": "5.0.0",
     "node-fetch": "2.6.7",
