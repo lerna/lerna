@@ -75,6 +75,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--no-push`](#--no-push)
     - [`--npm-client-args`](#--npm-client-args)
     - [`--preid`](#--preid)
+    - [`--run-scripts-on-lockfile-update`](#--run-scripts-on-lockfile-update)
     - [`--signoff-git-commit`](#--signoff-git-commit)
     - [`--sign-git-commit`](#--sign-git-commit)
     - [`--sign-git-tag`](#--sign-git-tag)
@@ -501,6 +502,11 @@ lerna version prepatch --preid next
 
 When run with this flag, `lerna version` will increment `premajor`, `preminor`, `prepatch`, or `prerelease` semver
 bumps using the specified [prerelease identifier](http://semver.org/#spec-item-9).
+
+### `--run-scripts-on-lockfile-update`
+
+By default, `lerna version` skips any lifecycle script when syncing the package-lock file after the version bump.
+With this option it will run `prepare`, `postinstall`, etc.
 
 ### `--signoff-git-commit`
 

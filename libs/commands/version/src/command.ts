@@ -208,6 +208,10 @@ const command: CommandModule = {
           "Allows users to specify a custom command to be used when applying git tags. For example, this may be useful for providing a wrapper command in CI/CD pipelines that have no direct write access.",
         type: "string",
       },
+      "run-scripts-on-lockfile-update": {
+        describe: "Do not disable all lifecycle scripts while updating the lock file after the version bump.",
+        type: "boolean",
+      },
       "npm-client-args": {
         describe: "Additional arguments to pass to the npm client when performing 'npm install'.",
         type: "array",
