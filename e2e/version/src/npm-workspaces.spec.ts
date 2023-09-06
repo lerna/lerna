@@ -1,4 +1,5 @@
 import { Fixture, normalizeCommitSHAs, normalizeEnvironment } from "@lerna/e2e-utils";
+import { existsSync } from "fs";
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
@@ -106,5 +107,52 @@ describe("lerna-version-with-workspaces", () => {
     expect(packages["packages/package-a"].version).toEqual("3.3.3");
     expect(packages["packages/package-b"].version).toEqual("3.3.3");
     expect(packages["packages/package-b"].dependencies["package-a"]).toEqual("^3.3.3");
+  });
+
+  describe("with --run-scripts-on-lockfile-update", () => {
+    it("should run npm install lifecycle scripts when updating package-lock.json", async () => {
+      await fixture.updateJson("package.json", (json) => ({
+        ...json,
+        scripts: {
+          preinstall: "touch preinstall.txt",
+          install: "touch install.txt",
+          postinstall: "touch postinstall.txt",
+          prepublish: "touch prepublish.txt",
+          prepare: "touch prepare.txt",
+        },
+      }));
+      await fixture.exec("git add package.json");
+      await fixture.exec("git commit -m 'update package.json with lifecycle scripts'");
+
+      const output = await fixture.lerna("version 3.3.3 -y --run-scripts-on-lockfile-update");
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna info current version 0.0.0
+        lerna info Assuming all packages changed
+
+        Changes:
+         - package-a: 0.0.0 => 3.3.3
+         - package-b: 0.0.0 => 3.3.3
+
+        lerna info auto-confirmed 
+        lerna info execute Skipping releases
+        lerna info git Pushing tags...
+        lerna success version finished
+
+      `);
+
+      const packageLockJson = await fixture.readWorkspaceFile("package-lock.json");
+      const packages = JSON.parse(packageLockJson).packages;
+
+      expect(packages["packages/package-a"].version).toEqual("3.3.3");
+      expect(packages["packages/package-b"].version).toEqual("3.3.3");
+      expect(packages["packages/package-b"].dependencies["package-a"]).toEqual("^3.3.3");
+
+      expect(existsSync(fixture.getWorkspacePath("preinstall.txt"))).toBe(true);
+      expect(existsSync(fixture.getWorkspacePath("install.txt"))).toBe(true);
+      expect(existsSync(fixture.getWorkspacePath("postinstall.txt"))).toBe(true);
+      expect(existsSync(fixture.getWorkspacePath("prepublish.txt"))).toBe(true);
+      expect(existsSync(fixture.getWorkspacePath("prepare.txt"))).toBe(true);
+    });
   });
 });
