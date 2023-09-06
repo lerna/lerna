@@ -1,7 +1,6 @@
 import { joinPathFragments, readJsonFile, writeJsonFile } from "@nx/devkit";
 import { exec, spawn } from "child_process";
 import { WriteStream, createWriteStream, ensureDir, existsSync, readFile, remove, writeFile } from "fs-extra";
-import { dump } from "js-yaml";
 
 interface RunCommandOptions {
   silenceError?: boolean;
@@ -140,13 +139,6 @@ export class Fixture {
       existsSync(joinPathFragments(this.fixtureWorkspacePath, "lerna.json"))
     ) {
       await this.overrideLernaConfig({ npmClient: this.packageManager });
-    }
-
-    if (this.packageManager === "pnpm") {
-      const pnpmWorkspaceContent = dump({
-        packages: ["packages/*", "!**/__test__/**"],
-      });
-      await writeFile(this.getWorkspacePath("pnpm-workspace.yaml"), pnpmWorkspaceContent, "utf-8");
     }
   }
 
