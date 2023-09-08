@@ -798,4 +798,167 @@ describe("toposortProjects", () => {
       "package-1",
     ]);
   });
+
+  // https://github.com/lerna/lerna/issues/3798#issuecomment-1705306211
+  // test case recreated from this repo: https://github.com/cheminfo/mass-tools/tree/test3
+  // at this exact commit: abd464912df5a1e1b0293f7784d5d010eee79c2a
+  it("should not traverse cycles not included in projects list", async () => {
+    const projects: ProjectGraphProjectNodeWithPackage[] = [
+      projectNode({
+        name: "a",
+      }),
+      projectNode({
+        name: "b",
+      }),
+      projectNode({
+        name: "c",
+      }),
+      projectNode({
+        name: "d",
+      }),
+      projectNode({
+        name: "e",
+      }),
+      projectNode({
+        name: "f",
+      }),
+      projectNode({
+        name: "g",
+      }),
+    ];
+    const dependencies: ProjectGraphWorkspacePackageDependency[] = [
+      projectGraphDependency({
+        source: "c",
+        target: "b",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "c",
+        target: "a",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "c",
+        target: "e",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "c",
+        target: "g",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "c",
+        target: "f",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "c",
+        target: "h",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "c",
+        target: "i",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "b",
+        target: "h",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "a",
+        target: "b",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "a",
+        target: "f",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "a",
+        target: "h",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "a",
+        target: "i",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "e",
+        target: "f",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "d",
+        target: "a",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "d",
+        target: "f",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "d",
+        target: "h",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "g",
+        target: "f",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "g",
+        target: "h",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "g",
+        target: "i",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "f",
+        target: "a",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "f",
+        target: "h",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "f",
+        target: "i",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "h",
+        target: "i",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+      projectGraphDependency({
+        source: "i",
+        target: "h",
+        targetVersionMatchesDependencyRequirement: true,
+      }),
+    ];
+
+    const projectGraph = createProjectGraph({ projects, dependencies });
+
+    expect(toposortProjects(projects, projectGraph).map((p) => p.name)).toEqual([
+      "b",
+      "a",
+      "f",
+      "d",
+      "e",
+      "g",
+      "c",
+    ]);
+  });
 });

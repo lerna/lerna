@@ -33,7 +33,7 @@ export function toposortProjects(
     }
   });
 
-  const unmergedCycles = getCycles(localDependencies);
+  const unmergedCycles = getCycles(dependenciesBySource);
 
   reportCycles(unmergedCycles, rejectCycles);
 
@@ -56,7 +56,7 @@ export function toposortProjects(
         const cycleHasExternalDependencies = cycle.some((project) => {
           const projectDeps = dependenciesBySource[project];
           const depIsNotInCycle = (dep: string) => cycle.indexOf(dep) === -1;
-          return Array.from(projectDeps).filter(depIsNotInCycle).length > 0;
+          return !!projectDeps && Array.from(projectDeps).filter(depIsNotInCycle).length > 0;
         });
         return !cycleHasExternalDependencies;
       });
