@@ -850,9 +850,14 @@ class VersionCommand extends Command {
     if (await this.hasChanges()) {
       await gitCommit(message, this.gitOpts, this.execOpts);
     }
-    await Promise.all(
-      tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand))
-    );
+    if (this.gitOpts.signGitTag) {
+      for (const tag in tags)
+        await gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand)
+    } else {
+      await Promise.all(
+        tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand))
+      );
+    }
 
     return tags;
   }
