@@ -48,7 +48,7 @@ export async function runProjectsTopologically<T>(
     }
   });
 
-  const unmergedCycles = getCycles(localDependencies);
+  const unmergedCycles = getCycles(dependenciesBySource);
 
   reportCycles(unmergedCycles, rejectCycles);
 
