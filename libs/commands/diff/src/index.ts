@@ -1,9 +1,7 @@
 import { Command, CommandConfigOptions, getPackage, ValidationError } from "@lerna/core";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { getLastCommit } = require("./lib/get-last-commit");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { hasCommit } = require("./lib/has-commit");
+import execa from "execa";
+import { getLastCommit } from "./lib/get-last-commit";
+import { hasCommit } from "./lib/has-commit";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
@@ -18,11 +16,10 @@ interface DiffCommandOptions extends CommandConfigOptions {
 }
 
 class DiffCommand extends Command<DiffCommandOptions> {
-  private args: string[];
+  private args: string[] = [];
 
   initialize() {
     const packageName = this.options.pkgName;
-
     let targetPackage;
 
     if (packageName) {
@@ -59,7 +56,7 @@ class DiffCommand extends Command<DiffCommandOptions> {
   }
 
   execute() {
-    return childProcess.spawn("git", this.args, this.execOpts).catch((err) => {
+    return childProcess.spawn("git", this.args, this.execOpts).catch((err: execa.ExecaError) => {
       if (err.exitCode) {
         // quitting the diff viewer is not an error
         throw err;

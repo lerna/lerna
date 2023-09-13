@@ -22,6 +22,11 @@ export interface PreInitializedProjectData {
   projectGraph: ProjectGraphWithPackages;
 }
 
+export type ExecOpts = {
+  cwd: string;
+  maxBuffer?: number;
+};
+
 export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   name: string;
   composed: boolean;
@@ -29,7 +34,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   runner: Promise<unknown>;
   concurrency?: number;
   toposort = false;
-  execOpts?: { cwd: string; maxBuffer?: number };
+  execOpts?: ExecOpts;
   logger!: log.Logger;
   envDefaults: any;
   argv: any;
