@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.3.0](https://github.com/lerna/lerna/compare/v7.2.0...v7.3.0) (2023-09-13)
+
+### Bug Fixes
+
+- **core:** skip unnecessary cycles when running tasks ([#3834](https://github.com/lerna/lerna/issues/3834)) ([d477529](https://github.com/lerna/lerna/commit/d4775294c0eb34b5dbbaf5b32b6867d7b5288f02))
+- **init:** generate pnpm workspace yaml ([#3822](https://github.com/lerna/lerna/issues/3822)) ([489aa92](https://github.com/lerna/lerna/commit/489aa928254d41b6e56803e710027ee271338705))
+- update make-dir to 4.0.0 and npm audit fix ([#3828](https://github.com/lerna/lerna/issues/3828)) ([373b8bc](https://github.com/lerna/lerna/commit/373b8bc8202f15b4cafb216aee97f43885eebddf))
+- **version:** Fix crash when using `gitSignTag` with `independent` versioning mode ([#3832](https://github.com/lerna/lerna/issues/3832)) ([4940f2d](https://github.com/lerna/lerna/commit/4940f2df85e9242669d67a8d08448efe19507cae))
+
+### Features
+
+- **version:** add --sync-dist-version option ([#3787](https://github.com/lerna/lerna/issues/3787)) ([ba8b946](https://github.com/lerna/lerna/commit/ba8b9469809326de1b3929cf11bbb5919c723a78))
+- **version:** option to not ignore scripts on lock update ([#3823](https://github.com/lerna/lerna/issues/3823)) ([4843c3c](https://github.com/lerna/lerna/commit/4843c3c1a95aa2f6c48204c1da3c06a4dcd746a4))
+
 # [7.2.0](https://github.com/lerna/lerna/compare/v7.1.5...v7.2.0) (2023-08-29)
 
 ### Bug Fixes
