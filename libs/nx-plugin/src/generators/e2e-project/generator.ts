@@ -7,8 +7,7 @@ import {
   updateProjectConfiguration,
 } from "@nx/devkit";
 import { addPropertyToJestConfig } from "@nx/jest/src/utils/config/update-config";
-import { projectGenerator } from "@nx/js/src/generators/library/library";
-import { resolve } from "path";
+import { libraryGenerator } from "@nx/js/src/generators/library/library";
 import { E2eProjectGeneratorSchema } from "./schema";
 
 interface NormalizedSchema extends E2eProjectGeneratorSchema {
@@ -36,16 +35,11 @@ function normalizeOptions(_tree: Tree, options: E2eProjectGeneratorSchema): Norm
 export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
   const normalizedOptions = normalizeOptions(tree, options);
 
-  await projectGenerator(
-    tree,
-    {
-      name: normalizedOptions.name,
-      directory: normalizedOptions.projectDirectory,
-      skipTsConfig: true,
-    },
-    "./",
-    resolve("node_modules/@nx/js/src/generators/library/files")
-  );
+  await libraryGenerator(tree, {
+    name: normalizedOptions.name,
+    directory: normalizedOptions.projectDirectory,
+    skipTsConfig: true,
+  });
 
   tree.delete(`${normalizedOptions.projectRoot}/README.md`);
 
