@@ -12,8 +12,9 @@ module.exports = function factory(argv: NodeJS.Process["argv"]) {
 
 interface ChangedCommandOptions extends CommandConfigOptions {
   conventionalCommits: boolean;
-  conventionalGraduate: boolean;
-  forcePublish: boolean;
+  conventionalGraduate: boolean | string;
+  forceConventionalGraduate: boolean;
+  forcePublish: boolean | string;
 }
 
 class ChangedCommand extends Command<ChangedCommandOptions> {

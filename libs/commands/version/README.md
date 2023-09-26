@@ -56,6 +56,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--changelog-entry-additional-markdown`](#--changelog-entry-additional-markdown)
     - [`--conventional-commits`](#--conventional-commits)
     - [`--conventional-graduate`](#--conventional-graduate)
+    - [`--force-conventional-graduate`](#--force-conventional-graduate)
     - [`--conventional-prerelease`](#--conventional-prerelease)
     - [`--conventional-bump-prerelease`](#--conventional-bump-prerelease)
     - [`--create-release <type>`](#--create-release-type)
@@ -225,6 +226,17 @@ When run with this flag, `lerna version` will graduate the specified packages (c
 "Graduating" a package means bumping to the non-prerelease variant of a prerelease version, eg. `package-1@1.0.0-alpha.0 => package-1@1.0.0`.
 
 > NOTE: when specifying packages, dependents of specified packages will be released, but will not be graduated.
+
+### `--force-conventional-graduate`
+
+```sh
+lerna version --conventional-commits --conventional-graduate=package-2,package-4 --force-conventional-graduate
+
+# force all prerelease packages to be graduated and updated if not a prerelease or having no change
+lerna version --conventional-commits --conventional-graduate --force-conventional-graduate
+```
+
+When run with this flag, `lerna version` will graduate all packages specified by `--conventional-graduate`. Non-prerelease packages will not be ignored as it would be the case without the flag. In combination with single version mode this can be used to force all specified packages to be updated to a single version despite having no change or being a non-prerelease version. It works similar like `--force-publish` but not being ignored when having `--conventional-commits` and `--conventional-graduate` enabled. This flag is only applicable when having `--conventional-graduate` set as well, otherwise the option is ignored.
 
 ### `--conventional-prerelease`
 

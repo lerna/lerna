@@ -332,6 +332,42 @@ describe("collectProjectUpdates", () => {
     ]);
   });
 
+  it("always includes all nodes targeted by --conventional-graduate = pkg despite having no prerelease version when having -froce-convention-graduate set", () => {
+    changedPackages.add("package-dag-3");
+
+    const graph = buildGraph();
+    const nodes = Object.values(graph.nodes);
+    const execOpts = { cwd: "/test" };
+    setPrereleaseVersions(graph, ["package-standalone"]);
+
+    const updates = collectProjectUpdates(nodes, graph, execOpts, {
+      forceConventionalGraduate: true,
+      conventionalCommits: true,
+      conventionalGraduate: "package-dag-2b,package-dag-3",
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-2b" }),
+      expect.objectContaining({ name: "package-dag-3" }),
+    ]);
+  });
+
+  it("always includes all nodes targeted by --conventional-graduate = * despite having no prerelease version when having -froce-convention-graduate set", () => {
+    changedPackages.add("package-dag-3");
+
+    const graph = buildGraph();
+    const nodes = Object.values(graph.nodes);
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectProjectUpdates(nodes, graph, execOpts, {
+      forceConventionalGraduate: true,
+      conventionalCommits: true,
+      conventionalGraduate: "*",
+    });
+
+    expect(updates).toEqual(ALL_NODES);
+  });
+
   it("uses revision range with --canary", () => {
     changedPackages.add("package-dag-2a");
 

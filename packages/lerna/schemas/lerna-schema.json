@@ -961,6 +961,9 @@
             "conventionalGraduate": {
               "$ref": "#/$defs/commandOptions/shared/conventionalGraduate"
             },
+            "forceConventionalGraduate": {
+              "$ref": "#/$defs/commandOptions/shared/forceConventionalGraduate"
+            },
             "conventionalPrerelease": {
               "$ref": "#/$defs/commandOptions/version/conventionalPrerelease"
             },
@@ -1751,6 +1754,10 @@
             { "type": "array", "items": { "type": "string" } }
           ],
           "description": "Detect currently prereleased packages that would change to a non-prerelease version. Relevant for `lerna changed` and `lerna version`."
+        },
+        "forceConventionalGraduate": {
+          "type": "boolean",
+          "description": "Forces all specified packages by --conventional-graduate to bump their version despite being a prerelease. Relevant for `lerna changed` and `lerna version`."
         },
         "forceLocal": {
           "type": "boolean",

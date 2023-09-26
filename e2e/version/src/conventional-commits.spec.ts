@@ -289,6 +289,55 @@ describe("lerna-version-conventional-commits", () => {
       `);
     });
 
+    it("should correctly bump versions when using --conventional-graduate and --force-conventional-graduate", async () => {
+      await fixture.createInitialGitCommit();
+
+      await fixture.lerna("create package-a -y");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'feat: add package-a'");
+
+      await fixture.lerna("create package-b -y");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'feat: add package-b'");
+
+      await fixture.exec("git push origin test-main");
+
+      // Initial versioning with two packages created
+      await fixture.lerna("version --conventional-commits -y", { silenceError: true });
+
+      // Update and version just package-a
+      await fixture.exec("echo update_package_a > packages/package-a/new_file.txt");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'fix: update package-a'");
+
+      // Create a version with force-conventional-graduate
+      const output = await fixture.lerna(
+        "version --conventional-commits --conventional-graduate --force-conventional-graduate -y",
+        {
+          silenceError: true,
+        }
+      );
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna info current version 0.1.0
+        lerna WARN conventional-graduate all packages
+        lerna info Graduating all prereleased packages
+        lerna info Looking for changed packages since v0.1.0
+        lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
+
+        Changes:
+         - package-a: 0.1.0 => 0.1.1
+         - package-b: 0.1.0 => 0.1.1
+
+        lerna info auto-confirmed 
+        lerna info execute Skipping releases
+        lerna info git Pushing tags...
+        lerna success version finished
+
+      `);
+    });
+
     it("should correctly generate and bump prerelease versions when using --conventional-prerelease and --conventional-bump-prerelease", async () => {
       await fixture.createInitialGitCommit();
 
@@ -531,6 +580,61 @@ describe("lerna-version-conventional-commits", () => {
         expect(
           (await fixture.exec("git ls-remote origin refs/tags/package-b@1.1.1")).combinedOutput
         ).toMatchInlineSnapshot(``);
+      });
+
+      it("should correctly bump versions when using --conventional-graduate and --force-conventional-graduate", async () => {
+        await fixture.createInitialGitCommit();
+
+        fixture.updateJson("lerna.json", (json) => {
+          // eslint-disable-next-line no-param-reassign
+          json.version = "independent";
+          return json;
+        });
+
+        await fixture.lerna("create package-a -y");
+        await fixture.exec("git add --all");
+        await fixture.exec("git commit -m 'feat: add package-a'");
+
+        await fixture.lerna("create package-b -y");
+        await fixture.exec("git add --all");
+        await fixture.exec("git commit -m 'feat: add package-b'");
+
+        await fixture.exec("git push origin test-main");
+
+        // Initial versioning with two packages created
+        await fixture.lerna("version --conventional-commits -y", { silenceError: true });
+
+        // Update and version just package-a
+        await fixture.exec("echo update_package_a > packages/package-a/new_file.txt");
+        await fixture.exec("git add --all");
+        await fixture.exec("git commit -m 'feat: update package-a'");
+
+        // Create a version with force-conventional-graduate
+        const output = await fixture.lerna(
+          "version --conventional-commits --conventional-graduate --force-conventional-graduate -y",
+          {
+            silenceError: true,
+          }
+        );
+
+        expect(output.combinedOutput).toMatchInlineSnapshot(`
+          lerna notice cli v999.9.9-e2e.0
+          lerna info versioning independent
+          lerna WARN conventional-graduate all packages
+          lerna info Graduating all prereleased packages
+          lerna info Looking for changed packages since package-a@1.1.0
+          lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
+
+          Changes:
+           - package-a: 1.1.0 => 1.2.0
+           - package-b: 1.1.0 => 1.1.1
+
+          lerna info auto-confirmed 
+          lerna info execute Skipping releases
+          lerna info git Pushing tags...
+          lerna success version finished
+
+        `);
       });
     });
   });
