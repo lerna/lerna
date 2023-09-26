@@ -738,6 +738,11 @@ class VersionCommand extends Command {
     const npmClientArgsRaw = this.options.npmClientArgs || [];
     const npmClientArgs = npmClientArgsRaw.reduce((args, arg) => args.concat(arg.split(/\s|,/)), []);
 
+    if (!this.hasRootedLeaf) {
+      // exec version lifecycle in root (after all updates)
+      await this.runRootLifecycle("version");
+    }
+
     if (this.options.npmClient === "pnpm") {
       this.logger.verbose("version", "Updating root pnpm-lock.yaml");
       await childProcess.exec(
@@ -790,11 +795,6 @@ class VersionCommand extends Command {
         );
         changedFiles.add(lockfilePath);
       }
-    }
-
-    if (!this.hasRootedLeaf) {
-      // exec version lifecycle in root (after all updates)
-      await this.runRootLifecycle("version");
     }
 
     if (this.commitAndTag) {
