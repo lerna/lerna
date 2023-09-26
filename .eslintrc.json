@@ -17,6 +17,7 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
+            "checkDynamicDependenciesExceptions": ["@lerna/core", "@lerna/test-helpers"],
             "allow": [],
             "depConstraints": [
               {
