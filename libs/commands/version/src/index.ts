@@ -19,6 +19,7 @@ import {
   runProjectsTopologically,
   throwIfUncommitted,
   updateChangelog,
+  formatJSON,
 } from "@lerna/core";
 import chalk from "chalk";
 import dedent from "dedent";
@@ -59,6 +60,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   allowBranch?: string | string[];
   conventionalCommits?: boolean;
   amend?: boolean;
+  json?: boolean;
   commitHooks?: boolean;
   gitRemote?: string;
   gitTagVersion?: boolean;
@@ -388,7 +390,6 @@ class VersionCommand extends Command {
       if (!this.composed) {
         this.logger.success("version", "finished");
       }
-
       return {
         updates: this.updates,
         updatesVersions: this.updatesVersions,
@@ -591,19 +592,26 @@ class VersionCommand extends Command {
   }
 
   confirmVersions() {
-    const changes = this.updates.map((node) => {
-      const pkg = getPackage(node);
-      let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(node.name)}`;
-      if (pkg.private) {
-        line += ` (${chalk.red("private")})`;
-      }
-      return line;
-    });
+    if (this.options.json) {
+      const updatedProjectsJson = formatJSON(this.updates, ({ name }) => ({
+        newVersion: this.updatesVersions.get(name),
+      }));
+      output(updatedProjectsJson);
+    } else {
+      const changes = this.updates.map((node) => {
+        const pkg = getPackage(node);
+        let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(node.name)}`;
+        if (pkg.private) {
+          line += ` (${chalk.red("private")})`;
+        }
+        return line;
+      });
 
-    output("");
-    output("Changes:");
-    output(changes.join(os.EOL));
-    output("");
+      output("");
+      output("Changes:");
+      output(changes.join(os.EOL));
+      output("");
+    }
 
     if (this.options.yes) {
       this.logger.info("auto-confirmed", "");

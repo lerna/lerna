@@ -73,7 +73,12 @@ function filterResultList(
   return result;
 }
 
-function toJSONList(resultList: ReturnType<typeof filterResultList>) {
+function toJSONList(
+  resultList: ReturnType<typeof filterResultList>,
+  addtionalProperties: (project: ProjectGraphProjectNodeWithPackage) => {
+    [propt: string]: unknown;
+  } = () => ({})
+) {
   // explicit re-mapping exposes non-enumerable properties
   return resultList.map((project) => {
     const pkg = getPackage(project);
@@ -82,12 +87,18 @@ function toJSONList(resultList: ReturnType<typeof filterResultList>) {
       version: pkg.version,
       private: pkg.private,
       location: pkg.location,
+      ...addtionalProperties(project),
     };
   });
 }
 
-function formatJSON(resultList: ReturnType<typeof filterResultList>) {
-  return JSON.stringify(toJSONList(resultList), null, 2);
+export function formatJSON(
+  resultList: ReturnType<typeof filterResultList>,
+  additionalProperties: (project: ProjectGraphProjectNodeWithPackage) => {
+    [propt: string]: unknown;
+  } = () => ({})
+) {
+  return JSON.stringify(toJSONList(resultList, additionalProperties), null, 2);
 }
 
 function formatNDJSON(resultList: ReturnType<typeof filterResultList>) {

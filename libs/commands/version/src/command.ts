@@ -112,6 +112,10 @@ const command: CommandModule = {
         describe: "Include tags from merged branches when detecting changed packages.",
         type: "boolean",
       },
+      json: {
+        describe: "Outputs changed packages in json format",
+        type: "boolean",
+      },
       m: {
         describe: "Use a custom commit message when creating the version commit.",
         alias: "message",

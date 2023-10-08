@@ -67,6 +67,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--ignore-changes`](#--ignore-changes)
     - [`--ignore-scripts`](#--ignore-scripts)
     - [`--include-merged-tags`](#--include-merged-tags)
+    - [`--json`](#--json)
     - [`--message <msg>`](#--message-msg)
     - [`--no-changelog`](#--no-changelog)
     - [`--no-commit-hooks`](#--no-commit-hooks)
@@ -372,6 +373,40 @@ lerna version --include-merged-tags
 ```
 
 Include tags from merged branches when detecting changed packages.
+
+### `--json`
+
+```sh
+lerna version --json
+```
+
+Outputs updated packages in json format. Here an example of the output:
+
+```json
+[
+  {
+    "name": "footer",
+    "version": "0.0.4",
+    "private": false,
+    "location": "/home/ammo/git/lerna-getting-started-example/packages/footer",
+    "newVersion": "0.0.5"
+  },
+  {
+    "name": "header",
+    "version": "0.0.4",
+    "private": false,
+    "location": "/home/ammo/git/lerna-getting-started-example/packages/header",
+    "newVersion": "0.0.5"
+  },
+  {
+    "name": "remixapp",
+    "version": "0.0.4",
+    "private": true,
+    "location": "/home/ammo/git/lerna-getting-started-example/packages/remixapp",
+    "newVersion": "0.0.5"
+  }
+]
+```
 
 ### `--message <msg>`
 

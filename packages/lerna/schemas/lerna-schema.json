@@ -997,6 +997,9 @@
             "ignoreScripts": {
               "$ref": "#/$defs/commandOptions/shared/ignoreScripts"
             },
+            "json": {
+              "$ref": "#/$defs/commandOptions/version/json"
+            },
             "message": {
               "$ref": "#/$defs/commandOptions/version/message"
             },
@@ -1695,6 +1698,10 @@
           "type": "string",
           "description": "During `lerna version`, an official GitHub or GitLab release for every version.",
           "enum": ["github", "gitlab"]
+        },
+        "json": {
+          "type": "boolean",
+          "description": "During `lerna version` when true output is provided in json format."
         },
         "message": {
           "type": "string",

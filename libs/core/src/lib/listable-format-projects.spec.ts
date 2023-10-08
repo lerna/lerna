@@ -4,7 +4,7 @@
 import { loggingOutput, tempDirSerializer, windowsPathSerializer } from "@lerna/test-helpers";
 import chalk from "chalk";
 import tempy from "tempy";
-import { listableFormatProjects } from "./listable-format-projects";
+import { formatJSON, listableFormatProjects } from "./listable-format-projects";
 import { ListableOptions } from "./listable-options";
 import { Package, RawManifest } from "./package";
 import {
@@ -96,6 +96,35 @@ pkg-3  v3.0.0 pkgs/pkg-3 (PRIVATE)
     "name": "pkg-2",
     "private": false,
     "location": "__TEST_ROOTDIR__/pkgs/pkg-2"
+  }
+]
+`);
+    });
+
+    test("JSON output with additional props", () => {
+      const text = formatJSON(projectNodes, ({ name }) => ({ projectName: name }));
+
+      expect(text).toMatchInlineSnapshot(`
+[
+  {
+    "name": "pkg-1",
+    "version": "1.0.0",
+    "private": false,
+    "location": "__TEST_ROOTDIR__/pkgs/pkg-1",
+    "projectName": "pkg-1"
+  },
+  {
+    "name": "pkg-2",
+    "private": false,
+    "location": "__TEST_ROOTDIR__/pkgs/pkg-2",
+    "projectName": "pkg-2"
+  },
+  {
+    "name": "pkg-3",
+    "version": "3.0.0",
+    "private": true,
+    "location": "__TEST_ROOTDIR__/pkgs/pkg-3",
+    "projectName": "pkg-3"
   }
 ]
 `);
