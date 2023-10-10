@@ -236,7 +236,7 @@ lerna version --conventional-commits --conventional-graduate=package-2,package-4
 lerna version --conventional-commits --conventional-graduate --force-conventional-graduate
 ```
 
-When run with this flag, `lerna version` will graduate all packages specified by `--conventional-graduate`. Non-prerelease packages will not be ignored as it would be the case without the flag. In combination with single version mode this can be used to force all specified packages to be updated to a single version despite having no change or being a non-prerelease version. It works similar like `--force-publish` but not being ignored when having `--conventional-commits` and `--conventional-graduate` enabled. This flag is only applicable when having `--conventional-graduate` set as well, otherwise the option is ignored.
+When run with this flag, `lerna version` will graduate all packages specified by `--conventional-graduate`. Non-prerelease packages will not be ignored as it would be the case without the flag. In combination with single version mode this can be used to force all specified packages to be updated to a single version despite having no change or being a non-prerelease version. It works similar to `--force-publish` but is not ignored when `--conventional-commits` and `--conventional-graduate` are enabled. This flag is only applicable when having `--conventional-graduate` set, otherwise the option is ignored.
 
 ### `--conventional-prerelease`
 

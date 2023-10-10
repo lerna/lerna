@@ -57,7 +57,7 @@ const command: CommandModule = {
       },
       "force-conventional-graduate": {
         describe:
-          "Forces all specified packages by --conventional-graduate to bump their version despite beeing a prerelease.",
+          "Forces all packages specified by --conventional-graduate to bump their version whether or not they are a prerelease or have changes since the previous version.",
         type: "boolean",
       },
       "conventional-prerelease": {
