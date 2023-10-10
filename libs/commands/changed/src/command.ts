@@ -22,7 +22,7 @@ const command: CommandModule = {
       },
       "force-conventional-graduate": {
         describe:
-          "Includes all packages by specified by --conventional-graduate to bump their version despite being a prerelease.",
+          "Always include all packages by specified by --conventional-graduate whether or not they are a prerelease or have changes since the previous version.",
         type: "boolean",
       },
       "force-publish": {
