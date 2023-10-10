@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "7.3.0",
+  "version": "7.3.1",
   "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",
@@ -19,7 +19,7 @@
   ],
   "main": "./dist/index.js",
   "engines": {
-    "node": "^14.17.0 || >=16.0.0"
+    "node": ">=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/create"
   },
   "dependencies": {
-    "@lerna/child-process": "7.3.0",
+    "@lerna/child-process": "7.3.1",
     "@npmcli/run-script": "6.0.2",
     "@nx/devkit": ">=16.5.1 < 17",
     "@octokit/plugin-enterprise-rest": "6.0.1",

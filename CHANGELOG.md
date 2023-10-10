@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.3.1](https://github.com/lerna/lerna/compare/v7.3.0...v7.3.1) (2023-10-10)
+
+### Bug Fixes
+
+- **core:** update package engines.node to correctly include only >=16 ([#3861](https://github.com/lerna/lerna/issues/3861)) ([0674555](https://github.com/lerna/lerna/commit/067455559a1ffa25350800bff6c9226d0e24e6b9))
+
 # [7.3.0](https://github.com/lerna/lerna/compare/v7.2.0...v7.3.0) (2023-09-13)
 
 ### Bug Fixes
@@ -93,6 +99,16 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 > After updating we strongly recommend running `lerna repair` in your project. This will migrate your `lerna.json` to the latest and greatest and remove any outdated options.
 
 As this is a major release there are a few breaking changes to be aware of, which may or may not affect your lerna repos, depending on how you are using the tool.
+
+- **node v14 support is dropped because it is end of life**
+
+When a node version because end of life (EOL) it means that it does not receive any updates or maintenance whatsoever, even if critical security vulnerabilities have been uncovered.
+
+We strongly encourage all folks here to keep up with the maintenance LTS version of Node at an absolute minimum:
+
+https://github.com/nodejs/release#release-schedule
+
+NOTE: Due to an oversight, we initially forgot to formally remove this from the engines field. This was corrected in patch `7.3.1`
 
 - **legacy package management commands have been removed**
 

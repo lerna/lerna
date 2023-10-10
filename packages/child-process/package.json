@@ -1,6 +1,6 @@
 {
   "name": "@lerna/child-process",
-  "version": "7.3.0",
+  "version": "7.3.1",
   "description": "Lerna's internal child_process wrapper",
   "keywords": [
     "lerna",
@@ -17,7 +17,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": "^14.17.0 || >=16.0.0"
+    "node": ">=16.0.0"
   },
   "publishConfig": {
     "access": "public"
