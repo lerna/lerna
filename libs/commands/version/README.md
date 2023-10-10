@@ -293,7 +293,7 @@ lerna version --force-publish=package-2,package-4
 lerna version --force-publish
 ```
 
-When run with this flag, `lerna version` will force publish the specified packages (comma-separated) or all packages using `*`. This option is ignored when
+When run with this flag, `lerna version` will force publish the specified packages (comma-separated) or all packages using `*`.
 
 > This will skip the `lerna changed` check for changed packages and forces a package that didn't have a `git diff` change to be updated.
 > NOTE: When used in combination with `--conventional-commits` and `--conventional-graduate` this option will be ignored.
