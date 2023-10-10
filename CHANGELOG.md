@@ -94,6 +94,16 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 As this is a major release there are a few breaking changes to be aware of, which may or may not affect your lerna repos, depending on how you are using the tool.
 
+- **node v14 support is dropped because it is end of life**
+
+When a node version because end of life (EOL) it means that it does not receive any updates or maintenance whatsoever, even if critical security vulnerabilities have been uncovered.
+
+We strongly encourage all folks here to keep up with the maintenance LTS version of Node at an absolute minimum:
+
+https://github.com/nodejs/release#release-schedule
+
+NOTE: Due to an oversight, we initially forgot to formally remove this from the engines field. This was corrected in patch `7.3.1`
+
 - **legacy package management commands have been removed**
 
 We no longer include the `bootstrap`, `add`, and `link` commands by default. We strongly recommend using your package manager (`npm`, `yarn`, `pnpm`) for package management related concerns such as installing and linking dependencies.
