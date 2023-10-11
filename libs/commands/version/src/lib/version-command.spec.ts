@@ -16,6 +16,7 @@ import {
   initFixtureFactory,
   loggingOutput,
   showCommit,
+  tempDirSerializer,
 } from "@lerna/test-helpers";
 import execa from "execa";
 import fs from "fs-extra";
@@ -83,6 +84,9 @@ const listDirty = (cwd) =>
 
 // stabilize commit SHA
 expect.addSnapshotSerializer(gitSHASerializer);
+
+// normalize temp directory paths in snapshots
+expect.addSnapshotSerializer(tempDirSerializer);
 
 describe("VersionCommand", () => {
   describe("normal mode", () => {
@@ -494,6 +498,73 @@ describe("VersionCommand", () => {
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("v1.0.1");
+    });
+  });
+
+  describe("--json", () => {
+    it("prints json format", async () => {
+      const testDir = await initFixture("normal");
+
+      await lernaVersion(testDir)("--yes", "--json", "patch");
+
+      // Output should be a parseable string
+      const jsonOutput = JSON.parse(output.logged());
+      expect(jsonOutput).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "location": "__TEST_ROOTDIR__/packages/package-1",
+    "name": "package-1",
+    "newVersion": "1.0.1",
+    "private": false,
+    "version": "1.0.0",
+  },
+  Object {
+    "location": "__TEST_ROOTDIR__/packages/package-2",
+    "name": "package-2",
+    "newVersion": "1.0.1",
+    "private": false,
+    "version": "1.0.0",
+  },
+  Object {
+    "location": "__TEST_ROOTDIR__/packages/package-3",
+    "name": "package-3",
+    "newVersion": "1.0.1",
+    "private": false,
+    "version": "1.0.0",
+  },
+  Object {
+    "location": "__TEST_ROOTDIR__/packages/package-4",
+    "name": "package-4",
+    "newVersion": "1.0.1",
+    "private": false,
+    "version": "1.0.0",
+  },
+  Object {
+    "location": "__TEST_ROOTDIR__/packages/package-5",
+    "name": "package-5",
+    "newVersion": "1.0.1",
+    "private": true,
+    "version": "1.0.0",
+  },
+]
+`);
+    });
+
+    it("prints NO json format", async () => {
+      const testDir = await initFixture("normal");
+
+      await lernaVersion(testDir)("--yes", "patch");
+
+      expect(output.logged()).toMatchInlineSnapshot(`
+"
+Changes:
+ - package-1: 1.0.0 => 1.0.1
+ - package-2: 1.0.0 => 1.0.1
+ - package-3: 1.0.0 => 1.0.1
+ - package-4: 1.0.0 => 1.0.1
+ - package-5: 1.0.0 => 1.0.1 (private)
+"
+`);
     });
   });
 
