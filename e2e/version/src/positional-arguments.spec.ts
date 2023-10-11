@@ -263,4 +263,42 @@ describe("lerna-version-positional-arguments-npm", () => {
 
     `);
   });
+
+  it("should support outputting json format", async () => {
+    const output = await fixture.lerna("version prerelease -y --json");
+    expect(output.combinedOutput).toMatchInlineSnapshot(`
+      lerna notice cli v999.9.9-e2e.0
+      lerna info current version 0.0.0
+      lerna info Assuming all packages changed
+      [
+        {
+          "name": "package-a",
+          "version": "0.0.0",
+          "private": false,
+          "location": "/tmp/lerna-e2e/lerna-version-positional-arguments-npm/lerna-workspace/packages/package-a",
+          "newVersion": "0.0.1-alpha.0"
+        }
+      ]
+      lerna info auto-confirmed 
+      lerna info execute Skipping releases
+      lerna info git Pushing tags...
+      lerna success version finished
+
+    `);
+
+    // should output valid json format
+    expect(JSON.parse(output.stdout)).toMatchInlineSnapshot(
+      `
+      Array [
+        Object {
+          location: /tmp/lerna-e2e/lerna-version-positional-arguments-npm/lerna-workspace/packages/package-a,
+          name: package-a,
+          newVersion: 0.0.1-alpha.0,
+          private: false,
+          version: 0.0.0,
+        },
+      ]
+    `
+    );
+  });
 });
