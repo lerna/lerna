@@ -55,6 +55,11 @@ const command: CommandModule = {
         describe: "Version currently prereleased packages to a non-prerelease version.",
         // type must remain ambiguous because it is overloaded (boolean _or_ string _or_ array)
       },
+      "force-conventional-graduate": {
+        describe:
+          "Forces all packages specified by --conventional-graduate to bump their version whether or not they are a prerelease or have changes since the previous version.",
+        type: "boolean",
+      },
       "conventional-prerelease": {
         describe: "Version changed packages as prereleases when using --conventional-commits.",
         // type must remain ambiguous because it is overloaded (boolean _or_ string _or_ array)

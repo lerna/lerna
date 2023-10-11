@@ -27,6 +27,7 @@ export interface ProjectUpdateCollectorOptions {
   since?: string;
   conventionalCommits?: boolean;
   conventionalGraduate?: string | boolean;
+  forceConventionalGraduate?: boolean;
   excludeDependents?: boolean;
 }
 
@@ -39,10 +40,16 @@ export function collectProjectUpdates(
   execOpts: ExecOptions,
   commandOptions: ProjectUpdateCollectorOptions
 ): ProjectGraphProjectNodeWithPackage[] {
-  const { forcePublish, conventionalCommits, conventionalGraduate, excludeDependents } = commandOptions;
+  const {
+    forcePublish,
+    conventionalCommits,
+    forceConventionalGraduate,
+    conventionalGraduate,
+    excludeDependents,
+  } = commandOptions;
 
-  // If --conventional-commits and --conventional-graduate are both set, ignore --force-publish
-  const useConventionalGraduate = conventionalCommits && conventionalGraduate;
+  // If --conventional-commits and --conventional-graduate are both set, ignore --force-publish but consider --force-conventional-graduate
+  const useConventionalGraduate = conventionalCommits && (conventionalGraduate || forceConventionalGraduate);
   const forced = getPackagesForOption(useConventionalGraduate ? conventionalGraduate : forcePublish);
 
   let committish = commandOptions.since ?? "";
@@ -107,7 +114,8 @@ export function collectProjectUpdates(
   const isForced = (node: ProjectGraphProjectNodeWithPackage, name: string) =>
     !!(
       (forced.has("*") || forced.has(name)) &&
-      (useConventionalGraduate ? prereleaseIdFromVersion(getPackage(node).version) : true)
+      ((useConventionalGraduate ? prereleaseIdFromVersion(getPackage(node).version) : true) ||
+        forceConventionalGraduate)
     );
 
   return collectProjects(filteredProjects, projectGraph, {

@@ -75,6 +75,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   exact?: boolean;
   conventionalPrerelease?: string;
   conventionalGraduate?: string;
+  forceConventionalGraduate?: boolean;
   private?: boolean;
   forcePublish?: boolean | string | string[];
   bump?: string;
