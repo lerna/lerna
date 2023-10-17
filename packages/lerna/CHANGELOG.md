@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.4.0](https://github.com/lerna/lerna/compare/v7.3.1...v7.4.0) (2023-10-17)
+
+### Features
+
+- **version:** add json option ([#3858](https://github.com/lerna/lerna/issues/3858)) ([86f22f4](https://github.com/lerna/lerna/commit/86f22f40ca05de38e8717c573356708d13377c33))
+- **version:** add option to force version update ([#3852](https://github.com/lerna/lerna/issues/3852)) ([914dd96](https://github.com/lerna/lerna/commit/914dd964d7a4a127be3d4f2703322ab1b31594f6))
+
 ## [7.3.1](https://github.com/lerna/lerna/compare/v7.3.0...v7.3.1) (2023-10-10)
 
 ### Bug Fixes
