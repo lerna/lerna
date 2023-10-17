@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/diff/lib/has-commit");
+export * from "@lerna/commands/diff/lib/has-commit";

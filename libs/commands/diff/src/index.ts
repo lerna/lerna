@@ -6,19 +6,19 @@ import { hasCommit } from "./lib/has-commit";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+export function factory(argv: NodeJS.Process["argv"]) {
   return new DiffCommand(argv);
-};
+}
 
 interface DiffCommandOptions extends CommandConfigOptions {
   pkgName: string;
   ignoreChanges: string[];
 }
 
-class DiffCommand extends Command<DiffCommandOptions> {
+export class DiffCommand extends Command<DiffCommandOptions> {
   private args: string[] = [];
 
-  initialize() {
+  override initialize() {
     const packageName = this.options.pkgName;
     let targetPackage;
 
@@ -55,7 +55,7 @@ class DiffCommand extends Command<DiffCommandOptions> {
     this.args = args;
   }
 
-  execute() {
+  override execute() {
     return childProcess.spawn("git", this.args, this.execOpts).catch((err: execa.ExecaError) => {
       if (err.exitCode) {
         // quitting the diff viewer is not an error
@@ -64,5 +64,3 @@ class DiffCommand extends Command<DiffCommandOptions> {
     });
   }
 }
-
-module.exports.DiffCommand = DiffCommand;
