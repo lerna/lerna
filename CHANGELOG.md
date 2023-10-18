@@ -5,7 +5,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [7.4.1](https://github.com/lerna/lerna/compare/v7.4.0...v7.4.1) (2023-10-18)
 
-**Note:** Version bump only for package lerna-monorepo
+7.4.0 contained a malformed dist directory, please bump to 7.4.1 for the correct artifacts
 
 # [7.4.0](https://github.com/lerna/lerna/compare/v7.3.1...v7.4.0) (2023-10-17)
 
