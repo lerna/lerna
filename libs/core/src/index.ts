@@ -8,10 +8,11 @@ export {
   collectProjectUpdates,
   collectProjects,
 } from "./lib/collect-updates";
-export { Command, PreInitializedProjectData, ExecOpts } from "./lib/command";
+export { Command, ExecOpts, PreInitializedProjectData } from "./lib/command";
 export { detectProjects } from "./lib/command/detect-projects";
 export { isGitInitialized } from "./lib/command/is-git-initialized";
 export { applyBuildMetadata, recommendVersion, updateChangelog } from "./lib/conventional-commits";
+export * from "./lib/corepack";
 export { describeRef, describeRefSync } from "./lib/describe-ref";
 export { FilterOptions, filterOptions } from "./lib/filter-options";
 export { filterProjects } from "./lib/filter-projects";
@@ -19,7 +20,7 @@ export { getPackageManifestPath } from "./lib/get-package-manifest-path";
 export * from "./lib/get-packages-for-option";
 export { gitCheckout } from "./lib/git-checkout";
 export { hasNpmVersion } from "./lib/has-npm-version";
-export { listableFormatProjects, formatJSON } from "./lib/listable-format-projects";
+export { formatJSON, listableFormatProjects } from "./lib/listable-format-projects";
 export { ListableOptions, listableOptions } from "./lib/listable-options";
 export { logPacked } from "./lib/log-packed";
 export { Conf } from "./lib/npm-conf/conf";
