@@ -77,6 +77,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--no-push`](#--no-push)
     - [`--npm-client-args`](#--npm-client-args)
     - [`--preid`](#--preid)
+    - [`--premajor-version-bump`](#--premajor-version-bump)
     - [`--run-scripts-on-lockfile-update`](#--run-scripts-on-lockfile-update)
     - [`--signoff-git-commit`](#--signoff-git-commit)
     - [`--sign-git-commit`](#--sign-git-commit)
@@ -550,6 +551,23 @@ lerna version prepatch --preid next
 
 When run with this flag, `lerna version` will increment `premajor`, `preminor`, `prepatch`, or `prerelease` semver
 bumps using the specified [prerelease identifier](http://semver.org/#spec-item-9).
+
+### `--premajor-version-bump`
+
+This option allows you to control how lerna handles bumping versions for packages with a
+`premajor` version (packages that have not had a major release, e.g. `"version": "0.2.4"`)
+when non-breaking changes are detected.
+Breaking changes in `premajor` packages will always trigger a `minor` bump.
+
+```sh
+lerna version --conventional-commits --premajor-version-bump semver
+# ensures premajor version bumps are handled as minor unless breaking change is applied.
+# 0.1.0 --> 0.2.0
+
+lerna version --conventional-commits --premajor-version-bump force-patch
+# ensures that all non-breaking premajor version bumps are handled as patches
+# 0.1.0 --> 0.1.1
+```
 
 ### `--run-scripts-on-lockfile-update`
 
