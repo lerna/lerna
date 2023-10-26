@@ -49,6 +49,7 @@ describe("version --conventional-commits", () => {
       ["package-3", "4.0.0"],
       ["package-4", "4.1.0"],
       ["package-5", "5.0.1"],
+      ["package-6", "0.2.0"]
     ]);
 
     const prereleaseVersionBumps = new Map([
@@ -57,6 +58,7 @@ describe("version --conventional-commits", () => {
       ["package-3", "4.0.0-beta.0"],
       ["package-4", "4.1.0-alpha.0"],
       ["package-5", "5.0.1-alpha.0"],
+      ["package-6", "0.2.0-alpha.0"],
     ]);
 
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {

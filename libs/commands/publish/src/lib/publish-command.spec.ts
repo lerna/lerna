@@ -164,6 +164,7 @@ Map {
       expect(npmPublish.order()).toEqual([
         "package-1",
         "package-4",
+        "package-6",
         "package-2",
         "package-3",
         // package-5 is private

@@ -65,8 +65,9 @@ exports[`version --conventional-commits independent accepts --build-metadata opt
  - package-3@4.0.0+001
  - package-4@4.1.0+001
  - package-5@5.0.1+001
+ - package-6@0.2.0+001
 
-HEAD -> main, tag: package-5@5.0.1+001, tag: package-4@4.1.0+001, tag: package-3@4.0.0+001, tag: package-2@2.1.0+001, tag: package-1@1.0.1+001
+HEAD -> main, tag: package-6@0.2.0+001, tag: package-5@5.0.1+001, tag: package-4@4.1.0+001, tag: package-3@4.0.0+001, tag: package-2@2.1.0+001, tag: package-1@1.0.1+001
 
 packages/package-1/CHANGELOG.md
 packages/package-1/package.json
@@ -77,7 +78,9 @@ packages/package-3/package.json
 packages/package-4/CHANGELOG.md
 packages/package-4/package.json
 packages/package-5/CHANGELOG.md
-packages/package-5/package.json"
+packages/package-5/package.json
+packages/package-6/CHANGELOG.md
+packages/package-6/package.json"
 `;
 
 exports[`version --conventional-commits independent should graduate prerelease version bumps and generate CHANGELOG 1`] = `
@@ -88,8 +91,9 @@ exports[`version --conventional-commits independent should graduate prerelease v
  - package-3@4.0.0
  - package-4@4.1.0
  - package-5@5.0.1
+ - package-6@0.2.0
 
-HEAD -> main, tag: package-5@5.0.1, tag: package-4@4.1.0, tag: package-3@4.0.0, tag: package-2@2.1.0, tag: package-1@1.0.1
+HEAD -> main, tag: package-6@0.2.0, tag: package-5@5.0.1, tag: package-4@4.1.0, tag: package-3@4.0.0, tag: package-2@2.1.0, tag: package-1@1.0.1
 
 packages/package-1/CHANGELOG.md
 packages/package-1/package.json
@@ -100,7 +104,9 @@ packages/package-3/package.json
 packages/package-4/CHANGELOG.md
 packages/package-4/package.json
 packages/package-5/CHANGELOG.md
-packages/package-5/package.json"
+packages/package-5/package.json
+packages/package-6/CHANGELOG.md
+packages/package-6/package.json"
 `;
 
 exports[`version --conventional-commits independent should guess prerelease version bumps and generate CHANGELOG 1`] = `
@@ -111,8 +117,9 @@ exports[`version --conventional-commits independent should guess prerelease vers
  - package-3@4.0.0-beta.0
  - package-4@4.1.0-alpha.0
  - package-5@5.0.1-alpha.0
+ - package-6@0.2.0-alpha.0
 
-HEAD -> main, tag: package-5@5.0.1-alpha.0, tag: package-4@4.1.0-alpha.0, tag: package-3@4.0.0-beta.0, tag: package-2@2.1.0-alpha.0, tag: package-1@1.0.1-alpha.0
+HEAD -> main, tag: package-6@0.2.0-alpha.0, tag: package-5@5.0.1-alpha.0, tag: package-4@4.1.0-alpha.0, tag: package-3@4.0.0-beta.0, tag: package-2@2.1.0-alpha.0, tag: package-1@1.0.1-alpha.0
 
 packages/package-1/CHANGELOG.md
 packages/package-1/package.json
@@ -123,7 +130,9 @@ packages/package-3/package.json
 packages/package-4/CHANGELOG.md
 packages/package-4/package.json
 packages/package-5/CHANGELOG.md
-packages/package-5/package.json"
+packages/package-5/package.json
+packages/package-6/CHANGELOG.md
+packages/package-6/package.json"
 `;
 
 exports[`version --conventional-commits independent should use conventional-commits utility to guess version bump and generate CHANGELOG 1`] = `
@@ -134,8 +143,9 @@ exports[`version --conventional-commits independent should use conventional-comm
  - package-3@4.0.0
  - package-4@4.1.0
  - package-5@5.0.1
+ - package-6@0.2.0
 
-HEAD -> main, tag: package-5@5.0.1, tag: package-4@4.1.0, tag: package-3@4.0.0, tag: package-2@2.1.0, tag: package-1@1.0.1
+HEAD -> main, tag: package-6@0.2.0, tag: package-5@5.0.1, tag: package-4@4.1.0, tag: package-3@4.0.0, tag: package-2@2.1.0, tag: package-1@1.0.1
 
 packages/package-1/CHANGELOG.md
 packages/package-1/package.json
@@ -146,5 +156,7 @@ packages/package-3/package.json
 packages/package-4/CHANGELOG.md
 packages/package-4/package.json
 packages/package-5/CHANGELOG.md
-packages/package-5/package.json"
+packages/package-5/package.json
+packages/package-6/CHANGELOG.md
+packages/package-6/package.json"
 `;
