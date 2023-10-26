@@ -20,7 +20,6 @@ expect.addSnapshotSerializer({
 });
 
 const setupYarnBerryWithCorepack = async (fixture: Fixture) => {
-  await fixture.exec("corepack enable");
   // "corepack use ..." will try to do an install afterwards, but it will fail due to unsafeHttpWhitelist not being set.
   // This isn't a problem as yarn itself will still be installed and we can do a `yarn install` after setting appropriate config.
   await fixture.exec("corepack use yarn@stable", {
@@ -66,7 +65,10 @@ const setupYarnBerryWithCorepack = async (fixture: Fixture) => {
 describe("lerna-version-corepack", () => {
   let fixture: Fixture;
 
-  afterEach(() => fixture.destroy());
+  afterEach(async () => {
+    await fixture.exec("corepack disable");
+    await fixture.destroy();
+  });
 
   describe("yarn berry", () => {
     beforeEach(async () => {
@@ -81,6 +83,7 @@ describe("lerna-version-corepack", () => {
 
       await fixture.lernaInit("");
 
+      await fixture.exec("corepack enable");
       await setupYarnBerryWithCorepack(fixture);
 
       await fixture.lerna("create package-a -y");
@@ -131,6 +134,8 @@ describe("lerna-version-corepack", () => {
         lernaInit: { args: [`--packages="packages/*"`] },
         installDependencies: true,
       });
+      await fixture.exec("corepack enable");
+
       await fixture.lerna("create package-a -y");
       await fixture.lerna("create package-b -y --dependencies package-a");
       await fixture.createInitialGitCommit();
