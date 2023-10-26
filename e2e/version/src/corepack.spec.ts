@@ -106,21 +106,21 @@ describe("lerna-version-corepack", () => {
         lerna notice cli v999.9.9-e2e.0
         lerna info current version 0.0.0
         lerna info Assuming all packages changed
-  
+
         Changes:
          - package-a: 0.0.0 => 3.3.3
          - package-b: 0.0.0 => 3.3.3
-  
+
         lerna info auto-confirmed 
         lerna info execute Skipping releases
         lerna info git Pushing tags...
         lerna success version finished
-  
+
       `);
       const yarnLock = readFileSync(fixture.getWorkspacePath("yarn.lock")).toString();
-      expect(yarnLock).toContain("package-a@^3.3.3, package-a@workspace:packages/package-a");
-      expect(yarnLock).toContain("package-b@workspace:packages/package-b");
-      expect(yarnLock).toContain("package-a: ^3.3.3");
+      expect(yarnLock).toContain(`package-a@npm:^3.3.3, package-a@workspace:packages/package-a`);
+      expect(yarnLock).toContain(`package-b@workspace:packages/package-b`);
+      expect(yarnLock).toContain(`package-a: "npm:^3.3.3"`);
     });
   });
 
@@ -128,7 +128,7 @@ describe("lerna-version-corepack", () => {
     beforeEach(async () => {
       fixture = await Fixture.create({
         e2eRoot: process.env.E2E_ROOT,
-        name: "lerna-version-positional-arguments",
+        name: "lerna-version-corepack",
         packageManager: "pnpm",
         initializeGit: true,
         lernaInit: { args: [`--packages="packages/*"`] },
@@ -145,20 +145,20 @@ describe("lerna-version-corepack", () => {
     it("should update pnpm-lock.yaml", async () => {
       const output = await fixture.lerna("version 3.4.0 -y");
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-      lerna notice cli v999.9.9-e2e.0
-      lerna info current version 0.0.0
-      lerna info Assuming all packages changed
+        lerna notice cli v999.9.9-e2e.0
+        lerna info current version 0.0.0
+        lerna info Assuming all packages changed
 
-      Changes:
-       - package-a: 0.0.0 => 3.4.0
-       - package-b: 0.0.0 => 3.4.0
+        Changes:
+         - package-a: 0.0.0 => 3.4.0
+         - package-b: 0.0.0 => 3.4.0
 
-      lerna info auto-confirmed 
-      lerna info execute Skipping releases
-      lerna info git Pushing tags...
-      lerna success version finished
+        lerna info auto-confirmed 
+        lerna info execute Skipping releases
+        lerna info git Pushing tags...
+        lerna success version finished
 
-    `);
+      `);
 
       const pnpmLockfileContent = await fixture.readWorkspaceFile("pnpm-lock.yaml");
       const pnpmLockfileObject = <PnpmLockfile>load(pnpmLockfileContent);
