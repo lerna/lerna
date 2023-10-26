@@ -1,4 +1,5 @@
 import {
+  Arguments,
   collectProjectUpdates,
   Command,
   CommandConfigOptions,
@@ -6,7 +7,7 @@ import {
   output,
 } from "@lerna/core";
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+module.exports = function factory(argv: Arguments<ChangedCommandOptions>) {
   return new ChangedCommand(argv);
 };
 

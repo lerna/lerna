@@ -1,6 +1,13 @@
-import { Command, filterProjects, listableFormatProjects, output } from "@lerna/core";
+import {
+  Arguments,
+  Command,
+  CommandConfigOptions,
+  filterProjects,
+  listableFormatProjects,
+  output,
+} from "@lerna/core";
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+module.exports = function factory(argv: Arguments<CommandConfigOptions>) {
   return new ListCommand(argv);
 };
 

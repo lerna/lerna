@@ -1,16 +1,16 @@
-import { Command } from "@lerna/core";
+import { Arguments, Command, CommandConfigOptions } from "@lerna/core";
 import log from "npmlog";
 import { repair } from "nx/src/command-line/repair/repair";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const migrationsJson = require("../../../migrations.json");
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+module.exports = function factory(argv: Arguments<CommandConfigOptions>) {
   return new RepairCommand(argv);
 };
 
 class RepairCommand extends Command {
-  constructor(argv: NodeJS.Process["argv"]) {
+  constructor(argv: Arguments<CommandConfigOptions>) {
     super(argv, { skipValidations: true });
   }
 

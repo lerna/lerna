@@ -22,9 +22,8 @@ const command: CommandModule = {
         "When ignoreChanges is configured in lerna.json, pass --no-ignore-changes to include ignored files."
       );
   },
-  handler(argv) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require(".").factory(argv);
+  async handler(argv) {
+    return (await import(".")).factory(argv);
   },
 };
 
