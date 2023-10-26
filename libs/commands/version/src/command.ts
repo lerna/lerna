@@ -225,6 +225,11 @@ const command: CommandModule = {
         describe: "Additional arguments to pass to the npm client when performing 'npm install'.",
         type: "array",
       },
+      "premajor-version-bump": {
+        describe: "Controls how pre-major version packages are bumped by lerna.",
+        type: "string",
+        choices: ["default", "force-patch"],
+      },
       y: {
         describe: "Skip all confirmation prompts.",
         alias: "yes",

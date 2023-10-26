@@ -15,8 +15,9 @@ export function recommendVersion(
     tagPrefix,
     prereleaseId,
     conventionalBumpPrerelease,
-    buildMetadata,
-  }: BaseChangelogOptions & { prereleaseId?: string; buildMetadata?: string }
+    buildMetadata
+  }: BaseChangelogOptions & { prereleaseId?: string; buildMetadata?: string },
+  premajorVersionBump: "default" | "force-patch"
 ): Promise<string> {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
@@ -53,6 +54,7 @@ export function recommendVersion(
     // "new" preset API
     options.config = config;
 
+
     return new Promise((resolve, reject) => {
       conventionalRecommendedBump(options, (err: any, data: any) => {
         if (err) {
@@ -88,8 +90,15 @@ export function recommendVersion(
             // breaking changes. This matches the behavior of `^` operator
             // as implemented by `npm`.
             //
+            // In node-semver, it is however also documented that
+            // "Many authors treat a 0.x version as if the x were the major "breaking-change" indicator."
+            // and all other features or bug fixes as semver-patch bumps
+            // this can be enabled in lerna through `premajorVersionBump = "force-patch"`
+
             if (releaseType === "major") {
               releaseType = "minor";
+            } else if(premajorVersionBump === "force-patch") {
+              releaseType = "patch"
             }
           }
           log.verbose(type, "increment %s by %s", pkg.version, releaseType);

@@ -92,6 +92,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   conventionalBumpPrerelease?: boolean;
   yes?: boolean;
   rejectCycles?: boolean;
+  premajorVersionBump?: "default" | "force-patch";
 }
 
 class VersionCommand extends Command {
@@ -124,6 +125,7 @@ class VersionCommand extends Command {
   updatesVersions?: Map<string, string>;
   packagesToVersion?: Package[];
   projectsWithPackage: ProjectGraphProjectNodeWithPackage[] = [];
+  premajorVersionBump?: "default" | "force-patch";
 
   get otherCommandConfigs() {
     // back-compat
@@ -165,12 +167,14 @@ class VersionCommand extends Command {
       signGitTag,
       forceGitTag,
       tagVersionPrefix = "v",
+      premajorVersionBump = "default",
     } = this.options;
 
     this.gitRemote = gitRemote;
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
     this.pushToRemote = gitTagVersion && amend !== true && push;
+    this.premajorVersionBump = premajorVersionBump;
     // never automatically push to remote when amending a commit
 
     this.releaseClient =
@@ -510,17 +514,22 @@ class VersionCommand extends Command {
 
     const versions = await this.reduceVersions((node) => {
       const pkg = getPackage(node);
-      return recommendVersion(pkg, type, {
-        changelogPreset,
-        rootPath,
-        tagPrefix: this.tagPrefix,
-        prereleaseId: getPrereleaseId({
-          name: node.name,
-          prereleaseId: prereleaseIdFromVersion(pkg.version),
-        }),
-        conventionalBumpPrerelease,
-        buildMetadata,
-      });
+      return recommendVersion(
+        pkg,
+        type,
+        {
+          changelogPreset,
+          rootPath,
+          tagPrefix: this.tagPrefix,
+          prereleaseId: getPrereleaseId({
+            name: node.name,
+            prereleaseId: prereleaseIdFromVersion(pkg.version),
+          }),
+          conventionalBumpPrerelease,
+          buildMetadata,
+        },
+        this.premajorVersionBump
+      );
     });
 
     if (type === "fixed") {
