@@ -15,7 +15,7 @@ export function recommendVersion(
     tagPrefix,
     prereleaseId,
     conventionalBumpPrerelease,
-    buildMetadata
+    buildMetadata,
   }: BaseChangelogOptions & { prereleaseId?: string; buildMetadata?: string },
   premajorVersionBump: "default" | "force-patch"
 ): Promise<string> {
@@ -53,7 +53,6 @@ export function recommendVersion(
   chain = chain.then((config) => {
     // "new" preset API
     options.config = config;
-
 
     return new Promise((resolve, reject) => {
       conventionalRecommendedBump(options, (err: any, data: any) => {
@@ -97,8 +96,8 @@ export function recommendVersion(
 
             if (releaseType === "major") {
               releaseType = "minor";
-            } else if(premajorVersionBump === "force-patch") {
-              releaseType = "patch"
+            } else if (premajorVersionBump === "force-patch") {
+              releaseType = "patch";
             }
           }
           log.verbose(type, "increment %s by %s", pkg.version, releaseType);

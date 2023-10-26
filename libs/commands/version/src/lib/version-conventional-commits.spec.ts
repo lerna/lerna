@@ -49,7 +49,7 @@ describe("version --conventional-commits", () => {
       ["package-3", "4.0.0"],
       ["package-4", "4.1.0"],
       ["package-5", "5.0.1"],
-      ["package-6", "0.2.0"]
+      ["package-6", "0.2.0"],
     ]);
 
     const prereleaseVersionBumps = new Map([
@@ -72,13 +72,18 @@ describe("version --conventional-commits", () => {
       expect(changedFiles).toMatchSnapshot();
 
       versionBumps.forEach((version, name) => {
-        expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name }), "independent", {
-          changelogPreset: undefined,
-          rootPath: cwd,
-          tagPrefix: "v",
-          prereleaseId: undefined,
-          buildMetadata: undefined,
-        });
+        expect(recommendVersion).toHaveBeenCalledWith(
+          expect.objectContaining({ name }),
+          "independent",
+          {
+            changelogPreset: undefined,
+            rootPath: cwd,
+            tagPrefix: "v",
+            prereleaseId: undefined,
+            buildMetadata: undefined,
+          },
+          "default"
+        );
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
@@ -98,13 +103,18 @@ describe("version --conventional-commits", () => {
 
       prereleaseVersionBumps.forEach((version, name) => {
         const prereleaseId = semver.prerelease(version)[0];
-        expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name }), "independent", {
-          changelogPreset: undefined,
-          rootPath: cwd,
-          tagPrefix: "v",
-          prereleaseId,
-          buildMetadata: undefined,
-        });
+        expect(recommendVersion).toHaveBeenCalledWith(
+          expect.objectContaining({ name }),
+          "independent",
+          {
+            changelogPreset: undefined,
+            rootPath: cwd,
+            tagPrefix: "v",
+            prereleaseId,
+            buildMetadata: undefined,
+          },
+          "default"
+        );
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
@@ -125,13 +135,18 @@ describe("version --conventional-commits", () => {
 
       prereleaseVersionBumps.forEach((version, name) => {
         const prereleaseId = semver.prerelease(version)[0];
-        expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name }), "independent", {
-          changelogPreset: undefined,
-          rootPath: cwd,
-          tagPrefix: "v",
-          prereleaseId,
-          conventionalBumpPrerelease: true,
-        });
+        expect(recommendVersion).toHaveBeenCalledWith(
+          expect.objectContaining({ name }),
+          "independent",
+          {
+            changelogPreset: undefined,
+            rootPath: cwd,
+            tagPrefix: "v",
+            prereleaseId,
+            conventionalBumpPrerelease: true,
+          },
+          "default"
+        );
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
@@ -150,13 +165,18 @@ describe("version --conventional-commits", () => {
       expect(changedFiles).toMatchSnapshot();
 
       versionBumps.forEach((version, name) => {
-        expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name }), "independent", {
-          changelogPreset: undefined,
-          rootPath: cwd,
-          tagPrefix: "v",
-          prerelease: undefined,
-          buildMetadata: undefined,
-        });
+        expect(recommendVersion).toHaveBeenCalledWith(
+          expect.objectContaining({ name }),
+          "independent",
+          {
+            changelogPreset: undefined,
+            rootPath: cwd,
+            tagPrefix: "v",
+            prerelease: undefined,
+            buildMetadata: undefined,
+          },
+          "default"
+        );
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
@@ -177,7 +197,12 @@ describe("version --conventional-commits", () => {
 
       await lernaVersion(cwd)("--conventional-commits", "--changelog-preset", "foo-bar");
 
-      expect(recommendVersion).toHaveBeenCalledWith(expect.any(Object), "independent", changelogOpts);
+      expect(recommendVersion).toHaveBeenCalledWith(
+        expect.any(Object),
+        "independent",
+        changelogOpts,
+        "default"
+      );
       expect(updateChangelog).toHaveBeenCalledWith(expect.any(Object), "independent", changelogOpts);
     });
 
@@ -214,10 +239,15 @@ describe("version --conventional-commits", () => {
       const changedFiles = await showCommit(cwd, "--name-only");
       expect(changedFiles).toMatchSnapshot();
 
-      expect(recommendVersion).toHaveBeenCalledWith(expect.any(Object), "independent", {
-        ...changelogOpts,
-        buildMetadata,
-      });
+      expect(recommendVersion).toHaveBeenCalledWith(
+        expect.any(Object),
+        "independent",
+        {
+          ...changelogOpts,
+          buildMetadata,
+        },
+        "default"
+      );
       expect(updateChangelog).toHaveBeenCalledWith(expect.any(Object), "independent", changelogOpts);
     });
   });
@@ -241,13 +271,18 @@ describe("version --conventional-commits", () => {
       ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach((name) => {
         const location = path.join(cwd, "packages", name);
 
-        expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name, location }), "fixed", {
-          changelogPreset: undefined,
-          rootPath: cwd,
-          tagPrefix: "v",
-          prereleaseId: undefined,
-          buildMetadata: undefined,
-        });
+        expect(recommendVersion).toHaveBeenCalledWith(
+          expect.objectContaining({ name, location }),
+          "fixed",
+          {
+            changelogPreset: undefined,
+            rootPath: cwd,
+            tagPrefix: "v",
+            prereleaseId: undefined,
+            buildMetadata: undefined,
+          },
+          "default"
+        );
 
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version: "2.0.0" }),
@@ -290,13 +325,18 @@ describe("version --conventional-commits", () => {
       ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach((name) => {
         const location = path.join(cwd, "packages", name);
 
-        expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name, location }), "fixed", {
-          changelogPreset: undefined,
-          rootPath: cwd,
-          tagPrefix: "v",
-          prereleaseId: "alpha",
-          buildMetadata: undefined,
-        });
+        expect(recommendVersion).toHaveBeenCalledWith(
+          expect.objectContaining({ name, location }),
+          "fixed",
+          {
+            changelogPreset: undefined,
+            rootPath: cwd,
+            tagPrefix: "v",
+            prereleaseId: "alpha",
+            buildMetadata: undefined,
+          },
+          "default"
+        );
 
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version: "2.0.0-alpha.0" }),
@@ -338,10 +378,15 @@ describe("version --conventional-commits", () => {
         "dragons-are-awesome"
       );
 
-      expect(recommendVersion).toHaveBeenCalledWith(expect.any(Object), "fixed", {
-        ...changelogOpts,
-        buildMetadata: undefined,
-      });
+      expect(recommendVersion).toHaveBeenCalledWith(
+        expect.any(Object),
+        "fixed",
+        {
+          ...changelogOpts,
+          buildMetadata: undefined,
+        },
+        "default"
+      );
       expect(updateChangelog).toHaveBeenCalledWith(expect.any(Object), "fixed", changelogOpts);
     });
 
@@ -405,10 +450,15 @@ describe("version --conventional-commits", () => {
     const changedFiles = await showCommit(cwd, "--name-only");
     expect(changedFiles).toMatchSnapshot();
 
-    expect(recommendVersion).toHaveBeenCalledWith(expect.any(Object), "fixed", {
-      ...changelogOpts,
-      buildMetadata,
-    });
+    expect(recommendVersion).toHaveBeenCalledWith(
+      expect.any(Object),
+      "fixed",
+      {
+        ...changelogOpts,
+        buildMetadata,
+      },
+      "default"
+    );
     expect(updateChangelog).toHaveBeenCalledWith(expect.any(Object), "fixed", changelogOpts);
   });
 });
