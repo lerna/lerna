@@ -83,6 +83,58 @@ packages/package-6/CHANGELOG.md
 packages/package-6/package.json"
 `;
 
+exports[`version --conventional-commits independent should bump premajorVersionBump default as minor 1`] = `
+"Publish
+
+ - package-1@0.1.0
+ - package-2@0.3.0
+ - package-3@0.4.0
+ - package-4@1.1.0
+ - package-5@0.6.0
+ - package-6@0.2.0
+
+HEAD -> main, tag: package-6@0.2.0, tag: package-5@0.6.0, tag: package-4@1.1.0, tag: package-3@0.4.0, tag: package-2@0.3.0, tag: package-1@0.1.0
+
+packages/package-1/CHANGELOG.md
+packages/package-1/package.json
+packages/package-2/CHANGELOG.md
+packages/package-2/package.json
+packages/package-3/CHANGELOG.md
+packages/package-3/package.json
+packages/package-4/CHANGELOG.md
+packages/package-4/package.json
+packages/package-5/CHANGELOG.md
+packages/package-5/package.json
+packages/package-6/CHANGELOG.md
+packages/package-6/package.json"
+`;
+
+exports[`version --conventional-commits independent should bump premajorVersionBump force-patch as patch 1`] = `
+"Publish
+
+ - package-1@0.1.0
+ - package-2@0.2.1
+ - package-3@0.3.1
+ - package-4@1.1.0
+ - package-5@0.5.1
+ - package-6@0.1.1
+
+HEAD -> main, tag: package-6@0.1.1, tag: package-5@0.5.1, tag: package-4@1.1.0, tag: package-3@0.3.1, tag: package-2@0.2.1, tag: package-1@0.1.0
+
+packages/package-1/CHANGELOG.md
+packages/package-1/package.json
+packages/package-2/CHANGELOG.md
+packages/package-2/package.json
+packages/package-3/CHANGELOG.md
+packages/package-3/package.json
+packages/package-4/CHANGELOG.md
+packages/package-4/package.json
+packages/package-5/CHANGELOG.md
+packages/package-5/package.json
+packages/package-6/CHANGELOG.md
+packages/package-6/package.json"
+`;
+
 exports[`version --conventional-commits independent should graduate prerelease version bumps and generate CHANGELOG 1`] = `
 "Publish
 
@@ -159,4 +211,42 @@ packages/package-5/CHANGELOG.md
 packages/package-5/package.json
 packages/package-6/CHANGELOG.md
 packages/package-6/package.json"
+`;
+
+exports[`version --conventional-commits should bump premajorVersionBump force-patch as patch 1`] = `
+"v0.1.1
+
+HEAD -> main, tag: v0.1.1
+
+CHANGELOG.md
+lerna.json
+packages/package-1/CHANGELOG.md
+packages/package-1/package.json
+packages/package-2/CHANGELOG.md
+packages/package-2/package.json
+packages/package-3/CHANGELOG.md
+packages/package-3/package.json
+packages/package-4/CHANGELOG.md
+packages/package-4/package.json
+packages/package-5/CHANGELOG.md
+packages/package-5/package.json"
+`;
+
+exports[`version --conventional-commits should bump premajorVersionBump semver as minor 1`] = `
+"v0.2.0
+
+HEAD -> main, tag: v0.2.0
+
+CHANGELOG.md
+lerna.json
+packages/package-1/CHANGELOG.md
+packages/package-1/package.json
+packages/package-2/CHANGELOG.md
+packages/package-2/package.json
+packages/package-3/CHANGELOG.md
+packages/package-3/package.json
+packages/package-4/CHANGELOG.md
+packages/package-4/package.json
+packages/package-5/CHANGELOG.md
+packages/package-5/package.json"
 `;
