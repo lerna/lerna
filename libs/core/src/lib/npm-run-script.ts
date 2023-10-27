@@ -28,6 +28,7 @@ export function npmRunScriptStreaming(script: string, { args, npmClient, pkg, pr
 function makeOpts(pkg: { name: any; location: string }, reject: any) {
   return Object.assign(getNpmExecOpts(pkg), {
     windowsHide: false,
+    stdio: "inherit" /*to support interactive prompts */,
     reject,
   });
 }
