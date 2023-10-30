@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.4.2](https://github.com/lerna/lerna/compare/v7.4.1...v7.4.2) (2023-10-27)
+
+### Bug Fixes
+
+- **version:** support changelog-presets using async factory funcs ([#3873](https://github.com/lerna/lerna/issues/3873)) ([bb5e7d7](https://github.com/lerna/lerna/commit/bb5e7d7a35de6c801943c8349832558f1e6adb50))
+
 ## [7.4.1](https://github.com/lerna/lerna/compare/v7.4.0...v7.4.1) (2023-10-18)
 
 7.4.0 contained a malformed dist directory, please bump to 7.4.1 for the correct artifacts
