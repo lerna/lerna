@@ -4,6 +4,7 @@ export type ChangelogPresetConfig = string | { name: string; [key: string]: unkn
 export type BaseChangelogOptions = {
   changelogPreset?: ChangelogPresetConfig;
   changelogEntryAdditionalMarkdown?: string;
+  changelogSkipUnstable?: boolean;
   rootPath: string;
   tagPrefix?: string;
   conventionalBumpPrerelease?: boolean;

@@ -89,6 +89,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   runScriptsOnLockfileUpdate?: boolean;
   changelogPreset?: string;
   changelogEntryAdditionalMarkdown?: string;
+  changelogSkipUnstable?: boolean;
   conventionalBumpPrerelease?: boolean;
   yes?: boolean;
   rejectCycles?: boolean;
@@ -631,6 +632,7 @@ class VersionCommand extends Command {
       conventionalCommits,
       changelogPreset,
       changelogEntryAdditionalMarkdown,
+      changelogSkipUnstable,
       changelog = true,
       runScriptsOnLockfileUpdate = false,
       syncDistVersion = false,
@@ -691,6 +693,7 @@ class VersionCommand extends Command {
         updateChangelog(getPackage(node), type, {
           changelogPreset,
           changelogEntryAdditionalMarkdown,
+          changelogSkipUnstable,
           rootPath,
           tagPrefix: this.tagPrefix,
         }).then(({ logPath, newEntry }) => {
@@ -724,6 +727,7 @@ class VersionCommand extends Command {
         const { logPath, newEntry } = await updateChangelog(this.project.manifest, "root", {
           changelogPreset,
           changelogEntryAdditionalMarkdown,
+          changelogSkipUnstable,
           rootPath,
           tagPrefix: this.tagPrefix,
           version: this.globalVersion,

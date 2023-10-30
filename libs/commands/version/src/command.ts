@@ -78,6 +78,10 @@ const command: CommandModule = {
         describe: "Additional markdown to add to CHANGELOG.md entries.",
         type: "string",
       },
+      "changelog-skip-unstable": {
+        describe: "Skip changelog generation for prerelease versions.",
+        type: "boolean",
+      },
       exact: {
         describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
         type: "boolean",

@@ -54,6 +54,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--build-metadata <buildMetadata>`](#--build-metadata)
     - [`--changelog-preset`](#--changelog-preset)
     - [`--changelog-entry-additional-markdown`](#--changelog-entry-additional-markdown)
+    - [`--changelog-skip-unstable`](#--changelog-skip-unstable)
     - [`--conventional-commits`](#--conventional-commits)
     - [`--conventional-graduate`](#--conventional-graduate)
     - [`--force-conventional-graduate`](#--force-conventional-graduate)
@@ -202,6 +203,14 @@ If your text is static, and does not change from release to release, you could c
   }
 }
 ```
+
+### `--changelog-skip-unstable`
+
+```sh
+lerna version --conventional-commits --changelog-skip-unstable
+```
+
+This option allows you to optionally skip the changelog entry for prerelease versions (e.g. `1.0.0-alpha.0`). This is useful if you want to keep the changelog clean and only show stable versions.
 
 ### `--conventional-commits`
 

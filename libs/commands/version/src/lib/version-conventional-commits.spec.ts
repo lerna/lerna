@@ -186,6 +186,22 @@ describe("version --conventional-commits", () => {
       expect(updateChangelog).not.toHaveBeenCalled();
     });
 
+    it("accepts --changelog-skip-unstable option", async () => {
+      const cwd = await initFixture("independent");
+      const changelogOpts = {
+        changelogPreset: "foo-bar",
+        changelogSkipUnstable: true,
+        rootPath: cwd,
+        tagPrefix: "v",
+        prereleaseId: undefined,
+        buildMetadata: undefined
+      };
+
+      await lernaVersion(cwd)("--conventional-commits", "--changelog-preset", "foo-bar", "--changelog-skip-unstable");
+
+      expect(updateChangelog).toHaveBeenCalledWith(expect.any(Object), "independent", changelogOpts);
+    });
+
     it("should respect --no-private", async () => {
       const cwd = await initFixture("independent");
       // TODO: (major) make --no-private the default
@@ -348,6 +364,27 @@ describe("version --conventional-commits", () => {
       await lernaVersion(cwd)("--conventional-commits", "--no-changelog");
 
       expect(updateChangelog).not.toHaveBeenCalled();
+    });
+
+    it("accepts --changelog-skip-unstable option", async () => {
+      const cwd = await initFixture("normal");
+      const changelogOpts = {
+        changelogPreset: "baz-qux",
+        changelogSkipUnstable: true,
+        rootPath: cwd,
+        tagPrefix: "v",
+        prereleaseId: undefined,
+        buildMetadata: undefined
+      };
+
+      await lernaVersion(cwd)(
+        "--conventional-commits",
+        "--changelog-preset",
+        "baz-qux",
+        "--changelog-skip-unstable"
+      );
+
+      expect(updateChangelog).toHaveBeenCalledWith(expect.any(Object), "fixed", changelogOpts);
     });
 
     it("should respect --no-private", async () => {

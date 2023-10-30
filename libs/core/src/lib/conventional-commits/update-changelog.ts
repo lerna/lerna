@@ -14,6 +14,7 @@ export function updateChangelog(
   {
     changelogPreset,
     changelogEntryAdditionalMarkdown,
+    changelogSkipUnstable,
     rootPath,
     tagPrefix = "v",
     version,
@@ -33,6 +34,8 @@ export function updateChangelog(
       // "old" preset API
       options.config = Object.assign({}, config);
     }
+
+    options.skipUnstable = changelogSkipUnstable;
 
     // NOTE: must pass as positional argument due to weird bug in merge-config
     const gitRawCommitsOpts = Object.assign({}, options.config.gitRawCommitsOpts);
