@@ -8,7 +8,7 @@ const command: CommandModule = {
   describe: "Prints debugging information about the local environment",
   handler(argv) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require(".")(argv);
+    return require(".").factory(argv);
   },
 };
 
