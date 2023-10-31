@@ -14,6 +14,7 @@ import { detectProjects } from "./detect-projects";
 import { isGitInitialized } from "./is-git-initialized";
 import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
+import yargs from "yargs";
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
@@ -27,6 +28,14 @@ export type ExecOpts = {
   maxBuffer?: number;
 };
 
+export type Arguments<T extends CommandConfigOptions = CommandConfigOptions> = {
+  cwd?: string;
+  composed?: string;
+  lernaVersion?: string;
+  onResolved?: (value: unknown) => unknown;
+  onRejected?: (reason: unknown) => unknown;
+} & yargs.ArgumentsCamelCase<T>;
+
 export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   name: string;
   composed: boolean;
@@ -37,7 +46,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   execOpts?: ExecOpts;
   logger!: log.Logger;
   envDefaults: any;
-  argv: any;
+  argv: Arguments<T> = {} as Arguments<T>;
   projectGraph!: ProjectGraphWithPackages;
   projectFileMap!: ProjectFileMap;
 
@@ -54,7 +63,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   }
 
   constructor(
-    _argv: any,
+    _argv: Arguments<T>,
     {
       skipValidations,
       preInitializedProjectData,
@@ -67,7 +76,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     log.heading = "lerna";
 
     const argv = cloneDeep(_argv);
-    log.silly("argv", argv);
+    log.silly("argv", argv as any /*types declaration of npmlog is not correct here */);
 
     // "FooCommand" => "foo"
     this.name = this.constructor.name.replace(/Command$/, "").toLowerCase();

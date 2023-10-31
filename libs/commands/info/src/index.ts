@@ -1,7 +1,7 @@
-import { Command, output } from "@lerna/core";
+import { Arguments, Command, CommandConfigOptions, output } from "@lerna/core";
 import envinfo from "envinfo";
 
-export function factory(argv: NodeJS.Process["argv"]) {
+export function factory(argv: Arguments<CommandConfigOptions>) {
   return new InfoCommand(argv);
 }
 
