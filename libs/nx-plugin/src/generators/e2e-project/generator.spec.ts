@@ -42,7 +42,7 @@ describe("e2e-project generator", () => {
             },
           },
           "lint": Object {
-            "executor": "@nx/linter:eslint",
+            "executor": "@nx/eslint:eslint",
             "options": Object {
               "lintFilePatterns": Array [
                 "e2e/test/**/*.ts",
