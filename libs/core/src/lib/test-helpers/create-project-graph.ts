@@ -3,7 +3,7 @@ process.env.NX_DAEMON = "false";
 process.env.NX_CACHE_PROJECT_GRAPH = "false";
 
 import { ProjectGraphDependency, ProjectGraphProjectNode } from "@nx/devkit";
-import { fileHasher } from "nx/src/hasher/file-hasher";
+import { resetWorkspaceContext } from "nx/src/utils/workspace-context";
 import { Package, RawManifest } from "../package";
 import {
   ProjectGraphProjectNodeWithPackage,
@@ -11,7 +11,7 @@ import {
   ProjectGraphWorkspacePackageDependency,
 } from "../project-graph-with-packages";
 
-fileHasher.clear();
+resetWorkspaceContext();
 
 export function projectNode(
   projectNode: Partial<ProjectGraphProjectNode>,

@@ -1,5 +1,5 @@
 import execa from "execa";
-import { fileHasher } from "nx/src/hasher/file-hasher";
+import { resetWorkspaceContext, setupWorkspaceContext } from "nx/src/utils/workspace-context";
 import { setWorkspaceRoot } from "nx/src/utils/workspace-root";
 import path, { join } from "path";
 import yargs from "yargs";
@@ -45,8 +45,8 @@ export function commandRunner(commandModule: yargs.CommandModule) {
         process.env.NX_WORKSPACE_ROOT_PATH = cwd;
 
         // Reset the Nx file hasher in order to respect the newly set workspaceRoot
-        fileHasher.clear();
-        await fileHasher.ensureInitialized();
+        resetWorkspaceContext();
+        setupWorkspaceContext(cwd);
 
         const yargsMeta = {};
 
