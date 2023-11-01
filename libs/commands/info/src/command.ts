@@ -6,9 +6,8 @@ import type { CommandModule } from "yargs";
 const command: CommandModule = {
   command: "info",
   describe: "Prints debugging information about the local environment",
-  handler(argv) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require(".").factory(argv);
+  async handler(argv) {
+    return (await import(".")).factory(argv);
   },
 };
 
