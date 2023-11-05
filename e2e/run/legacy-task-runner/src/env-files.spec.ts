@@ -61,7 +61,7 @@ describe("lerna-run-legacy-task-runner-env-files", () => {
         lerna info Executing command in 1 package: "npm run log-env-var --silent"
         lerna info run Ran npm script 'log-env-var' in 'package-X' in X.Xs:
         lerna success run Ran npm script 'log-env-var' in 1 package in X.Xs:
-        lerna success - package-X
+        lerna success run - package-X
 
       `);
   });

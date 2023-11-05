@@ -1,4 +1,4 @@
-import { Arguments, Command, LernaConfig, isGitInitialized } from "@lerna/core";
+import { Arguments, Command, LernaConfig, LernaLogger, isGitInitialized } from "@lerna/core";
 import {
   PackageManager,
   addDependenciesToPackageJson,
@@ -36,7 +36,7 @@ module.exports = function factory(args: yargs.ArgumentsCamelCase<InitCommandOpti
 
 class InitCommand {
   name = "init";
-  logger: log.Logger;
+  logger: LernaLogger;
   cwd = process.cwd();
   packageManager: PackageManager;
 

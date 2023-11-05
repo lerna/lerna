@@ -30,7 +30,7 @@ export class ListCommand extends Command {
       output(this.result.text);
     }
 
-    this.logger["success"](
+    this.logger.success(
       "found",
       "%d %s",
       this.result?.count,

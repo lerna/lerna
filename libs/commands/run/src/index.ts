@@ -166,7 +166,7 @@ class RunCommand extends Command {
       this.packagePlural,
       (getElapsed() / 1000).toFixed(1)
     );
-    this.logger.success("", this.projectsWithScript.map((p) => `- ${getPackage(p).name}`).join("\n"));
+    this.logger.success("run", this.projectsWithScript.map((p) => `- ${getPackage(p).name}`).join("\n"));
   }
 
   private getOpts(pkg: Package) {

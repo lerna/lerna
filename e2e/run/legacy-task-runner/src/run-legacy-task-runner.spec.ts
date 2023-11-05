@@ -71,9 +71,9 @@ describe("lerna-run-legacy-task-runner", () => {
       lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
       lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
       lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-      lerna success - package-X
-      lerna success - package-X
-      lerna success - package-X
+      lerna success run - package-X
+      lerna success run - package-X
+      lerna success run - package-X
 
     `);
   });
@@ -89,9 +89,9 @@ describe("lerna-run-legacy-task-runner", () => {
         lerna notice cli v999.9.9-e2e.0
         lerna info Executing command in 3 packages: "npm run print-name --silent"
         lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-        lerna success - package-X
-        lerna success - package-X
-        lerna success - package-X
+        lerna success run - package-X
+        lerna success run - package-X
+        lerna success run - package-X
 
       `);
     });
@@ -108,9 +108,9 @@ describe("lerna-run-legacy-task-runner", () => {
         lerna notice cli v999.9.9-e2e.0
         lerna info Executing command in 3 packages: "npm run print-name --silent"
         lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-        lerna success - package-X
-        lerna success - package-X
-        lerna success - package-X
+        lerna success run - package-X
+        lerna success run - package-X
+        lerna success run - package-X
 
       `);
     });
@@ -128,9 +128,9 @@ describe("lerna-run-legacy-task-runner", () => {
           lerna notice cli v999.9.9-e2e.0
           lerna info Executing command in 3 packages: "npm run print-name --silent"
           lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-          lerna success - package-X
-          lerna success - package-X
-          lerna success - package-X
+          lerna success run - package-X
+          lerna success run - package-X
+          lerna success run - package-X
 
         `);
       });
@@ -147,9 +147,9 @@ describe("lerna-run-legacy-task-runner", () => {
           lerna notice cli v999.9.9-e2e.0
           lerna info Executing command in 3 packages: "npm run print-name --silent"
           lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-          lerna success - package-X
-          lerna success - package-X
-          lerna success - package-X
+          lerna success run - package-X
+          lerna success run - package-X
+          lerna success run - package-X
 
         `);
       });
@@ -171,9 +171,9 @@ describe("lerna-run-legacy-task-runner", () => {
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna info profiler Performance profile saved to /tmp/lerna-e2e/lerna-run-legacy-task-runner/lerna-workspace/Lerna-Profile-XXXXXXXXTXXXXXX.json
         lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-        lerna success - package-X
-        lerna success - package-X
-        lerna success - package-X
+        lerna success run - package-X
+        lerna success run - package-X
+        lerna success run - package-X
 
       `);
 
@@ -202,9 +202,9 @@ describe("lerna-run-legacy-task-runner", () => {
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna info profiler Performance profile saved to /tmp/lerna-e2e/lerna-run-legacy-task-runner/lerna-workspace/profiles/Lerna-Profile-XXXXXXXXTXXXXXX.json
         lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-        lerna success - package-X
-        lerna success - package-X
-        lerna success - package-X
+        lerna success run - package-X
+        lerna success run - package-X
+        lerna success run - package-X
 
       `);
 
@@ -241,9 +241,9 @@ describe("lerna-run-legacy-task-runner", () => {
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-        lerna success - package-X
-        lerna success - package-X
-        lerna success - package-X
+        lerna success run - package-X
+        lerna success run - package-X
+        lerna success run - package-X
 
       `);
     });
@@ -273,9 +273,9 @@ describe("lerna-run-legacy-task-runner", () => {
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-        lerna success - package-X
-        lerna success - package-X
-        lerna success - package-X
+        lerna success run - package-X
+        lerna success run - package-X
+        lerna success run - package-X
 
       `);
     });
@@ -356,9 +356,9 @@ describe("--no-bail", () => {
             lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
             lerna ERR! Received non-zero exit code 100 during execution
             lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-            lerna success - package-X
-            lerna success - package-X
-            lerna success - package-X
+            lerna success run - package-X
+            lerna success run - package-X
+            lerna success run - package-X
 
           `);
   });
