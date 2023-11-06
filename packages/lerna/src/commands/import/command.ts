@@ -1,1 +1,2 @@
-module.exports = require("@lerna/commands/import/command");
+import cmd from "@lerna/commands/import/command";
+module.exports = cmd;
