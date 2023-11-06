@@ -33,8 +33,7 @@
             "glob": "executors.json",
             "output": "."
           }
-        ],
-        "updateBuildableProjectDepsInPackageJson": true
+        ]
       }
     },
     "lint": {
