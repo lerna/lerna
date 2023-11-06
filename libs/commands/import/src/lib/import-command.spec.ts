@@ -24,7 +24,7 @@ jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/cor
 const lernaImport = commandRunner(require("../command"));
 
 // assertion helpers
-const lastCommitInDir = (cwd) =>
+const lastCommitInDir = (cwd: string) =>
   execa("git", ["log", "-1", "--format=%s"], { cwd }).then((result) => result.stdout);
 
 describe("ImportCommand", () => {
