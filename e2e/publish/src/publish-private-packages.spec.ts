@@ -302,7 +302,7 @@ describe("lerna-publish-private", () => {
         lerna notice cli v999.9.9-e2e.0
         lerna WARN Unable to determine published version, assuming "test-X" unpublished.
         lerna notice from-package No unpublished release found
-        lerna success publish No changed packages to publish  
+        lerna success publish No changed packages to publish
 
       `);
     });
@@ -431,7 +431,7 @@ describe("lerna-publish-private", () => {
         lerna notice cli v999.9.9-e2e.0
         lerna info canary enabled
         lerna info Assuming all packages changed
-        lerna success publish No changed packages to publish  
+        lerna success publish No changed packages to publish
 
       `);
     });

@@ -1,5 +1,11 @@
-import { Arguments, Command, CommandConfigOptions, LernaLogger, LernaConfig, isGitInitialized } from "@lerna/core";
-
+import {
+  Arguments,
+  Command,
+  CommandConfigOptions,
+  LernaLogger,
+  LernaConfig,
+  isGitInitialized,
+} from "@lerna/core";
 import {
   PackageManager,
   addDependenciesToPackageJson,
