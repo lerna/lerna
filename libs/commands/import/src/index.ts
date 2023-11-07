@@ -287,7 +287,7 @@ export class ImportCommand extends Command<ImportCommandOptions> {
           });
         }
 
-        this.logger["success"]("import", "finished");
+        this.logger.success("import", "finished");
       })
       .catch((err) => {
         tracker.finish();

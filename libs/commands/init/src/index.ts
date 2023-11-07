@@ -118,7 +118,7 @@ export class InitCommand {
       if (task) {
         await task();
       }
-      this.logger["success"]("", "Initialized Lerna files");
+      this.logger.success("", "Initialized Lerna files");
       this.logger.info("", "New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started");
     } else {
       this.logger.warn("", `The "dryRun" flag means no changes were made.`);

@@ -51,7 +51,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   runner: Promise<unknown>;
   concurrency?: number;
   toposort = false;
-  execOpts?: ExecOptions = {};
+  execOpts: ExecOptions = {};
   logger!: LernaLogger;
   envDefaults: any;
   argv: Arguments<T> = {} as Arguments<T>;
