@@ -2,11 +2,11 @@ import {
   Arguments,
   Command,
   CommandConfigOptions,
-  ExecOpts,
   promptConfirmation,
   pulseTillDone,
   ValidationError,
 } from "@lerna/core";
+import { ExecOptions } from "child_process";
 import dedent from "dedent";
 import fs from "fs-extra";
 import pMapSeries from "p-map-series";
@@ -28,7 +28,7 @@ interface ImportCommandOptions extends CommandConfigOptions {
 }
 
 export class ImportCommand extends Command<ImportCommandOptions> {
-  private externalExecOpts: ExecOpts = { cwd: "" };
+  private externalExecOpts: ExecOptions = { cwd: "" };
   private targetDirRelativeToGitRoot?: string;
   private commits: string[] = [];
   private origGitEmail?: string;

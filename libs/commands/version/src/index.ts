@@ -898,7 +898,11 @@ class VersionCommand extends Command {
 
   private async hasChanges() {
     try {
-      await execa("git", ["diff", "--staged", "--quiet"], { stdio: "pipe", ...this.execOpts });
+      await execa("git", ["diff", "--staged", "--quiet"], {
+        stdio: "pipe",
+        ...this.execOpts,
+        cwd: this.execOpts.cwd as string, // force it to a string
+      });
     } catch (e) {
       // git diff exited with a non-zero exit code, so we assume changes were found
       return true;

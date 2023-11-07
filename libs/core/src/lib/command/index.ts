@@ -15,6 +15,7 @@ import { isGitInitialized } from "./is-git-initialized";
 import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
 import yargs from "yargs";
+import { ExecOptions } from "child_process";
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
@@ -35,11 +36,6 @@ export interface PreInitializedProjectData {
   projectGraph: ProjectGraphWithPackages;
 }
 
-export type ExecOpts = {
-  cwd: string;
-  maxBuffer?: number;
-};
-
 export type Arguments<T extends CommandConfigOptions = CommandConfigOptions> = {
   cwd?: string;
   composed?: string;
@@ -55,7 +51,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   runner: Promise<unknown>;
   concurrency?: number;
   toposort = false;
-  execOpts?: ExecOpts;
+  execOpts?: ExecOptions = {};
   logger!: LernaLogger;
   envDefaults: any;
   argv: Arguments<T> = {} as Arguments<T>;
@@ -223,7 +219,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
 
   // Override this to inherit config from another command.
   // For example `changed` inherits config from `publish`.
-  get otherCommandConfigs() {
+  get otherCommandConfigs(): string[] {
     return [];
   }
 
