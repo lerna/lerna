@@ -1,4 +1,4 @@
-import { ExecOpts } from "@lerna/core";
+import { ExecOptions } from "child_process";
 import log from "npmlog";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -7,7 +7,7 @@ const childProcess = require("@lerna/child-process");
 /**
  * @param {import("@lerna/child-process").ExecOpts} execOpts
  */
-export function getLastCommit(execOpts?: ExecOpts) {
+export function getLastCommit(execOpts?: ExecOptions) {
   if (hasTags(execOpts)) {
     log.silly("getLastTagInBranch", "");
     return childProcess.execSync("git", ["describe", "--tags", "--abbrev=0"], execOpts);
@@ -19,7 +19,7 @@ export function getLastCommit(execOpts?: ExecOpts) {
 /**
  * @param {import("@lerna/child-process").ExecOpts} opts
  */
-function hasTags(opts?: ExecOpts) {
+function hasTags(opts?: ExecOptions) {
   let result = false;
 
   try {
