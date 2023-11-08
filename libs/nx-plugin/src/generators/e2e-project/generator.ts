@@ -18,8 +18,10 @@ interface NormalizedSchema extends E2eProjectGeneratorSchema {
 
 function normalizeOptions(_tree: Tree, options: E2eProjectGeneratorSchema): NormalizedSchema {
   const e2eRoot = "e2e";
-  const projectDirectory = options.directory ? `${e2eRoot}/${names(options.directory).fileName}` : e2eRoot;
-  const projectRoot = `${projectDirectory}/${names(options.name).fileName}`;
+  const projectDirectory = options.directory
+    ? `${e2eRoot}/${names(options.directory).fileName}${names(options.name).fileName}`
+    : `${e2eRoot}/${names(options.name).fileName}`;
+  const projectRoot = projectDirectory;
   const projectName = `${e2eRoot}${options.directory ? `-${options.directory}` : ""}-${
     names(options.name).fileName
   }`;
@@ -36,9 +38,11 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
   const normalizedOptions = normalizeOptions(tree, options);
 
   await libraryGenerator(tree, {
-    name: normalizedOptions.name,
+    name: normalizedOptions.projectName,
     directory: normalizedOptions.projectDirectory,
     skipTsConfig: true,
+    unitTestRunner: "jest",
+    projectNameAndRootFormat: "as-provided",
   });
 
   tree.delete(`${normalizedOptions.projectRoot}/README.md`);
