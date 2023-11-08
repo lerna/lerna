@@ -334,7 +334,7 @@ class PublishCommand extends Command {
     }
 
     if (!result.updates.length) {
-      this.logger.success("publish", "No changed packages to publish");
+      this.logger.success("", "No changed packages to publish");
 
       // still exits zero, aka "ok"
       return false;
@@ -404,7 +404,7 @@ class PublishCommand extends Command {
     const publishedPackagesSorted = this.publishedPackages.sort((a, b) => a.name.localeCompare(b.name));
 
     if (!count) {
-      this.logger.success("publish", "All packages have already been published.");
+      this.logger.success("", "All packages have already been published.");
       return;
     }
 
