@@ -1,4 +1,5 @@
 import {
+  Arguments,
   AssetDefinition,
   collectProjectUpdates,
   Command,
@@ -52,7 +53,7 @@ import { interpolate } from "./lib/interpolate";
 import { removeTempLicenses } from "./lib/remove-temp-licenses";
 import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+module.exports = function factory(argv: Arguments<PublishCommandConfigOptions>) {
   return new PublishCommand(argv);
 };
 

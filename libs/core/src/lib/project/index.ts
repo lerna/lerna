@@ -27,7 +27,7 @@ interface CommandConfigs {
 
 export interface CommandConfigOptions {
   //Here we have all general options
-  _?: string[];
+  _?: (string | number)[];
   concurrency?: number;
   sort?: boolean;
   maxBuffer?: number;

@@ -96,8 +96,8 @@ describe("lerna-version-yarn-lockfiles", () => {
 
     `);
     const yarnLock = readFileSync(fixture.getWorkspacePath("yarn.lock")).toString();
-    expect(yarnLock).toContain("package-a@^3.3.3, package-a@workspace:packages/package-a");
-    expect(yarnLock).toContain("package-b@workspace:packages/package-b");
-    expect(yarnLock).toContain("package-a: ^3.3.3");
+    expect(yarnLock).toContain(`package-a@npm:^3.3.3, package-a@workspace:packages/package-a`);
+    expect(yarnLock).toContain(`package-b@workspace:packages/package-b`);
+    expect(yarnLock).toContain(`package-a: "npm:^3.3.3"`);
   });
 });

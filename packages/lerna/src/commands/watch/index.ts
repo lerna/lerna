@@ -1,4 +1,5 @@
 import {
+  Arguments,
   Command,
   CommandConfigOptions,
   filterProjects,
@@ -7,12 +8,12 @@ import {
 } from "@lerna/core";
 import { watch } from "nx/src/command-line/watch/watch";
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+module.exports = function factory(argv: Arguments<WatchCommandOptions>) {
   return new WatchCommand(argv);
 };
 
 interface WatchCommandOptions extends CommandConfigOptions {
-  command: string;
+  command?: string;
 }
 
 class WatchCommand extends Command<WatchCommandOptions> {

@@ -4,7 +4,7 @@ const childProcess = require("@lerna/child-process");
 
 interface DescribeRefOptions {
   // Defaults to `process.cwd()`
-  cwd?: string;
+  cwd?: string | URL;
   // Glob passed to `--match` flag
   match?: string;
 }

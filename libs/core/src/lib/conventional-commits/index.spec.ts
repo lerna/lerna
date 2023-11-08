@@ -267,6 +267,21 @@ describe("conventional-commits", () => {
       expect(bump).toBe("1.1.0");
     });
 
+    it("supports async function presets", async () => {
+      const cwd = await initFixture("fixed");
+      const [pkg1] = await getPackages(cwd);
+
+      // make a change in package-1
+      await pkg1.set("changed", 1).serialize();
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "feat: changed 1");
+
+      const bump = await recommendVersion(pkg1, "fixed", {
+        changelogPreset: "./scripts/local-preset-async.js",
+      });
+      expect(bump).toBe("1.1.0");
+    });
+
     it("supports custom tagPrefix in fixed mode", async () => {
       const cwd = await initFixture("fixed");
 

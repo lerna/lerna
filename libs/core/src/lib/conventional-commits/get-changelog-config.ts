@@ -7,7 +7,10 @@ import { ChangelogPresetConfig } from "./constants";
 const cfgCache = new Map();
 
 function isFunction(config: any) {
-  return Object.prototype.toString.call(config) === "[object Function]";
+  return (
+    Object.prototype.toString.call(config) === "[object Function]" ||
+    Object.prototype.toString.call(config) === "[object AsyncFunction]"
+  );
 }
 
 function resolveConfigPromise(presetPackageName: string, presetConfig: object) {

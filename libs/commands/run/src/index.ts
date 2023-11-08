@@ -1,4 +1,5 @@
 import {
+  Arguments,
   Command,
   CommandConfigOptions,
   FilterOptions,
@@ -23,7 +24,7 @@ import pMap from "p-map";
 import path from "path";
 import { performance } from "perf_hooks";
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+module.exports = function factory(argv: Arguments<RunCommandConfigOptions>) {
   return new RunCommand(argv);
 };
 
