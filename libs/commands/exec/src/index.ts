@@ -1,4 +1,5 @@
 import {
+  Arguments,
   Command,
   CommandConfigOptions,
   filterProjects,
@@ -14,7 +15,7 @@ import pMap from "p-map";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+module.exports = function factory(argv: Arguments<ExecCommandConfigOptions>) {
   return new ExecCommand(argv);
 };
 

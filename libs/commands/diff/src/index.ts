@@ -1,4 +1,4 @@
-import { Command, CommandConfigOptions, getPackage, ValidationError } from "@lerna/core";
+import { Arguments, Command, CommandConfigOptions, getPackage, ValidationError } from "@lerna/core";
 import execa from "execa";
 import { getLastCommit } from "./lib/get-last-commit";
 import { hasCommit } from "./lib/has-commit";
@@ -6,13 +6,13 @@ import { hasCommit } from "./lib/has-commit";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-export function factory(argv: NodeJS.Process["argv"]) {
+export function factory(argv: Arguments<DiffCommandOptions>) {
   return new DiffCommand(argv);
 }
 
 interface DiffCommandOptions extends CommandConfigOptions {
-  pkgName: string;
-  ignoreChanges: string[];
+  pkgName?: string;
+  ignoreChanges?: string[];
 }
 
 export class DiffCommand extends Command<DiffCommandOptions> {

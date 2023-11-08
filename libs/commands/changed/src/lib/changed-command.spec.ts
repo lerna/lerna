@@ -35,7 +35,7 @@ expect.addSnapshotSerializer({
 expect.addSnapshotSerializer(tempDirSerializer);
 
 describe("ChangedCommand", () => {
-  let cwd;
+  let cwd = "";
 
   beforeAll(async () => {
     cwd = await initFixture("normal");
