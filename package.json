@@ -34,6 +34,7 @@
   "homepage": "https://lerna.js.org",
   "devDependencies": {
     "@nx/esbuild": "17.0.3",
+    "@nx/eslint": "17.0.3",
     "@nx/eslint-plugin": "17.0.3",
     "@nx/jest": "17.0.3",
     "@nx/js": "17.0.3",
@@ -104,7 +105,6 @@
     "ts-jest": "29.1.0",
     "ts-node": "10.9.1",
     "typescript": "5.0.4",
-    "verdaccio": "^5.19.0",
-    "@nx/eslint": "17.0.3"
+    "verdaccio": "5.19.0"
   }
 }
