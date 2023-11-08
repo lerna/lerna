@@ -75,7 +75,7 @@ describe("lerna-run-legacy-task-runner-include-dependencies", () => {
         lerna info Executing command in 1 package: "npm run print-name --silent"
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna success run Ran npm script 'print-name' in 1 package in X.Xs:
-        lerna success run - package-X
+        lerna success - package-X
 
       `);
   });
