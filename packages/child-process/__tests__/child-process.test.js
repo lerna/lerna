@@ -3,6 +3,13 @@
 // file under test
 const childProcess = require("..");
 
+jest.mock("../set-exit-code", () => {
+  const setExitCode = jest.fn();
+  return { setExitCode };
+});
+
+const { setExitCode } = require("../set-exit-code");
+
 describe("childProcess", () => {
   describe(".execSync()", () => {
     it("should execute a command in a child process and return the result", () => {
@@ -78,6 +85,8 @@ describe("childProcess", () => {
           pkg: { name: "shelled" },
         })
       );
+
+      expect(setExitCode).toHaveBeenCalledWith(123);
     });
   });
 });

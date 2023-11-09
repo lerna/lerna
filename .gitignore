@@ -38,3 +38,5 @@ dist
 website/build
 website/.docusaurus
 website/.cache-loader
+
+.nx/cache
