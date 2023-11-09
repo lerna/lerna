@@ -23,7 +23,8 @@
                 "sourceTag": "*",
                 "onlyDependOnLibsWithTags": ["*"]
               }
-            ]
+            ],
+            "checkDynamicDependenciesExceptions": [".*"]
           }
         ]
       }
