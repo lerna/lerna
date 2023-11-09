@@ -4,6 +4,7 @@ const os = require("os");
 const chalk = require("chalk");
 const execa = require("execa");
 const logTransformer = require("strong-log-transformer");
+const { setExitCode } = require("./set-exit-code");
 
 // bookkeeping for spawned processes
 /** @type {Set<import("execa").ExecaChildProcess<string>>} */
@@ -135,7 +136,7 @@ function spawnProcess(command, args, opts) {
 
     // propagate exit code, if any
     if (exitCode) {
-      process.exitCode = exitCode;
+      setExitCode(exitCode);
     }
   };
 
