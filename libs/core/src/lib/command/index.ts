@@ -19,6 +19,18 @@ import { ExecOptions } from "child_process";
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
+/**
+ * Specific logger with log-level success enabled in order to use function without index signature
+ */
+export interface LernaLogger extends log.Logger {
+  /**
+   * Log with level success
+   * @param prefix
+   * @param message
+   * @param args
+   */
+  success(prefix: string, message: string, ...args: any[]): void;
+}
 export interface PreInitializedProjectData {
   projectFileMap: ProjectFileMap;
   projectGraph: ProjectGraphWithPackages;
@@ -40,7 +52,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   concurrency?: number;
   toposort = false;
   execOpts: ExecOptions = {};
-  logger!: log.Logger;
+  logger!: LernaLogger;
   envDefaults: any;
   argv: Arguments<T> = {} as Arguments<T>;
   projectGraph!: ProjectGraphWithPackages;
@@ -72,7 +84,10 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     log.heading = "lerna";
 
     const argv = cloneDeep(_argv);
-    log.silly("argv", argv as any /*types declaration of npmlog is not correct here */);
+    log.silly(
+      "argv",
+      argv as any /*types declaration of npmlog is not correct here see https://github.com/DefinitelyTyped/DefinitelyTyped/pull/67232 */
+    );
 
     // "FooCommand" => "foo"
     this.name = this.constructor.name.replace(/Command$/, "").toLowerCase();
@@ -98,10 +113,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       chain = chain.then(() => this.configureProperties());
       chain = chain.then(() => {
         // create logger that subclasses use
-        const logger = Command.createLogger(this.name, this.options.loglevel);
-        Object.defineProperty(this, "logger", {
-          value: logger,
-        });
+        this.logger = Command.createLogger(this.name, this.options.loglevel);
       });
       // For the special "repair" command we want to initialize everything but don't want to run validations as that will end up becoming cyclical
       if (!skipValidations) {
@@ -180,7 +192,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     this.runner = runner;
   }
 
-  static createLogger(name: string, loglevel?: string): log.Logger {
+  static createLogger(name: string, loglevel?: string): LernaLogger {
     if (loglevel) {
       log.level = loglevel;
     }
