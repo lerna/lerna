@@ -1,4 +1,11 @@
-import { Arguments, Command, CommandConfigOptions, LernaConfig, isGitInitialized } from "@lerna/core";
+import {
+  Arguments,
+  Command,
+  CommandConfigOptions,
+  LernaLogger,
+  LernaConfig,
+  isGitInitialized,
+} from "@lerna/core";
 import {
   PackageManager,
   addDependenciesToPackageJson,
@@ -36,7 +43,7 @@ export function factory(args: Arguments<InitCommandOptions>) {
 
 export class InitCommand {
   name = "init";
-  logger: log.Logger;
+  logger: LernaLogger;
   cwd = process.cwd();
   packageManager: PackageManager;
   runner: Promise<void>;
@@ -111,7 +118,7 @@ export class InitCommand {
       if (task) {
         await task();
       }
-      this.logger["success"]("", "Initialized Lerna files");
+      this.logger.success("", "Initialized Lerna files");
       this.logger.info("", "New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started");
     } else {
       this.logger.warn("", `The "dryRun" flag means no changes were made.`);
