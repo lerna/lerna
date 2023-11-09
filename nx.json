@@ -1,23 +1,5 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx-cloud",
-      "options": {
-        "accessToken": "MGQ4ZjkyMWYtYTVhNi00ZWQ4LWE0OTctNTkxM2U0ZDUzYWQ1fHJlYWQ=",
-        "cacheableOperations": [
-          "build",
-          "compile",
-          "lint",
-          "e2e",
-          "test",
-          "run-e2e-tests-process",
-          "run-e2e-tests",
-          "integration"
-        ]
-      }
-    }
-  },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": [
@@ -46,17 +28,21 @@
         "{workspaceRoot}/jest.preset.js",
         "{workspaceRoot}/jest.config.ts"
       ],
-      "dependsOn": ["build"]
+      "dependsOn": ["build"],
+      "cache": true
     },
     "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json", "{workspaceRoot}/.eslintignore"]
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json", "{workspaceRoot}/.eslintignore"],
+      "cache": true
     },
     "build": {
       "inputs": ["production", "^production"],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "cache": true
     },
     "compile": {
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production"],
+      "cache": true
     },
     "e2e": {
       "executor": "nx:run-commands",
@@ -73,7 +59,8 @@
           }
         ],
         "parallel": false
-      }
+      },
+      "cache": true
     },
     "run-e2e-tests": {
       "inputs": [
@@ -88,7 +75,8 @@
         "passWithNoTests": true,
         "runInBand": true
       },
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"]
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "cache": true
     },
     "run-e2e-tests-process": {
       "inputs": [
@@ -106,11 +94,14 @@
           }
         ],
         "parallel": false
-      }
+      },
+      "cache": true
     },
     "integration": {
       "inputs": ["default"],
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "cache": true
     }
-  }
+  },
+  "nxCloudAccessToken": "MGQ4ZjkyMWYtYTVhNi00ZWQ4LWE0OTctNTkxM2U0ZDUzYWQ1fHJlYWQ="
 }
