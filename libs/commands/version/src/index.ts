@@ -1,4 +1,5 @@
 import {
+  Arguments,
   Command,
   CommandConfigOptions,
   Package,
@@ -22,8 +23,6 @@ import {
   runProjectsTopologically,
   throwIfUncommitted,
   updateChangelog,
-  formatJSON,
-  Arguments,
 } from "@lerna/core";
 import chalk from "chalk";
 import dedent from "dedent";
@@ -786,7 +785,7 @@ class VersionCommand extends Command {
           ...this.execOpts,
           env: {
             ...process.env,
-            YARN_ENABLE_SCRIPTS: false,
+            YARN_ENABLE_SCRIPTS: "false",
           },
         });
 
