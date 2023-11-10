@@ -29,7 +29,7 @@
     "@lerna/child-process": "7.4.2",
     "@npmcli/arborist": "6.2.9",
     "@npmcli/run-script": "6.0.2",
-    "@nx/devkit": ">=16.1.3 < 17",
+    "@nx/devkit": ">=17.1.1 < 18",
     "@octokit/rest": "19.0.11",
     "byte-size": "8.1.1",
     "chalk": "4.1.0",
