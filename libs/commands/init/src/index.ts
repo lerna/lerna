@@ -2,8 +2,8 @@ import {
   Arguments,
   Command,
   CommandConfigOptions,
-  LernaLogger,
   LernaConfig,
+  LernaLogger,
   isGitInitialized,
 } from "@lerna/core";
 import {
@@ -18,7 +18,6 @@ import { existsSync } from "fs";
 import { readFileSync } from "fs-extra";
 import log from "npmlog";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
-import yargs from "yargs";
 
 const LARGE_BUFFER = 1024 * 1000000;
 
@@ -79,7 +78,7 @@ export class InitCommand {
           expand: false,
           aColor: chalk.red,
           bColor: chalk.green,
-          patchColor: (s) => "",
+          patchColor: () => "",
         })
       );
     }
