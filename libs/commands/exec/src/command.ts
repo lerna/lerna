@@ -1,5 +1,6 @@
 import { filterOptions } from "@lerna/core";
 import type { CommandModule } from "yargs";
+import { factory } from "./index";
 
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
@@ -69,9 +70,8 @@ const command: CommandModule = {
 
     return filterOptions(yargs);
   },
-  handler(argv) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require(".")(argv);
+  async handler(argv) {
+    return factory(argv);
   },
 };
 
