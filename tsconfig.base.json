@@ -17,6 +17,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
+      "@lerna/child-process": ["libs/child-process/index.js"],
       "@lerna/commands/add": ["libs/commands/add/src/index.ts"],
       "@lerna/commands/add/*": ["libs/commands/add/src/*"],
       "@lerna/commands/bootstrap": ["libs/commands/bootstrap/src/index.ts"],

@@ -1,0 +1,27 @@
+{
+  "name": "child-process",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/child-process",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/child-process/**/*.js"]
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "libs/child-process",
+        "commands": [
+          {
+            "command": "jest __tests__"
+          }
+        ]
+      }
+    }
+  },
+  "tags": []
+}

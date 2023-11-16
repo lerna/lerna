@@ -1,6 +1,6 @@
 {
   "name": "@lerna/child-process",
-  "version": "7.4.2",
+  "private": true,
   "description": "Lerna's internal child_process wrapper",
   "keywords": [
     "lerna",
@@ -27,9 +27,6 @@
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git",
     "directory": "core/child-process"
-  },
-  "scripts": {
-    "test": "jest __tests__"
   },
   "dependencies": {
     "chalk": "^4.1.0",
