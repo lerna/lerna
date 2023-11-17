@@ -97,6 +97,11 @@
       },
       "cache": true
     },
+    "integration": {
+      "inputs": ["default"],
+      "dependsOn": ["^build"],
+      "cache": true
+    },
     "@nx/jest:jest": {
       "cache": true,
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
