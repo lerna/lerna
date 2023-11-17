@@ -25,6 +25,10 @@ runs:
     # Github actions/cache now recommends _not_ caching node_modules when using npm ci
     # https://github.com/actions/cache/blob/940f3d7cf195ba83374c77632d1e2cbb2f24ae68/examples.md#node---npm
 
+    - name: Enable corepack
+      run: corepack enable
+      shell: bash
+
     - name: Install dependencies
       run: ${{ inputs.install-command }}
       shell: bash

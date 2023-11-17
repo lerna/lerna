@@ -193,13 +193,6 @@ jobs:
         run: npm ci
         shell: bash
 
-      - name: Enable corepack
-        run: corepack enable
-        shell: bash
-
-      - run: pnpm --version
-        shell: bash
-
       - name: Check if e2e-run-task-runner is affected
         id: check_affected
         run: |
