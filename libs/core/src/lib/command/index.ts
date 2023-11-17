@@ -49,7 +49,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   composed: boolean;
   options: T = {} as T;
   runner: Promise<unknown>;
-  concurrency?: number;
+  concurrency = 0;
   toposort = false;
   execOpts: ExecOptions = {};
   logger!: LernaLogger;
