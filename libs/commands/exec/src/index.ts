@@ -15,9 +15,9 @@ import pMap from "p-map";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-module.exports = function factory(argv: Arguments<ExecCommandConfigOptions>) {
+export function factory(argv: Arguments<ExecCommandConfigOptions>) {
   return new ExecCommand(argv);
-};
+}
 
 interface ExecCommandConfigOptions extends CommandConfigOptions {
   cmd?: string;
@@ -28,22 +28,21 @@ interface ExecCommandConfigOptions extends CommandConfigOptions {
   profile?: boolean;
   profileLocation?: string;
   rejectCycles?: boolean;
+  "--"?: string[];
 }
 
-class ExecCommand extends Command {
-  options: ExecCommandConfigOptions;
-
+export class ExecCommand extends Command<ExecCommandConfigOptions> {
   command?: string;
   args?: string[];
   bail?: boolean;
   prefix?: boolean;
   env?: NodeJS.ProcessEnv;
-  filteredProjects?: ProjectGraphProjectNodeWithPackage[];
+  filteredProjects: ProjectGraphProjectNodeWithPackage[] = [];
   count?: number;
   packagePlural?: string;
   joinedCommand?: string;
 
-  get requiresGit() {
+  override get requiresGit() {
     return false;
   }
 
@@ -94,9 +93,8 @@ class ExecCommand extends Command {
       // only the first error is caught
       try {
         await runCommand();
-      } catch (err) {
+      } catch (err: any) {
         process.exitCode = err.exitCode;
-
         // rethrow to halt chain and log properly
         throw err;
       }
@@ -144,7 +142,7 @@ class ExecCommand extends Command {
   }
 
   private runCommandInPackagesTopological() {
-    let profiler: Profiler;
+    let profiler: Profiler | undefined;
     let runner: (pkg: Package) => Promise<unknown>;
 
     if (this.options.profile) {
@@ -155,7 +153,8 @@ class ExecCommand extends Command {
       });
 
       const callback = this.getRunner();
-      runner = (pkg) => profiler.run(() => callback(pkg), pkg.name);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      runner = (pkg) => profiler!.run(() => callback(pkg), pkg.name);
     } else {
       runner = this.getRunner();
     }
@@ -171,7 +170,8 @@ class ExecCommand extends Command {
     );
 
     if (profiler) {
-      chain = chain.then((results) => profiler.output().then(() => results));
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      chain = chain.then((results) => profiler!.output().then(() => results));
     }
 
     return chain;
@@ -187,13 +187,11 @@ class ExecCommand extends Command {
     });
   }
 
-  runCommandInPackageStreaming(pkg) {
+  runCommandInPackageStreaming(pkg: Package) {
     return childProcess.spawnStreaming(this.command, this.args, this.getOpts(pkg), this.prefix && pkg.name);
   }
 
-  runCommandInPackageCapturing(pkg) {
+  runCommandInPackageCapturing(pkg: Package) {
     return childProcess.spawn(this.command, this.args, this.getOpts(pkg));
   }
 }
-
-module.exports.ExecCommand = ExecCommand;
