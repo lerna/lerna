@@ -29,6 +29,10 @@ runs:
       run: corepack enable
       shell: bash
 
+    - name: Prepare pnpm
+      run: corepack prepare pnpm@8
+      shell: bash
+
     - name: Install dependencies
       run: ${{ inputs.install-command }}
       shell: bash
