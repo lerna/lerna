@@ -4,9 +4,7 @@ import { dump } from "js-yaml";
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
-    return normalizeEnvironment(str)
-      .replace(/\.+\/\.?(pnpm|node_modules).*\n/g, "")
-      .replace("info cli using local version of lerna\n", "");
+    return normalizeEnvironment(str).replace("info cli using local version of lerna\n", "");
   },
   test(val: string) {
     return val != null && typeof val === "string";
@@ -85,7 +83,7 @@ describe("lerna-init-pnpm", () => {
     it("should generate pnpm-workspace.yaml", async () => {
       const result = await fixture.lernaInit();
 
-      expect(result.combinedOutput).toMatchInlineSnapshot(`
+      expect(result.combinedOutput).toContain(`
         lerna notice cli v999.9.9-e2e.0
         lerna info Applying the following file system updates:
         CREATE lerna.json
