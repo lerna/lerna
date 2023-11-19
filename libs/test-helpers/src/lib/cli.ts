@@ -4,7 +4,6 @@ import { setWorkspaceRoot } from "nx/src/utils/workspace-root";
 import path, { join } from "path";
 import yargs from "yargs";
 import { lernaCLI } from "@lerna/core";
-import { strict } from "assert";
 
 /**
  * A higher-order function to help with passing _actual_ yargs-parsed argv
@@ -34,8 +33,6 @@ export function commandRunner(commandModule: yargs.CommandModule) {
       .command(commandModule);
 
     return (...args: any) => {
-      // eslint-disable-next-line no-async-promise-executor
-
       // We always need fresh copies of the graph in the unit test fixtures
       process.env.NX_DAEMON = "false";
       process.env.NX_CACHE_PROJECT_GRAPH = "false";
@@ -49,16 +46,18 @@ export function commandRunner(commandModule: yargs.CommandModule) {
       resetWorkspaceContext();
       setupWorkspaceContext(cwd);
 
-      const yargsMeta: { error?: any; exitCode?: number } = {};
-      let realResult: any = {};
+      const yargsMeta: { exitCode?: number | unknown } = {};
+      //keep track of the results in order to complete promise
+      let fullResult: any = {};
       let rejectedResult: any = undefined;
+
       const context = {
         cwd,
         lernaVersion: "__TEST_VERSION__",
         loglevel: "silent",
         progress: false,
         onResolved: (res: any) => {
-          realResult = Object.assign({}, res, yargsMeta);
+          fullResult = Object.assign({}, res, yargsMeta);
         },
         onRejected: (result: any) => {
           Object.assign(result, yargsMeta);
@@ -73,33 +72,26 @@ export function commandRunner(commandModule: yargs.CommandModule) {
         Object.assign(yargsMeta, { parsedArgv, yargsOutput });
       };
 
-      // eslint-disable-next-line no-async-promise-executor
       return new Promise((resolve, reject) => {
         const result = cli
           .fail((msg: string | undefined, err: Error) => {
             // since yargs 10.1.0, this is the only way to catch handler rejection
             // _and_ yargs validation exceptions when using async command handlers
             const actual = err || new Error(msg);
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            yargsMeta.error = actual;
-            // ok lets keep the exit code here and always have one
-            if (!(actual as any).exitCode) {
-              (actual as any).exitCode = 1;
-            }
+            // backfill exitCode for test convenience
+            yargsMeta.exitCode = "exitCode" in actual ? actual.exitCode : 1;
+            context.onRejected(actual);
           })
           .parse([cmd, ...args], context, parseFn);
         Promise.resolve(result)
           .then(() => {
-            if (yargsMeta.error) {
-              reject(yargsMeta.error);
-              return;
-            }
+            //if there is an error we reject the promise
             if (rejectedResult) {
               reject(rejectedResult);
               return;
             }
-            resolve(realResult);
+            // resolve with full result
+            resolve(fullResult);
           })
           .catch((e) => reject(e));
       });
