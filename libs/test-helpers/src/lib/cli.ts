@@ -48,46 +48,52 @@ export function commandRunner(commandModule: yargs.CommandModule) {
 
       const yargsMeta: { exitCode?: number | unknown } = {};
       //keep track of the results in order to complete promise
-      let fullResult: any = {};
-      let rejectedResult: any = undefined;
+      let fullResult: unknown = {};
+      let capturedError: Error | undefined = undefined;
 
       const context = {
         cwd,
         lernaVersion: "__TEST_VERSION__",
         loglevel: "silent",
         progress: false,
-        onResolved: (res: any) => {
+        //used to capture information for testing
+        onResolved: (res: unknown) => {
           fullResult = Object.assign({}, res, yargsMeta);
         },
-        onRejected: (result: any) => {
+        //used to capture information for testing
+        onRejected: (result: Error) => {
           Object.assign(result, yargsMeta);
           // tests expect errors thrown to indicate failure,
           // _not_ just non-zero exitCode
-          rejectedResult = result;
+          capturedError = result;
         },
       };
 
-      const parseFn = (yargsError: any, parsedArgv: any, yargsOutput: any) => {
+      const parseFn = (_: unknown, parsedArgv: unknown, yargsOutput: unknown) => {
         // this is synchronous, before the async handlers resolve
         Object.assign(yargsMeta, { parsedArgv, yargsOutput });
       };
 
       return new Promise((resolve, reject) => {
-        const result = cli
-          .fail((msg: string | undefined, err: Error) => {
-            // since yargs 10.1.0, this is the only way to catch handler rejection
-            // _and_ yargs validation exceptions when using async command handlers
-            const actual = err || new Error(msg);
-            // backfill exitCode for test convenience
-            yargsMeta.exitCode = "exitCode" in actual ? actual.exitCode : 1;
-            context.onRejected(actual);
-          })
-          .parse([cmd, ...args], context, parseFn);
-        Promise.resolve(result)
+        // we wrap command execution in a promise to get additional information for testing, which is collected from inner promises (builder and command handler)
+        Promise.resolve(
+          //cli parse can potentially be a promise so we wait until it is resolved, which means the whole command has really finished.
+          //this has to be done since yargs 17.0.0, because handlers get executed no matter if the builder and its checks succeed
+          cli
+            .fail((msg: string | undefined, err: Error) => {
+              // since yargs 10.1.0, this is the only way to catch handler rejection
+              // _and_ yargs validation exceptions when using async command handlers
+              const actual = err || new Error(msg);
+              // backfill exitCode for test convenience
+              yargsMeta.exitCode = "exitCode" in actual ? actual.exitCode : 1;
+              context.onRejected(actual);
+            })
+            .parse([cmd, ...args], context, parseFn)
+        )
           .then(() => {
             //if there is an error we reject the promise
-            if (rejectedResult) {
-              reject(rejectedResult);
+            if (capturedError) {
+              reject(capturedError);
               return;
             }
             // resolve with full result
@@ -99,7 +105,7 @@ export function commandRunner(commandModule: yargs.CommandModule) {
   };
 }
 
-export function cliRunner(cwd: any, env?: any) {
+export function cliRunner(cwd: string, env?: any) {
   const opts = {
     cwd,
     env: Object.assign(
