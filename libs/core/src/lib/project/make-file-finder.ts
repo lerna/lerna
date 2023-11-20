@@ -1,4 +1,4 @@
-import globby, { Entry } from "globby";
+import globby from "globby";
 import pMap from "p-map";
 import path from "path";
 import { ValidationError } from "../validation-error";

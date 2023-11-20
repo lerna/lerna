@@ -194,9 +194,11 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       this.options.loglevel = "verbose";
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   argv(argv: any, arg1: any, config: any, envDefaults: any): any {
     throw new Error("Method not implemented.");
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   envDefaults(argv: any, arg1: any, config: any, envDefaults: any): any {
     throw new Error("Method not implemented.");
   }
