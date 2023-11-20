@@ -62,8 +62,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "packages/legacy-structure/commands/create/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "packages/legacy-structure/commands/create/jest.config.ts"
       }
     }
   },

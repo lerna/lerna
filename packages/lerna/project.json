@@ -114,8 +114,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "packages/lerna/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "packages/lerna/jest.config.ts"
       }
     }
   },
