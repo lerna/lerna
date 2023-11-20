@@ -226,15 +226,15 @@ describe("lerna-run-legacy-task-runner", () => {
       const output = await fixture.lerna(`run print-name --npm-client=yarn`);
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-        yarn run v1.22.21
+        yarn run v1.XX.XX
         $ echo test-package-X
         test-package-X
         Done in X.Xs.
-        yarn run v1.22.21
+        yarn run v1.XX.XX
         $ echo test-package-X
         test-package-X
         Done in X.Xs.
-        yarn run v1.22.21
+        yarn run v1.XX.XX
         $ echo test-package-X
         test-package-X
         Done in X.Xs.
