@@ -192,10 +192,6 @@ jobs:
         run: corepack enable
         shell: bash
 
-      - name: Prepare pnpm
-        run: corepack prepare pnpm@8
-        shell: bash
-
       # TODO: figure out why uses: ./.github/actions/install-node-and-dependencies is causing pnpm to not be available in this job.
       - name: Install dependencies
         run: npm ci
