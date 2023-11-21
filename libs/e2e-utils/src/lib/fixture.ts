@@ -28,6 +28,7 @@ const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4872/";
 
 const noopWriteStream = {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   write(...x: any[]) {},
 } as WriteStream;
 

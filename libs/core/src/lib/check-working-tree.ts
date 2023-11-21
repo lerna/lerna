@@ -5,7 +5,7 @@ import { collectUncommitted } from "./collect-uncommitted";
 import { describeRef } from "./describe-ref";
 import { ValidationError } from "./validation-error";
 
-export function checkWorkingTree({ cwd } = {}) {
+export function checkWorkingTree({ cwd }: { cwd?: string | URL } = {}) {
   let chain = Promise.resolve();
 
   chain = chain.then(() => describeRef({ cwd }));

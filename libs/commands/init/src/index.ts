@@ -1,4 +1,11 @@
-import { Command, LernaConfig, isGitInitialized } from "@lerna/core";
+import {
+  Arguments,
+  Command,
+  CommandConfigOptions,
+  LernaConfig,
+  LernaLogger,
+  isGitInitialized,
+} from "@lerna/core";
 import {
   PackageManager,
   addDependenciesToPackageJson,
@@ -11,12 +18,11 @@ import { existsSync } from "fs";
 import { readFileSync } from "fs-extra";
 import log from "npmlog";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
-import yargs from "yargs";
 
 const LARGE_BUFFER = 1024 * 1000000;
 
-interface InitCommandOptions {
-  lernaVersion: string;
+interface InitCommandOptions extends CommandConfigOptions {
+  lernaVersion?: string;
   packages?: string[];
   exact?: boolean;
   loglevel?: string;
@@ -30,22 +36,23 @@ const childProcess = require("@lerna/child-process");
 
 const PACKAGE_GLOB = "packages/*";
 
-module.exports = function factory(args: yargs.ArgumentsCamelCase<InitCommandOptions>) {
+export function factory(args: Arguments<InitCommandOptions>) {
   return new InitCommand(args);
-};
+}
 
-class InitCommand {
+export class InitCommand {
   name = "init";
-  logger: log.Logger;
+  logger: LernaLogger;
   cwd = process.cwd();
   packageManager: PackageManager;
+  runner: Promise<void>;
 
-  constructor(private args: yargs.ArgumentsCamelCase<InitCommandOptions>) {
+  constructor(private args: Arguments<InitCommandOptions>) {
     log.heading = "lerna";
     this.logger = Command.createLogger(this.name, args.loglevel);
     this.logger.notice("cli", `v${this.args.lernaVersion}`);
     this.packageManager = this.detectPackageManager() || this.detectInvokedPackageManager() || "npm";
-    this.execute();
+    this.runner = this.execute();
   }
 
   async execute(): Promise<void> {
@@ -71,7 +78,7 @@ class InitCommand {
           expand: false,
           aColor: chalk.red,
           bColor: chalk.green,
-          patchColor: (s) => "",
+          patchColor: () => "",
         })
       );
     }
@@ -115,6 +122,16 @@ class InitCommand {
     } else {
       this.logger.warn("", `The "dryRun" flag means no changes were made.`);
     }
+  }
+
+  // proxy "Promise" methods to "private" instance
+  then(onResolved: () => void, onRejected: (err: string | Error) => void) {
+    return this.runner.then(onResolved, onRejected);
+  }
+
+  /* istanbul ignore next */
+  catch(onRejected: (err: string | Error) => void) {
+    return this.runner.catch(onRejected);
   }
 
   async generate(tree: Tree): Promise<void | (() => Promise<void>)> {
@@ -190,7 +207,7 @@ class InitCommand {
     addDependenciesToPackageJson(
       tree,
       {},
-      { lerna: this.args.exact ? this.args.lernaVersion : `^${this.args.lernaVersion}` }
+      { lerna: this.args.exact ? (this.args.lernaVersion as string) : `^${this.args.lernaVersion}` }
     );
 
     // Ensure minimal .gitignore exists
@@ -269,5 +286,3 @@ class InitCommand {
     return detectedPackageManager;
   }
 }
-
-module.exports.InitCommand = InitCommand;

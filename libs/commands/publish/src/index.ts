@@ -1,4 +1,5 @@
 import {
+  Arguments,
   AssetDefinition,
   collectProjectUpdates,
   Command,
@@ -52,7 +53,7 @@ import { interpolate } from "./lib/interpolate";
 import { removeTempLicenses } from "./lib/remove-temp-licenses";
 import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+module.exports = function factory(argv: Arguments<PublishCommandConfigOptions>) {
   return new PublishCommand(argv);
 };
 
@@ -333,7 +334,7 @@ class PublishCommand extends Command {
     }
 
     if (!result.updates.length) {
-      this.logger.success("No changed packages to publish");
+      this.logger.success("", "No changed packages to publish");
 
       // still exits zero, aka "ok"
       return false;
@@ -403,7 +404,7 @@ class PublishCommand extends Command {
     const publishedPackagesSorted = this.publishedPackages.sort((a, b) => a.name.localeCompare(b.name));
 
     if (!count) {
-      this.logger.success("All packages have already been published.");
+      this.logger.success("", "All packages have already been published.");
       return;
     }
 

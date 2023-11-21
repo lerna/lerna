@@ -14,30 +14,47 @@ import { detectProjects } from "./detect-projects";
 import { isGitInitialized } from "./is-git-initialized";
 import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
+import yargs from "yargs";
+import { ExecOptions } from "child_process";
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
+/**
+ * Specific logger with log-level success enabled in order to use function without index signature
+ */
+export interface LernaLogger extends log.Logger {
+  /**
+   * Log with level success
+   * @param prefix
+   * @param message
+   * @param args
+   */
+  success(prefix: string, message: string, ...args: any[]): void;
+}
 export interface PreInitializedProjectData {
   projectFileMap: ProjectFileMap;
   projectGraph: ProjectGraphWithPackages;
 }
 
-export type ExecOpts = {
-  cwd: string;
-  maxBuffer?: number;
-};
+export type Arguments<T extends CommandConfigOptions = CommandConfigOptions> = {
+  cwd?: string;
+  composed?: string;
+  lernaVersion?: string;
+  onResolved?: (value: unknown) => unknown;
+  onRejected?: (reason: unknown) => unknown;
+} & yargs.ArgumentsCamelCase<T>;
 
 export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   name: string;
   composed: boolean;
   options: T = {} as T;
   runner: Promise<unknown>;
-  concurrency?: number;
+  concurrency = 0;
   toposort = false;
-  execOpts?: ExecOpts;
-  logger!: log.Logger;
+  execOpts: ExecOptions = {};
+  logger!: LernaLogger;
   envDefaults: any;
-  argv: any;
+  argv: Arguments<T> = {} as Arguments<T>;
   projectGraph!: ProjectGraphWithPackages;
   projectFileMap!: ProjectFileMap;
 
@@ -54,7 +71,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   }
 
   constructor(
-    _argv: any,
+    _argv: Arguments<T>,
     {
       skipValidations,
       preInitializedProjectData,
@@ -67,7 +84,10 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     log.heading = "lerna";
 
     const argv = cloneDeep(_argv);
-    log.silly("argv", argv);
+    log.silly(
+      "argv",
+      argv as any /*types declaration of npmlog is not correct here see https://github.com/DefinitelyTyped/DefinitelyTyped/pull/67232 */
+    );
 
     // "FooCommand" => "foo"
     this.name = this.constructor.name.replace(/Command$/, "").toLowerCase();
@@ -93,10 +113,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       chain = chain.then(() => this.configureProperties());
       chain = chain.then(() => {
         // create logger that subclasses use
-        const logger = Command.createLogger(this.name, this.options.loglevel);
-        Object.defineProperty(this, "logger", {
-          value: logger,
-        });
+        this.logger = Command.createLogger(this.name, this.options.loglevel);
       });
       // For the special "repair" command we want to initialize everything but don't want to run validations as that will end up becoming cyclical
       if (!skipValidations) {
@@ -175,7 +192,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     this.runner = runner;
   }
 
-  static createLogger(name: string, loglevel?: string): log.Logger {
+  static createLogger(name: string, loglevel?: string): LernaLogger {
     if (loglevel) {
       log.level = loglevel;
     }
@@ -202,7 +219,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
 
   // Override this to inherit config from another command.
   // For example `changed` inherits config from `publish`.
-  get otherCommandConfigs() {
+  get otherCommandConfigs(): string[] {
     return [];
   }
 

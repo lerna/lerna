@@ -8,7 +8,7 @@
     "run-e2e-tests-process": {},
     "run-e2e-tests": {},
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["e2e/version/**/*.ts"]

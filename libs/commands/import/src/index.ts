@@ -1,8 +1,12 @@
-// TODO: refactor based on TS feedback
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
-import { Command, promptConfirmation, pulseTillDone, ValidationError } from "@lerna/core";
+import {
+  Arguments,
+  Command,
+  CommandConfigOptions,
+  promptConfirmation,
+  pulseTillDone,
+  ValidationError,
+} from "@lerna/core";
+import { ExecOptions } from "child_process";
 import dedent from "dedent";
 import fs from "fs-extra";
 import pMapSeries from "p-map-series";
@@ -11,11 +15,26 @@ import path from "path";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+export function factory(argv: Arguments<ImportCommandOptions>) {
   return new ImportCommand(argv);
-};
+}
 
-class ImportCommand extends Command {
+interface ImportCommandOptions extends CommandConfigOptions {
+  dir?: string;
+  dest?: string;
+  flatten?: boolean;
+  preserveCommit?: boolean;
+  yes?: boolean;
+}
+
+export class ImportCommand extends Command<ImportCommandOptions> {
+  private externalExecOpts: ExecOptions = { cwd: "" };
+  private targetDirRelativeToGitRoot?: string;
+  private commits: string[] = [];
+  private origGitEmail?: string;
+  private origGitName?: string;
+  private preImportHead?: string;
+
   gitParamsForTargetCommits() {
     const params = ["log", "--format=%h"];
     if (this.options.flatten) {
@@ -27,7 +46,7 @@ class ImportCommand extends Command {
   override initialize() {
     const inputPath = this.options.dir;
 
-    const externalRepoPath = path.resolve(inputPath);
+    const externalRepoPath = path.resolve(inputPath ?? "");
     const externalRepoBase = path.basename(externalRepoPath);
 
     this.externalExecOpts = Object.assign({}, this.execOpts, {
@@ -38,7 +57,7 @@ class ImportCommand extends Command {
 
     try {
       stats = fs.statSync(externalRepoPath);
-    } catch (e) {
+    } catch (e: any) {
       if (e.code === "ENOENT") {
         throw new ValidationError("ENOENT", `No repository found at "${inputPath}"`);
       }
@@ -143,15 +162,15 @@ class ImportCommand extends Command {
     return this.execSync("git", ["rev-parse", "--show-toplevel"]);
   }
 
-  execSync(cmd, args) {
+  execSync(cmd: string, args: string[]): string {
     return childProcess.execSync(cmd, args, this.execOpts);
   }
 
-  externalExecSync(cmd, args) {
+  externalExecSync(cmd: string, args: string[]): string {
     return childProcess.execSync(cmd, args, this.externalExecOpts);
   }
 
-  createPatchForCommit(sha) {
+  createPatchForCommit(sha: string) {
     let patch = null;
 
     if (this.options.flatten) {
@@ -186,7 +205,7 @@ class ImportCommand extends Command {
       ]);
     }
 
-    const formattedTarget = this.targetDirRelativeToGitRoot.replace(/\\/g, "/");
+    const formattedTarget = this.targetDirRelativeToGitRoot?.replace(/\\/g, "/");
     const replacement = `$1/${formattedTarget}`;
 
     // Create a patch file for this commit and prepend the target directory
@@ -200,14 +219,14 @@ class ImportCommand extends Command {
       .replace(/^(rename (from|to)) ("?)/gm, `$1 $3${formattedTarget}/`);
   }
 
-  getGitUserFromSha(sha) {
+  getGitUserFromSha(sha: string) {
     return {
       email: this.externalExecSync("git", ["show", "-s", "--format='%ae'", sha]),
       name: this.externalExecSync("git", ["show", "-s", "--format='%an'", sha]),
     };
   }
 
-  configureGitUser({ email, name }) {
+  configureGitUser({ email, name }: { email?: string; name?: string }) {
     this.execSync("git", ["config", "user.email", `"${email}"`]);
     this.execSync("git", ["config", "user.name", `"${name}"`]);
   }
@@ -215,8 +234,8 @@ class ImportCommand extends Command {
   override execute() {
     this.enableProgressBar();
 
-    const tracker = this.logger.newItem("execute");
-    const mapper = (sha) => {
+    const tracker = this.logger["newItem"]("execute");
+    const mapper = (sha: string) => {
       tracker.info(sha);
 
       const patch = this.createPatchForCommit(sha);
@@ -240,7 +259,7 @@ class ImportCommand extends Command {
         .then(() => {
           tracker.completeWork(1);
         })
-        .catch((err) => {
+        .catch((err: any) => {
           // Getting commit diff to see if it's empty
           const diff = this.externalExecSync("git", ["diff", "-s", `${sha}^!`]).trim();
           if (diff === "") {
@@ -284,8 +303,9 @@ class ImportCommand extends Command {
 
         // Abort the failed `git am` and roll back to previous HEAD.
         this.execSync("git", ["am", "--abort"]);
-        this.execSync("git", ["reset", "--hard", this.preImportHead]);
-
+        if (this.preImportHead) {
+          this.execSync("git", ["reset", "--hard", this.preImportHead]);
+        }
         throw new ValidationError(
           "EIMPORT",
           dedent`
@@ -298,5 +318,3 @@ class ImportCommand extends Command {
       });
   }
 }
-
-module.exports.ImportCommand = ImportCommand;

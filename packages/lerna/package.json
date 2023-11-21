@@ -23,7 +23,7 @@
   ],
   "main": "./src/index.js",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "publishConfig": {
     "tag": "next"
@@ -40,7 +40,7 @@
     "@lerna/child-process": "7.4.2",
     "@lerna/create": "7.4.2",
     "@npmcli/run-script": "6.0.2",
-    "@nx/devkit": ">=16.5.1 < 17",
+    "@nx/devkit": ">=17.1.2 < 18",
     "@octokit/plugin-enterprise-rest": "6.0.1",
     "@octokit/rest": "19.0.11",
     "byte-size": "8.1.1",
@@ -83,7 +83,7 @@
     "npm-packlist": "5.1.1",
     "npm-registry-fetch": "^14.0.5",
     "npmlog": "^6.0.2",
-    "nx": ">=16.5.1 < 17",
+    "nx": ">=17.1.2 < 18",
     "p-map": "4.0.0",
     "p-map-series": "2.1.0",
     "p-pipe": "3.1.0",

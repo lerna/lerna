@@ -1,4 +1,5 @@
 import {
+  Arguments,
   collectProjectUpdates,
   Command,
   CommandConfigOptions,
@@ -6,21 +7,21 @@ import {
   output,
 } from "@lerna/core";
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+export function factory(argv: Arguments<ChangedCommandOptions>) {
   return new ChangedCommand(argv);
-};
-
-interface ChangedCommandOptions extends CommandConfigOptions {
-  conventionalCommits: boolean;
-  conventionalGraduate: boolean | string;
-  forceConventionalGraduate: boolean;
-  forcePublish: boolean | string;
 }
 
-class ChangedCommand extends Command<ChangedCommandOptions> {
-  result: ReturnType<typeof listableFormatProjects>;
+interface ChangedCommandOptions extends CommandConfigOptions {
+  conventionalCommits?: boolean;
+  conventionalGraduate?: boolean | string;
+  forceConventionalGraduate?: boolean;
+  forcePublish?: boolean | string;
+}
 
-  get otherCommandConfigs() {
+export class ChangedCommand extends Command<ChangedCommandOptions> {
+  result?: ReturnType<typeof listableFormatProjects>;
+
+  override get otherCommandConfigs() {
     // back-compat
     return ["version", "publish"];
   }
@@ -53,18 +54,17 @@ class ChangedCommand extends Command<ChangedCommandOptions> {
       // prevents execute()
       return false;
     }
+    return true;
   }
 
   override execute() {
-    output(this.result.text);
+    output(this.result?.text);
 
     this.logger.success(
       "found",
       "%d %s ready to publish",
-      this.result.count,
-      this.result.count === 1 ? "package" : "packages"
+      this.result?.count,
+      this.result?.count === 1 ? "package" : "packages"
     );
   }
 }
-
-module.exports.ChangedCommand = ChangedCommand;

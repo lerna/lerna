@@ -20,6 +20,7 @@ import {
   throwIfUncommitted,
   updateChangelog,
   formatJSON,
+  Arguments,
 } from "@lerna/core";
 import chalk from "chalk";
 import dedent from "dedent";
@@ -50,7 +51,7 @@ import { updateLockfileVersion } from "./lib/update-lockfile-version";
 const childProcess = require("@lerna/child-process");
 
 module.exports = function factory(
-  argv: NodeJS.Process["argv"],
+  argv: Arguments<VersionCommandConfigOptions>,
   preInitializedProjectData?: PreInitializedProjectData
 ) {
   return new VersionCommand(argv, preInitializedProjectData);
@@ -144,7 +145,10 @@ class VersionCommand extends Command {
    * in a single step, we need to be able to receive any project data which might already exist from the
    * publish command (in the case that it invokes the version command from within its implementation details).
    */
-  constructor(argv: NodeJS.Process["argv"], preInitializedProjectData?: PreInitializedProjectData) {
+  constructor(
+    argv: Arguments<VersionCommandConfigOptions>,
+    preInitializedProjectData?: PreInitializedProjectData
+  ) {
     super(argv, { skipValidations: false, preInitializedProjectData });
   }
 
@@ -320,7 +324,7 @@ class VersionCommand extends Command {
     });
 
     if (!this.updates.length) {
-      this.logger.success(`No changed packages to ${this.composed ? "publish" : "version"}`);
+      this.logger.success("", `No changed packages to ${this.composed ? "publish" : "version"}`);
 
       // still exits zero, aka "ok"
       return false;
@@ -894,7 +898,11 @@ class VersionCommand extends Command {
 
   private async hasChanges() {
     try {
-      await execa("git", ["diff", "--staged", "--quiet"], { stdio: "pipe", ...this.execOpts });
+      await execa("git", ["diff", "--staged", "--quiet"], {
+        stdio: "pipe",
+        ...this.execOpts,
+        cwd: this.execOpts.cwd as string, // force it to a string
+      });
     } catch (e) {
       // git diff exited with a non-zero exit code, so we assume changes were found
       return true;
