@@ -2,9 +2,7 @@ import { Arguments, Command, CommandConfigOptions, getPackage, ValidationError }
 import execa from "execa";
 import { getLastCommit } from "./lib/get-last-commit";
 import { hasCommit } from "./lib/has-commit";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const childProcess = require("@lerna/child-process");
+import { spawn } from "@lerna/child-process";
 
 export function factory(argv: Arguments<DiffCommandOptions>) {
   return new DiffCommand(argv);
@@ -56,7 +54,7 @@ export class DiffCommand extends Command<DiffCommandOptions> {
   }
 
   override execute() {
-    return childProcess.spawn("git", this.args, this.execOpts).catch((err: execa.ExecaError) => {
+    return spawn("git", this.args, this.execOpts).catch((err: execa.ExecaError) => {
       if (err.exitCode) {
         // quitting the diff viewer is not an error
         throw err;

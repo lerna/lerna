@@ -14,9 +14,11 @@
   },
   "files": [
     "index.js",
+    "types/index.d.ts",
     "set-exit-code.js"
   ],
   "main": "index.js",
+  "types": "types/index.d.ts",
   "engines": {
     "node": ">=18.0.0"
   },
