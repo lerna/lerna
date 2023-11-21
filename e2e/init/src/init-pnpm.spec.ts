@@ -51,6 +51,8 @@ describe("lerna-init-pnpm", () => {
     it("should set npmClient to pnpm in lerna.json", async () => {
       const result = await fixture.lernaInit();
 
+      // use toContain instead of toMatchInlineSnapshot to keep the test
+      // decoupled from the pnpm install output
       expect(result.combinedOutput).toContain("lerna success Initialized Lerna files");
 
       const packageJson = await fixture.readWorkspaceFile("package.json");
@@ -72,6 +74,8 @@ describe("lerna-init-pnpm", () => {
     it("should generate pnpm-workspace.yaml", async () => {
       const result = await fixture.lernaInit();
 
+      // use toContain instead of toMatchInlineSnapshot to keep the test
+      // decoupled from the pnpm install output
       expect(result.combinedOutput).toContain("lerna success Initialized Lerna files");
 
       const lernaJson = await fixture.readWorkspaceFile("lerna.json");
