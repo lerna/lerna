@@ -1,10 +1,11 @@
 import { filterOptions } from "@lerna/core";
 import type { CommandModule } from "yargs";
+import { RunCommandConfigOptions } from ".";
 
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
  */
-const command: CommandModule = {
+const command: CommandModule<object, RunCommandConfigOptions> = {
   command: "run <script>",
   describe: "Run an npm script in each package that contains that script",
   builder(yargs) {
@@ -93,11 +94,10 @@ const command: CommandModule = {
         },
       });
 
-    return filterOptions(yargs);
+    return filterOptions<RunCommandConfigOptions>(yargs);
   },
-  handler(argv) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require(".")(argv);
+  async handler(argv) {
+    return (await import(".")).factory(argv);
   },
 };
 
