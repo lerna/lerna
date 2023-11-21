@@ -3,7 +3,10 @@ import { existsSync } from "fs-extra";
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
-    return normalizeCommandOutput(normalizeEnvironment(str));
+    return normalizeCommandOutput(normalizeEnvironment(str)).replaceAll(
+      /yarn run v1\.\d\d\.\d+/g,
+      "yarn run v1.XX.XX"
+    );
   },
   test(val: string) {
     return val != null && typeof val === "string";
@@ -223,15 +226,15 @@ describe("lerna-run-legacy-task-runner", () => {
       const output = await fixture.lerna(`run print-name --npm-client=yarn`);
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
-        yarn run v1.22.19
+        yarn run v1.XX.XX
         $ echo test-package-X
         test-package-X
         Done in X.Xs.
-        yarn run v1.22.19
+        yarn run v1.XX.XX
         $ echo test-package-X
         test-package-X
         Done in X.Xs.
-        yarn run v1.22.19
+        yarn run v1.XX.XX
         $ echo test-package-X
         test-package-X
         Done in X.Xs.

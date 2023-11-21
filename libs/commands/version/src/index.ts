@@ -1,4 +1,5 @@
 import {
+  Arguments,
   Command,
   CommandConfigOptions,
   Package,
@@ -10,6 +11,9 @@ import {
   collectProjectUpdates,
   collectProjects,
   createRunner,
+  execPackageManager,
+  execPackageManagerSync,
+  formatJSON,
   getPackage,
   getPackagesForOption,
   output,
@@ -19,8 +23,6 @@ import {
   runProjectsTopologically,
   throwIfUncommitted,
   updateChangelog,
-  formatJSON,
-  Arguments,
 } from "@lerna/core";
 import chalk from "chalk";
 import dedent from "dedent";
@@ -93,6 +95,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   conventionalBumpPrerelease?: boolean;
   yes?: boolean;
   rejectCycles?: boolean;
+  premajorVersionBump?: "default" | "force-patch";
 }
 
 class VersionCommand extends Command {
@@ -125,6 +128,7 @@ class VersionCommand extends Command {
   updatesVersions?: Map<string, string>;
   packagesToVersion?: Package[];
   projectsWithPackage: ProjectGraphProjectNodeWithPackage[] = [];
+  premajorVersionBump?: "default" | "force-patch";
 
   get otherCommandConfigs() {
     // back-compat
@@ -169,12 +173,14 @@ class VersionCommand extends Command {
       signGitTag,
       forceGitTag,
       tagVersionPrefix = "v",
+      premajorVersionBump = "default",
     } = this.options;
 
     this.gitRemote = gitRemote;
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
     this.pushToRemote = gitTagVersion && amend !== true && push;
+    this.premajorVersionBump = premajorVersionBump;
     // never automatically push to remote when amending a commit
 
     this.releaseClient =
@@ -514,17 +520,22 @@ class VersionCommand extends Command {
 
     const versions = await this.reduceVersions((node) => {
       const pkg = getPackage(node);
-      return recommendVersion(pkg, type, {
-        changelogPreset,
-        rootPath,
-        tagPrefix: this.tagPrefix,
-        prereleaseId: getPrereleaseId({
-          name: node.name,
-          prereleaseId: prereleaseIdFromVersion(pkg.version),
-        }),
-        conventionalBumpPrerelease,
-        buildMetadata,
-      });
+      return recommendVersion(
+        pkg,
+        type,
+        {
+          changelogPreset,
+          rootPath,
+          tagPrefix: this.tagPrefix,
+          prereleaseId: getPrereleaseId({
+            name: node.name,
+            prereleaseId: prereleaseIdFromVersion(pkg.version),
+          }),
+          conventionalBumpPrerelease,
+          buildMetadata,
+        },
+        this.premajorVersionBump
+      );
     });
 
     if (type === "fixed") {
@@ -758,7 +769,7 @@ class VersionCommand extends Command {
 
     if (this.options.npmClient === "pnpm") {
       this.logger.verbose("version", "Updating root pnpm-lock.yaml");
-      await childProcess.exec(
+      await execPackageManager(
         "pnpm",
         [
           "install",
@@ -774,16 +785,16 @@ class VersionCommand extends Command {
     }
 
     if (this.options.npmClient === "yarn") {
-      const yarnVersion = await childProcess.execSync("yarn", ["--version"], this.execOpts);
+      const yarnVersion = execPackageManagerSync("yarn", ["--version"], this.execOpts);
       this.logger.verbose("version", `Detected yarn version ${yarnVersion}`);
 
       if (semver.gte(yarnVersion, "2.0.0")) {
         this.logger.verbose("version", "Updating root yarn.lock");
-        await childProcess.exec("yarn", ["install", "--mode", "update-lockfile", ...npmClientArgs], {
+        await execPackageManager("yarn", ["install", "--mode", "update-lockfile", ...npmClientArgs], {
           ...this.execOpts,
           env: {
             ...process.env,
-            YARN_ENABLE_SCRIPTS: false,
+            YARN_ENABLE_SCRIPTS: "false",
           },
         });
 
