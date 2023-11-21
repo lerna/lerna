@@ -33,6 +33,10 @@ runs:
       run: corepack prepare pnpm@8
       shell: bash
 
+    - name: Use Yarn classic
+      run: yarn set version classic
+      shell: bash
+
     - name: Install dependencies
       run: ${{ inputs.install-command }}
       shell: bash

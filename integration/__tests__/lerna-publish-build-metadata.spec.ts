@@ -151,12 +151,14 @@ test("lerna publish applies build metadata independent versions", async () => {
      - package-3: 3.0.0 => 4.0.0+001
      - package-4: 4.0.0 => 5.0.0+001
      - package-5: 5.0.0 => 6.0.0+001 (private)
+     - package-6: 0.1.0 => 1.0.0+001
 
     Successfully published:
      - package-1@2.0.0+001
      - package-2@3.0.0+001
      - package-3@4.0.0+001
      - package-4@5.0.0+001
+     - package-6@1.0.0+001
   `);
 
   /* eslint-disable max-len */
@@ -169,8 +171,9 @@ test("lerna publish applies build metadata independent versions", async () => {
      - package-3@4.0.0+001
      - package-4@5.0.0+001
      - package-5@6.0.0+001
+     - package-6@1.0.0+001
 
-    HEAD -> main, tag: package-5@6.0.0+001, tag: package-4@5.0.0+001, tag: package-3@4.0.0+001, tag: package-2@3.0.0+001, tag: package-1@2.0.0+001, origin/main
+    HEAD -> main, tag: package-6@1.0.0+001, tag: package-5@6.0.0+001, tag: package-4@5.0.0+001, tag: package-3@4.0.0+001, tag: package-2@3.0.0+001, tag: package-1@2.0.0+001, origin/main
 
     diff --git a/packages/package-1/package.json b/packages/package-1/package.json
     index SHA..SHA 100644
@@ -216,6 +219,13 @@ test("lerna publish applies build metadata independent versions", async () => {
     @@ -7 +7 @@
     -  "version": "5.0.0",
     +  "version": "6.0.0+001",
+    diff --git a/packages/package-6/package.json b/packages/package-6/package.json
+    index SHA..SHA 100644
+    --- a/packages/package-6/package.json
+    +++ b/packages/package-6/package.json
+    @@ -3 +3 @@
+    -  "version": "0.1.0",
+    +  "version": "1.0.0+001",
   `);
 });
 

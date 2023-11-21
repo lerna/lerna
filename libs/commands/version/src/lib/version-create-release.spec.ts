@@ -122,13 +122,14 @@ describe.each([
       ["package-3", "4.0.0"],
       ["package-4", "4.1.0"],
       ["package-5", "5.0.1"],
+      ["package-6", "0.2.0"],
     ]);
 
     versionBumps.forEach((bump) => recommendVersion.mockResolvedValueOnce(bump));
 
     await lernaVersion(cwd)("--create-release", type, "--conventional-commits");
 
-    expect(client.releases.size).toBe(5);
+    expect(client.releases.size).toBe(6);
     versionBumps.forEach((version, name) => {
       expect(client.releases.get(`${name}@${version}`)).toEqual({
         owner: "lerna",
