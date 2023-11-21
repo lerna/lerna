@@ -73,21 +73,19 @@ describe("lerna-version-positional-arguments-pnpm", () => {
       Object {
         .: Object {
           devDependencies: Object {
-            lerna: 999.9.9-e2e.0,
-          },
-          specifiers: Object {
-            lerna: ^999.9.9-e2e.0,
+            lerna: Object {
+              specifier: ^999.9.9-e2e.0,
+              version: 999.9.9-e2e.0,
+            },
           },
         },
-        packages/package-a: Object {
-          specifiers: Object {},
-        },
+        packages/package-a: Object {},
         packages/package-b: Object {
           dependencies: Object {
-            package-a: link:../package-a,
-          },
-          specifiers: Object {
-            package-a: ^3.3.3,
+            package-a: Object {
+              specifier: ^3.3.3,
+              version: link:../package-a,
+            },
           },
         },
       }
@@ -140,21 +138,19 @@ describe("lerna-version-positional-arguments-pnpm", () => {
       Object {
         .: Object {
           devDependencies: Object {
-            lerna: 999.9.9-e2e.0,
-          },
-          specifiers: Object {
-            lerna: ^999.9.9-e2e.0,
+            lerna: Object {
+              specifier: ^999.9.9-e2e.0,
+              version: 999.9.9-e2e.0,
+            },
           },
         },
-        packages/package-a: Object {
-          specifiers: Object {},
-        },
+        packages/package-a: Object {},
         packages/package-b: Object {
           dependencies: Object {
-            package-a: link:../package-a,
-          },
-          specifiers: Object {
-            package-a: workspace:^3.3.3,
+            package-a: Object {
+              specifier: workspace:^3.3.3,
+              version: link:../package-a,
+            },
           },
         },
       }
@@ -211,21 +207,19 @@ describe("lerna-version-positional-arguments-pnpm", () => {
       Object {
         .: Object {
           devDependencies: Object {
-            lerna: 999.9.9-e2e.0,
-          },
-          specifiers: Object {
-            lerna: ^999.9.9-e2e.0,
+            lerna: Object {
+              specifier: ^999.9.9-e2e.0,
+              version: 999.9.9-e2e.0,
+            },
           },
         },
-        packages/package-a: Object {
-          specifiers: Object {},
-        },
+        packages/package-a: Object {},
         packages/package-b: Object {
           dependencies: Object {
-            package-a: link:../package-a,
-          },
-          specifiers: Object {
-            package-a: ^3.3.3,
+            package-a: Object {
+              specifier: ^3.3.3,
+              version: link:../package-a,
+            },
           },
         },
       }
