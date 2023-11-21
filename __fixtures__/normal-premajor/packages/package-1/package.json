@@ -1,0 +1,7 @@
+{
+  "name": "package-1",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/lerna/normal-package-1"
+  }
+}

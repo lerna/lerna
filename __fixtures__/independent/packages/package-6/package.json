@@ -1,0 +1,7 @@
+{
+  "name": "package-6",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/lerna/independent-package-6"
+  }
+}
