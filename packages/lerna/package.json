@@ -109,8 +109,8 @@
     "validate-npm-package-name": "5.0.0",
     "write-file-atomic": "5.0.1",
     "write-pkg": "4.0.0",
-    "yargs": "16.2.0",
-    "yargs-parser": "20.2.4"
+    "yargs": "17.7.2",
+    "yargs-parser": "21.1.1"
   },
   "exports": {
     ".": "./dist/index.js",
