@@ -188,6 +188,10 @@ jobs:
           git config --global user.email test@example.com
           git config --global user.name "Tester McPerson"
 
+      - name: Enable corepack
+        run: corepack enable
+        shell: bash
+
       # TODO: figure out why uses: ./.github/actions/install-node-and-dependencies is causing pnpm to not be available in this job.
       - name: Install dependencies
         run: npm ci
@@ -199,13 +203,6 @@ jobs:
           IS_AFFECTED_STR=$(npx nx print-affected | jq '.projects | contains(["e2e-run-task-runner"])')
           IS_AFFECTED=$([[ $IS_AFFECTED_STR == 'true' ]] && echo 'true' || echo '')
           echo "is_affected=$IS_AFFECTED" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: Install pnpm v7
-        run: npm install -g pnpm@7
-        shell: bash
-
-      - run: pnpm --version
         shell: bash
 
       - name: Prepare e2e tests for task-runner

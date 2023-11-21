@@ -4,9 +4,7 @@ import { dump } from "js-yaml";
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
-    return normalizeEnvironment(str)
-      .replace(/\.+\/\.?(pnpm|node_modules).*\n/g, "")
-      .replace("info cli using local version of lerna\n", "");
+    return normalizeEnvironment(str).replace("info cli using local version of lerna\n", "");
   },
   test(val: string) {
     return val != null && typeof val === "string";
@@ -53,18 +51,9 @@ describe("lerna-init-pnpm", () => {
     it("should set npmClient to pnpm in lerna.json", async () => {
       const result = await fixture.lernaInit();
 
-      expect(result.combinedOutput).toMatchInlineSnapshot(`
-        lerna notice cli v999.9.9-e2e.0
-        lerna info Applying the following file system updates:
-        CREATE lerna.json
-        UPDATE package.json
-        CREATE .gitignore
-        lerna info Initializing Git repository
-        lerna info Using pnpm to install packages
-        lerna success Initialized Lerna files
-        lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
-
-      `);
+      // use toContain instead of toMatchInlineSnapshot to keep the test
+      // decoupled from the pnpm install output
+      expect(result.combinedOutput).toContain("lerna success Initialized Lerna files");
 
       const packageJson = await fixture.readWorkspaceFile("package.json");
       expect(JSON.parse(packageJson).workspaces).toBeUndefined();
@@ -85,19 +74,9 @@ describe("lerna-init-pnpm", () => {
     it("should generate pnpm-workspace.yaml", async () => {
       const result = await fixture.lernaInit();
 
-      expect(result.combinedOutput).toMatchInlineSnapshot(`
-        lerna notice cli v999.9.9-e2e.0
-        lerna info Applying the following file system updates:
-        CREATE lerna.json
-        CREATE package.json
-        CREATE pnpm-workspace.yaml
-        CREATE .gitignore
-        lerna info Initializing Git repository
-        lerna info Using pnpm to install packages
-        lerna success Initialized Lerna files
-        lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
-
-      `);
+      // use toContain instead of toMatchInlineSnapshot to keep the test
+      // decoupled from the pnpm install output
+      expect(result.combinedOutput).toContain("lerna success Initialized Lerna files");
 
       const lernaJson = await fixture.readWorkspaceFile("lerna.json");
 
