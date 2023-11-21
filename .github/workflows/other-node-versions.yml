@@ -65,8 +65,8 @@ jobs:
           jq 'del(.volta)' package.json > package.json.tmp
           mv package.json.tmp package.json
 
-      - name: Install pnpm v7
-        run: npm install -g pnpm@7
+      - name: Enable corepack
+        run: corepack enable
         shell: bash
 
       - run: pnpm --version
