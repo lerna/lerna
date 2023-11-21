@@ -560,12 +560,16 @@ when non-breaking changes are detected.
 Breaking changes in `premajor` packages will always trigger a `minor` bump.
 
 ```sh
-lerna version --conventional-commits --premajor-version-bump
-# ensures that all feature version bumps are handled as minor
+lerna version --conventional-commits
+# OR
+lerna version --conventional-commits --premajor-version-bump default
+# all non-breaking changes trigger a bump based on the configured conventional commits preset
+# for the default preset, a non-breaking feat would be a minor bump
 # 0.1.0 --> 0.2.0
 
 lerna version --conventional-commits --premajor-version-bump force-patch
 # ensures that all non-breaking premajor version bumps are handled as patches
+# in this case, a non-breaking feat would always be a patch bump
 # 0.1.0 --> 0.1.1
 ```
 

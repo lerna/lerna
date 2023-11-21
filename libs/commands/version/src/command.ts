@@ -229,6 +229,8 @@ const command: CommandModule = {
         describe: "Controls how pre-major version packages are bumped by lerna.",
         type: "string",
         choices: ["default", "force-patch"],
+        requiresArg: true,
+        defaultDescription: "default",
       },
       y: {
         describe: "Skip all confirmation prompts.",

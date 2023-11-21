@@ -338,7 +338,53 @@ describe("lerna-version-conventional-commits", () => {
       `);
     });
 
-    it("should bump premajor version as minor with --premajor-version-bump default", async () => {
+    it("should bump premajor version as minor for feat commit with no --premajor-version-bump argument", async () => {
+      await fixture.createInitialGitCommit();
+
+      await fixture.lerna("create package-a -y");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'feat: add package-a'");
+
+      await fixture.lerna("create package-b -y");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'feat: add package-b'");
+
+      await fixture.exec("git push origin test-main");
+
+      // Initial versioning with two packages created
+      await fixture.lerna("version --conventional-commits -y", {
+        silenceError: true,
+      });
+
+      // Update and version just package-a
+      await fixture.exec("echo update_package_a > packages/package-a/new_file.txt");
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'feat: update package-a'");
+
+      // Create a version with force-conventional-graduate
+      const output = await fixture.lerna("version --conventional-commits -y", {
+        silenceError: true,
+      });
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna info current version 0.1.0
+        lerna info Looking for changed packages since v0.1.0
+        lerna info getChangelogConfig Successfully resolved preset "conventional-changelog-angular"
+
+        Changes:
+         - package-a: 0.1.0 => 0.2.0
+         - package-b: 0.1.0 => 0.2.0
+
+        lerna info auto-confirmed 
+        lerna info execute Skipping releases
+        lerna info git Pushing tags...
+        lerna success version finished
+
+      `);
+    });
+
+    it("should bump premajor version as minor for feat commit with --premajor-version-bump default", async () => {
       await fixture.createInitialGitCommit();
 
       await fixture.lerna("create package-a -y");
@@ -387,7 +433,7 @@ describe("lerna-version-conventional-commits", () => {
       `);
     });
 
-    it("should bump premajor version as patch with --premajor-version-bump force-patch", async () => {
+    it("should bump premajor version as patch for feat commit with --premajor-version-bump force-patch", async () => {
       await fixture.createInitialGitCommit();
 
       await fixture.lerna("create package-a -y");
@@ -703,8 +749,6 @@ describe("lerna-version-conventional-commits", () => {
         await fixture.lerna("version --conventional-commits -y", { silenceError: true });
 
         // Update and version just package-a
-        await fixture.exec("cat packages/package-a/package.json");
-
         await fixture.exec("echo update_package_a > packages/package-a/new_file.txt");
         await fixture.exec("git add --all");
         await fixture.exec("git commit -m 'feat: update package-a'");
