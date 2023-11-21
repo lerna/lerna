@@ -88,12 +88,7 @@
           "packages/lerna/src/utils/index.ts"
         ],
         "esbuildOptions": {
-          "external": [
-            "*package.json",
-            "@lerna/child-process",
-            "@lerna/create",
-            "@lerna/legacy-package-management"
-          ],
+          "external": ["*package.json", "@lerna/create", "@lerna/legacy-package-management"],
           "outExtension": {
             ".js": ".js"
           },
