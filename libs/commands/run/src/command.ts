@@ -1,6 +1,6 @@
 import { filterOptions } from "@lerna/core";
 import type { CommandModule } from "yargs";
-import { RunCommandConfigOptions } from ".";
+import { RunCommandConfigOptions, factory } from ".";
 
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
@@ -97,7 +97,7 @@ const command: CommandModule<object, RunCommandConfigOptions> = {
     return filterOptions<RunCommandConfigOptions>(yargs);
   },
   async handler(argv) {
-    return (await import(".")).factory(argv);
+    return factory(argv);
   },
 };
 
