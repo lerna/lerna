@@ -228,6 +228,7 @@ describe("VersionCommand", () => {
       promptSelectOne.chooseBump("major");
       promptSelectOne.chooseBump("minor");
       promptSelectOne.chooseBump("patch");
+      promptSelectOne.chooseBump("minor");
 
       const testDir = await initFixture("independent");
       await lernaVersion(testDir)(); // --independent is only valid in InitCommand

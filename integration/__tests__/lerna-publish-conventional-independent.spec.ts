@@ -44,12 +44,14 @@ Changes:
  - package-3: 3.0.0 => 4.0.0
  - package-4: 4.0.0 => 4.1.0
  - package-5: 5.0.0 => 5.1.0 (private)
+ - package-6: 0.1.0 => 0.2.0
 
 Successfully published:
  - package-1@1.1.0
  - package-2@2.1.0
  - package-3@4.0.0
  - package-4@4.1.0
+ - package-6@0.2.0
 `);
 
   // ensure changelog header is not duplicated
