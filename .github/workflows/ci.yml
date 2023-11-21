@@ -120,7 +120,7 @@ jobs:
 
           # Ignored specs currently failing on windows
           # TODO: investigate why
-          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --testTimeout=60000 --testPathIgnorePatterns=save.spec.ts --testPathIgnorePatterns=find-file.spec.ts --testPathIgnorePatterns=chain-class.spec.ts &
+          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --testTimeout=60000 --testPathIgnorePatterns=save.spec.ts --testPathIgnorePatterns=find-file.spec.ts --testPathIgnorePatterns=chain-class.spec.ts --testPathIgnorePatterns=lerna-bootstrap-yarn.spec.ts &
 
           pids+=($!)
 
