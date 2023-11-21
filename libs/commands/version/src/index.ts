@@ -328,7 +328,7 @@ class VersionCommand extends Command {
     });
 
     if (!this.updates.length) {
-      this.logger.success(`No changed packages to ${this.composed ? "publish" : "version"}`);
+      this.logger.success("", `No changed packages to ${this.composed ? "publish" : "version"}`);
 
       // still exits zero, aka "ok"
       return false;

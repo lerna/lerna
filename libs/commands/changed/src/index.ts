@@ -60,7 +60,7 @@ export class ChangedCommand extends Command<ChangedCommandOptions> {
   override execute() {
     output(this.result?.text);
 
-    this.logger["success"](
+    this.logger.success(
       "found",
       "%d %s ready to publish",
       this.result?.count,

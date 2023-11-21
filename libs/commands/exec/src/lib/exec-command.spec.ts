@@ -1,3 +1,4 @@
+import { Package } from "@lerna/core";
 import { commandRunner, initFixtureFactory, loggingOutput, normalizeRelativeDir } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import globby from "globby";
@@ -14,14 +15,20 @@ const childProcess = require("@lerna/child-process");
 const lernaExec = commandRunner(require("../command"));
 
 // assertion helpers
-const calledInPackages = () => childProcess.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));
+const calledInPackages = () =>
+  childProcess.spawn.mock.calls.map(([, , opts]: [string, string, { cwd: string }]) =>
+    path.basename(opts.cwd)
+  );
 
-const execInPackagesStreaming = (testDir) =>
-  childProcess.spawnStreaming.mock.calls.reduce((arr, [command, params, opts, prefix]) => {
-    const dir = normalizeRelativeDir(testDir, opts.cwd);
-    arr.push([dir, command, `(prefix: ${prefix})`].concat(params).join(" "));
-    return arr;
-  }, []);
+const execInPackagesStreaming = (testDir: string) =>
+  childProcess.spawnStreaming.mock.calls.reduce(
+    (arr: string[], [command, params, opts, prefix]: [string, string[], { cwd: string }, string]) => {
+      const dir = normalizeRelativeDir(testDir, opts.cwd);
+      arr.push([dir, command, `(prefix: ${prefix})`].concat(params).join(" "));
+      return arr;
+    },
+    []
+  );
 
 describe("ExecCommand", () => {
   // TODO: it's very suspicious that mockResolvedValue() doesn't work here
@@ -34,7 +41,7 @@ describe("ExecCommand", () => {
 
   describe("in a basic repo", () => {
     // working dir is never mutated
-    let testDir;
+    let testDir: string;
 
     beforeAll(async () => {
       testDir = await initFixture("basic");
@@ -47,7 +54,7 @@ describe("ExecCommand", () => {
     });
 
     it("rejects with execution error", async () => {
-      childProcess.spawn.mockImplementationOnce((cmd, args) => {
+      childProcess.spawn.mockImplementationOnce((cmd: string, args: string[]) => {
         const boom = new Error("execution error") as any;
 
         boom.failed = true;
@@ -69,7 +76,7 @@ describe("ExecCommand", () => {
     });
 
     it("should ignore execution errors with --no-bail", async () => {
-      childProcess.spawn.mockImplementationOnce((cmd, args, { pkg }) => {
+      childProcess.spawn.mockImplementationOnce((cmd: string, args: string[], { pkg }: { pkg: Package }) => {
         const boom = new Error(pkg.name) as any;
 
         boom.failed = true;

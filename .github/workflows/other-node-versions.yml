@@ -27,7 +27,7 @@ jobs:
         id: node-matrix
         # These versions intentionally do not contain our primary major version because that has already been tested by ci.yml
         run: |
-          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['16']));")
+          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['18']));")
           echo $NODE_VERSIONS_JSON_ARRAY
           echo "node-versions=$NODE_VERSIONS_JSON_ARRAY" >> $GITHUB_OUTPUT
 
