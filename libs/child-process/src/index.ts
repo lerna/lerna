@@ -4,6 +4,12 @@ import execa from "execa";
 import strongLogTransformer from "strong-log-transformer";
 import { setExitCode } from "./set-exit-code";
 
+type withPkg<T> = T & { pkg?: unknown };
+
+export type LernaChildProcess = withPkg<execa.ExecaChildProcess<string>>;
+export type LernaReturnValue = withPkg<execa.ExecaReturnValue<string>>;
+export type LernaOptions = withPkg<execa.Options>;
+
 // bookkeeping for spawned processes
 const children = new Set<execa.ExecaChildProcess<string>>();
 
@@ -21,11 +27,7 @@ let currentColor = 0;
  * @param opts
  * @returns
  */
-export function exec(
-  command: string,
-  args: string[],
-  opts?: import("execa").Options & { pkg?: unknown }
-): Promise<execa.ExecaReturnValue<string>> {
+export function exec(command: string, args: string[], opts?: LernaOptions): Promise<LernaReturnValue> {
   const options = Object.assign({ stdio: "pipe" }, opts);
   const spawned = spawnProcess(command, args, options);
 
@@ -48,11 +50,7 @@ export function execSync(command: string, args: string[], opts?: import("execa")
  * @param args
  * @param opts
  */
-export function spawn(
-  command: string,
-  args: string[],
-  opts?: import("execa").Options & { pkg?: unknown }
-): Promise<execa.ExecaReturnValue<string>> {
+export function spawn(command: string, args: string[], opts?: LernaOptions): Promise<LernaReturnValue> {
   const options = Object.assign({}, opts, { stdio: "inherit" });
   const spawned = spawnProcess(command, args, options);
 
@@ -70,9 +68,9 @@ export function spawn(
 export function spawnStreaming(
   command: string,
   args: string[],
-  opts?: execa.Options,
+  opts?: LernaOptions,
   prefix?: string
-): Promise<execa.ExecaReturnValue<string>> {
+): Promise<LernaReturnValue> {
   const options: any = Object.assign({}, opts);
   options.stdio = ["ignore", "pipe", "pipe"];
 
@@ -127,7 +125,7 @@ export function getExitCode(
   if (typeof result.code === "string") {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return os.constants.errno[result.code];
+    return os.constants.errno[result.code as typeof os.constants.errno];
   }
 
   // we tried
@@ -139,8 +137,8 @@ export function getExitCode(
  * @param args
  * @param opts
  */
-function spawnProcess(command: string, args: string[], opts?: import("execa").Options & { pkg?: unknown }) {
-  const child = execa(command, args, opts);
+function spawnProcess(command: string, args: string[], opts?: LernaOptions): LernaChildProcess {
+  const child: LernaChildProcess = execa(command, args, opts);
   const drain = (exitCode: number, signal: number) => {
     children.delete(child);
 
@@ -159,8 +157,6 @@ function spawnProcess(command: string, args: string[], opts?: import("execa").Op
   child.once("error", drain);
 
   if (opts?.pkg) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     child.pkg = opts.pkg;
   }
 
@@ -172,7 +168,7 @@ function spawnProcess(command: string, args: string[], opts?: import("execa").Op
 /**
  * @param spawned
  */
-function wrapError(spawned: execa.ExecaChildProcess<string> & { pkg?: unknown }) {
+function wrapError(spawned: LernaChildProcess) {
   if (spawned.pkg) {
     return spawned.catch((err: any) => {
       // ensure exit code is always a number
