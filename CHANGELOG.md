@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0-alpha.0](https://github.com/lerna/lerna/compare/v7.4.2...v8.0.0-alpha.0) (2023-11-22)
+
+
+### Features
+
+* **version:** add --premajor-version-bump option to force patch bumps for non-breaking changes in premajor packages ([#3876](https://github.com/lerna/lerna/issues/3876)) ([3b05947](https://github.com/lerna/lerna/commit/3b059476fd62fcb09ac391878b73640cceb6b5ef))
+* **version:** use corepack for install when enabled ([#3877](https://github.com/lerna/lerna/issues/3877)) ([a3cb7ca](https://github.com/lerna/lerna/commit/a3cb7cad74266c74da5d005324bced500111ed1c))
+
+
+
+
+
 ## [7.4.2](https://github.com/lerna/lerna/compare/v7.4.1...v7.4.2) (2023-10-27)
 
 ### Bug Fixes
