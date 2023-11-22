@@ -1,0 +1,13 @@
+{
+  "name": "package-3",
+  "version": "0.1.0",
+  "peerDependencies": {
+    "package-2": "^0.1.0"
+  },
+  "devDependencies": {
+    "package-2": "^0.1.0"
+  },
+  "repository": {
+    "url": "https://github.com/lerna/normal-package-3"
+  }
+}

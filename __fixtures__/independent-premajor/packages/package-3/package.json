@@ -1,0 +1,10 @@
+{
+  "name": "package-3",
+  "version": "0.3.0",
+  "devDependencies": {
+    "package-2": "^0.2.0"
+  },
+  "repository": {
+    "url": "https://github.com/lerna/independent-package-3"
+  }
+}

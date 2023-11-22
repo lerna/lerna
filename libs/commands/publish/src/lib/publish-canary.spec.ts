@@ -439,6 +439,7 @@ Object {
       "package-2": 2.0.1-alpha.0+SHA,
       "package-3": 3.0.1-alpha.0+SHA,
       "package-4": 4.0.1-alpha.0+SHA,
+      "package-6": 0.1.1-alpha.0+SHA,
     }
   `);
   });

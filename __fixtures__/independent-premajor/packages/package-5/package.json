@@ -1,0 +1,11 @@
+{
+  "name": "package-5",
+  "dependencies": {
+    "package-3": "^0.3.0"
+  },
+  "private": true,
+  "version": "0.5.0",
+  "repository": {
+    "url": "https://github.com/lerna/independent-package-5"
+  }
+}
