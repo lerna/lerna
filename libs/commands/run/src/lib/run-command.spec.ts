@@ -1,4 +1,5 @@
 import {
+  Package,
   npmRunScript as _npmRunScript,
   npmRunScriptStreaming as _npmRunScriptStreaming,
   output as _output,
@@ -26,16 +27,27 @@ const npmRunScript = _npmRunScript as any;
 const npmRunScriptStreaming = _npmRunScriptStreaming as any;
 
 // assertion helpers
-const ranInPackagesStreaming = (testDir) =>
-  npmRunScriptStreaming.mock.calls.reduce((arr, [script, { args, npmClient, pkg, prefix }]) => {
-    const dir = normalizeRelativeDir(testDir, pkg.location);
-    const record = [dir, npmClient, "run", script, `(prefixed: ${prefix})`].concat(args);
-    arr.push(record.join(" "));
-    return arr;
-  }, []);
+const ranInPackagesStreaming = (testDir: string) =>
+  npmRunScriptStreaming.mock.calls.reduce(
+    (
+      arr: string[],
+      [script, { args, npmClient, pkg, prefix }]: [
+        string,
+        { args: string[]; npmClient: string; pkg: Package; prefix: string }
+      ]
+    ) => {
+      const dir = normalizeRelativeDir(testDir, pkg.location);
+      const record = [dir, npmClient, "run", script, `(prefixed: ${prefix})`].concat(args);
+      arr.push(record.join(" "));
+      return arr;
+    },
+    []
+  );
 
 describe("RunCommand", () => {
-  npmRunScript.mockImplementation((script, { pkg }) => Promise.resolve({ exitCode: 0, stdout: pkg.name }));
+  npmRunScript.mockImplementation((script: string, { pkg }: { pkg: Package }) =>
+    Promise.resolve({ exitCode: 0, stdout: pkg.name })
+  );
   npmRunScriptStreaming.mockImplementation(() => Promise.resolve({ exitCode: 0 }));
 
   afterEach(() => {
@@ -44,7 +56,7 @@ describe("RunCommand", () => {
 
   describe("in a basic repo", () => {
     // working dir is never mutated
-    let testDir;
+    let testDir: string;
 
     beforeAll(async () => {
       testDir = await initFixture("basic");
@@ -129,7 +141,7 @@ describe("RunCommand", () => {
     });
 
     it("reports script errors with early exit", async () => {
-      npmRunScript.mockImplementationOnce((script, { pkg }) => {
+      npmRunScript.mockImplementationOnce((_script: string, { pkg }: { pkg: Package }) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const err = new Error(pkg.name) as any;
 
@@ -146,7 +158,7 @@ describe("RunCommand", () => {
     });
 
     it("propagates non-zero exit codes with --no-bail", async () => {
-      npmRunScript.mockImplementationOnce((script, { pkg }) => {
+      npmRunScript.mockImplementationOnce((_script: string, { pkg }: { pkg: Package }) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const err = new Error(pkg.name) as any;
 

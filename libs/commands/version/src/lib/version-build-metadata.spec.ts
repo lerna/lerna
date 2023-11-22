@@ -145,6 +145,7 @@ describe("--build-metadata with prompt", () => {
     promptSelectOne.chooseBump("major");
     promptSelectOne.chooseBump("minor");
     promptSelectOne.chooseBump("patch");
+    promptSelectOne.chooseBump("minor");
 
     await lernaVersion(testDir)("--build-metadata", "21AF26D3--117B344092BD");
 
