@@ -25,7 +25,7 @@
         "platform": "node",
         "format": ["cjs"],
         "esbuildOptions": {
-          "external": ["*package.json", "@lerna/child-process", "@lerna/create"],
+          "external": ["*package.json", "@lerna/create"],
           "outExtension": {
             ".js": ".js"
           },

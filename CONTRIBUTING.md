@@ -132,7 +132,7 @@ npx lerna --version # 999.9.9
 
 ### Run E2E Tests
 
-> NOTE: You will need to have `pnpm` installed at version `7.7.0` or later in order to run the full suite of e2e tests
+> NOTE: You will need to have `pnpm` installed at version `8.10.2` or later in order to run the full suite of e2e tests
 
 In addition to our lower level testing, we also have a suite of e2e tests which actually publish our packages to a locally running npm registry (using verdaccio in the same way as described in the section above) and use the `lerna` CLI directly. These are our most valuable tests because they get us as close as possible to the experience of our users.
 

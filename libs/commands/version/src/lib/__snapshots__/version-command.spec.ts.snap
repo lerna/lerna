@@ -202,8 +202,9 @@ exports[`VersionCommand independent mode versions changed packages: commit 1`] =
  - package-3@4.0.0
  - package-4@4.1.0
  - package-5@5.0.1
+ - package-6@0.2.0
 
-HEAD -> main, tag: package-5@5.0.1, tag: package-4@4.1.0, tag: package-3@4.0.0, tag: package-2@2.1.0, tag: package-1@1.0.1
+HEAD -> main, tag: package-6@0.2.0, tag: package-5@5.0.1, tag: package-4@4.1.0, tag: package-3@4.0.0, tag: package-2@2.1.0, tag: package-1@1.0.1
 
 diff --git a/packages/package-1/package.json b/packages/package-1/package.json
 index SHA..SHA 100644
@@ -248,7 +249,14 @@ index SHA..SHA 100644
 +    \\"package-3\\": \\"^4.0.0\\"
 @@ -7 +7 @@
 -  \\"version\\": \\"5.0.0\\",
-+  \\"version\\": \\"5.0.1\\","
++  \\"version\\": \\"5.0.1\\",
+diff --git a/packages/package-6/package.json b/packages/package-6/package.json
+index SHA..SHA 100644
+--- a/packages/package-6/package.json
++++ b/packages/package-6/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"0.1.0\\",
++  \\"version\\": \\"0.2.0\\","
 `;
 
 exports[`VersionCommand independent mode versions changed packages: console output 1`] = `
@@ -259,6 +267,7 @@ Changes:
  - package-3: 3.0.0 => 4.0.0
  - package-4: 4.0.0 => 4.1.0
  - package-5: 5.0.0 => 5.0.1 (private)
+ - package-6: 0.1.0 => 0.2.0
 "
 `;
 

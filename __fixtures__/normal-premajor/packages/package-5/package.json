@@ -1,0 +1,14 @@
+{
+  "name": "package-5",
+  "dependencies": {
+    "package-1": "^0.1.0"
+  },
+  "optionalDependencies": {
+    "package-3": "^0.1.0"
+  },
+  "private": true,
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/lerna/normal-package-5"
+  }
+}
