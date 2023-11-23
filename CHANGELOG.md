@@ -3,8 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [8.0.0](https://github.com/lerna/lerna/compare/v7.4.2...v8.0.0) (2023-11-23)
-
 ## BREAKING CHANGES
 
 > After updating we strongly recommend running `lerna repair` in your project. This will migrate your `lerna.json` to the latest and greatest and remove any outdated options.
@@ -18,6 +16,10 @@ When a node version becomes end of life (EOL) it means that it does not receive 
 We strongly encourage all folks here to keep up with the maintenance LTS version of Node at an absolute minimum:
 
 https://github.com/nodejs/release#release-schedule
+
+- **lerna's task runner for `lerna run` now depends on nx v17 instead of v16**
+
+`lerna run` gets to benefit from all of the further performance improvements in the nx v17 task runner behind scenes.
 
 - **`@lerna/child-process` is no longer a separately published package**
 
