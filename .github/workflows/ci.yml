@@ -23,11 +23,11 @@ jobs:
     name: Nx Cloud - Main Job
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: nrwl/nx-set-shas@v3
+      - uses: nrwl/nx-set-shas@v4
 
       - name: Set NX_RUN_GROUP
         shell: bash
@@ -64,7 +64,7 @@ jobs:
       matrix:
         agent: [1, 2, 3, 4]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set NX_RUN_GROUP
         shell: bash
@@ -97,7 +97,7 @@ jobs:
       TEMP: C:\temp
       TMP: C:\temp
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set NX_RUN_GROUP
         shell: bash
@@ -145,7 +145,7 @@ jobs:
       TEMP: C:\temp
       TMP: C:\temp
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set NX_RUN_GROUP
         shell: bash
@@ -176,20 +176,23 @@ jobs:
     env:
       NX_CLOUD_DISTRIBUTED_EXECUTION: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v3
+        uses: nrwl/nx-set-shas@v4
 
       - name: Configure git metadata
         run: |
           git config --global user.email test@example.com
           git config --global user.name "Tester McPerson"
 
-      - name: Enable corepack
-        run: corepack enable
+      - name: Install pnpm v7
+        run: npm install -g pnpm@7
+        shell: bash
+
+      - run: pnpm --version
         shell: bash
 
       # TODO: figure out why uses: ./.github/actions/install-node-and-dependencies is causing pnpm to not be available in this job.
