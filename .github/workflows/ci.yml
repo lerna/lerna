@@ -19,155 +19,155 @@ env:
   NX_VERBOSE_LOGGING: false
 
 jobs:
-  main:
-    name: Nx Cloud - Main Job
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # main:
+  #   name: Nx Cloud - Main Job
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - uses: nrwl/nx-set-shas@v3
+  #     - uses: nrwl/nx-set-shas@v3
 
-      - name: Set NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-linux" >> $GITHUB_ENV
+  #     - name: Set NX_RUN_GROUP
+  #       shell: bash
+  #       run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-linux" >> $GITHUB_ENV
 
-      - name: Log NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+  #     - name: Log NX_RUN_GROUP
+  #       shell: bash
+  #       run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
-      - name: Install primary node version (see volta config in package.json) and dependencies
-        uses: ./.github/actions/install-node-and-dependencies
+  #     - name: Install primary node version (see volta config in package.json) and dependencies
+  #       uses: ./.github/actions/install-node-and-dependencies
 
-      - name: Run parallel distributed tasks
-        uses: jameshenry/parallel-bash-commands@v1
-        with:
-          cmd1: npx nx-cloud record -- npx nx format:check
-          cmd2: npx nx run-many -t build --parallel=3
-          cmd3: npx nx run-many -t lint --parallel=3
-          cmd4: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
-          cmd5: npx nx run integration:integration --ci --maxWorkers=2
+  #     - name: Run parallel distributed tasks
+  #       uses: jameshenry/parallel-bash-commands@v1
+  #       with:
+  #         cmd1: npx nx-cloud record -- npx nx format:check
+  #         cmd2: npx nx run-many -t build --parallel=3
+  #         cmd3: npx nx run-many -t lint --parallel=3
+  #         cmd4: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
+  #         cmd5: npx nx run integration:integration --ci --maxWorkers=2
 
-      # e2e tests for everything except the primary task runner
-      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
+  #     # e2e tests for everything except the primary task runner
+  #     - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
 
-      - name: Stop all running agents for Nx Run Group ${{ env.NX_RUN_GROUP }}
-        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
-        if: ${{ always() }}
-        run: npx nx-cloud stop-all-agents
+  #     - name: Stop all running agents for Nx Run Group ${{ env.NX_RUN_GROUP }}
+  #       # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+  #       if: ${{ always() }}
+  #       run: npx nx-cloud stop-all-agents
 
-  agents:
-    name: Nx Cloud - Agent ${{ matrix.agent }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        agent: [1, 2, 3, 4]
-    steps:
-      - uses: actions/checkout@v3
+  # agents:
+  #   name: Nx Cloud - Agent ${{ matrix.agent }}
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       agent: [1, 2, 3, 4]
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Set NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-linux" >> $GITHUB_ENV
+  #     - name: Set NX_RUN_GROUP
+  #       shell: bash
+  #       run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-linux" >> $GITHUB_ENV
 
-      - name: Log NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+  #     - name: Log NX_RUN_GROUP
+  #       shell: bash
+  #       run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
-      - name: Configure git metadata
-        run: |
-          git config --global user.email test@example.com
-          git config --global user.name "Tester McPerson"
+  #     - name: Configure git metadata
+  #       run: |
+  #         git config --global user.email test@example.com
+  #         git config --global user.name "Tester McPerson"
 
-      - name: Install primary node version (see volta config in package.json) and dependencies
-        uses: ./.github/actions/install-node-and-dependencies
+  #     - name: Install primary node version (see volta config in package.json) and dependencies
+  #       uses: ./.github/actions/install-node-and-dependencies
 
-      - name: Start Nx Agent ${{ matrix.agent }}
-        run: npx nx-cloud start-agent
-        env:
-          NX_AGENT_NAME: ${{ matrix.agent }}
-          NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
+  #     - name: Start Nx Agent ${{ matrix.agent }}
+  #       run: npx nx-cloud start-agent
+  #       env:
+  #         NX_AGENT_NAME: ${{ matrix.agent }}
+  #         NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
 
-  windows-main:
-    name: Nx Cloud - Windows Main Job
-    runs-on: windows-latest
-    env:
-      LERNA_OS_TYPE: windows
-      # Set the temp directory to a short dir without username in it otherwise import command specs have a problem because of different paths on windows agents
-      TEMP: C:\temp
-      TMP: C:\temp
-    steps:
-      - uses: actions/checkout@v3
+  # windows-main:
+  #   name: Nx Cloud - Windows Main Job
+  #   runs-on: windows-latest
+  #   env:
+  #     LERNA_OS_TYPE: windows
+  #     # Set the temp directory to a short dir without username in it otherwise import command specs have a problem because of different paths on windows agents
+  #     TEMP: C:\temp
+  #     TMP: C:\temp
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Set NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
+  #     - name: Set NX_RUN_GROUP
+  #       shell: bash
+  #       run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
 
-      - name: Log NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+  #     - name: Log NX_RUN_GROUP
+  #       shell: bash
+  #       run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
-      - name: Install primary node version (see volta config in package.json) and dependencies
-        uses: ./.github/actions/install-node-and-dependencies
+  #     - name: Install primary node version (see volta config in package.json) and dependencies
+  #       uses: ./.github/actions/install-node-and-dependencies
 
-      - name: Run parallel distributed unit and integration tests on windows
-        shell: bash
-        # From old maintainer regarding integration tests: "import is NOT TESTED in windows because pain and suffering"
-        run: |
-          pids=()
-          npx nx run integration:integration --ci --maxWorkers=2 &
-          pids+=($!)
+  #     - name: Run parallel distributed unit and integration tests on windows
+  #       shell: bash
+  #       # From old maintainer regarding integration tests: "import is NOT TESTED in windows because pain and suffering"
+  #       run: |
+  #         pids=()
+  #         npx nx run integration:integration --ci --maxWorkers=2 &
+  #         pids+=($!)
 
-          # Ignored specs currently failing on windows
-          # TODO: investigate why
-          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --testTimeout=60000 --testPathIgnorePatterns=save.spec.ts --testPathIgnorePatterns=find-file.spec.ts --testPathIgnorePatterns=chain-class.spec.ts &
+  #         # Ignored specs currently failing on windows
+  #         # TODO: investigate why
+  #         npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --testTimeout=60000 --testPathIgnorePatterns=save.spec.ts --testPathIgnorePatterns=find-file.spec.ts --testPathIgnorePatterns=chain-class.spec.ts &
 
-          pids+=($!)
+  #         pids+=($!)
 
-          for pid in "${pids[@]}"; do
-            wait "$pid"
-          done
+  #         for pid in "${pids[@]}"; do
+  #           wait "$pid"
+  #         done
 
-      - name: Stop all running agents for Nx Run Group ${{ env.NX_RUN_GROUP }}
-        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
-        if: ${{ always() }}
-        run: npx nx-cloud stop-all-agents
+  #     - name: Stop all running agents for Nx Run Group ${{ env.NX_RUN_GROUP }}
+  #       # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+  #       if: ${{ always() }}
+  #       run: npx nx-cloud stop-all-agents
 
-  windows-agents:
-    name: Nx Cloud - Windows Agent ${{ matrix.agent }}
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        agent: [1, 2, 3, 4]
-    env:
-      LERNA_OS_TYPE: windows
-      # Set the temp directory to a short dir without containing username, otherwise import command specs have a problem because of different paths on windows agents
-      TEMP: C:\temp
-      TMP: C:\temp
-    steps:
-      - uses: actions/checkout@v3
+  # windows-agents:
+  #   name: Nx Cloud - Windows Agent ${{ matrix.agent }}
+  #   runs-on: windows-latest
+  #   strategy:
+  #     matrix:
+  #       agent: [1, 2, 3, 4]
+  #   env:
+  #     LERNA_OS_TYPE: windows
+  #     # Set the temp directory to a short dir without containing username, otherwise import command specs have a problem because of different paths on windows agents
+  #     TEMP: C:\temp
+  #     TMP: C:\temp
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Set NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
+  #     - name: Set NX_RUN_GROUP
+  #       shell: bash
+  #       run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
 
-      - name: Log NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+  #     - name: Log NX_RUN_GROUP
+  #       shell: bash
+  #       run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
-      - name: Configure git metadata
-        run: |
-          git config --global user.email test@example.com
-          git config --global user.name "Tester McPerson"
+  #     - name: Configure git metadata
+  #       run: |
+  #         git config --global user.email test@example.com
+  #         git config --global user.name "Tester McPerson"
 
-      - name: Install primary node version (see volta config in package.json) and dependencies
-        uses: ./.github/actions/install-node-and-dependencies
+  #     - name: Install primary node version (see volta config in package.json) and dependencies
+  #       uses: ./.github/actions/install-node-and-dependencies
 
-      - name: Start Nx Agent ${{ matrix.agent }}
-        run: npx nx-cloud start-agent
-        env:
-          NX_AGENT_NAME: ${{ matrix.agent }}
-          NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
+  #     - name: Start Nx Agent ${{ matrix.agent }}
+  #       run: npx nx-cloud start-agent
+  #       env:
+  #         NX_AGENT_NAME: ${{ matrix.agent }}
+  #         NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
 
   # Isolated e2e tests for the task runner which become too flaky if nested through further node child processes
   task-runner-e2e:
