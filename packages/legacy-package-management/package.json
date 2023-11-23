@@ -92,5 +92,5 @@
   "exports": {
     ".": "./dist/index.js"
   },
-  "gitHead": "4f5edee2ef6c595f2393e3f37fc0d6a4f5352bf3"
+  "gitHead": "b664840ff8eb39dfb894b7cedc5ae9e186eaa8e4"
 }
