@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## BREAKING CHANGES
+
+> After updating we strongly recommend running `lerna repair` in your project. This will migrate your `lerna.json` to the latest and greatest and remove any outdated options.
+
+As this is a major release there are a few breaking changes to be aware of, which may or may not affect your lerna repos, depending on how you are using the tool.
+
+- **node v16 support is dropped because it is end of life**
+
+When a node version becomes end of life (EOL) it means that it does not receive any updates or maintenance whatsoever, even if critical security vulnerabilities have been uncovered.
+
+We strongly encourage all folks here to keep up with the maintenance LTS version of Node at an absolute minimum:
+
+https://github.com/nodejs/release#release-schedule
+
+- **lerna's task runner for `lerna run` now depends on nx v17 instead of v16**
+
+`lerna run` gets to benefit from all of the further performance improvements in the nx v17 task runner behind scenes.
+
+- **`@lerna/child-process` is no longer a separately published package**
+
+Lerna is a monorepo management tool with versioning and publishing capabilities, it is not a child process manager. There are lots of good options out there in the ecosystem to help you with managing child processes in nodejs, and it does not really make sense to treat some of lerna's implementation details around child processes as if they were a public API. The package will be officially deprecated on npm in the future. You can of course take the code and fork it and adapt it for your own purposes if you wish!
+
+- **Older packages under `@lerna/` on npm have been officially marked as deprecated**
+
+Under prior stewardship the lerna repo used to publish a very large (>65) number of packages. The vast majority of these should not form part of the public API of lerna and so they have no longer been published as packages since v6. We have now officially marked them as deprecated packages on the npm registry so that users get clear feedback that they are using packages which are no longer maintained (which they can of course fork and do whatever they want with). NOTE: We have not yet marked `@lerna/child-process` as deprecated so as not to create noise for lerna v7 users until they have had chance to migrate to v8.
+
+### Features
+
+- **version:** add --premajor-version-bump option to force patch bumps for non-breaking changes in premajor packages ([#3876](https://github.com/lerna/lerna/issues/3876)) ([3b05947](https://github.com/lerna/lerna/commit/3b059476fd62fcb09ac391878b73640cceb6b5ef))
+- **version:** use corepack for install when enabled ([#3877](https://github.com/lerna/lerna/issues/3877)) ([a3cb7ca](https://github.com/lerna/lerna/commit/a3cb7cad74266c74da5d005324bced500111ed1c))
+
 # [8.0.0-alpha.0](https://github.com/lerna/lerna/compare/v7.4.2...v8.0.0-alpha.0) (2023-11-22)
 
 ### Features

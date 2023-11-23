@@ -15,27 +15,20 @@ concurrency:
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
-  # NX_BRANCH: ${{ github.event.number || github.ref_name }}
   NX_VERBOSE_LOGGING: false
 
 jobs:
   main:
     name: Nx Cloud - Main Job
     runs-on: ubuntu-latest
+    env:
+      NX_CI_EXECUTION_ENV: "linux"
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - uses: nrwl/nx-set-shas@v4
-
-      - name: Set NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-linux" >> $GITHUB_ENV
-
-      - name: Log NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
@@ -52,7 +45,7 @@ jobs:
       # e2e tests for everything except the primary task runner
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
 
-      - name: Stop all running agents for Nx Run Group ${{ env.NX_RUN_GROUP }}
+      - name: Stop all running agents
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
@@ -60,19 +53,13 @@ jobs:
   agents:
     name: Nx Cloud - Agent ${{ matrix.agent }}
     runs-on: ubuntu-latest
+    env:
+      NX_CI_EXECUTION_ENV: "linux"
     strategy:
       matrix:
         agent: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-linux" >> $GITHUB_ENV
-
-      - name: Log NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
       - name: Configure git metadata
         run: |
@@ -86,26 +73,18 @@ jobs:
         run: npx nx-cloud start-agent
         env:
           NX_AGENT_NAME: ${{ matrix.agent }}
-          NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
 
   windows-main:
     name: Nx Cloud - Windows Main Job
     runs-on: windows-latest
     env:
+      NX_CI_EXECUTION_ENV: "windows"
       LERNA_OS_TYPE: windows
       # Set the temp directory to a short dir without username in it otherwise import command specs have a problem because of different paths on windows agents
       TEMP: C:\temp
       TMP: C:\temp
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
-
-      - name: Log NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
@@ -128,7 +107,7 @@ jobs:
             wait "$pid"
           done
 
-      - name: Stop all running agents for Nx Run Group ${{ env.NX_RUN_GROUP }}
+      - name: Stop all running agents for Nx Run Group
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
@@ -140,20 +119,13 @@ jobs:
       matrix:
         agent: [1, 2, 3, 4]
     env:
+      NX_CI_EXECUTION_ENV: "windows"
       LERNA_OS_TYPE: windows
       # Set the temp directory to a short dir without containing username, otherwise import command specs have a problem because of different paths on windows agents
       TEMP: C:\temp
       TMP: C:\temp
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-windows" >> $GITHUB_ENV
-
-      - name: Log NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
 
       - name: Configure git metadata
         run: |
@@ -167,13 +139,14 @@ jobs:
         run: npx nx-cloud start-agent
         env:
           NX_AGENT_NAME: ${{ matrix.agent }}
-          NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
 
   # Isolated e2e tests for the task runner which become too flaky if nested through further node child processes
   task-runner-e2e:
     name: Task Runner E2E
     runs-on: ubuntu-latest
     env:
+      # Silently disable nx cloud for task runner e2e (using NX_NO_CLOUD produces a warning log)
+      NX_CLOUD_ACCESS_TOKEN: ""
       NX_CLOUD_DISTRIBUTED_EXECUTION: false
     steps:
       - uses: actions/checkout@v4
@@ -188,14 +161,10 @@ jobs:
           git config --global user.email test@example.com
           git config --global user.name "Tester McPerson"
 
-      - name: Install pnpm v7
-        run: npm install -g pnpm@7
+      - name: Enable corepack
+        run: corepack enable
         shell: bash
 
-      - run: pnpm --version
-        shell: bash
-
-      # TODO: figure out why uses: ./.github/actions/install-node-and-dependencies is causing pnpm to not be available in this job.
       - name: Install dependencies
         run: npm ci
         shell: bash
