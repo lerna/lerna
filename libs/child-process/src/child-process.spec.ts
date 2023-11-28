@@ -1,14 +1,14 @@
 "use strict";
 
-// file under test
-const childProcess = require("..");
+import * as childProcess from ".";
 
-jest.mock("../set-exit-code", () => {
+jest.mock("./set-exit-code", () => {
   const setExitCode = jest.fn();
   return { setExitCode };
 });
 
-const { setExitCode } = require("../set-exit-code");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { setExitCode } = require("./set-exit-code");
 
 describe("childProcess", () => {
   describe(".execSync()", () => {
@@ -30,7 +30,7 @@ describe("childProcess", () => {
     });
 
     it("rejects on undefined command", async () => {
-      const result = childProcess.exec("nowImTheModelOfAModernMajorGeneral");
+      const result = childProcess.exec("nowImTheModelOfAModernMajorGeneral", []);
 
       await expect(result).rejects.toThrow(/\bnowImTheModelOfAModernMajorGeneral\b/);
       expect(childProcess.getChildProcessCount()).toBe(0);
@@ -65,7 +65,7 @@ describe("childProcess", () => {
 
   describe(".spawn()", () => {
     it("should spawn a command in a child process that always inherits stdio", async () => {
-      const child = childProcess.spawn("echo", ["-n"]);
+      const child: any = childProcess.spawn("echo", ["-n"]);
       expect(child.stdio).toEqual([null, null, null]);
 
       const { exitCode, signal } = await child;

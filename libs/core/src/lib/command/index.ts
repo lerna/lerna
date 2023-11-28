@@ -15,7 +15,17 @@ import { isGitInitialized } from "./is-git-initialized";
 import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
 import yargs from "yargs";
-import { ExecOptions } from "child_process";
+import { ExecOptions as NodeExecOptions } from "child_process";
+
+/**
+ * Execa compatible options type
+ *
+ * Current used execa version options type uses```cwd: string``` and not
+ * ``` cwd?: string | URL ```
+ *
+ * Can be removed when latest execa version is used!!!
+ * */
+export type ExecOptions = Omit<NodeExecOptions, "cwd"> & { cwd?: string };
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
