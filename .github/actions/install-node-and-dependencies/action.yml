@@ -30,7 +30,8 @@ runs:
       shell: bash
 
     - name: Prepare pnpm
-      run: corepack prepare pnpm@8
+      # run: corepack prepare pnpm@8
+      run: corepack prepare pnpm@latest
       shell: bash
 
     - name: Use Yarn classic
