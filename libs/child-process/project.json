@@ -1,25 +1,21 @@
 {
   "name": "child-process",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/child-process",
+  "sourceRoot": "libs/child-process/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/child-process/**/*.js"]
+        "lintFilePatterns": ["libs/child-process/**/*.ts"]
       }
     },
     "test": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "cwd": "libs/child-process",
-        "commands": [
-          {
-            "command": "jest __tests__"
-          }
-        ]
+        "jestConfig": "libs/child-process/jest.config.ts"
       }
     }
   },

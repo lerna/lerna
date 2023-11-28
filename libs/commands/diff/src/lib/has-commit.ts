@@ -1,11 +1,10 @@
 import log from "npmlog";
-import { ExecOptions } from "child_process";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const childProcess = require("@lerna/child-process");
-
+import { ExecOptions } from "@lerna/core";
+import * as childProcess from "@lerna/child-process";
 /**
- * @param {import("child_process").ExecOptions} opts
+ *
+ * @param opts
+ * @returns
  */
 export function hasCommit(opts?: ExecOptions) {
   log.silly("hasCommit", "");

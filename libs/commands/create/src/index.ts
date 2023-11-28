@@ -14,9 +14,7 @@ import path from "path";
 import slash from "slash";
 import { URL } from "url";
 import { camelCase } from "yargs-parser";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const childProcess = require("@lerna/child-process");
+import { execSync } from "@lerna/child-process";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const initPackageJson = require("init-package-json");
@@ -209,7 +207,7 @@ class CreateCommand extends Command {
   }
 
   gitConfig(prop) {
-    return childProcess.execSync("git", ["config", "--get", prop], this.execOpts);
+    return execSync("git", ["config", "--get", prop], this.execOpts);
   }
 
   collectExternalVersions() {
@@ -391,7 +389,7 @@ class CreateCommand extends Command {
 
   setRepository() {
     try {
-      const url = childProcess.execSync("git", ["remote", "get-url", "origin"], this.execOpts);
+      const url = execSync("git", ["remote", "get-url", "origin"], this.execOpts);
 
       this.conf.set("repository", url);
     } catch (err) {

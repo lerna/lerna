@@ -1,17 +1,20 @@
-"use strict";
+import os from "os";
+import chalk from "chalk";
+import execa from "execa";
+import strongLogTransformer from "strong-log-transformer";
+import { setExitCode } from "./set-exit-code";
 
-const os = require("os");
-const chalk = require("chalk");
-const execa = require("execa");
-const logTransformer = require("strong-log-transformer");
-const { setExitCode } = require("./set-exit-code");
+type withPkg<T> = T & { pkg?: unknown };
+
+export type LernaChildProcess = withPkg<execa.ExecaChildProcess<string>>;
+export type LernaReturnValue = withPkg<execa.ExecaReturnValue<string>>;
+export type LernaOptions = withPkg<execa.Options>;
 
 // bookkeeping for spawned processes
-/** @type {Set<import("execa").ExecaChildProcess<string>>} */
-const children = new Set();
+const children = new Set<execa.ExecaChildProcess<string>>();
 
 // when streaming processes are spawned, use this color for prefix
-const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "blueBright"];
+const colorWheel = [chalk.cyan, chalk.magenta, chalk.blue, chalk.yellow, chalk.green, chalk.blueBright];
 const NUM_COLORS = colorWheel.length;
 
 // ever-increasing index ensures colors are always sequential
@@ -19,11 +22,12 @@ let currentColor = 0;
 
 /**
  * Execute a command asynchronously, piping stdio by default.
- * @param {string} command
- * @param {string[]} args
- * @param {import("execa").Options} [opts]
+ * @param command
+ * @param args
+ * @param opts
+ * @returns
  */
-function exec(command, args, opts) {
+export function exec(command: string, args: string[], opts?: LernaOptions): Promise<LernaReturnValue> {
   const options = Object.assign({ stdio: "pipe" }, opts);
   const spawned = spawnProcess(command, args, options);
 
@@ -32,21 +36,21 @@ function exec(command, args, opts) {
 
 /**
  * Execute a command synchronously.
- * @param {string} command
- * @param {string[]} args
- * @param {import("execa").SyncOptions} [opts]
+ * @param command
+ * @param args
+ * @param opts
  */
-function execSync(command, args, opts) {
+export function execSync(command: string, args: string[], opts?: import("execa").SyncOptions): string {
   return execa.sync(command, args, opts).stdout;
 }
 
 /**
  * Spawn a command asynchronously, _always_ inheriting stdio.
- * @param {string} command
- * @param {string[]} args
- * @param {import("execa").Options} [opts]
+ * @param command
+ * @param args
+ * @param opts
  */
-function spawn(command, args, opts) {
+export function spawn(command: string, args: string[], opts?: LernaOptions): Promise<LernaReturnValue> {
   const options = Object.assign({}, opts, { stdio: "inherit" });
   const spawned = spawnProcess(command, args, options);
 
@@ -55,24 +59,29 @@ function spawn(command, args, opts) {
 
 /**
  * Spawn a command asynchronously, streaming stdio with optional prefix.
- * @param {string} command
- * @param {string[]} args
- * @param {import("execa").Options} [opts]
- * @param {string} [prefix]
+ * @param command
+ * @param args
+ * @param opts
+ * @param prefix
  */
 // istanbul ignore next
-function spawnStreaming(command, args, opts, prefix) {
-  const options = Object.assign({}, opts);
+export function spawnStreaming(
+  command: string,
+  args: string[],
+  opts?: LernaOptions,
+  prefix?: string
+): Promise<LernaReturnValue> {
+  const options: any = Object.assign({}, opts);
   options.stdio = ["ignore", "pipe", "pipe"];
 
   const spawned = spawnProcess(command, args, options);
 
-  const stdoutOpts = {};
-  const stderrOpts = {}; // mergeMultiline causes escaped newlines :P
+  const stdoutOpts: { tag?: string } = {};
+  const stderrOpts: { tag?: string } = {}; // mergeMultiline causes escaped newlines :P
 
   if (prefix) {
     const colorName = colorWheel[currentColor % NUM_COLORS];
-    const color = chalk[colorName];
+    const color = colorName;
 
     currentColor += 1;
 
@@ -86,21 +95,23 @@ function spawnStreaming(command, args, opts, prefix) {
     process.stderr.setMaxListeners(children.size);
   }
 
-  spawned.stdout.pipe(logTransformer(stdoutOpts)).pipe(process.stdout);
-  spawned.stderr.pipe(logTransformer(stderrOpts)).pipe(process.stderr);
+  spawned.stdout?.pipe(strongLogTransformer(stdoutOpts)).pipe(process.stdout);
+  spawned.stderr?.pipe(strongLogTransformer(stderrOpts)).pipe(process.stderr);
 
   return wrapError(spawned);
 }
 
-function getChildProcessCount() {
+export function getChildProcessCount() {
   return children.size;
 }
 
 /**
- * @param {import("execa").ExecaError<string>} result
- * @returns {number}
+ * @param result
+ * @returns
  */
-function getExitCode(result) {
+export function getExitCode(
+  result: execa.ExecaError<string> & { code?: string | number }
+): number | undefined {
   if (result.exitCode) {
     return result.exitCode;
   }
@@ -112,7 +123,9 @@ function getExitCode(result) {
 
   // https://nodejs.org/docs/latest-v6.x/api/errors.html#errors_error_code
   if (typeof result.code === "string") {
-    return os.constants.errno[result.code];
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return os.constants.errno[result.code as typeof os.constants.errno];
   }
 
   // we tried
@@ -120,13 +133,13 @@ function getExitCode(result) {
 }
 
 /**
- * @param {string} command
- * @param {string[]} args
- * @param {import("execa").Options} opts
+ * @param command
+ * @param args
+ * @param opts
  */
-function spawnProcess(command, args, opts) {
-  const child = execa(command, args, opts);
-  const drain = (exitCode, signal) => {
+function spawnProcess(command: string, args: string[], opts?: LernaOptions): LernaChildProcess {
+  const child: LernaChildProcess = execa(command, args, opts);
+  const drain = (exitCode: number, signal: number) => {
     children.delete(child);
 
     // don't run repeatedly if this is the error event
@@ -143,7 +156,7 @@ function spawnProcess(command, args, opts) {
   child.once("exit", drain);
   child.once("error", drain);
 
-  if (opts.pkg) {
+  if (opts?.pkg) {
     child.pkg = opts.pkg;
   }
 
@@ -153,11 +166,11 @@ function spawnProcess(command, args, opts) {
 }
 
 /**
- * @param {import("execa").ExecaChildProcess<string> & { pkg?: import("@lerna/package").Package }} spawned
+ * @param spawned
  */
-function wrapError(spawned) {
+function wrapError(spawned: LernaChildProcess) {
   if (spawned.pkg) {
-    return spawned.catch((err) => {
+    return spawned.catch((err: any) => {
       // ensure exit code is always a number
       err.exitCode = getExitCode(err);
 
@@ -170,16 +183,3 @@ function wrapError(spawned) {
 
   return spawned;
 }
-
-exports.exec = exec;
-exports.execSync = execSync;
-exports.spawn = spawn;
-exports.spawnStreaming = spawnStreaming;
-exports.getChildProcessCount = getChildProcessCount;
-exports.getExitCode = getExitCode;
-
-/**
- * @typedef {object} ExecOpts Provided to any execa-based call
- * @property {string} cwd
- * @property {number} [maxBuffer]
- */
