@@ -94,10 +94,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     log.heading = "lerna";
 
     const argv = cloneDeep(_argv);
-    log.silly(
-      "argv",
-      argv as any /*types declaration of npmlog is not correct here see https://github.com/DefinitelyTyped/DefinitelyTyped/pull/67232 */
-    );
+    log.silly("argv", argv);
 
     // "FooCommand" => "foo"
     this.name = this.constructor.name.replace(/Command$/, "").toLowerCase();
