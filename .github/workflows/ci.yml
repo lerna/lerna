@@ -68,7 +68,7 @@ jobs:
 
       - name: Generate and configure GPG for signing commits and tags in E2E tests
         run: |
-          # Generate a PGP key for test@example.com and store the output from stderr
+          # Generate a GPG key for test@example.com and store the output from stderr
           GPG_OUTPUT=$(echo "Key-Type: default
           Key-Length: 2048
           Subkey-Type: default
@@ -81,7 +81,7 @@ jobs:
           # Find and extract the revocation file path from sdterr
           REVOCATION_FILE=$(echo "$GPG_OUTPUT" | grep '.rev' | tr '\n' ' ' | awk -F "'" '{print $4}')
 
-          # Get the PGP key ID and the full fingerprint
+          # Get the GPG key ID and the full fingerprint
           export GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | cut -d'/' -f2)
           export GPG_FULL_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep "$GPG_KEY_ID" | grep -v "sec" | awk '{print $1}' | cut -d'/' -f2)
 
@@ -104,8 +104,10 @@ jobs:
           NX_AGENT_NAME: ${{ matrix.agent }}
 
       - name: Revoke and delete GPG key
+        # It's important that we always run this step, otherwise the key will remain active if any of the steps above fail
+        if: ${{ always() }}
         run: |
-          # As instructed in the revocation file, the colon needs to first be removed
+          # As instructed in the text of revocation file, there is a colon that needs to be removed manually
           sed -i "s/:-----BEGIN PGP PUBLIC KEY BLOCK-----/-----BEGIN PGP PUBLIC KEY BLOCK-----/" $REVOCATION_FILE
 
           # Revoke the key and delete it
