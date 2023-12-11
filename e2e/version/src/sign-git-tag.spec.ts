@@ -14,7 +14,7 @@ expect.addSnapshotSerializer({
  * The reason is that using the `--sign-git-tag` flag requires a GPG key to be present on the machine,
  * which is not a guarantee in a local development environment.
  */
-const describeFunc = process.env.CI === 'true' ? describe : describe.skip;
+const describeFunc = process.env.CI === "true" ? describe : describe.skip;
 
 describeFunc("lerna-version-sign-git-tag", () => {
   describe("single package", () => {
