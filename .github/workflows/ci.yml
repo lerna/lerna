@@ -28,6 +28,8 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: nrwl/nx-set-shas@v4
+
       - name: Start Nx Cloud CI Run - Linux
         run: npx nx-cloud start-ci-run --stop-agents-after="e2e"
 
