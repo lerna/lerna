@@ -28,7 +28,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: nrwl/nx-set-shas@v4
+      - name: Start Nx Cloud CI Run - Linux
+        run: npx nx-cloud start-ci-run --stop-agents-after="e2e"
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
@@ -125,6 +126,9 @@ jobs:
       TMP: C:\temp
     steps:
       - uses: actions/checkout@v4
+
+      - name: Start Nx Cloud CI Run - Windows
+        run: npx nx-cloud start-ci-run --stop-agents-after="test"
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
