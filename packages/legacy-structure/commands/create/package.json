@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "directory": "packages/legacy-structure/commands/create"
   },
   "dependencies": {
-    "@npmcli/run-script": "6.0.2",
+    "@npmcli/run-script": "7.0.2",
     "@nx/devkit": ">=17.1.2 < 18",
     "@octokit/plugin-enterprise-rest": "6.0.1",
     "@octokit/rest": "19.0.11",
@@ -73,7 +73,7 @@
     "p-map-series": "2.1.0",
     "p-queue": "6.6.2",
     "p-reduce": "^2.1.0",
-    "pacote": "^15.2.0",
+    "pacote": "^17.0.5",
     "pify": "5.0.0",
     "read-cmd-shim": "4.0.0",
     "read-package-json": "6.0.4",

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.1](https://github.com/lerna/lerna/compare/v8.0.0...v8.0.1) (2023-12-15)
+
+### Bug Fixes
+
+- update node-gyp usage to v10 to resolve npm warning ([#3919](https://github.com/lerna/lerna/issues/3919)) ([f5fdcba](https://github.com/lerna/lerna/commit/f5fdcba1ef53fa8d779dcaf6c617cba3461f343c))
+
 # [8.0.0](https://github.com/lerna/lerna/compare/v7.4.2...v8.0.0) (2023-11-23)
 
 **Note:** Version bump only for package @lerna/create
