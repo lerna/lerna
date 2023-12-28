@@ -1,11 +1,11 @@
-import { ExecOptions } from "child_process";
+import { ExecOptions } from "@lerna/core";
 import log from "npmlog";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 /**
- * @param {import("@lerna/child-process").ExecOpts} execOpts
+ *
+ * @param execOpts
+ * @returns
  */
 export function getLastCommit(execOpts?: ExecOptions) {
   if (hasTags(execOpts)) {
@@ -17,7 +17,9 @@ export function getLastCommit(execOpts?: ExecOptions) {
 }
 
 /**
- * @param {import("@lerna/child-process").ExecOpts} opts
+ *
+ * @param opts
+ * @returns
  */
 function hasTags(opts?: ExecOptions) {
   let result = false;

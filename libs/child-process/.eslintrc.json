@@ -4,10 +4,7 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "import/no-extraneous-dependencies": 1,
-        "node/no-extraneous-require": 1
-      }
+      "rules": {}
     },
     {
       "files": ["*.ts", "*.tsx"],
