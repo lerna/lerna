@@ -13,7 +13,6 @@ concurrency:
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
-  NX_BRANCH: ${{ github.event.number || github.ref_name }}
   NX_VERBOSE_LOGGING: false
 
 jobs:
@@ -35,25 +34,19 @@ jobs:
     name: Nx Cloud - Main Job - node-${{ matrix.node }}
     needs: set-node-versions
     runs-on: ubuntu-latest
+    env:
+      NX_CI_EXECUTION_ENV: linux-node-${{ matrix.node }}
     strategy:
       # Do not kill all versions of node just because one version failed
       fail-fast: false
       matrix:
         node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: nrwl/nx-set-shas@v3
-
-      - name: Set NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-node-${{ matrix.node }}" >> $GITHUB_ENV
-
-      - name: Log NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
+      - uses: nrwl/nx-set-shas@v4
 
       - name: Install node v${{ matrix.node }} and dependencies
         uses: ./.github/actions/install-node-and-dependencies
@@ -122,7 +115,7 @@ jobs:
         env:
           NX_CLOUD_DISTRIBUTED_EXECUTION: false
 
-      - name: Stop all running agents for Nx Run Group ${{ env.NX_RUN_GROUP }}
+      - name: Stop all running agents
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
@@ -142,6 +135,8 @@ jobs:
     name: Nx Cloud - Agent - node-${{ matrix.node }}-agent-${{ matrix.agent }}
     needs: set-node-versions
     runs-on: ubuntu-latest
+    env:
+      NX_CI_EXECUTION_ENV: linux-node-${{ matrix.node }}
     strategy:
       # Do not kill all versions of node just because one version failed
       fail-fast: false
@@ -150,7 +145,7 @@ jobs:
         # Create 4 agents per node version
         agent: [1, 2, 3, 4]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure git metadata
         run: |
@@ -186,14 +181,6 @@ jobs:
           git config tag.gpgsign true
           git config --global user.signingkey $GPG_KEY_ID
 
-      - name: Set NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-node-${{ matrix.node }}" >> $GITHUB_ENV
-
-      - name: Log NX_RUN_GROUP
-        shell: bash
-        run: echo "NX_RUN_GROUP is ${{ env.NX_RUN_GROUP }}"
-
       - name: Install node v${{ matrix.node }} and dependencies
         uses: ./.github/actions/install-node-and-dependencies
         with:
@@ -208,7 +195,6 @@ jobs:
         run: npx nx-cloud start-agent
         env:
           NX_AGENT_NAME: node-${{ matrix.node }}-agent-${{ matrix.agent }}
-          NX_RUN_GROUP: ${{ env.NX_RUN_GROUP }}
 
       - name: Revoke and delete GPG key
         # It's important that we always run this step, otherwise the key will remain active if any of the steps above fail
