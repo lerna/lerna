@@ -113,6 +113,8 @@ jobs:
         run: npx nx prepare-for-e2e e2e-run-task-runner && e2e/run/task-runner/src/run-tests.sh
         shell: bash
         env:
+          # Silently disable nx cloud for task runner e2e (using NX_NO_CLOUD produces a warning log)
+          NX_CLOUD_ACCESS_TOKEN: ""
           NX_CLOUD_DISTRIBUTED_EXECUTION: false
 
       - name: Stop all running agents
