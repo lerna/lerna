@@ -11,7 +11,6 @@ initializeFixture $DIR
 
 # Run the relevant task runner commands and write stdout and stderr to a named file in each case (for later assertions)
 npx lerna list
-git log
 npx lerna run print-name --scope package-3 > $OUTPUTS/print-name-package-3.txt 2>&1
 
 # Run the assertions
