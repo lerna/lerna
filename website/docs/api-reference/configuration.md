@@ -69,10 +69,7 @@ Find the available options in [the API docs](/docs/api-reference/commands).
 {
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "test"]
-      }
+      "runner": "nx/tasks-runners/default"
     }
   },
   "namedInputs": {
@@ -83,10 +80,12 @@ Find the available options in [the API docs](/docs/api-reference/commands).
     "build": {
       "dependsOn": ["prebuild", "^build"],
       "inputs": ["prod", "^prod"],
-      "outputs": ["{projectRoot}/dist"]
+      "outputs": ["{projectRoot}/dist"],
+      "cache": true
     },
     "test": {
-      "inputs": ["default", "^prod", "{workspaceRoot}/jest.config.ts"]
+      "inputs": ["default", "^prod", "{workspaceRoot}/jest.config.ts"],
+      "cache": true
     }
   }
 }
@@ -99,15 +98,15 @@ Find the available options in [the API docs](/docs/api-reference/commands).
 Everything in Nx is customizable, including running npm scripts. Most of the time you will either use the default runner
 or the `@nrwl/nx-cloud` runner.
 
-### cacheableOperations
-
-The `cacheableOperations` array defines the list of npm scripts/operations that are cached by Nx. In most repos all
-non-long running tasks (i.e., not `serve`) should be cacheable.
-
 ## Target Defaults
 
 Targets are npm script names. You can add metadata associated with say the build script of each project in the repo in
 the `targetDefaults` section.
+
+### cache
+
+When set to `true`, tells Nx to cache the results of running the script. In most repos all
+non-long running tasks (i.e., not `serve`) should be cacheable.
 
 ### dependsOn
 

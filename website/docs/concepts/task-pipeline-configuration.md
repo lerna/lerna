@@ -32,7 +32,6 @@ Note, you can also change the default in `nx.json`, like this:
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": [],
         "parallel": 5
       }
     }

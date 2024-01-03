@@ -199,7 +199,6 @@ option for the task runner in `nx.json`:
   "tasksRunnerOptions": {
     "default": {
       "options": {
-        "cacheableOperations": ["build", "test"],
         "cacheDirectory": "/tmp/mycache"
       }
     }
