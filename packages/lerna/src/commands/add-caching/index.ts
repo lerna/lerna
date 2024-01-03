@@ -49,6 +49,13 @@ class AddCachingCommand extends Command {
   }
 
   override async execute() {
+    const nxJsonPath = joinPathFragments(workspaceRoot, "nx.json");
+    let nxJson: NxJsonConfiguration = {};
+    try {
+      nxJson = readJsonFile(nxJsonPath);
+      // eslint-disable-next-line no-empty
+    } catch {}
+
     this.logger.info(
       "add-caching",
       "Please answer the following questions about the scripts found in your workspace in order to generate task runner configuration"
@@ -57,6 +64,9 @@ class AddCachingCommand extends Command {
 
     log.pause();
 
+    const existingTargetDefaults = this.uniqueScriptNames.filter(
+      (scriptName) => nxJson.targetDefaults?.[scriptName]?.dependsOn?.length
+    );
     const { targetDefaults } = await inquirer.prompt<{ targetDefaults: UserAnswers["targetDefaults"] }>([
       {
         type: "checkbox",
@@ -64,9 +74,13 @@ class AddCachingCommand extends Command {
         message:
           "Which scripts need to be run in order? (e.g. before building a project, dependent projects must be built.)\n",
         choices: this.uniqueScriptNames,
+        default: existingTargetDefaults,
       },
     ]);
 
+    const existingCacheableOperations = this.uniqueScriptNames.filter(
+      (scriptName) => nxJson.targetDefaults?.[scriptName]?.cache
+    );
     const { cacheableOperations } = await inquirer.prompt<{
       cacheableOperations: UserAnswers["cacheableOperations"];
     }>([
@@ -76,13 +90,13 @@ class AddCachingCommand extends Command {
         message:
           "Which scripts are cacheable? (Produce the same output given the same input, e.g. build, test and lint usually are, serve and start are not.)\n",
         choices: this.uniqueScriptNames,
+        default: existingCacheableOperations,
       },
     ]);
 
     const scriptOutputs: UserAnswers["scriptOutputs"] = {};
 
     for (const scriptName of cacheableOperations) {
-      // eslint-disable-next-line no-await-in-loop
       scriptOutputs[scriptName] = await inquirer.prompt<Record<string, string>>([
         {
           type: "input",
@@ -96,7 +110,7 @@ class AddCachingCommand extends Command {
 
     process.stdout.write("\n");
 
-    this.convertAnswersToNxConfig({ cacheableOperations, targetDefaults, scriptOutputs });
+    this.convertAnswersToNxConfig({ cacheableOperations, targetDefaults, scriptOutputs }, nxJsonPath, nxJson);
 
     await this.configureGitIgnore();
 
@@ -112,14 +126,7 @@ class AddCachingCommand extends Command {
     );
   }
 
-  private convertAnswersToNxConfig(answers: UserAnswers) {
-    const nxJsonPath = joinPathFragments(workspaceRoot, "nx.json");
-    let nxJson: NxJsonConfiguration = {};
-    try {
-      nxJson = readJsonFile(nxJsonPath);
-      // eslint-disable-next-line no-empty
-    } catch {}
-
+  private convertAnswersToNxConfig(answers: UserAnswers, nxJsonPath: string, nxJson: NxJsonConfiguration) {
     if (nxJson.targetDefaults) {
       this.logger.warn(
         "add-caching",
@@ -131,7 +138,12 @@ class AddCachingCommand extends Command {
 
     for (const scriptName of this.uniqueScriptNames) {
       nxJson.targetDefaults[scriptName] = nxJson.targetDefaults[scriptName] || {};
-      nxJson.targetDefaults[scriptName].cache = answers.cacheableOperations.includes(scriptName);
+      if (answers.cacheableOperations.includes(scriptName)) {
+        nxJson.targetDefaults[scriptName].cache = true;
+      } else {
+        delete nxJson.targetDefaults[scriptName].cache;
+      }
+      // always set dependsOn, even if empty array, so that `lerna run` knows not to assume any dependencies
       nxJson.targetDefaults[scriptName].dependsOn = answers.targetDefaults.includes(scriptName)
         ? [`^${scriptName}`]
         : [];
