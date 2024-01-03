@@ -116,21 +116,6 @@ class AddCachingCommand extends Command {
       // eslint-disable-next-line no-empty
     } catch {}
 
-    nxJson.tasksRunnerOptions = nxJson.tasksRunnerOptions || {};
-    nxJson.tasksRunnerOptions["default"] = nxJson.tasksRunnerOptions["default"] || {};
-    nxJson.tasksRunnerOptions["default"].runner =
-      nxJson.tasksRunnerOptions["default"].runner || "nx/tasks-runners/default";
-    nxJson.tasksRunnerOptions["default"].options = nxJson.tasksRunnerOptions["default"].options || {};
-
-    if (nxJson.tasksRunnerOptions["default"].options.cacheableOperations) {
-      this.logger.warn(
-        "add-caching",
-        "The `tasksRunnerOptions.default.cacheableOperations` property already exists in `nx.json` and will be overwritten by your answers"
-      );
-    }
-
-    nxJson.tasksRunnerOptions["default"].options.cacheableOperations = answers.cacheableOperations;
-
     if (nxJson.targetDefaults) {
       this.logger.warn(
         "add-caching",
@@ -140,14 +125,16 @@ class AddCachingCommand extends Command {
 
     nxJson.targetDefaults = nxJson.targetDefaults || {};
 
-    for (const scriptName of answers.targetDefaults) {
+    for (const scriptName of this.uniqueScriptNames) {
       nxJson.targetDefaults[scriptName] = nxJson.targetDefaults[scriptName] || {};
-      nxJson.targetDefaults[scriptName] = { dependsOn: [`^${scriptName}`] };
+      nxJson.targetDefaults[scriptName].cache = answers.cacheableOperations.includes(scriptName);
+      nxJson.targetDefaults[scriptName].dependsOn = answers.targetDefaults.includes(scriptName)
+        ? [`^${scriptName}`]
+        : [];
     }
 
     for (const [scriptName, scriptAnswerData] of Object.entries(answers.scriptOutputs)) {
       if (!scriptAnswerData[scriptName]) {
-        // eslint-disable-next-line no-continue
         continue;
       }
       nxJson.targetDefaults[scriptName] = nxJson.targetDefaults[scriptName] || {};
