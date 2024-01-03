@@ -43,14 +43,9 @@ If you mark `build` as cacheable, the `nx.json` file will look like this:
 
 ```jsonc
 {
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build" // cache the build script
-        ]
-      }
+  "targetDefaults": {
+    "build": {
+      "cache": true
     }
   }
 }
