@@ -6,6 +6,8 @@ import {
   workspaceRoot,
   writeJsonFile,
 } from "@nx/devkit";
+import execa from "execa";
+import { writeFile } from "fs-extra";
 import inquirer from "inquirer";
 import log from "npmlog";
 
@@ -96,6 +98,8 @@ class AddCachingCommand extends Command {
 
     this.convertAnswersToNxConfig({ cacheableOperations, targetDefaults, scriptOutputs });
 
+    await this.configureGitIgnore();
+
     this.logger["success"]("add-caching", "Successfully updated task runner configuration in `nx.json`");
 
     this.logger.info(
@@ -108,7 +112,7 @@ class AddCachingCommand extends Command {
     );
   }
 
-  convertAnswersToNxConfig(answers: UserAnswers) {
+  private convertAnswersToNxConfig(answers: UserAnswers) {
     const nxJsonPath = joinPathFragments(workspaceRoot, "nx.json");
     let nxJson: NxJsonConfiguration = {};
     try {
@@ -142,6 +146,22 @@ class AddCachingCommand extends Command {
     }
 
     writeJsonFile(nxJsonPath, nxJson);
+  }
+
+  private async configureGitIgnore(): Promise<void> {
+    try {
+      await execa("git", ["check-ignore", ".nx/cache"]);
+      // .nx/cache is already ignored - no need to update .gitignore
+    } catch (e) {
+      try {
+        await writeFile(joinPathFragments(workspaceRoot, ".gitignore"), "\n.nx/cache\n", { flag: "a+" });
+      } catch (e) {
+        this.logger.warn(
+          "add-caching",
+          "Failed to update `.gitignore` with `.nx/cache`. Please update manually."
+        );
+      }
+    }
   }
 }
 
