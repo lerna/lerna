@@ -24,22 +24,6 @@ following:
 npx lerna run build --concurrency=5
 ```
 
-Note, you can also change the default in `nx.json`, like this:
-
-```json title="nx.json"
-{
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [],
-        "parallel": 5
-      }
-    }
-  }
-}
-```
-
 ## Define Task Dependencies (aka Task Pipelines)
 
 Without our help Lerna cannot know what targets (scripts) have prerequisites and which ones don't. You can define task dependencies in the `nx.json` file:

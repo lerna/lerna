@@ -23,16 +23,16 @@ If you don't have `nx.json`, run `npx lerna add-caching`.
 
 :::
 
-To enable caching for `build` and `test`, edit the `cacheableOperations` property in `nx.json` to include the `build` and `test` tasks:
+To enable caching for `build` and `test`, edit the `targetDefaults` property in `nx.json` to include the `build` and `test` tasks:
 
 ```json title="nx.json"
 {
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "test"]
-      }
+  "targetDefaults": {
+    "build": {
+      "cache": true
+    },
+    "test": {
+      "cache": true
     }
   }
 }
@@ -40,7 +40,7 @@ To enable caching for `build` and `test`, edit the `cacheableOperations` propert
 
 :::info
 
-Note, `cacheableOperations` need to be side effect free, meaning that given the same input they should always result in
+Note, cacheable operations need to be side effect free, meaning that given the same input they should always result in
 the same output. As an example, e2e test runs that hit the backend API cannot be cached as the backend might influence
 the result of the test run.
 
