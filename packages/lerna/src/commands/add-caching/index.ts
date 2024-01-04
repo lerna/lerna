@@ -7,7 +7,7 @@ import {
   writeJsonFile,
 } from "@nx/devkit";
 import execa from "execa";
-import { writeFile } from "fs-extra";
+import { appendFile } from "fs-extra";
 import inquirer from "inquirer";
 import log from "npmlog";
 
@@ -166,7 +166,7 @@ class AddCachingCommand extends Command {
       // .nx/cache is already ignored - no need to update .gitignore
     } catch (e) {
       try {
-        await writeFile(joinPathFragments(workspaceRoot, ".gitignore"), "\n.nx/cache\n", { flag: "a+" });
+        await appendFile(joinPathFragments(workspaceRoot, ".gitignore"), "\n.nx/cache\n");
       } catch (e) {
         this.logger.warn(
           "add-caching",

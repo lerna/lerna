@@ -188,20 +188,3 @@ the `--skip-nx-cache` flag to skip checking the computation cache.
 npx lerna run build --skip-nx-cache
 npx lerna run test --skip-nx-cache
 ```
-
-## Customizing the Cache Location
-
-The cache is stored in `node_modules/.cache/nx` by default. To change the cache location, update the `cacheDirectory`
-option for the task runner in `nx.json`:
-
-```json
-{
-  "tasksRunnerOptions": {
-    "default": {
-      "options": {
-        "cacheDirectory": "/tmp/mycache"
-      }
-    }
-  }
-}
-```

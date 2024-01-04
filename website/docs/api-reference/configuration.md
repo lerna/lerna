@@ -67,11 +67,6 @@ Find the available options in [the API docs](/docs/api-reference/commands).
 
 ```json title="nx.json"
 {
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default"
-    }
-  },
   "namedInputs": {
     "default": ["{projectRoot}/**/*"],
     "prod": ["!{projectRoot}/**/*.spec.tsx"]
@@ -90,13 +85,6 @@ Find the available options in [the API docs](/docs/api-reference/commands).
   }
 }
 ```
-
-## taskRunnerOptions
-
-### runner
-
-Everything in Nx is customizable, including running npm scripts. Most of the time you will either use the default runner
-or the `@nrwl/nx-cloud` runner.
 
 ## Target Defaults
 
