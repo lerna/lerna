@@ -275,3 +275,7 @@ Using pseudocode `outputs = packageJson.targets.build.outputs || nxJson.targetDe
 The `"implicitDependencies": ["projecta", "!projectb"]` line tells Nx that the parent project depends on `projecta` even
 though there is no dependency in its `package.json`. Nx will treat such a dependency in the same way it treats explicit
 dependencies. It also tells Nx that even though there is an explicit dependency on `projectb`, it should be ignored.
+
+## Additional Configuration
+
+For additional ways to configure tasks and caching, see the relevant [Nx documentation](https://nx.dev/recipes/running-tasks).

@@ -188,3 +188,7 @@ the `--skip-nx-cache` flag to skip checking the computation cache.
 npx lerna run build --skip-nx-cache
 npx lerna run test --skip-nx-cache
 ```
+
+## Additional Configuration
+
+For additional ways to configure tasks and caching, see the relevant [Nx documentation](https://nx.dev/recipes/running-tasks).
