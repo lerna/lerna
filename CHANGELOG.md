@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.2](https://github.com/lerna/lerna/compare/v8.0.1...v8.0.2) (2024-01-05)
+
+### Bug Fixes
+
+- **add-caching:** explicitly set targetDefaults for all scripts ([#3929](https://github.com/lerna/lerna/issues/3929)) ([dae18c9](https://github.com/lerna/lerna/commit/dae18c927a47326b29d35f8897e02632adb93790))
+
 ## [8.0.1](https://github.com/lerna/lerna/compare/v8.0.0...v8.0.1) (2023-12-15)
 
 ### Bug Fixes
