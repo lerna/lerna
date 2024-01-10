@@ -90,3 +90,10 @@ npx -c 'lerna watch -- lerna run build --scope=\$LERNA_PACKAGE_NAME'
 :::note
 When using `npx`, you will need to use `-c` and surround the entire `lerna watch` command in single quotes (`'`). Without this, `npx` will try to replace the [watch environment variables](#watch-environment-variables) before passing the command to `lerna`, resulting in an always empty value for `$LERNA_PACKAGE_NAME` and `$LERNA_FILE_CHANGES`.
 :::
+
+:::note
+If you use Lerna in Windows, you must frame environment variables in '%'. For example:
+```sh
+$ lerna watch -- lerna run build --scope=%LERNA_PACKAGE_NAME% --include-dependents
+```
+:::
