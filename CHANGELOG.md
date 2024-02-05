@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.1.2](https://github.com/lerna/lerna/compare/v8.1.1...v8.1.2) (2024-02-05)
+
+### Bug Fixes
+
+- improve git binary error ([#3945](https://github.com/lerna/lerna/issues/3945)) ([7637972](https://github.com/lerna/lerna/commit/763797295818876bb97d54ddced309d80315361f))
+
 ## [8.1.1](https://github.com/lerna/lerna/compare/v8.1.0...v8.1.1) (2024-02-05)
 
 ### Bug Fixes

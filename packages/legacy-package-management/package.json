@@ -1,6 +1,6 @@
 {
   "name": "@lerna/legacy-package-management",
-  "version": "8.1.1",
+  "version": "8.1.2",
   "description": "Legacy package management concerns provided by lerna. Please migrate to use npm/yarn/pnpm workspaces instead.",
   "keywords": [
     "lerna",
