@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.1.1](https://github.com/lerna/lerna/compare/v8.1.0...v8.1.1) (2024-02-05)
+
+### Bug Fixes
+
+- **list:** explicitly exit upon completion ([bafe090](https://github.com/lerna/lerna/commit/bafe090e837675c0febb938bab3e8c71b27dbe70))
+
 # [8.1.0](https://github.com/lerna/lerna/compare/v8.0.2...v8.1.0) (2024-02-05)
 
 ### Features
