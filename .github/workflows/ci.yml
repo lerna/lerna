@@ -225,10 +225,7 @@ jobs:
 
       - name: Prepare e2e tests for task-runner
         if: ${{ steps.check_affected.outputs.is_affected }}
-        run: |
-          # We do not want the automatic Github Actions grouping to be applied to the e2e tests, or the snapshots won't match local
-          unset GITHUB_ACTIONS
-          npx nx prepare-for-e2e e2e-run-task-runner
+        run: npx nx prepare-for-e2e e2e-run-task-runner
         shell: bash
 
       - name: Run e2e tests for task-runner
