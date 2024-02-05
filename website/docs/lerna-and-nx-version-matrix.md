@@ -16,7 +16,7 @@ We provide a recommended version, and it is usually the latest minor version of 
 
 | Lerna Version       | **Nx Version _(recommended)_** | Nx Version _(range)_ |
 | ------------------- | ------------------------------ | -------------------- |
-| `>=8.0.0 <= latest` | **latest**                     | `>=17.1.2 <= latest` |
+| `>=8.0.0 <= latest` | **latest**                     | `>=17.1.2 < 19`      |
 | `>=7.1.4 < 8.0.0`   | `16.10.0`                      | `>=16.5.1 < 17`      |
 | `>= 7.0.0 < 7.1.4`  | `16.10.0`                      | `>=16.3.1 < 17`      |
 | `>= 6.5.0 < 7.0.0`  | `15.9.4`                       | `>=15.5.2 < 16`      |
