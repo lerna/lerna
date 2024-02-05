@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.1.0](https://github.com/lerna/lerna/compare/v8.0.2...v8.1.0) (2024-02-05)
+
+### Features
+
+- support nx v18 ([#3950](https://github.com/lerna/lerna/issues/3950)) ([ea3fb65](https://github.com/lerna/lerna/commit/ea3fb65b5f8f9af11a4acea3c63222283ea869d5))
+- **version:** custom tag-version-separator for independent projects ([#3951](https://github.com/lerna/lerna/issues/3951)) ([43de79c](https://github.com/lerna/lerna/commit/43de79cb5818baba8c7239b01f020817d0d1be6f))
+
 ## [8.0.2](https://github.com/lerna/lerna/compare/v8.0.1...v8.0.2) (2024-01-05)
 
 ### Bug Fixes
