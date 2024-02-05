@@ -57,7 +57,7 @@ Lerna defers to Nx's power task runner behind the scenes to detect task dependen
 
 ### Features
 
-1. [Share cached task results across the organization](./features/cache-tasks#distributed-computation-caching)
+1. [Share cached task results across the organization](./features/cache-tasks)
 2. [Distribute task execution](./features/distribute-tasks) efficiently across agent machines
 
 ### Cost
