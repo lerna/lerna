@@ -93,7 +93,9 @@ When using `npx`, you will need to use `-c` and surround the entire `lerna watch
 
 :::note
 If you use Lerna in Windows, you must frame environment variables in '%'. For example:
+
 ```sh
 $ lerna watch -- lerna run build --scope=%LERNA_PACKAGE_NAME% --include-dependents
 ```
+
 :::
