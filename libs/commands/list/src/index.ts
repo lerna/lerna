@@ -36,5 +36,7 @@ export class ListCommand extends Command {
       this.result?.count,
       this.result?.count === 1 ? "package" : "packages"
     );
+
+    process.exit(0);
   }
 }
