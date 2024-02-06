@@ -130,6 +130,43 @@ describe("parser", () => {
     expect(result.isDirty).toBe(true);
   });
 
+  describe("custom tag-version-separator", () => {
+    it("matches independent tags using a custom tag-version-separator, CASE 1", () => {
+      childProcess.execSync.mockReturnValueOnce("pkg-name__1.2.3-4-g567890a");
+
+      const result = describeRefSync({ separator: "__" }) as DescribeRefDetailedResult;
+
+      expect(result.lastTagName).toBe("pkg-name__1.2.3");
+      expect(result.lastVersion).toBe("1.2.3");
+    });
+
+    it("matches independent tags using a custom tag-version-separator, CASE 2", () => {
+      childProcess.execSync.mockReturnValueOnce("pkg-name-1.2.3-4-g567890a");
+
+      const result = describeRefSync({ separator: "-" }) as DescribeRefDetailedResult;
+
+      expect(result.lastTagName).toBe("pkg-name-1.2.3");
+      expect(result.lastVersion).toBe("1.2.3");
+    });
+
+    it("matches independent tags for scoped packages", () => {
+      childProcess.execSync.mockReturnValueOnce("@scope/pkg-name_1.2.3-4-g567890a");
+
+      const result = describeRefSync({ separator: "_" }) as DescribeRefDetailedResult;
+
+      expect(result.lastTagName).toBe("@scope/pkg-name_1.2.3");
+      expect(result.lastVersion).toBe("1.2.3");
+    });
+
+    it("matches dirty annotations", () => {
+      childProcess.execSync.mockReturnValueOnce("pkg-name@@1.2.3-4-g567890a-dirty");
+
+      const result = describeRefSync({ separator: "@@" });
+
+      expect(result.isDirty).toBe(true);
+    });
+  });
+
   it("handles non-matching strings safely", () => {
     childProcess.execSync.mockReturnValueOnce("poopy-pants");
 

@@ -1,7 +1,7 @@
 import log from "npmlog";
 
 let pulsers = 0;
-let pulse: NodeJS.Timer;
+let pulse: NodeJS.Timeout;
 
 function pulseStart(prefix: any) {
   pulsers += 1;

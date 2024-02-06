@@ -230,5 +230,8 @@ jobs:
 
       - name: Run e2e tests for task-runner
         if: ${{ steps.check_affected.outputs.is_affected }}
-        run: e2e/run/task-runner/src/run-tests.sh
+        run: |
+          # We do not want the automatic Github Actions grouping to be applied to the e2e tests, or the snapshots won't match local
+          unset GITHUB_ACTIONS
+          e2e/run/task-runner/src/run-tests.sh
         shell: bash

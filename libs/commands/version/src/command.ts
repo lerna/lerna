@@ -212,6 +212,12 @@ const command: CommandModule = {
         requiresArg: true,
         defaultDescription: "v",
       },
+      "tag-version-separator": {
+        describe: "Customize the tag version separator used when creating tags for independent versioning.",
+        type: "string",
+        requiresArg: true,
+        defaultDescription: "@",
+      },
       "git-tag-command": {
         describe:
           "Allows users to specify a custom command to be used when applying git tags. For example, this may be useful for providing a wrapper command in CI/CD pipelines that have no direct write access.",
