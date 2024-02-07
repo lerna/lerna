@@ -110,7 +110,10 @@ jobs:
           git config --global user.signingkey $GPG_KEY_ID
 
       - name: Run e2e tests for task-runner
-        run: npx nx prepare-for-e2e e2e-run-task-runner && e2e/run/task-runner/src/run-tests.sh
+        run: |
+          # We do not want the automatic Github Actions grouping to be applied to the e2e tests, or the snapshots won't match local
+          unset GITHUB_ACTIONS
+          npx nx prepare-for-e2e e2e-run-task-runner && e2e/run/task-runner/src/run-tests.sh
         shell: bash
         env:
           # Silently disable nx cloud for task runner e2e (using NX_NO_CLOUD produces a warning log)

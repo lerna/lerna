@@ -124,5 +124,5 @@
     "./migrations/**/*": "./dist/migrations/**/*",
     "./utils": "./dist/utils/index.js"
   },
-  "gitHead": "b664840ff8eb39dfb894b7cedc5ae9e186eaa8e4"
+  "gitHead": "9a4ad5ecd640480faa3011dcf80f6c51c2d756c3"
 }
