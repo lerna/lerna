@@ -32,6 +32,9 @@ If you mark `build` as needing topological order, the `nx.json` file will look l
 }
 ```
 
+> **Note:** Before running `add-caching`, Lerna assumes that all scripts need to be run in order.
+> After running `add-caching`, Lerna will only run scripts in order if they are marked as needing topological order.
+
 ### Which scripts are cacheable?
 
 Each script selected will be cached by Lerna. Only select scripts that do not depend on any external inputs (like network calls). `build` and `test` are usually cacheable. `start` and `serve` are usually not cacheable. Sometimes `e2e` is cacheable.
@@ -40,14 +43,9 @@ If you mark `build` as cacheable, the `nx.json` file will look like this:
 
 ```jsonc
 {
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build" // cache the build script
-        ]
-      }
+  "targetDefaults": {
+    "build": {
+      "cache": true
     }
   }
 }

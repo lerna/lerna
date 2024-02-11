@@ -75,6 +75,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   signGitTag?: boolean;
   forceGitTag?: boolean;
   tagVersionPrefix?: string;
+  tagVersionSeparator?: string;
   createRelease?: "github" | "gitlab";
   changelog?: boolean;
   exact?: boolean;
@@ -864,9 +865,10 @@ class VersionCommand extends Command {
   }
 
   async gitCommitAndTagVersionForUpdates() {
+    const tagVersionSeparator = this.options.tagVersionSeparator || "@";
     const tags = this.updates.map((node) => {
       const pkg = getPackage(node);
-      return `${pkg.name}@${this.updatesVersions.get(node.name)}`;
+      return `${pkg.name}${tagVersionSeparator}${this.updatesVersions.get(node.name)}`;
     });
     const subject = this.options.message || "Publish";
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);

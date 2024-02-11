@@ -29,6 +29,8 @@ export interface ProjectUpdateCollectorOptions {
   conventionalGraduate?: string | boolean;
   forceConventionalGraduate?: boolean;
   excludeDependents?: boolean;
+  // Separator used within independent version tags, defaults to @
+  tagVersionSeparator?: string;
 }
 
 /**
@@ -46,6 +48,7 @@ export function collectProjectUpdates(
     forceConventionalGraduate,
     conventionalGraduate,
     excludeDependents,
+    tagVersionSeparator,
   } = commandOptions;
 
   // If --conventional-commits and --conventional-graduate are both set, ignore --force-publish but consider --force-conventional-graduate
@@ -59,7 +62,10 @@ export function collectProjectUpdates(
     // TODO: refactor to address type issues
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const { sha, refCount, lastTagName } = describeRefSync(execOpts, commandOptions.includeMergedTags);
+    const { sha, refCount, lastTagName } = describeRefSync(
+      { ...execOpts, separator: tagVersionSeparator },
+      commandOptions.includeMergedTags
+    );
 
     if (refCount === "0" && forced.size === 0 && !committish) {
       // no commits since previous release

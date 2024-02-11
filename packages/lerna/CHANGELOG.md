@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.1.2](https://github.com/lerna/lerna/compare/v8.1.1...v8.1.2) (2024-02-05)
+
+**Note:** Version bump only for package lerna
+
+## [8.1.1](https://github.com/lerna/lerna/compare/v8.1.0...v8.1.1) (2024-02-05)
+
+**Note:** Version bump only for package lerna
+
+# [8.1.0](https://github.com/lerna/lerna/compare/v8.0.2...v8.1.0) (2024-02-05)
+
+### Features
+
+- support nx v18 ([#3950](https://github.com/lerna/lerna/issues/3950)) ([ea3fb65](https://github.com/lerna/lerna/commit/ea3fb65b5f8f9af11a4acea3c63222283ea869d5))
+
+## [8.0.2](https://github.com/lerna/lerna/compare/v8.0.1...v8.0.2) (2024-01-05)
+
+### Bug Fixes
+
+- **add-caching:** explicitly set targetDefaults for all scripts ([#3929](https://github.com/lerna/lerna/issues/3929)) ([dae18c9](https://github.com/lerna/lerna/commit/dae18c927a47326b29d35f8897e02632adb93790))
+
 ## [8.0.1](https://github.com/lerna/lerna/compare/v8.0.0...v8.0.1) (2023-12-15)
 
 ### Bug Fixes
