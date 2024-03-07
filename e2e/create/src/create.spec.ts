@@ -1285,7 +1285,7 @@ describe("lerna-create", () => {
 
          
 
-         >  Lerna (powered by Nx)   Successfully ran target test for project test-script
+         Lerna (powered by Nx)   Successfully ran target test for project test-script
 
 
 

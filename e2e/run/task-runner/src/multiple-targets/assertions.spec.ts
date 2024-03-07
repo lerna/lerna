@@ -33,7 +33,7 @@ describe("lerna-run-nx-multiple-targets", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running targets XXXXXXXXXX, XXXXXXXXXX for 3 projects:
+      Lerna (powered by Nx)   Running targets XXXXXXXXXX, XXXXXXXXXX for 3 projects:
 
       - package-X
       - package-X
@@ -75,7 +75,7 @@ describe("lerna-run-nx-multiple-targets", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran targets XXXXXXXXXX, XXXXXXXXXX for 3 projects
+      Lerna (powered by Nx)   Successfully ran targets XXXXXXXXXX, XXXXXXXXXX for 3 projects
 
 
 
@@ -89,7 +89,7 @@ describe("lerna-run-nx-multiple-targets", () => {
       lerna notice filter including "package-X"
       lerna info filter [ 'package-X' ]
 
-      >  Lerna (powered by Nx)   Running targets XXXXXXXXXX, XXXXXXXXXX for project package-X:
+      Lerna (powered by Nx)   Running targets XXXXXXXXXX, XXXXXXXXXX for project package-X:
 
       - package-X
 
@@ -113,7 +113,7 @@ describe("lerna-run-nx-multiple-targets", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran targets XXXXXXXXXX, XXXXXXXXXX for project package-X
+      Lerna (powered by Nx)   Successfully ran targets XXXXXXXXXX, XXXXXXXXXX for project package-X
 
 
 
