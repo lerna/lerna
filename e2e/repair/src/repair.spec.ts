@@ -30,7 +30,7 @@ describe("lerna-repair", () => {
     expect(output.combinedOutput).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-       >  Lerna   No changes were necessary. This workspace is up to date!
+      Lerna   No changes were necessary. This workspace is up to date!
 
 
     `);
