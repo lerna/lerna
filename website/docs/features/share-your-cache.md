@@ -52,7 +52,7 @@ created dist in 786ms
 
  —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
- >  Lerna (powered by Nx)   Successfully ran target build for project header (2s)
+ Lerna (powered by Nx)   Successfully ran target build for project header (2s)
 
    See logs and investigate cache misses at https://cloud.nx.app/runs/k0HDHACpL8
 
@@ -80,7 +80,7 @@ created dist in 786ms
 
  —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 
- >  Lerna (powered by Nx)   Successfully ran target build for project header (664ms)
+ Lerna (powered by Nx)   Successfully ran target build for project header (664ms)
 
    Nx read the output from the cache instead of running the command for 1 out of 1 tasks.
 

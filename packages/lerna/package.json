@@ -21,7 +21,7 @@
     "schemas/lerna-schema.json",
     "migrations.json"
   ],
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
   "engines": {
     "node": ">=18.0.0"
   },

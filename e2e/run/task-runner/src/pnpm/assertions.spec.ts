@@ -30,7 +30,7 @@ describe("lerna-run-nx-pnpm", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running target print-name for 12 projects:
+      Lerna (powered by Nx)   Running target print-name for 12 projects:
 
       - package-X
       - package-X
@@ -145,7 +145,7 @@ describe("lerna-run-nx-pnpm", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 12 projects
+      Lerna (powered by Nx)   Successfully ran target print-name for 12 projects
 
 
 
