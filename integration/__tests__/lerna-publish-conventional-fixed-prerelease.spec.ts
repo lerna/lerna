@@ -438,3 +438,285 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
     `);
   });
 });
+
+describe(`lerna publish --conventional-prerelease/graduate fixed w/ stable changelog`, () => {
+  let cwd: string;
+
+  beforeAll(async () => {
+    ({ cwd } = await cloneFixture("normal", "chore: init repo"));
+    await gitTag(cwd, "v1.0.0");
+  });
+
+  test(`release specified stable packages as prerelease, ignoring specified packages`, async () => {
+    const args = [
+      "publish",
+      "--conventional-commits",
+      "--conventional-prerelease",
+      "--yes",
+    ];
+    await commitChangeToPackage(cwd, "package-1", "feat(package-1): Add foo", { foo: true });
+    await commitChangeToPackage(cwd, "package-2", "fix(package-2): Fix bar", { bar: true });
+    await commitChangeToPackage(
+      cwd,
+      "package-3",
+      `feat(package-3): Add baz feature${os.EOL}${os.EOL}BREAKING CHANGE: yup`,
+      { baz: true }
+    );
+
+    const { stdout } = await cliRunner(cwd, env)(...args);
+    expect(stdout).toMatchInlineSnapshot(`
+
+      Changes:
+       - package-1: 1.0.0 => 2.0.0-alpha.0
+       - package-2: 1.0.0 => 2.0.0-alpha.0
+       - package-3: 1.0.0 => 2.0.0-alpha.0
+       - package-5: 1.0.0 => 2.0.0-alpha.0 (private)
+
+      Successfully published:
+       - package-1@2.0.0-alpha.0
+       - package-2@2.0.0-alpha.0
+       - package-3@2.0.0-alpha.0
+    `);
+  });
+
+  test(`graduate prerelease packages`, async () => {
+    const args = [
+      "publish",
+      "--conventional-commits",
+      "--conventional-graduate",
+      "--changelog-skip-unstable",
+      "--yes",
+    ];
+    await commitChangeToPackage(cwd, "package-1", "feat(package-1): Add baz", { baz: true });
+
+    const { stdout } = await cliRunner(cwd, env)(...args);
+    // package-4 is bumped because the graduation to 2.0.0 is a breaking change
+    // Lerna bumps ALL packages when there is a breaking change when on fixed mode
+    expect(stdout).toMatchInlineSnapshot(`
+
+      Changes:
+       - package-1: 2.0.0-alpha.0 => 2.0.0
+       - package-2: 2.0.0-alpha.0 => 2.0.0
+       - package-3: 2.0.0-alpha.0 => 2.0.0
+       - package-4: 1.0.0 => 2.0.0
+       - package-5: 2.0.0-alpha.0 => 2.0.0 (private)
+
+      Successfully published:
+       - package-1@2.0.0
+       - package-2@2.0.0
+       - package-3@2.0.0
+       - package-4@2.0.0
+    `);
+  });
+
+  test(`generate accurate changelog`, async () => {
+    // ensure changelog header is not duplicated
+    const args = ["publish", "--conventional-commits", "--changelog-skip-unstable", "--yes"];
+    await commitChangeToPackage(cwd, "package-2", "fix(package-2): And another thing", { thing: true });
+    await cliRunner(cwd, env)(...args);
+
+    const changelogFilePaths = await globby(["**/CHANGELOG.md"], {
+      cwd,
+      absolute: true,
+      followSymbolicLinks: false,
+    });
+    const [rootChangelog, pkg1Changelog, pkg2Changelog, pkg3Changelog] =
+      await Promise.all(changelogFilePaths.sort().map((fp) => fs.readFile(fp, "utf8")));
+
+    /**
+     * ./CHANGELOG.md
+     */
+    expect(rootChangelog).toMatchInlineSnapshot(`
+      # Change Log
+
+      All notable changes to this project will be documented in this file.
+      See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+      ## [2.0.1](/compare/v2.0.0...v2.0.1) (YYYY-MM-DD)
+
+
+      ### Bug Fixes
+
+      * **package-2:** And another thing ([SHA](COMMIT_URL))
+
+
+
+
+
+      # [2.0.0](/compare/v1.0.0...v2.0.0) (YYYY-MM-DD)
+
+
+      ### Features
+
+      * **package-1:** Add baz ([SHA](COMMIT_URL))
+
+
+
+      # 2.0.0-alpha.0 (YYYY-MM-DD)
+
+
+      ### Bug Fixes
+
+      * **package-2:** Fix bar ([SHA](COMMIT_URL))
+
+
+      ### Features
+
+      * **package-1:** Add foo ([SHA](COMMIT_URL))
+      * **package-3:** Add baz feature ([SHA](COMMIT_URL))
+
+
+      ### BREAKING CHANGES
+
+      * **package-3:** yup
+
+
+
+
+
+      # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
+
+
+      ### Bug Fixes
+
+      * **package-2:** Fix bar ([SHA](COMMIT_URL))
+
+
+      ### Features
+
+      * **package-1:** Add foo ([SHA](COMMIT_URL))
+      * **package-3:** Add baz feature ([SHA](COMMIT_URL))
+
+
+      ### BREAKING CHANGES
+
+      * **package-3:** yup
+
+    `);
+
+    expect(pkg1Changelog).toMatchInlineSnapshot(`
+      # Change Log
+
+      All notable changes to this project will be documented in this file.
+      See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+      # [2.0.0](/compare/v1.0.0...v2.0.0) (YYYY-MM-DD)
+
+
+      ### Features
+
+      * **package-1:** Add baz ([SHA](COMMIT_URL))
+
+
+
+      # 2.0.0-alpha.0 (YYYY-MM-DD)
+
+
+      ### Features
+
+      * **package-1:** Add foo ([SHA](COMMIT_URL))
+
+
+
+
+
+      # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
+
+
+      ### Features
+
+      * **package-1:** Add foo ([SHA](COMMIT_URL))
+
+    `);
+
+    expect(pkg2Changelog).toMatchInlineSnapshot(`
+      # Change Log
+
+      All notable changes to this project will be documented in this file.
+      See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+      ## [2.0.1](/compare/v2.0.0...v2.0.1) (YYYY-MM-DD)
+
+
+      ### Bug Fixes
+
+      * **package-2:** And another thing ([SHA](COMMIT_URL))
+
+
+
+
+
+      # [2.0.0](/compare/v1.0.0...v2.0.0) (YYYY-MM-DD)
+
+
+
+      # 2.0.0-alpha.0 (YYYY-MM-DD)
+
+
+      ### Bug Fixes
+
+      * **package-2:** Fix bar ([SHA](COMMIT_URL))
+
+
+
+
+
+      # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
+
+
+      ### Bug Fixes
+
+      * **package-2:** Fix bar ([SHA](COMMIT_URL))
+
+    `);
+
+    expect(pkg3Changelog).toMatchInlineSnapshot(`
+      # Change Log
+
+      All notable changes to this project will be documented in this file.
+      See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+      ## [2.0.1](/compare/v2.0.0...v2.0.1) (YYYY-MM-DD)
+
+      **Note:** Version bump only for package package-3
+
+
+
+
+
+      # [2.0.0](/compare/v1.0.0...v2.0.0) (YYYY-MM-DD)
+
+
+
+      # 2.0.0-alpha.0 (YYYY-MM-DD)
+
+
+      ### Features
+
+      * **package-3:** Add baz feature ([SHA](COMMIT_URL))
+
+
+      ### BREAKING CHANGES
+
+      * **package-3:** yup
+
+
+
+
+
+      # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
+
+
+      ### Features
+
+      * **package-3:** Add baz feature ([SHA](COMMIT_URL))
+
+
+      ### BREAKING CHANGES
+
+      * **package-3:** yup
+
+    `);
+  });
+
+});

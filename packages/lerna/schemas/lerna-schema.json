@@ -979,6 +979,9 @@
             "changelogEntryAdditionalMarkdown": {
               "$ref": "#/$defs/commandOptions/version/changelogEntryAdditionalMarkdown"
             },
+            "changelogSkipUnstable": {
+              "$ref": "#/$defs/commandOptions/version/changelogSkipUnstable"
+            },
             "exact": {
               "$ref": "#/$defs/commandOptions/shared/exact"
             },
@@ -1689,6 +1692,10 @@
         "changelogEntryAdditionalMarkdown": {
           "type": "string",
           "description": "Additional markdown to add to CHANGELOG.md entries."
+        },
+        "changelogSkipUnstable": {
+          "type": "boolean",
+          "description": "During `lerna version`, when true, skip changelog generation for prerelease versions."
         },
         "gitRemote": {
           "type": "string",
