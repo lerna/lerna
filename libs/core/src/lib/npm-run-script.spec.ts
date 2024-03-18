@@ -27,6 +27,7 @@ describe("npm-run-script", () => {
         env: {},
         pkg: config.pkg,
         reject: true,
+        stdio: "inherit",
         windowsHide: false,
       });
     });
@@ -49,6 +50,7 @@ describe("npm-run-script", () => {
         env: {},
         pkg: config.pkg,
         reject: false,
+        stdio: "inherit",
         windowsHide: false,
       });
     });
@@ -70,6 +72,7 @@ describe("npm-run-script", () => {
         env: {},
         pkg: config.pkg,
         reject: true,
+        stdio: "inherit",
         windowsHide: false,
       });
     });
@@ -100,6 +103,7 @@ describe("npm-run-script", () => {
           },
           pkg: config.pkg,
           reject: true,
+          stdio: "inherit",
           windowsHide: false,
         },
         config.pkg.name
@@ -130,6 +134,7 @@ describe("npm-run-script", () => {
           },
           pkg: config.pkg,
           reject: false,
+          stdio: "inherit",
           windowsHide: false,
         },
         undefined

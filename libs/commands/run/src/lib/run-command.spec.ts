@@ -45,9 +45,10 @@ const ranInPackagesStreaming = (testDir: string) =>
   );
 
 describe("RunCommand", () => {
-  npmRunScript.mockImplementation((script: string, { pkg }: { pkg: Package }) =>
-    Promise.resolve({ exitCode: 0, stdout: pkg.name })
-  );
+  npmRunScript.mockImplementation((script: string, { pkg }: { pkg: Package }) => {
+    output(pkg.name);
+    return Promise.resolve({ exitCode: 0, stdout: pkg.name });
+  });
   npmRunScriptStreaming.mockImplementation(() => Promise.resolve({ exitCode: 0 }));
 
   afterEach(() => {
@@ -166,6 +167,7 @@ describe("RunCommand", () => {
         err.exitCode = 456;
         err.stdout = pkg.name;
 
+        output(pkg.name);
         return Promise.resolve(err);
       });
 

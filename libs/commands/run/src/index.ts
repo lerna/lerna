@@ -7,7 +7,6 @@ import {
   getPackage,
   npmRunScript,
   npmRunScriptStreaming,
-  output,
   Package,
   Profiler,
   ProjectGraphProjectNodeWithPackage,
@@ -250,7 +249,6 @@ export class RunCommand extends Command<RunCommandConfigOptions> {
         pkg.name,
         (getElapsed() / 1000).toFixed(1)
       );
-      output(result.stdout);
 
       return result;
     });
