@@ -389,7 +389,11 @@ class VersionCommand extends Command {
       tasks.push(() =>
         createRelease(
           this.releaseClient,
-          { tags: this.tags, releaseNotes: this.releaseNotes },
+          {
+            tags: this.tags,
+            tagVersionSeparator: this.options.tagVersionSeparator || "@",
+            releaseNotes: this.releaseNotes,
+          },
           { gitRemote: this.options.gitRemote, execOpts: this.execOpts }
         )
       );
