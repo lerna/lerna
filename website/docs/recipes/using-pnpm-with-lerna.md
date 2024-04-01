@@ -5,7 +5,7 @@ Lerna can be used in a [`pnpm` workspace](https://pnpm.io/workspaces) to get the
 When used in a `pnpm` workspace, Lerna will:
 
 - resolve package locations with `pnpm-workspace.yaml` (https://pnpm.io/workspaces)
-- enforce `useWorkspaces: true` in `lerna.json` (and ignore `packages:` in `package.json`).
+- ignore `packages:` in `package.json
 - block usage of `bootstrap`, `link`, and `add` commands. Instead, you should use `pnpm` commands directly to manage dependencies (https://pnpm.io/cli/install).
 - respect the [workspace protocol](https://pnpm.io/workspaces#workspace-protocol-workspace) for package dependencies.
   - During `lerna version`, dependencies will be updated as normal, but will preserve the `workspace:` prefix if it exists.
