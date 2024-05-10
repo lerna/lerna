@@ -62,6 +62,10 @@ jobs:
         run: corepack enable
         shell: bash
 
+      - name: Prepare pnpm
+        run: corepack prepare pnpm@8
+        shell: bash
+
       - run: pnpm --version
         shell: bash
 
