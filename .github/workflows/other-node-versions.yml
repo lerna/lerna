@@ -67,7 +67,7 @@ jobs:
         shell: bash
         env:
           COREPACK_ENABLE_AUTO_PIN: "0"
-  
+
       - name: Print installed pnpm version
         run: pnpm --version
         shell: bash
