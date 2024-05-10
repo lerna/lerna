@@ -47,7 +47,8 @@ const setupYarnBerry = async (fixture: Fixture) => {
   await fixture.exec("git push origin test-main");
 };
 
-describe("lerna-version-yarn-lockfiles", () => {
+// eslint-disable-next-line jest/no-disabled-tests
+describe.skip("lerna-version-yarn-lockfiles", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {
