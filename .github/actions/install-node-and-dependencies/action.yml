@@ -29,8 +29,8 @@ runs:
       run: corepack enable
       shell: bash
 
-    - name: Prepare pnpm
-      run: corepack prepare pnpm@8
+    - name: Pin pnpm to v8
+      run: npm i -g pnpm@8
       shell: bash
 
     - run: pnpm --version
