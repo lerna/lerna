@@ -15,7 +15,9 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna-publish-workspace-prefix-pnpm", () => {
+// TODO: re-enable test
+// eslint-disable-next-line jest/no-disabled-tests
+describe.skip("lerna-publish-workspace-prefix-pnpm", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {

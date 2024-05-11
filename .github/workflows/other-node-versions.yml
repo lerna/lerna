@@ -62,7 +62,14 @@ jobs:
         run: corepack enable
         shell: bash
 
-      - run: pnpm --version
+      - name: Install pnpm v8
+        run: corepack install -g pnpm@8
+        shell: bash
+        env:
+          COREPACK_ENABLE_AUTO_PIN: "0"
+
+      - name: Print installed pnpm version
+        run: pnpm --version
         shell: bash
 
       - name: Run parallel distributed builds and tests on each node version
