@@ -16,9 +16,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-// TODO: re-enable test
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip("lerna-publish-pnpm", () => {
+describe("lerna-publish-pnpm", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {
