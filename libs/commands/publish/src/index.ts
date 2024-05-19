@@ -25,20 +25,16 @@ import {
   ValidationError,
 } from "@lerna/core";
 import { workspaceRoot } from "@nx/devkit";
-
-import crypto from "crypto";
-import fs, { existsSync } from "fs";
-import os from "os";
+import { copy } from "fs-extra";
+import crypto from "node:crypto";
+import fs, { existsSync } from "node:fs";
+import os from "node:os";
+import path, { basename, join, normalize } from "node:path";
+import npa from "npm-package-arg";
 import pMap from "p-map";
 import pPipe from "p-pipe";
-import path, { basename, join, normalize } from "path";
 import semver, { ReleaseType } from "semver";
-
-const versionCommand = require("@lerna/commands/version");
-
-import { copy } from "fs-extra";
 import { glob } from "tinyglobby";
-import npa from "npm-package-arg";
 import { createTempLicenses } from "./lib/create-temp-licenses";
 import { getCurrentSHA } from "./lib/get-current-sha";
 import { getCurrentTags } from "./lib/get-current-tags";
@@ -52,6 +48,9 @@ import { interpolate } from "./lib/interpolate";
 import { removeTempLicenses } from "./lib/remove-temp-licenses";
 import { Queue, TailHeadQueue } from "./lib/throttle-queue";
 import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const versionCommand = require("@lerna/commands/version");
 
 module.exports = function factory(argv: Arguments<PublishCommandConfigOptions>) {
   return new PublishCommand(argv);
@@ -792,7 +791,7 @@ class PublishCommand extends Command {
           }
 
           // it no longer matters if we mutate the shared Package instance
-          pkg.updateLocalDependency(resolved, depVersion, savePrefix, { retainWorkspacePrefix: false });
+          pkg.updateLocalDependency(resolved, depVersion, savePrefix, { eraseWorkspacePrefix: true });
         }
       });
 

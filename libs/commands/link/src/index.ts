@@ -1,7 +1,5 @@
 import { CommandConfigOptions, Package, ValidationError } from "@lerna/core";
-
 import { Command, PackageGraph, PackageGraphNode, symlinkDependencies } from "@lerna/legacy-core";
-
 import npa from "npm-package-arg";
 import pMap from "p-map";
 import path from "path";

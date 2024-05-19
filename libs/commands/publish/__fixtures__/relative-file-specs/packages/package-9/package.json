@@ -1,0 +1,7 @@
+{
+  "name": "package-9",
+  "version": "1.0.0",
+  "peerDependencies": {
+    "package-1": "^1.0.0"
+  }
+}

@@ -22,6 +22,10 @@ import execa from "execa";
 import fs from "fs-extra";
 import path from "path";
 import _writePkg from "write-pkg";
+import { gitPush as _libPush } from "./git-push";
+import { isAnythingCommitted as _isAnythingCommitted } from "./is-anything-committed";
+import { isBehindUpstream as _isBehindUpstream } from "./is-behind-upstream";
+import { remoteBranchExists as _remoteBranchExists } from "./remote-branch-exists";
 
 jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
@@ -37,11 +41,6 @@ jest.mock("./is-behind-upstream", () => ({
 jest.mock("./remote-branch-exists", () => ({
   remoteBranchExists: jest.fn().mockResolvedValue(true),
 }));
-
-import { gitPush as _libPush } from "./git-push";
-import { isAnythingCommitted as _isAnythingCommitted } from "./is-anything-committed";
-import { isBehindUpstream as _isBehindUpstream } from "./is-behind-upstream";
-import { remoteBranchExists as _remoteBranchExists } from "./remote-branch-exists";
 
 const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
 const checkWorkingTree = jest.mocked(_checkWorkingTree);
@@ -831,6 +830,14 @@ Changes:
         "package-5": "2.0.0",
         "package-6": "2.0.0",
         "package-7": "2.0.0",
+        "package-8": "2.0.0",
+        "package-9": "2.0.0",
+        "package-a": "2.0.0",
+        "package-b": "2.0.0",
+        "package-c": "2.0.0",
+        "package-d": "2.0.0",
+        "package-e": "2.0.0",
+        "package-f": "2.0.0",
       });
 
       // package-1 has no relative file: dependencies
@@ -846,6 +853,30 @@ Changes:
       expect(writePkg.updatedManifest("package-5").dependencies).toMatchObject({
         "package-4": "file:../package-4",
         "package-6": "file:../package-6",
+      });
+      expect(writePkg.updatedManifest("package-8").peerDependencies).toMatchObject({
+        "package-1": "file:../package-1",
+      });
+      expect(writePkg.updatedManifest("package-9").peerDependencies).toMatchObject({
+        "package-1": "^1.0.0",
+      });
+      expect(writePkg.updatedManifest("package-a").peerDependencies).toMatchObject({
+        "package-1": "workspace:*",
+      });
+      expect(writePkg.updatedManifest("package-b").peerDependencies).toMatchObject({
+        "package-1": "workspace:^",
+      });
+      expect(writePkg.updatedManifest("package-c").peerDependencies).toMatchObject({
+        "package-1": "workspace:~",
+      });
+      expect(writePkg.updatedManifest("package-d").peerDependencies).toMatchObject({
+        "package-1": "workspace:^2.0.0",
+      });
+      expect(writePkg.updatedManifest("package-e").peerDependencies).toMatchObject({
+        "package-1": "workspace:~2.0.0",
+      });
+      expect(writePkg.updatedManifest("package-f").peerDependencies).toMatchObject({
+        "package-1": "workspace:2.0.0",
       });
     });
   });
