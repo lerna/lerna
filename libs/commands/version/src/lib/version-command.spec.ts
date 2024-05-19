@@ -832,6 +832,8 @@ Changes:
         "package-5": "2.0.0",
         "package-6": "2.0.0",
         "package-7": "2.0.0",
+        "package-8": "2.0.0",
+        "package-9": "2.0.0",
       });
 
       // package-1 has no relative file: dependencies
@@ -847,6 +849,12 @@ Changes:
       expect(writePkg.updatedManifest("package-5").dependencies).toMatchObject({
         "package-4": "file:../package-4",
         "package-6": "file:../package-6",
+      });
+      expect(writePkg.updatedManifest("package-8").peerDependencies).toMatchObject({
+        "package-1": "file:../package-1",
+      });
+      expect(writePkg.updatedManifest("package-9").peerDependencies).toMatchObject({
+        "package-1": "^1.0.0",
       });
     });
   });

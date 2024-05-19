@@ -8,7 +8,7 @@ export interface ProjectGraphProjectNodeWithPackage extends ProjectGraphProjectN
 export interface ProjectGraphWorkspacePackageDependency extends ProjectGraphDependency {
   targetVersionMatchesDependencyRequirement: boolean;
   targetResolvedNpaResult: ExtendedNpaResult;
-  dependencyCollection: "dependencies" | "devDependencies" | "optionalDependencies"; // lerna doesn't manage peer dependencies
+  dependencyCollection: "dependencies" | "devDependencies" | "optionalDependencies" | "peerDependencies";
 }
 
 export interface ProjectGraphWithPackages extends ProjectGraph {

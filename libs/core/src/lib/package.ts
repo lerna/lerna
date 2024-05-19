@@ -304,9 +304,10 @@ export class Package {
     return this;
   }
 
-  getLocalDependency(
-    depName: string
-  ): { collection: "dependencies" | "devDependencies" | "optionalDependencies"; spec: string } | null {
+  getLocalDependency(depName: string): {
+    collection: "dependencies" | "devDependencies" | "optionalDependencies" | "peerDependencies";
+    spec: string;
+  } | null {
     if (this.dependencies && this.dependencies[depName]) {
       return {
         collection: "dependencies",
@@ -324,6 +325,12 @@ export class Package {
         collection: "optionalDependencies",
         spec: this.optionalDependencies[depName],
       };
+    }
+    if (this.peerDependencies && this.peerDependencies[depName]) {
+      const spec = this.peerDependencies[depName];
+      if (spec.startsWith("file:")) {
+        return { collection: "peerDependencies", spec };
+      }
     }
     return null;
   }
@@ -353,6 +360,10 @@ export class Package {
     // fall back to devDependencies
     if (!depCollection || !depCollection[depName]) {
       depCollection = this.devDependencies;
+    }
+
+    if (!depCollection || !depCollection[depName]) {
+      depCollection = this.peerDependencies;
     }
 
     if (resolved.workspaceSpec && options.retainWorkspacePrefix) {

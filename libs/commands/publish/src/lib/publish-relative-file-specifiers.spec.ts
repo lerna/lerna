@@ -62,6 +62,8 @@ describe("relative 'file:' specifiers", () => {
       "package-5": "2.0.0",
       "package-6": "2.0.0",
       "package-7": "2.0.0",
+      "package-8": "2.0.0",
+      "package-9": "2.0.0",
     });
 
     // notably missing is package-1, which has no relative file: dependencies
@@ -82,6 +84,14 @@ describe("relative 'file:' specifiers", () => {
     // private packages do not need local version resolution
     expect(writePkg.updatedManifest("package-7").dependencies).toMatchObject({
       "package-1": "file:../package-1",
+    });
+    // peerDependencies which are relative are resolved to the semantic version
+    expect(writePkg.updatedManifest("package-8").peerDependencies).toMatchObject({
+      "package-1": "^2.0.0",
+    });
+    // peerDependencies which are not relative are left unchanged
+    expect(writePkg.updatedManifest("package-9").peerDependencies).toMatchObject({
+      "package-1": "^1.0.0",
     });
   });
 
