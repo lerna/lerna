@@ -51,6 +51,7 @@ import { getTwoFactorAuthRequired } from "./lib/get-two-factor-auth-required";
 import { gitCheckout } from "./lib/git-checkout";
 import { interpolate } from "./lib/interpolate";
 import { removeTempLicenses } from "./lib/remove-temp-licenses";
+import { ImmediateQueue, TailHeadQueue } from "./lib/throttle-queue";
 import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
 
 module.exports = function factory(argv: Arguments<PublishCommandConfigOptions>) {
@@ -973,6 +974,10 @@ class PublishCommand extends Command {
     };
     process.on("log", logListener);
 
+    const queue =
+      this.conf.get("registry") !== "https://registry.npmjs.org/"
+        ? new ImmediateQueue()
+        : new TailHeadQueue();
     const mapper = pPipe(
       ...[
         (pkg: Package) => {
@@ -980,7 +985,9 @@ class PublishCommand extends Command {
           const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
           const pkgOpts = Object.assign({}, opts, { tag });
 
-          return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache))
+          return pulseTillDone(
+            queue.queue(() => npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache))
+          )
             .then(() => {
               this.publishedPackages.push(pkg);
 
