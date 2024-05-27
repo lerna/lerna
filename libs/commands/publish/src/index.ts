@@ -88,6 +88,9 @@ interface PublishCommandConfigOptions extends CommandConfigOptions {
   rejectCycles?: boolean;
   distTag?: string;
   preDistTag?: string;
+  throttle?: boolean;
+  throttleSize?: number;
+  throttleDelay?: number;
 }
 
 class PublishCommand extends Command {
@@ -974,10 +977,18 @@ class PublishCommand extends Command {
     };
     process.on("log", logListener);
 
-    const queue =
-      this.conf.get("registry") !== "https://registry.npmjs.org/"
-        ? new ImmediateQueue()
-        : new TailHeadQueue();
+    let queue;
+    if (
+      this.options.throttle ||
+      (this.options.throttle === undefined && this.conf.get("registry") !== "https://registry.npmjs.org/")
+    ) {
+      queue = new TailHeadQueue(
+        this.options.throttleSize !== undefined ? this.options.throttleSize : 20,
+        (this.options.throttleDelay !== undefined ? this.options.throttleDelay : 30) * 1000
+      );
+    } else {
+      queue = new ImmediateQueue();
+    }
     const mapper = pPipe(
       ...[
         (pkg: Package) => {
