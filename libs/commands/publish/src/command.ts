@@ -107,6 +107,18 @@ const command: CommandModule = {
         describe: "Create a temporary tag while publishing.",
         type: "boolean",
       },
+      throttle: {
+        describe: "Throttle module publication. This is implicit if a throttle size or delay is provided",
+        type: "boolean",
+      },
+      "throttle-size": {
+        describe: "Bucket size used to throttle module publication.",
+        type: "number",
+      },
+      "throttle-delay": {
+        describe: "Delay between throttle bucket items publications (in seconds).",
+        type: "number",
+      },
       "no-verify-access": {
         // proxy for --verify-access
         describe: "Do not verify package read-write access for current npm user.",
