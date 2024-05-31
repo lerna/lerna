@@ -28,11 +28,15 @@ type TailHeadQueueItem = { startTime?: number; endTime?: number };
  * A sized queue that adds a delay between the end of an item's execution.
  *
  * Use only with async code, multi-threading is not supported.
+ *
+ * All items MUST be queued upfront or late items may be executed immediately
+ * if the queue is freed.
  */
 export class TailHeadQueue implements Queue {
-  private queue_list: TailHeadQueueItem[];
+  private queue_list: ((v: any) => any)[];
   private queue_size: number;
   private queue_period: number;
+  private allowance: number;
 
   /**
    * @param size The number of items that may run concurrently
@@ -42,6 +46,7 @@ export class TailHeadQueue implements Queue {
     this.queue_list = [];
     this.queue_size = Math.floor(size);
     this.queue_period = period;
+    this.allowance = this.queue_size;
   }
 
   /**
@@ -51,43 +56,46 @@ export class TailHeadQueue implements Queue {
    * @param i The queue item's index
    * @returns An array that contains a queue item and its index
    */
-  protected static list_reducer(
-    p: [TailHeadQueueItem, number],
-    v: TailHeadQueueItem,
-    i: number
-  ): [TailHeadQueueItem, number] {
-    if (!p[0].endTime || (v.endTime && v.endTime < p[0].endTime)) {
-      return [v, i];
+  protected static list_reducer(p: TailHeadQueueItem, v: TailHeadQueueItem, i: number): TailHeadQueueItem {
+    if (!p.endTime || (v.endTime && v.endTime < p.endTime)) {
+      return v;
     }
     return p;
   }
 
-  async queue<T>(f: () => Promise<T>): Promise<T> {
-    let curtime = Date.now();
-    let smallest: [TailHeadQueueItem, number] = this.queue_list.reduce(TailHeadQueue.list_reducer, [{}, -1]);
-    // Be careful when editing this loop, the position of each element around the async code is important
-    while (this.queue_list.length >= this.queue_size) {
-      if (smallest[0].endTime && smallest[0].endTime + this.queue_period <= curtime) {
-        this.queue_list.splice(smallest[1]);
-        break;
-      }
-      const delay = Math.max((smallest[0].endTime as number) + this.queue_period - curtime, 100);
-      await new Promise((r) => setTimeout(r, delay));
-      smallest = this.queue_list.reduce(TailHeadQueue.list_reducer, [{}, -1]);
-      curtime = Date.now();
+  /**
+   * Validate the execution of a queue item and schedule the execution of the next one
+   */
+  _on_settled() {
+    const next = this.queue_list.shift();
+    if (next !== undefined) {
+      setTimeout(next, this.queue_period);
+    } else {
+      // If we ever reach this point and THEN a new item is queued, it will be
+      // executed immediately. This is acceptable in our use-case as all queue
+      // items are loaded at once, so this problem should never occur.
+      //
+      // We can't simply wrap this in a setTimeout as it would add a flat
+      // this.queue_period delay to lerna's execution end after the last item
+      // in the queue is processed.
+      this.allowance += 1;
     }
+  }
 
-    const task: TailHeadQueueItem = { startTime: curtime };
-    this.queue_list.push(task);
-    return f().then(
-      (r) => {
-        task.endTime = Date.now();
-        return Promise.resolve(r);
-      },
-      (r) => {
-        task.endTime = Date.now();
-        return Promise.reject(r);
-      }
-    );
+  async queue<T>(f: () => Promise<T>): Promise<T> {
+    let p: Promise<T>;
+    if (this.allowance > 0) {
+      this.allowance -= 1;
+      p = f();
+    } else {
+      p = new Promise((r) => {
+        this.queue_list.push(r);
+      }).then(f);
+    }
+    return p.finally(() => {
+      // Don't wait on _on_settled as it is for the queue's continuation
+      // and should not delay processing of the queued item's result.
+      this._on_settled();
+    });
   }
 }
