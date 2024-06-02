@@ -20,11 +20,6 @@ export class ImmediateQueue implements Queue {
 }
 
 /**
- * Internal queue item representation used by {@link TailHeadQueue}
- */
-type TailHeadQueueItem = { startTime?: number; endTime?: number };
-
-/**
  * A sized queue that adds a delay between the end of an item's execution.
  *
  * Use only with async code, multi-threading is not supported.
@@ -47,20 +42,6 @@ export class TailHeadQueue implements Queue {
     this.queue_size = Math.floor(size);
     this.queue_period = period;
     this.allowance = this.queue_size;
-  }
-
-  /**
-   * Return the item with the smallest endTime in the provided list, for use with {@link TailHeadQueue.queue_list}.reduce
-   * @param p The last received item, this should be `[{}, -1]` at the start of the reduction
-   * @param v A queue item
-   * @param i The queue item's index
-   * @returns An array that contains a queue item and its index
-   */
-  protected static list_reducer(p: TailHeadQueueItem, v: TailHeadQueueItem, i: number): TailHeadQueueItem {
-    if (!p.endTime || (v.endTime && v.endTime < p.endTime)) {
-      return v;
-    }
-    return p;
   }
 
   /**
