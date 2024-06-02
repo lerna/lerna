@@ -978,12 +978,9 @@ class PublishCommand extends Command {
     process.on("log", logListener);
 
     let queue;
-    if (
-      this.options.throttle ||
-      (this.options.throttle === undefined && this.conf.get("registry") !== "https://registry.npmjs.org/")
-    ) {
+    if (this.options.throttle) {
       queue = new TailHeadQueue(
-        this.options.throttleSize !== undefined ? this.options.throttleSize : 20,
+        this.options.throttleSize !== undefined ? this.options.throttleSize : 25,
         (this.options.throttleDelay !== undefined ? this.options.throttleDelay : 30) * 1000
       );
     } else {
