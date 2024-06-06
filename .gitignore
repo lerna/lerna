@@ -40,3 +40,4 @@ website/.docusaurus
 website/.cache-loader
 
 .nx/cache
+.nx/workspace-data
