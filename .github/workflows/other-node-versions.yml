@@ -14,6 +14,8 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
   NX_VERBOSE_LOGGING: false
+  COREPACK_ENABLE_AUTO_PIN: "0"
+  COREPACK_ENABLE_STRICT: "0"
 
 jobs:
   set-node-versions:
@@ -65,8 +67,6 @@ jobs:
       - name: Install pnpm v8
         run: corepack install -g pnpm@8
         shell: bash
-        env:
-          COREPACK_ENABLE_AUTO_PIN: "0"
 
       - name: Print installed pnpm version
         run: pnpm --version
