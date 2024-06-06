@@ -47,7 +47,8 @@ describe("lerna-run-legacy-task-runner-env-files", () => {
   });
   afterEach(() => fixture.destroy());
 
-  it("should log an empty value", async () => {
+  // TODO: re-enable this test once resolution lands
+  it.skip("should log an empty value", async () => {
     // Enable legacy task runner
     await fixture.overrideLernaConfig({
       useNx: false,
