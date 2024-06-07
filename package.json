@@ -11,6 +11,7 @@
     "yarn": "1.22.19",
     "npm": "10.8.1"
   },
+  "packageManager": "npm@10.8.1",
   "engines": {
     "node": ">=18.0.0"
   },
