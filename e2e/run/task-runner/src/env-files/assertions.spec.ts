@@ -43,8 +43,7 @@ describe("lerna-run-nx-env-files", () => {
     `);
   });
 
-  // TODO: re-enable this test once resolution lands
-  it.skip("should log an empty value when --load-env-files=false", async () => {
+  it("should log an empty value when --load-env-files=false", async () => {
     const output = await fixture.readOutput("log-env-var-load-env-files-false");
 
     expect(output).toMatchInlineSnapshot(`
