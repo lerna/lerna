@@ -39,10 +39,6 @@ runs:
         COREPACK_ENABLE_AUTO_PIN: "0"
         COREPACK_ENABLE_STRICT: "0"
 
-    - name: Use Yarn classic
-      run: yarn set version classic
-      shell: bash
-
     - name: Print installed node, npm, yarn and pnpm versions
       run: |
         node --version
