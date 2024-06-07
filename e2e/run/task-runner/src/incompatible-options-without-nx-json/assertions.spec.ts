@@ -28,7 +28,7 @@ describe("lerna-run-nx-incompatible-options-without-nx-json", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+      Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -62,7 +62,7 @@ describe("lerna-run-nx-incompatible-options-without-nx-json", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 
@@ -75,7 +75,7 @@ describe("lerna-run-nx-incompatible-options-without-nx-json", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+      Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -109,7 +109,7 @@ describe("lerna-run-nx-incompatible-options-without-nx-json", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 
@@ -122,7 +122,7 @@ describe("lerna-run-nx-incompatible-options-without-nx-json", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+      Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -156,7 +156,7 @@ describe("lerna-run-nx-incompatible-options-without-nx-json", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 
@@ -169,7 +169,7 @@ describe("lerna-run-nx-incompatible-options-without-nx-json", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+      Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -203,7 +203,7 @@ describe("lerna-run-nx-incompatible-options-without-nx-json", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 
@@ -217,7 +217,7 @@ describe("lerna-run-nx-incompatible-options-without-nx-json", () => {
       lerna notice cli v999.9.9-e2e.0
       lerna notice filter including dependencies
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+      Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -251,7 +251,7 @@ describe("lerna-run-nx-incompatible-options-without-nx-json", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 

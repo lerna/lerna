@@ -56,3 +56,10 @@ export function normalizeCommandOutput(str: string): string {
     .map((r) => r.trim())
     .join("\n");
 }
+
+export function trimEnds(lines: string): string {
+  return lines
+    .split("\n")
+    .map((r) => r.trimEnd())
+    .join("\n");
+}

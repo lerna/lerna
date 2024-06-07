@@ -13,7 +13,7 @@ runs:
   using: "composite"
   steps:
     - name: Install node and npm based on the given values (or the volta config in package.json)
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version-file: ${{ inputs.node-version == '' && 'package.json' || '' }}
         node-version: ${{ inputs.node-version }}
@@ -28,15 +28,38 @@ runs:
     - name: Enable corepack
       run: corepack enable
       shell: bash
+      env:
+        COREPACK_ENABLE_AUTO_PIN: "0"
+        COREPACK_ENABLE_STRICT: "0"
 
-    - name: Prepare pnpm
-      run: corepack prepare pnpm@latest
+    - name: Install pnpm v8
+      run: corepack install -g pnpm@8
       shell: bash
+      env:
+        COREPACK_ENABLE_AUTO_PIN: "0"
+        COREPACK_ENABLE_STRICT: "0"
 
     - name: Use Yarn classic
       run: yarn set version classic
       shell: bash
+      env:
+        COREPACK_ENABLE_AUTO_PIN: "0"
+        COREPACK_ENABLE_STRICT: "0"
+
+    - name: Print installed node, npm, yarn and pnpm versions
+      run: |
+        node --version
+        npm --version
+        yarn --version
+        pnpm --version
+      shell: bash
+      env:
+        COREPACK_ENABLE_AUTO_PIN: "0"
+        COREPACK_ENABLE_STRICT: "0"
 
     - name: Install dependencies
       run: ${{ inputs.install-command }}
       shell: bash
+      env:
+        COREPACK_ENABLE_AUTO_PIN: "0"
+        COREPACK_ENABLE_STRICT: "0"

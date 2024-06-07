@@ -41,7 +41,7 @@ describe("lerna-run-nx-include-dependencies-without-nx-json", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X
+      Lerna (powered by Nx)   Successfully ran target print-name for project package-X
 
 
 

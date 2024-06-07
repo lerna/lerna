@@ -28,7 +28,7 @@ describe("lerna-run-with-nx-config", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+      Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -62,7 +62,7 @@ describe("lerna-run-with-nx-config", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 
@@ -75,7 +75,7 @@ describe("lerna-run-with-nx-config", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running target print:name for 2 projects:
+      Lerna (powered by Nx)   Running target print:name for 2 projects:
 
       - package-X
       - package-X
@@ -100,7 +100,7 @@ describe("lerna-run-with-nx-config", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print:name for 2 projects
+      Lerna (powered by Nx)   Successfully ran target print:name for 2 projects
 
 
 
@@ -122,7 +122,7 @@ describe("lerna-run-with-nx-config", () => {
 
 
 
-        >  Lerna (powered by Nx)   Successfully ran target print-name-run-one-only for project package-X
+        Lerna (powered by Nx)   Successfully ran target print-name-run-one-only for project package-X
 
 
 
@@ -143,7 +143,7 @@ describe("lerna-run-with-nx-config", () => {
 
 
 
-        >  Lerna (powered by Nx)   Successfully ran target print:name:run-one-only for project package-X
+        Lerna (powered by Nx)   Successfully ran target print:name:run-one-only for project package-X
 
 
 

@@ -37,6 +37,6 @@ export class ListCommand extends Command {
       this.result?.count === 1 ? "package" : "packages"
     );
 
-    process.exit(0);
+    process.stdout.end(() => process.exit(0));
   }
 }

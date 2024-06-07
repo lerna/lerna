@@ -12,8 +12,9 @@ concurrency:
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  NX_CLOUD_DISTRIBUTED_EXECUTION: true
   NX_VERBOSE_LOGGING: false
+  COREPACK_ENABLE_AUTO_PIN: "0"
+  COREPACK_ENABLE_STRICT: "0"
 
 jobs:
   set-node-versions:
@@ -46,8 +47,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: nrwl/nx-set-shas@v4
-
       - name: Install node v${{ matrix.node }} and dependencies
         uses: ./.github/actions/install-node-and-dependencies
         with:
@@ -62,18 +61,17 @@ jobs:
         run: corepack enable
         shell: bash
 
-      - run: pnpm --version
+      - name: Install pnpm v8
+        run: corepack install -g pnpm@8
         shell: bash
 
-      - name: Run parallel distributed builds and tests on each node version
-        uses: jameshenry/parallel-bash-commands@v1
-        with:
-          cmd1: npx nx run-many -t build --parallel=3
-          cmd2: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
-          cmd3: npx nx run integration:integration --ci --maxWorkers=2
-
-      # e2e tests for everything except the primary task runner
-      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
+      - name: Print installed node, npm, yarn and pnpm versions
+        run: |
+          node --version
+          npm --version
+          yarn --version
+          pnpm --version
+        shell: bash
 
       - name: Configure git metadata
         run: |
@@ -108,6 +106,16 @@ jobs:
           git config commit.gpgsign true
           git config tag.gpgsign true
           git config --global user.signingkey $GPG_KEY_ID
+
+      - name: Run parallel distributed builds and tests on each node version
+        uses: jameshenry/parallel-bash-commands@v1
+        with:
+          cmd1: npx nx run-many -t build --parallel=3
+          cmd2: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
+          cmd3: npx nx run integration:integration --ci --maxWorkers=2
+
+      # e2e tests for everything except the primary task runner
+      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
 
       - name: Run e2e tests for task-runner
         run: |

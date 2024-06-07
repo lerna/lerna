@@ -2,6 +2,7 @@ import packlist from "npm-packlist";
 import log from "npmlog";
 import path from "path";
 import { IntegrityMap } from "ssri";
+import type { Readable } from "stream";
 import tar from "tar";
 import { getPacked } from "./get-packed";
 import { Package } from "./package";
@@ -44,7 +45,7 @@ export function packDirectory(_pkg: Package | string, dir: string, options: Pack
 
   opts.log.verbose("pack-directory", path.relative(".", pkg.contents));
 
-  let chain = Promise.resolve();
+  let chain = Promise.resolve<void | Readable>(undefined);
 
   if (opts.ignorePrepublish !== true) {
     chain = chain.then(() => runLifecycle(pkg, "prepublish", opts));

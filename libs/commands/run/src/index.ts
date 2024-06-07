@@ -323,7 +323,7 @@ export class RunCommand extends Command<RunCommandConfigOptions> {
         ? {
             [this.script]: [
               {
-                projects: "dependencies",
+                dependencies: true,
                 target: this.script,
               },
             ],

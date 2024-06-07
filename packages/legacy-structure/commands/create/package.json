@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "8.1.2",
+  "version": "8.1.3",
   "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@npmcli/run-script": "7.0.2",
-    "@nx/devkit": ">=17.1.2 < 19",
+    "@nx/devkit": ">=17.1.2 < 20",
     "@octokit/plugin-enterprise-rest": "6.0.1",
     "@octokit/rest": "19.0.11",
     "byte-size": "8.1.1",
@@ -68,7 +68,7 @@
     "npm-packlist": "5.1.1",
     "npm-registry-fetch": "^14.0.5",
     "npmlog": "^6.0.2",
-    "nx": ">=17.1.2 < 19",
+    "nx": ">=17.1.2 < 20",
     "p-map": "4.0.0",
     "p-map-series": "2.1.0",
     "p-queue": "6.6.2",
@@ -84,7 +84,7 @@
     "slash": "^3.0.0",
     "ssri": "^9.0.1",
     "strong-log-transformer": "2.1.0",
-    "tar": "6.1.11",
+    "tar": "6.2.1",
     "temp-dir": "1.0.0",
     "upath": "2.0.1",
     "uuid": "^9.0.0",

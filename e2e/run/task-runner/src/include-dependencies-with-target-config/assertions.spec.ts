@@ -33,7 +33,7 @@ describe("lerna-run-nx-include-dependencies-with-target-config", () => {
       lerna info filter [ 'package-X' ]
       lerna verb run Nx target configuration was found. Task dependencies will be automatically included.
 
-      >  Lerna (powered by Nx)   Running target print-name for project package-X and 2 tasks it depends on:
+      Lerna (powered by Nx)   Running target print-name for project package-X and 2 tasks it depends on:
 
 
 
@@ -61,7 +61,7 @@ describe("lerna-run-nx-include-dependencies-with-target-config", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for project package-X and 2 tasks it depends on
+      Lerna (powered by Nx)   Successfully ran target print-name for project package-X and 2 tasks it depends on
 
 
 

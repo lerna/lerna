@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "8.1.2",
+  "version": "8.1.3",
   "description": "Lerna is a fast, modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository",
   "keywords": [
     "lerna",
@@ -21,7 +21,7 @@
     "schemas/lerna-schema.json",
     "migrations.json"
   ],
-  "main": "./src/index.js",
+  "main": "./dist/index.js",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -37,9 +37,9 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@lerna/create": "8.1.2",
+    "@lerna/create": "8.1.3",
     "@npmcli/run-script": "7.0.2",
-    "@nx/devkit": ">=17.1.2 < 19",
+    "@nx/devkit": ">=17.1.2 < 20",
     "@octokit/plugin-enterprise-rest": "6.0.1",
     "@octokit/rest": "19.0.11",
     "byte-size": "8.1.1",
@@ -82,7 +82,7 @@
     "npm-packlist": "5.1.1",
     "npm-registry-fetch": "^14.0.5",
     "npmlog": "^6.0.2",
-    "nx": ">=17.1.2 < 19",
+    "nx": ">=17.1.2 < 20",
     "p-map": "4.0.0",
     "p-map-series": "2.1.0",
     "p-pipe": "3.1.0",
@@ -100,7 +100,7 @@
     "slash": "3.0.0",
     "ssri": "^9.0.1",
     "strong-log-transformer": "2.1.0",
-    "tar": "6.1.11",
+    "tar": "6.2.1",
     "temp-dir": "1.0.0",
     "typescript": ">=3 < 6",
     "upath": "2.0.1",

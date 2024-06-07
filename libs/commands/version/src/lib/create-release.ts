@@ -16,21 +16,26 @@ export function createReleaseClient(type: "github" | "gitlab") {
 
 export function createRelease(
   client: ReturnType<typeof createReleaseClient>,
-  { tags, releaseNotes }: { tags: string[]; releaseNotes: { name: string; notes: string }[] },
+  {
+    tags,
+    releaseNotes,
+    tagVersionSeparator,
+  }: { tags: string[]; tagVersionSeparator: string; releaseNotes: { name: string; notes: string }[] },
   { gitRemote, execOpts }: { gitRemote: string; execOpts: ExecOptions }
 ) {
   const repo = parseGitRepo(gitRemote, execOpts);
 
   return Promise.all(
     releaseNotes.map(({ notes, name }) => {
-      const tag = name === "fixed" ? tags[0] : tags.find((t) => t.startsWith(`${name}@`));
+      const tag =
+        name === "fixed" ? tags[0] : tags.find((t) => t.startsWith(`${name}${tagVersionSeparator}`));
 
       /* istanbul ignore if */
       if (!tag) {
         return Promise.resolve();
       }
 
-      const prereleaseParts = semver.prerelease(tag.replace(`${name}@`, "")) || [];
+      const prereleaseParts = semver.prerelease(tag.replace(`${name}${tagVersionSeparator}`, "")) || [];
 
       return client.repos.createRelease({
         owner: repo.owner,
