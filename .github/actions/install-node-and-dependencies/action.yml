@@ -39,6 +39,13 @@ runs:
         COREPACK_ENABLE_AUTO_PIN: "0"
         COREPACK_ENABLE_STRICT: "0"
 
+    - name: Use Yarn classic
+      run: yarn set version classic
+      shell: bash
+      env:
+        COREPACK_ENABLE_AUTO_PIN: "0"
+        COREPACK_ENABLE_STRICT: "0"
+
     - name: Print installed node, npm, yarn and pnpm versions
       run: |
         node --version
@@ -46,7 +53,13 @@ runs:
         yarn --version
         pnpm --version
       shell: bash
+      env:
+        COREPACK_ENABLE_AUTO_PIN: "0"
+        COREPACK_ENABLE_STRICT: "0"
 
     - name: Install dependencies
       run: ${{ inputs.install-command }}
       shell: bash
+      env:
+        COREPACK_ENABLE_AUTO_PIN: "0"
+        COREPACK_ENABLE_STRICT: "0"
