@@ -1,4 +1,4 @@
-import { Fixture, normalizeCommitSHAs, normalizeEnvironment } from "@lerna/e2e-utils";
+import { Fixture, normalizeCommitSHAs, normalizeEnvironment, trimEnds } from "@lerna/e2e-utils";
 import { writeJsonFile } from "@nx/devkit";
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -6,9 +6,11 @@ const randomVersion = () => `${randomInt(10, 89)}.${randomInt(10, 89)}.${randomI
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
-    return normalizeCommitSHAs(normalizeEnvironment(str))
-      .replaceAll(/integrity:\s*.*/g, "integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-      .replaceAll(/\d*\.?\d+\s?[KMGTkmgt]?B/g, "XXXB");
+    return trimEnds(
+      normalizeCommitSHAs(normalizeEnvironment(str))
+        .replaceAll(/integrity:\s*.*/g, "integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        .replaceAll(/\d*\.?\d+\s?[KMGTkmgt]?B/g, "XXXB")
+    );
   },
   test(val: string) {
     return val != null && typeof val === "string";
