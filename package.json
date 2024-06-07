@@ -7,9 +7,11 @@
     "packages/legacy-structure/commands/create"
   ],
   "volta": {
-    "node": "20.9.0",
-    "yarn": "1.22.19"
+    "node": "20.14.0",
+    "yarn": "1.22.19",
+    "npm": "10.7.0"
   },
+  "packageManager": "npm@10.7.0",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -32,13 +34,13 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org",
   "devDependencies": {
-    "@nx/esbuild": "19.2.0",
-    "@nx/eslint": "19.2.0",
-    "@nx/eslint-plugin": "19.2.0",
-    "@nx/jest": "19.2.0",
-    "@nx/js": "19.2.0",
-    "@nx/plugin": "19.2.0",
-    "@nx/web": "19.2.0",
+    "@nx/esbuild": "19.2.1",
+    "@nx/eslint": "19.2.1",
+    "@nx/eslint-plugin": "19.2.1",
+    "@nx/jest": "19.2.1",
+    "@nx/js": "19.2.1",
+    "@nx/plugin": "19.2.1",
+    "@nx/web": "19.2.1",
     "@swc-node/register": "1.9.1",
     "@swc/cli": "0.3.12",
     "@swc/core": "1.5.7",
@@ -95,7 +97,7 @@
     "lodash": "^4.17.21",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
-    "nx": "19.2.0",
+    "nx": "19.2.1",
     "prettier": "^2.2.1",
     "resolve.exports": "2.0.0",
     "tacks": "1.2.6",
