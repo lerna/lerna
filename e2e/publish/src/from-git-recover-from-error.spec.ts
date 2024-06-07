@@ -102,13 +102,13 @@ describe("lerna-publish-from-git-recover-from-error", () => {
       `);
 
       expect(replaceVersion(unpublishOutput1.combinedOutput)).toMatchInlineSnapshot(`
-        npm WARN using --force Recommended protections disabled.
+        npm warn using --force Recommended protections disabled.
         - test-1@XX.XX.XX
 
       `);
 
       expect(replaceVersion(unpublishOutput2.combinedOutput)).toMatchInlineSnapshot(`
-        npm WARN using --force Recommended protections disabled.
+        npm warn using --force Recommended protections disabled.
         - test-2@XX.XX.XX
 
       `);

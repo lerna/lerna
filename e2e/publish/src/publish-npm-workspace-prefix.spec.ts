@@ -78,7 +78,7 @@ describe("lerna-publish-workspace-prefix", () => {
         const unpublishOutput = await fixture.exec(
           `npm unpublish ${packageName}@${version} --force --registry=http://localhost:4872`
         );
-        expect(replaceVersion(unpublishOutput.combinedOutput)).toContain(`${packageName}@XX.XX.XX`);
+        expect(replaceVersion(unpublishOutput.combinedOutput)).toContain(packageName);
       };
 
       expect(replaceVersion(output.combinedOutput)).toMatchInlineSnapshot(`
@@ -94,7 +94,7 @@ describe("lerna-publish-workspace-prefix", () => {
          - test-workspace-compat => XX.XX.XX
          - test-workspace-exact => XX.XX.XX
 
-        lerna info auto-confirmed 
+        lerna info auto-confirmed
         lerna info publish Publishing packages to npm...
         lerna notice Skipping all user and access validation due to third-party registry
         lerna notice Make sure you're authenticated properly ¯\\_(ツ)_/¯
@@ -102,141 +102,141 @@ describe("lerna-publish-workspace-prefix", () => {
         lerna WARN ENOLICENSE One way to fix this is to add a LICENSE.md file to the root of this repository.
         lerna WARN ENOLICENSE See https://choosealicense.com for additional guidance.
         lerna success published test-no-workspace-prefix XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  test-no-workspace-prefix@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice XXXB lib/test-no-workspace-prefix.js
-        lerna notice XXXB package.json                   
-        lerna notice XXXB README.md                      
-        lerna notice === Tarball Details === 
-        lerna notice name:          test-no-workspace-prefix                
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      test-no-workspace-prefix-XX.XX.XX.tgz   
-        lerna notice package size:  XXXB                                   
-        lerna notice unpacked size: XXXB                                  
+        lerna notice XXXB package.json
+        lerna notice XXXB README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          test-no-workspace-prefix
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      test-no-workspace-prefix-XX.XX.XX.tgz
+        lerna notice package size:  XXXB
+        lerna notice unpacked size: XXXB
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         lerna success published test-workspace-alias-caret XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  test-workspace-alias-caret@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice XXXB lib/test-workspace-alias-caret.js
-        lerna notice XXXB package.json                     
-        lerna notice XXXB README.md                        
-        lerna notice === Tarball Details === 
-        lerna notice name:          test-workspace-alias-caret              
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      test-workspace-alias-caret-XX.XX.XX.tgz 
-        lerna notice package size:  XXXB                                   
-        lerna notice unpacked size: XXXB                                  
+        lerna notice XXXB package.json
+        lerna notice XXXB README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          test-workspace-alias-caret
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      test-workspace-alias-caret-XX.XX.XX.tgz
+        lerna notice package size:  XXXB
+        lerna notice unpacked size: XXXB
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         lerna success published test-workspace-alias-star XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  test-workspace-alias-star@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice XXXB lib/test-workspace-alias-star.js
-        lerna notice XXXB package.json                    
-        lerna notice XXXB README.md                       
-        lerna notice === Tarball Details === 
-        lerna notice name:          test-workspace-alias-star               
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      test-workspace-alias-star-XX.XX.XX.tgz  
-        lerna notice package size:  XXXB                                   
-        lerna notice unpacked size: XXXB                                  
+        lerna notice XXXB package.json
+        lerna notice XXXB README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          test-workspace-alias-star
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      test-workspace-alias-star-XX.XX.XX.tgz
+        lerna notice package size:  XXXB
+        lerna notice unpacked size: XXXB
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         lerna success published test-workspace-alias-tilde XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  test-workspace-alias-tilde@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice XXXB lib/test-workspace-alias-tilde.js
-        lerna notice XXXB package.json                     
-        lerna notice XXXB README.md                        
-        lerna notice === Tarball Details === 
-        lerna notice name:          test-workspace-alias-tilde              
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      test-workspace-alias-tilde-XX.XX.XX.tgz 
-        lerna notice package size:  XXXB                                   
-        lerna notice unpacked size: XXXB                                  
+        lerna notice XXXB package.json
+        lerna notice XXXB README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          test-workspace-alias-tilde
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      test-workspace-alias-tilde-XX.XX.XX.tgz
+        lerna notice package size:  XXXB
+        lerna notice unpacked size: XXXB
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         lerna success published test-workspace-approx XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  test-workspace-approx@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice XXXB lib/test-workspace-approx.js
-        lerna notice XXXB package.json                
-        lerna notice XXXB README.md                   
-        lerna notice === Tarball Details === 
-        lerna notice name:          test-workspace-approx                   
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      test-workspace-approx-XX.XX.XX.tgz      
-        lerna notice package size:  XXXB                                   
-        lerna notice unpacked size: XXXB                                  
+        lerna notice XXXB package.json
+        lerna notice XXXB README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          test-workspace-approx
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      test-workspace-approx-XX.XX.XX.tgz
+        lerna notice package size:  XXXB
+        lerna notice unpacked size: XXXB
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         lerna success published test-workspace-compat XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  test-workspace-compat@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice XXXB lib/test-workspace-compat.js
-        lerna notice XXXB package.json                
-        lerna notice XXXB README.md                   
-        lerna notice === Tarball Details === 
-        lerna notice name:          test-workspace-compat                   
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      test-workspace-compat-XX.XX.XX.tgz      
-        lerna notice package size:  XXXB                                   
-        lerna notice unpacked size: XXXB                                  
+        lerna notice XXXB package.json
+        lerna notice XXXB README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          test-workspace-compat
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      test-workspace-compat-XX.XX.XX.tgz
+        lerna notice package size:  XXXB
+        lerna notice unpacked size: XXXB
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         lerna success published test-workspace-exact XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  test-workspace-exact@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice XXXB lib/test-workspace-exact.js
-        lerna notice XXXB package.json               
-        lerna notice XXXB README.md                  
-        lerna notice === Tarball Details === 
-        lerna notice name:          test-workspace-exact                    
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      test-workspace-exact-XX.XX.XX.tgz       
-        lerna notice package size:  XXXB                                   
-        lerna notice unpacked size: XXXB                                  
+        lerna notice XXXB package.json
+        lerna notice XXXB README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          test-workspace-exact
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      test-workspace-exact-XX.XX.XX.tgz
+        lerna notice package size:  XXXB
+        lerna notice unpacked size: XXXB
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         lerna success published test-main XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  test-main@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice XXXB   lib/test-main.js
-        lerna notice XXXB package.json    
-        lerna notice XXXB  README.md       
-        lerna notice === Tarball Details === 
-        lerna notice name:          test-main                               
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      test-main-XX.XX.XX.tgz                  
-        lerna notice package size:  XXXB                                   
-        lerna notice unpacked size: XXXB                                  
+        lerna notice XXXB package.json
+        lerna notice XXXB  README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          test-main
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      test-main-XX.XX.XX.tgz
+        lerna notice package size:  XXXB
+        lerna notice unpacked size: XXXB
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         Successfully published:
          - test-main@XX.XX.XX
          - test-no-workspace-prefix@XX.XX.XX

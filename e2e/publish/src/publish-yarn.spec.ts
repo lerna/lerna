@@ -84,7 +84,7 @@ describe("lerna-publish-yarn", () => {
       `);
 
       expect(replaceVersion(unpublishOutput.combinedOutput)).toMatchInlineSnapshot(`
-        npm WARN using --force Recommended protections disabled.
+        npm warn using --force Recommended protections disabled.
         - test-1@XX.XX.XX
 
       `);
@@ -147,7 +147,7 @@ describe("lerna-publish-yarn", () => {
         `);
 
         expect(replaceVersion(unpublishOutput.combinedOutput)).toMatchInlineSnapshot(`
-          npm WARN using --force Recommended protections disabled.
+          npm warn using --force Recommended protections disabled.
           - test-1@XX.XX.XX
 
         `);
