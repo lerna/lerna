@@ -28,12 +28,16 @@ runs:
     - name: Enable corepack
       run: corepack enable
       shell: bash
+      env:
+        COREPACK_ENABLE_AUTO_PIN: "0"
+        COREPACK_ENABLE_STRICT: "0"
 
     - name: Install pnpm v8
       run: corepack install -g pnpm@8
       shell: bash
       env:
         COREPACK_ENABLE_AUTO_PIN: "0"
+        COREPACK_ENABLE_STRICT: "0"
 
     - name: Use Yarn classic
       run: yarn set version classic
