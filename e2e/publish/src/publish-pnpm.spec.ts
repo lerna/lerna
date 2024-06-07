@@ -53,7 +53,7 @@ describe("lerna-publish-pnpm", () => {
         Found 1 package to publish:
          - test-1 => XX.XX.XX
 
-        lerna info auto-confirmed 
+        lerna info auto-confirmed
         lerna info publish Publishing packages to npm...
         lerna notice Skipping all user and access validation due to third-party registry
         lerna notice Make sure you're authenticated properly ¯\\_(ツ)_/¯
@@ -61,22 +61,22 @@ describe("lerna-publish-pnpm", () => {
         lerna WARN ENOLICENSE One way to fix this is to add a LICENSE.md file to the root of this repository.
         lerna WARN ENOLICENSE See https://choosealicense.com for additional guidance.
         lerna success published test-1 XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  test-1@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice 90B  lib/test-1.js
-        lerna notice XXXB package.json 
-        lerna notice 110B README.md    
-        lerna notice === Tarball Details === 
-        lerna notice name:          test-1                                  
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      test-1-XX.XX.XX.tgz                     
-        lerna notice package size: XXXB                                   
-        lerna notice unpacked size: XXX.XXX kb                                  
+        lerna notice XXXB package.json
+        lerna notice 110B README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          test-1
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      test-1-XX.XX.XX.tgz
+        lerna notice package size: XXXB
+        lerna notice unpacked size: XXX.XXX kb
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         Successfully published:
          - test-1@XX.XX.XX
         lerna success published 1 package
@@ -84,7 +84,7 @@ describe("lerna-publish-pnpm", () => {
       `);
 
       expect(replaceVersion(unpublishOutput.combinedOutput)).toMatchInlineSnapshot(`
-        npm WARN using --force Recommended protections disabled.
+        npm warn using --force Recommended protections disabled.
         - test-1@XX.XX.XX
 
       `);
