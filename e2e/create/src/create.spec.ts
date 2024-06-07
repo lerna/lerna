@@ -1283,9 +1283,9 @@ describe("lerna-create", () => {
         > node ./__tests__/test-script.test.js
         testScript tests passed
 
-         
 
-         >  Lerna (powered by Nx)   Successfully ran target test for project test-script
+
+         Lerna (powered by Nx)   Successfully ran target test for project test-script
 
 
 

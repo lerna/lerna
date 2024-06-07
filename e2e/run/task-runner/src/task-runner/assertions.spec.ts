@@ -29,7 +29,7 @@ describe("lerna-run-nx", () => {
     expect(output).toMatchInlineSnapshot(`
       lerna notice cli v999.9.9-e2e.0
 
-      >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+      Lerna (powered by Nx)   Running target print-name for 3 projects:
 
       - package-X
       - package-X
@@ -63,7 +63,7 @@ describe("lerna-run-nx", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+      Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 
@@ -77,7 +77,7 @@ describe("lerna-run-nx", () => {
       expect(output).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
 
-        >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+        Lerna (powered by Nx)   Running target print-name for 3 projects:
 
         - package-X
         - package-X
@@ -105,7 +105,7 @@ describe("lerna-run-nx", () => {
 
 
 
-        >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+        Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 
@@ -120,7 +120,7 @@ describe("lerna-run-nx", () => {
       expect(output).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
 
-        >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+        Lerna (powered by Nx)   Running target print-name for 3 projects:
 
         - package-X
         - package-X
@@ -154,7 +154,7 @@ describe("lerna-run-nx", () => {
 
 
 
-        >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+        Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 
@@ -171,7 +171,7 @@ describe("lerna-run-nx", () => {
           lerna notice cli v999.9.9-e2e.0
           lerna WARN run "no-prefix" is ignored when not using streaming output.
 
-          >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+          Lerna (powered by Nx)   Running target print-name for 3 projects:
 
           - package-X
           - package-X
@@ -205,7 +205,7 @@ describe("lerna-run-nx", () => {
 
 
 
-          >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+          Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 
@@ -220,7 +220,7 @@ describe("lerna-run-nx", () => {
         expect(output).toMatchInlineSnapshot(`
           lerna notice cli v999.9.9-e2e.0
 
-          >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+          Lerna (powered by Nx)   Running target print-name for 3 projects:
 
           - package-X
           - package-X
@@ -248,7 +248,7 @@ describe("lerna-run-nx", () => {
 
 
 
-          >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+          Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
 
@@ -264,7 +264,7 @@ describe("lerna-run-nx", () => {
       expect(output).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
 
-        >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+        Lerna (powered by Nx)   Running target print-name for 3 projects:
 
         - package-X
         - package-X
@@ -298,7 +298,7 @@ describe("lerna-run-nx", () => {
 
 
 
-        >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+        Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
         Performance Profile: /tmp/lerna-e2e/lerna-run-nx/lerna-workspace/Lerna-Profile-XXXXXXXXTXXXXXX.json
@@ -316,7 +316,7 @@ describe("lerna-run-nx", () => {
       expect(output).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
 
-        >  Lerna (powered by Nx)   Running target print-name for 3 projects:
+        Lerna (powered by Nx)   Running target print-name for 3 projects:
 
         - package-X
         - package-X
@@ -350,7 +350,7 @@ describe("lerna-run-nx", () => {
 
 
 
-        >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+        Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
 
 
         Performance Profile: /tmp/lerna-e2e/lerna-run-nx/lerna-workspace/profiles/Lerna-Profile-XXXXXXXXTXXXXXX.json

@@ -36,7 +36,7 @@ describe("lerna-run-nx-env-files", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target log-env-var for project package-X
+      Lerna (powered by Nx)   Successfully ran target log-env-var for project package-X
 
 
 
@@ -56,7 +56,7 @@ describe("lerna-run-nx-env-files", () => {
 
 
 
-      >  Lerna (powered by Nx)   Successfully ran target log-env-var for project package-X
+      Lerna (powered by Nx)   Successfully ran target log-env-var for project package-X
 
 
 

@@ -39,7 +39,7 @@ This will build the projects in the right order: `footer` and `header` and then 
 
  —————————————————————————————————————————————————————————————————————————————
 
- >  Lerna (powered by Nx)   Successfully ran target build for 3 projects (1s)
+ Lerna (powered by Nx)   Successfully ran target build for 3 projects (1s)
 
 ```
 

@@ -425,7 +425,9 @@ export class Fixture {
     const jsonPath = this.getWorkspacePath(path);
     const json = readJsonFile(jsonPath) as Record<string, unknown>;
 
-    writeJsonFile(jsonPath, updateFn(json));
+    writeJsonFile(jsonPath, updateFn(json), {
+      appendNewLine: true,
+    });
   }
 
   /**
