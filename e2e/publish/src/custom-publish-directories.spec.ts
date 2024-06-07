@@ -1,4 +1,4 @@
-import { Fixture, normalizeCommitSHAs, normalizeEnvironment } from "@lerna/e2e-utils";
+import { Fixture, normalizeCommitSHAs, normalizeEnvironment, trimEnds } from "@lerna/e2e-utils";
 import { ensureDir, writeFile } from "fs-extra";
 import globby from "globby";
 
@@ -7,15 +7,17 @@ const randomVersion = () => `${randomInt(10, 89)}.${randomInt(10, 89)}.${randomI
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
-    return normalizeCommitSHAs(normalizeEnvironment(str))
-      .replaceAll(/integrity:\s*.*/g, "integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-      .replaceAll(/\d*\.\d*\s?kB package\.json/g, "XXXkb package.json")
-      .replaceAll(/\d*B package\.json/g, "XXXB package.json")
-      .replaceAll(/\d*\.\d*\s?kB/g, "XXX.XXX kb")
-      .replaceAll(/size:\s*\d*\s?B/g, "size: XXXB")
-      .replaceAll(/session\s\w{16}/g, "session XXXXXXXX")
-      .replaceAll(/"vXX\.XX\.XX-0-g[a-f0-9]{7}"/g, '"vXX.XX.XX-0-gXXXXXXXX"')
-      .replaceAll(/node@v\d+\.\d+\.\d+\+\w+ \(\w+\)/g, "<user agent>");
+    return trimEnds(
+      normalizeCommitSHAs(normalizeEnvironment(str))
+        .replaceAll(/integrity:\s*.*/g, "integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        .replaceAll(/\d*\.\d*\s?kB package\.json/g, "XXXkb package.json")
+        .replaceAll(/\d*B package\.json/g, "XXXB package.json")
+        .replaceAll(/\d*\.\d*\s?kB/g, "XXX.XXX kb")
+        .replaceAll(/size:\s*\d*\s?B/g, "size: XXXB")
+        .replaceAll(/session\s\w{16}/g, "session XXXXXXXX")
+        .replaceAll(/"vXX\.XX\.XX-0-g[a-f0-9]{7}"/g, '"vXX.XX.XX-0-gXXXXXXXX"')
+        .replaceAll(/node@v\d+\.\d+\.\d+\+\w+ \(\w+\)/g, "<user agent>")
+    );
   },
   test(val: string) {
     return val != null && typeof val === "string";
@@ -136,7 +138,7 @@ describe("lerna-publish-custom-publish-directories", () => {
          - package-2 => XX.XX.XX
          - package-3 => XX.XX.XX
 
-        lerna info auto-confirmed 
+        lerna info auto-confirmed
         lerna info publish Publishing packages to npm...
         lerna notice Skipping all user and access validation due to third-party registry
         lerna notice Make sure you're authenticated properly ¯\\_(ツ)_/¯
@@ -162,56 +164,56 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna verb packed packages/package-3
         lerna verb publish package-1
         lerna success published package-1 XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  package-1@XX.XX.XX
-        lerna notice === Tarball Contents === 
-        lerna notice 99B   lib/main.js 
+        lerna notice === Tarball Contents ===
+        lerna notice 99B   lib/main.js
         lerna notice XXXkb package.json
-        lerna notice === Tarball Details === 
-        lerna notice name:          package-1                               
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      package-1-XX.XX.XX.tgz                  
-        lerna notice package size: XXXB                                   
-        lerna notice unpacked size: XXX.XXX kb                                  
+        lerna notice === Tarball Details ===
+        lerna notice name:          package-1
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      package-1-XX.XX.XX.tgz
+        lerna notice package size: XXXB
+        lerna notice unpacked size: XXX.XXX kb
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   2                                       
-        lerna notice 
+        lerna notice total files:   2
+        lerna notice
         lerna verb publish package-2
         lerna success published package-2 XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  package-2@XX.XX.XX
-        lerna notice === Tarball Contents === 
-        lerna notice 99B   lib/main.js 
+        lerna notice === Tarball Contents ===
+        lerna notice 99B   lib/main.js
         lerna notice XXXkb package.json
-        lerna notice === Tarball Details === 
-        lerna notice name:          package-2                               
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      package-2-XX.XX.XX.tgz                  
-        lerna notice package size: XXXB                                   
-        lerna notice unpacked size: XXX.XXX kb                                  
+        lerna notice === Tarball Details ===
+        lerna notice name:          package-2
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      package-2-XX.XX.XX.tgz
+        lerna notice package size: XXXB
+        lerna notice unpacked size: XXX.XXX kb
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   2                                       
-        lerna notice 
+        lerna notice total files:   2
+        lerna notice
         lerna verb publish package-3
         lerna success published package-3 XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  package-3@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice 99B  lib/package-3.js
-        lerna notice XXXB package.json    
-        lerna notice 119B README.md       
-        lerna notice === Tarball Details === 
-        lerna notice name:          package-3                               
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      package-3-XX.XX.XX.tgz                  
-        lerna notice package size: XXXB                                   
-        lerna notice unpacked size: XXX.XXX kb                                  
+        lerna notice XXXB package.json
+        lerna notice 119B README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          package-3
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      package-3-XX.XX.XX.tgz
+        lerna notice package size: XXXB
+        lerna notice unpacked size: XXX.XXX kb
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         Successfully published:
          - package-1@XX.XX.XX
          - package-2@XX.XX.XX
@@ -323,7 +325,7 @@ describe("lerna-publish-custom-publish-directories", () => {
          - package-1 => XX.XX.XX
          - package-2 => XX.XX.XX
 
-        lerna info auto-confirmed 
+        lerna info auto-confirmed
         lerna info publish Publishing packages to npm...
         lerna notice Skipping all user and access validation due to third-party registry
         lerna notice Make sure you're authenticated properly ¯\\_(ツ)_/¯
@@ -344,38 +346,38 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna verb packed dist/packages/package-2
         lerna verb publish package-1
         lerna success published package-1 XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  package-1@XX.XX.XX
-        lerna notice === Tarball Contents === 
-        lerna notice 99B   lib/main.js 
+        lerna notice === Tarball Contents ===
+        lerna notice 99B   lib/main.js
         lerna notice XXXkb package.json
-        lerna notice === Tarball Details === 
-        lerna notice name:          package-1                               
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      package-1-XX.XX.XX.tgz                  
-        lerna notice package size: XXXB                                   
-        lerna notice unpacked size: XXX.XXX kb                                  
+        lerna notice === Tarball Details ===
+        lerna notice name:          package-1
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      package-1-XX.XX.XX.tgz
+        lerna notice package size: XXXB
+        lerna notice unpacked size: XXX.XXX kb
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   2                                       
-        lerna notice 
+        lerna notice total files:   2
+        lerna notice
         lerna verb publish package-2
         lerna success published package-2 XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  package-2@XX.XX.XX
-        lerna notice === Tarball Contents === 
-        lerna notice 99B   lib/main.js 
+        lerna notice === Tarball Contents ===
+        lerna notice 99B   lib/main.js
         lerna notice XXXkb package.json
-        lerna notice === Tarball Details === 
-        lerna notice name:          package-2                               
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      package-2-XX.XX.XX.tgz                  
-        lerna notice package size: XXXB                                   
-        lerna notice unpacked size: XXX.XXX kb                                  
+        lerna notice === Tarball Details ===
+        lerna notice name:          package-2
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      package-2-XX.XX.XX.tgz
+        lerna notice package size: XXXB
+        lerna notice unpacked size: XXX.XXX kb
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   2                                       
-        lerna notice 
+        lerna notice total files:   2
+        lerna notice
         Successfully published:
          - package-1@XX.XX.XX
          - package-2@XX.XX.XX
@@ -482,7 +484,7 @@ describe("lerna-publish-custom-publish-directories", () => {
          - package-1 => XX.XX.XX
          - package-2 => XX.XX.XX
 
-        lerna info auto-confirmed 
+        lerna info auto-confirmed
         lerna info publish Publishing packages to npm...
         lerna notice Skipping all user and access validation due to third-party registry
         lerna notice Make sure you're authenticated properly ¯\\_(ツ)_/¯
@@ -500,39 +502,39 @@ describe("lerna-publish-custom-publish-directories", () => {
         lerna verb packed packages/package-2
         lerna verb publish package-1
         lerna success published package-1 XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  package-1@XX.XX.XX
-        lerna notice === Tarball Contents === 
-        lerna notice 99B   lib/main.js 
+        lerna notice === Tarball Contents ===
+        lerna notice 99B   lib/main.js
         lerna notice XXXkb package.json
-        lerna notice === Tarball Details === 
-        lerna notice name:          package-1                               
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      package-1-XX.XX.XX.tgz                  
-        lerna notice package size: XXXB                                   
-        lerna notice unpacked size: XXX.XXX kb                                  
+        lerna notice === Tarball Details ===
+        lerna notice name:          package-1
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      package-1-XX.XX.XX.tgz
+        lerna notice package size: XXXB
+        lerna notice unpacked size: XXX.XXX kb
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   2                                       
-        lerna notice 
+        lerna notice total files:   2
+        lerna notice
         lerna verb publish package-2
         lerna success published package-2 XX.XX.XX
-        lerna notice 
+        lerna notice
         lerna notice 📦  package-2@XX.XX.XX
-        lerna notice === Tarball Contents === 
+        lerna notice === Tarball Contents ===
         lerna notice 99B  lib/package-2.js
-        lerna notice XXXB package.json    
-        lerna notice 119B README.md       
-        lerna notice === Tarball Details === 
-        lerna notice name:          package-2                               
-        lerna notice version:       XX.XX.XX                                
-        lerna notice filename:      package-2-XX.XX.XX.tgz                  
-        lerna notice package size: XXXB                                   
-        lerna notice unpacked size: XXX.XXX kb                                  
+        lerna notice XXXB package.json
+        lerna notice 119B README.md
+        lerna notice === Tarball Details ===
+        lerna notice name:          package-2
+        lerna notice version:       XX.XX.XX
+        lerna notice filename:      package-2-XX.XX.XX.tgz
+        lerna notice package size: XXXB
+        lerna notice unpacked size: XXX.XXX kb
         lerna notice shasum:        {FULL_COMMIT_SHA}
         lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        lerna notice total files:   3                                       
-        lerna notice 
+        lerna notice total files:   3
+        lerna notice
         Successfully published:
          - package-1@XX.XX.XX
          - package-2@XX.XX.XX
