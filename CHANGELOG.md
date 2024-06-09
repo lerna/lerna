@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.1.4](https://github.com/lerna/lerna/compare/v8.1.3...v8.1.4) (2024-06-09)
+
+### Bug Fixes
+
+- specify 'dependencies: true' when prepping task runner options ([#4017](https://github.com/lerna/lerna/issues/4017)) ([244462d](https://github.com/lerna/lerna/commit/244462d59008f627ca7836c490a97951a9e5dd26))
+
 ## [8.1.3](https://github.com/lerna/lerna/compare/v8.1.2...v8.1.3) (2024-05-13)
 
 ### Bug Fixes
