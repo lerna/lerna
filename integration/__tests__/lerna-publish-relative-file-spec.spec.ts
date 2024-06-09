@@ -94,5 +94,47 @@ index SHA..SHA 100644
 @@ -3 +3 @@
 -  "version": "1.0.0",
 +  "version": "2.0.0",
+diff --git a/packages/package-8/package.json b/packages/package-8/package.json
+index SHA..SHA 100644
+--- a/packages/package-8/package.json
++++ b/packages/package-8/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-9/package.json b/packages/package-9/package.json
+index SHA..SHA 100644
+--- a/packages/package-9/package.json
++++ b/packages/package-9/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-a/package.json b/packages/package-a/package.json
+index SHA..SHA 100644
+--- a/packages/package-a/package.json
++++ b/packages/package-a/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-b/package.json b/packages/package-b/package.json
+index SHA..SHA 100644
+--- a/packages/package-b/package.json
++++ b/packages/package-b/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-c/package.json b/packages/package-c/package.json
+index SHA..SHA 100644
+--- a/packages/package-c/package.json
++++ b/packages/package-c/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-d/package.json b/packages/package-d/package.json
+index SHA..SHA 100644
+--- a/packages/package-d/package.json
++++ b/packages/package-d/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
 `);
 });

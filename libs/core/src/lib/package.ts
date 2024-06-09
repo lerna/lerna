@@ -75,7 +75,7 @@ export interface RawManifest {
 
 export type ExtendedNpaResult = npa.Result & {
   workspaceSpec?: string;
-  workspaceAlias?: string;
+  workspaceAlias?: "*" | "^" | "~";
 };
 
 /**
@@ -203,22 +203,23 @@ export class Package {
     this[PKG].version = version;
   }
 
-  get contents() {
+  get contents(): string {
     // if modified with setter, use that value
     if (this[_contents]) {
-      return this[_contents];
+      return this[_contents] as string;
     }
 
     // if provided by pkg.publishConfig.directory value
-    if (this[PKG].publishConfig && this[PKG].publishConfig.directory) {
-      return path.join(this.location, this[PKG].publishConfig.directory);
+    const publishConfig = this[PKG].publishConfig;
+    if (publishConfig && publishConfig.directory) {
+      return path.join(this.location, publishConfig.directory);
     }
 
     // default to package root
     return this.location;
   }
 
-  set contents(subDirectory) {
+  set contents(subDirectory: string) {
     // If absolute path starting with workspace root, set it directly, otherwise join with package location (historical behavior)
     const _workspaceRoot = process.env["NX_WORKSPACE_ROOT_PATH"] || workspaceRoot;
     if (subDirectory.startsWith(_workspaceRoot)) {
@@ -328,6 +329,25 @@ export class Package {
     }
     if (this.peerDependencies && this.peerDependencies[depName]) {
       const spec = this.peerDependencies[depName];
+      const WORKSPACE_PROTOCOL = "workspace:";
+      if (spec.startsWith(WORKSPACE_PROTOCOL)) {
+        const token = spec.substring(WORKSPACE_PROTOCOL.length);
+        switch (token) {
+          case "*": {
+            return { collection: "peerDependencies", spec };
+          }
+          case "^": {
+            return { collection: "peerDependencies", spec };
+          }
+          case "~": {
+            return { collection: "peerDependencies", spec };
+          }
+          default: {
+            // token is a semantic version range
+            return { collection: "peerDependencies", spec };
+          }
+        }
+      }
       if (spec.startsWith("file:")) {
         return { collection: "peerDependencies", spec };
       }
@@ -340,12 +360,13 @@ export class Package {
    * @param resolved npa metadata
    * @param depVersion semver
    * @param savePrefix npm_config_save_prefix
+   * @param options
    */
   updateLocalDependency(
     resolved: ExtendedNpaResult,
     depVersion: string,
     savePrefix: string,
-    options = { retainWorkspacePrefix: true }
+    options: { updateWorkspacePrefix: boolean } = { updateWorkspacePrefix: false }
   ) {
     const depName = resolved.name as string;
 
@@ -366,17 +387,20 @@ export class Package {
       depCollection = this.peerDependencies;
     }
 
-    if (resolved.workspaceSpec && options.retainWorkspacePrefix) {
-      // do nothing if there is a workspace alias since they don't specify a version number
-      if (!resolved.workspaceAlias) {
-        // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const workspacePrefix = resolved.workspaceSpec.match(/^(workspace:[*~^]?)/)[0];
-        // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        depCollection[depName] = `${workspacePrefix}${depVersion}`;
+    if (!depCollection) {
+      throw new Error(`${JSON.stringify(depName)} SHOULD exist in some dependency collection.`);
+    }
+
+    const workspaceSpec = resolved.workspaceSpec;
+    if (workspaceSpec) {
+      if (options.updateWorkspacePrefix) {
+        if (resolved.workspaceAlias) {
+          const prefix = resolved.workspaceAlias === "*" ? "" : resolved.workspaceAlias;
+          depCollection[depName] = `${prefix}${depVersion}`;
+        } else {
+          const semverRange = workspaceSpec.substring("workspace:".length);
+          depCollection[depName] = `${semverRange}`;
+        }
       }
     } else if (resolved.registry || resolved.type === "directory") {
       // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)
