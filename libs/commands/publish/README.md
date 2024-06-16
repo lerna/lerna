@@ -70,6 +70,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--registry <url>`](#--registry-url)
 - [`--tag-version-prefix`](#--tag-version-prefix)
 - [`--temp-tag`](#--temp-tag)
+- [`--throttle`](#--throttle)
 - [`--yes`](#--yes)
 - [`--summary-file <dir>`](#--summary-file)
 
@@ -301,6 +302,20 @@ new version(s) to the dist-tag configured by [`--dist-tag`](#--dist-tag-tag) (de
 
 This is not generally necessary, as Lerna will publish packages in topological
 order (all dependencies before dependents) by default.
+
+### `--throttle`
+
+This option class allows to throttle the timing at which modules are published to the configured registry.
+
+- `--throttle`: Enable throttling when publishing modules
+- `--throttle-size`: The amount of modules that may be published at once (defaults to `25`)
+- `--throttle-delay`: How long to wait after a module was successfully published (defaults to 30 seconds)
+
+This is usefull to avoid errors/retries when publishing to rate-limited repositories on huge monorepos:
+
+```bash
+lerna publish from-git --throttle --throttle-delay=$((3600*24))
+```
 
 ### `--yes`
 
