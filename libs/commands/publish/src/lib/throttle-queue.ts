@@ -23,15 +23,13 @@ export class ImmediateQueue implements Queue {
  * A sized queue that adds a delay between the end of an item's execution.
  *
  * Use only with async code, multi-threading is not supported.
- *
- * All items MUST be queued upfront or late items may be executed immediately
- * if the queue is freed.
  */
 export class TailHeadQueue implements Queue {
   private queue_list: ((v: any) => any)[];
   private queue_size: number;
   private queue_period: number;
   private allowance: number;
+  private last_end: number[];
 
   /**
    * @param size The number of items that may run concurrently
@@ -42,6 +40,7 @@ export class TailHeadQueue implements Queue {
     this.queue_size = Math.floor(size);
     this.queue_period = period;
     this.allowance = this.queue_size;
+    this.last_end = [];
   }
 
   /**
@@ -52,13 +51,13 @@ export class TailHeadQueue implements Queue {
     if (next !== undefined) {
       setTimeout(next, this.queue_period);
     } else {
-      // If we ever reach this point and THEN a new item is queued, it will be
-      // executed immediately. This is acceptable in our use-case as all queue
-      // items are loaded at once, so this problem should never occur.
+      // If we ever reach this point and THEN a new item is queued, we need to
+      // explicitly keep track of execution times to be able to add a delay.
       //
       // We can't simply wrap this in a setTimeout as it would add a flat
       // this.queue_period delay to lerna's execution end after the last item
       // in the queue is processed.
+      this.last_end.push(Date.now());
       this.allowance += 1;
     }
   }
@@ -67,7 +66,16 @@ export class TailHeadQueue implements Queue {
     let p: Promise<T>;
     if (this.allowance > 0) {
       this.allowance -= 1;
-      p = f();
+      // Check if the queue should delay the promise's execution
+      if (this.allowance + 1 <= this.last_end.length) {
+        const time_offset = Date.now() - (this.last_end.shift() || 0);
+        if (time_offset < this.queue_period) {
+          p = new Promise((r) => setTimeout(r, this.queue_period - time_offset)).then(f);
+        }
+      }
+      if (p === undefined) {
+        p = f();
+      }
     } else {
       p = new Promise((r) => {
         this.queue_list.push(r);
