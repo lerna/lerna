@@ -6,12 +6,12 @@ import { runLifecycle as _runLifecycle } from "./run-lifecycle";
 
 jest.mock("./run-lifecycle");
 jest.mock("./otplease");
-jest.mock("read-package-json");
+jest.mock("@npmcli/package-json");
 jest.mock("libnpmpublish");
 jest.mock("fs-extra");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const readJSON = require("read-package-json");
+const { load: readJSON } = require("@npmcli/package-json");
 
 // helpers
 import path from "path";
@@ -26,7 +26,7 @@ const runLifecycle = jest.mocked(_runLifecycle);
 const otplease = jest.mocked(_otplease);
 
 describe("npm-publish", () => {
-  const mockTarData = Buffer.from("MOCK");
+  const mockTarData = Buffer.from("MOCK") as never;
   const mockManifest = { _normalized: true };
 
   fs.readFile.mockName("fs.readFile").mockResolvedValue(mockTarData);
@@ -34,7 +34,7 @@ describe("npm-publish", () => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   publish.mockName("libnpmpublish").mockResolvedValue();
-  readJSON.mockName("read-package-json").mockImplementation((file: any, cb: any) => cb(null, mockManifest));
+  readJSON.mockName("@npmcli/package-json").mockImplementation(() => ({ content: mockManifest }));
   // TODO: refactor based on TS feedback
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -55,7 +55,7 @@ describe("npm-publish", () => {
     await npmPublish(pkg, tarFilePath, opts);
 
     expect(fs.readFile).toHaveBeenCalledWith(tarFilePath);
-    expect(readJSON).toHaveBeenCalledWith(pkg.manifestLocation, expect.any(Function));
+    expect(readJSON).toHaveBeenCalledWith(pkg.manifestLocation);
     expect(publish).toHaveBeenCalledWith(
       mockManifest,
       mockTarData,
@@ -79,13 +79,13 @@ describe("npm-publish", () => {
   });
 
   it("overrides pkg.publishConfig.tag when opts.tag is explicitly configured", async () => {
-    readJSON.mockImplementationOnce((file: any, cb: any) =>
-      cb(null, {
+    readJSON.mockImplementationOnce(() => ({
+      content: {
         publishConfig: {
           tag: "beta",
         },
-      })
-    );
+      },
+    }));
     const opts = { tag: "temp-tag" };
 
     await npmPublish(pkg, tarFilePath, opts);
@@ -104,13 +104,13 @@ describe("npm-publish", () => {
   });
 
   it("respects pkg.publishConfig.tag when opts.defaultTag matches default", async () => {
-    readJSON.mockImplementationOnce((file: any, cb: any) =>
-      cb(null, {
+    readJSON.mockImplementationOnce(() => ({
+      content: {
         publishConfig: {
           tag: "beta",
         },
-      })
-    );
+      },
+    }));
 
     await npmPublish(pkg, tarFilePath);
 
@@ -140,19 +140,16 @@ describe("npm-publish", () => {
       rootPath
     );
 
-    readJSON.mockImplementationOnce((file: any, cb: any) =>
-      cb(null, {
+    readJSON.mockImplementationOnce(() => ({
+      content: {
         name: "fancy-fancy",
         version: "1.10.100",
-      })
-    );
+      },
+    }));
 
     await npmPublish(fancyPkg, tarFilePath);
 
-    expect(readJSON).toHaveBeenCalledWith(
-      path.join(fancyPkg.location, "dist/package.json"),
-      expect.any(Function)
-    );
+    expect(readJSON).toHaveBeenCalledWith(path.join(fancyPkg.location, "dist/package.json"));
     expect(publish).toHaveBeenCalledWith(
       expect.objectContaining({
         name: "fancy-fancy",
@@ -165,13 +162,13 @@ describe("npm-publish", () => {
   });
 
   it("merges pkg.publishConfig.registry into options", async () => {
-    readJSON.mockImplementationOnce((file: any, cb: any) =>
-      cb(null, {
+    readJSON.mockImplementationOnce(() => ({
+      content: {
         publishConfig: {
           registry: "http://pkg-registry.com",
         },
-      })
-    );
+      },
+    }));
     const opts = { registry: "https://global-registry.com" };
 
     await npmPublish(pkg, tarFilePath, opts);
