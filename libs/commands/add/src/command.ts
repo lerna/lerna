@@ -8,14 +8,14 @@ const command: CommandModule = {
   command: "add <pkg> [globs..]",
   describe: "Add a single dependency to matched packages",
   builder(yargs) {
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     yargs
       .positional("pkg", {
         describe: "Package name to add as a dependency",
         type: "string",
       })
+      // TODO: refactor based on TS feedback
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       .positional("globs", {
         describe: "Optional package directory globs to match",
         type: "array",
