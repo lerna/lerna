@@ -67,7 +67,7 @@ export async function npmPublish(
 
     const [tarData, npmCliPackageJson] = await Promise.all([
       fs.readFile(tarFilePath),
-      await load(manifestLocation),
+      await load(path.dirname(manifestLocation)),
     ]);
 
     const manifestContent = npmCliPackageJson.content;
