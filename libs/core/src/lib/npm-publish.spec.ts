@@ -55,7 +55,7 @@ describe("npm-publish", () => {
     await npmPublish(pkg, tarFilePath, opts);
 
     expect(fs.readFile).toHaveBeenCalledWith(tarFilePath);
-    expect(readJSON).toHaveBeenCalledWith(pkg.manifestLocation);
+    expect(readJSON).toHaveBeenCalledWith(path.dirname(pkg.manifestLocation));
     expect(publish).toHaveBeenCalledWith(
       mockManifest,
       mockTarData,
@@ -149,7 +149,7 @@ describe("npm-publish", () => {
 
     await npmPublish(fancyPkg, tarFilePath);
 
-    expect(readJSON).toHaveBeenCalledWith(path.join(fancyPkg.location, "dist/package.json"));
+    expect(readJSON).toHaveBeenCalledWith(path.join(fancyPkg.location, "dist"));
     expect(publish).toHaveBeenCalledWith(
       expect.objectContaining({
         name: "fancy-fancy",
