@@ -37,6 +37,7 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
+    "@npmcli/arborist": "7.5.3",
     "@lerna/create": "8.1.4",
     "@npmcli/package-json": "5.2.0",
     "@npmcli/run-script": "8.1.0",
