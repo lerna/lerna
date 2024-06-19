@@ -145,5 +145,5 @@ test("unexpected git error", async () => {
     throw error;
   });
 
-  await expect(gitPush("origin", "main", { cwd })).rejects.toThrowError(/some unexpected error/);
+  await expect(gitPush("origin", "main", { cwd })).rejects.toThrow(/some unexpected error/);
 });

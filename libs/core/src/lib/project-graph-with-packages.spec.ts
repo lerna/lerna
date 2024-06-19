@@ -36,6 +36,6 @@ describe("getPackage", () => {
       name: "foo",
     }) as ProjectGraphProjectNodeWithPackage;
 
-    expect(() => getPackage(node)).toThrowError("Failed attempting to find package for project foo");
+    expect(() => getPackage(node)).toThrow("Failed attempting to find package for project foo");
   });
 });
