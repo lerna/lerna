@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
-import log from "npmlog";
 import path from "path";
+import log from "../../npmlog";
 
 export class GitLabClient {
   constructor(public token: string, public baseUrl = "https://gitlab.com/api/v4") {}

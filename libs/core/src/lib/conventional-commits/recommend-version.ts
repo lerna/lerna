@@ -1,6 +1,6 @@
 import conventionalRecommendedBump from "conventional-recommended-bump";
-import log from "npmlog";
 import semver from "semver";
+import log from "../npmlog";
 import { Package } from "../package";
 import { applyBuildMetadata } from "./apply-build-metadata";
 import { BaseChangelogOptions, VersioningStrategy } from "./constants";

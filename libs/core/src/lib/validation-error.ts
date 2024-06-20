@@ -1,4 +1,4 @@
-import log from "npmlog";
+import log from "./npmlog";
 
 export class ValidationError extends Error {
   prefix: string;

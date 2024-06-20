@@ -1,6 +1,6 @@
 import npa from "npm-package-arg";
 import fetch from "npm-registry-fetch";
-import log from "npmlog";
+import log from "./npmlog";
 import { OneTimePasswordCache, otplease } from "./otplease";
 
 interface DistTagOptions extends fetch.FetchOptions {

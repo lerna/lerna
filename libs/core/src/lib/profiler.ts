@@ -1,6 +1,6 @@
 import fs from "fs-extra";
-import npmlog from "npmlog";
 import upath from "upath";
+import npmlog from "./npmlog";
 
 const hrtimeToMicroseconds = (hrtime: number[]) => {
   return (hrtime[0] * 1e9 + hrtime[1]) / 1000;

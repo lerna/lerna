@@ -1,10 +1,10 @@
 import Arborist from "@npmcli/arborist";
 import packlist from "npm-packlist";
-import log from "npmlog";
 import path from "path";
 import { IntegrityMap } from "ssri";
 import tar from "tar";
 import { getPacked } from "./get-packed";
+import log from "./npmlog";
 import { Package } from "./package";
 import { runLifecycle } from "./run-lifecycle";
 import tempWrite from "./temp-write";

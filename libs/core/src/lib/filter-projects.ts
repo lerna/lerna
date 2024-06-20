@@ -1,11 +1,11 @@
 import { ExecOptions } from "child_process";
 import multimatch from "multimatch";
-import log from "npmlog";
 import util from "util";
 import { addDependencies } from "./add-dependencies";
 import { addDependents } from "./add-dependents";
 import { collectProjectUpdates } from "./collect-updates/collect-project-updates";
 import { FilterOptions } from "./filter-options";
+import log from "./npmlog";
 import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";
 import { ValidationError } from "./validation-error";
 
