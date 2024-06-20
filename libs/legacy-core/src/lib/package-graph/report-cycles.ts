@@ -1,5 +1,4 @@
-import { ValidationError } from "@lerna/core";
-import log from "npmlog";
+import { ValidationError, log } from "@lerna/core";
 
 export function reportCycles(paths: string[], rejectCycles?: boolean) {
   if (!paths.length) {

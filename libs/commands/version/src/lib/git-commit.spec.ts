@@ -8,6 +8,7 @@ jest.mock("@lerna/core", () => ({
   tempWrite: {
     sync: jest.fn(),
   },
+  log: jest.requireActual("@lerna/core").log,
 }));
 
 const tempWrite = jest.mocked(_tempWrite);

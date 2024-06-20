@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
+import { log } from "@lerna/core";
 import minimatch from "minimatch";
-import log from "npmlog";
 import path from "path";
 import slash from "slash";
 import { PackageGraphNode } from "../package-graph/package-graph-node";

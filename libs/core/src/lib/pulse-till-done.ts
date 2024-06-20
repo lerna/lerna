@@ -1,4 +1,4 @@
-import log from "npmlog";
+import log from "./npmlog";
 
 let pulsers = 0;
 let pulse: NodeJS.Timeout;

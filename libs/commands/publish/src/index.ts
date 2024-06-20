@@ -1049,6 +1049,7 @@ class PublishCommand extends Command {
 
   private async npmUpdateAsLatest() {
     const tracker = this.logger.newItem("npmUpdateAsLatest");
+    console.log({ logger: this.logger, tracker });
 
     tracker.addWork(this.updates.length);
     tracker.showProgress();

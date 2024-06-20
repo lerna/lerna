@@ -18,7 +18,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna-publish-from-git-recover-from-error qqqq", () => {
+describe("lerna-publish-from-git-recover-from-error", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {

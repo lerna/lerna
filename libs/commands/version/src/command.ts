@@ -1,4 +1,4 @@
-import log from "npmlog";
+import { log } from "@lerna/core";
 import semver from "semver";
 import type { CommandModule } from "yargs";
 

@@ -1,4 +1,4 @@
-import log from "npmlog";
+import log from "./npmlog";
 
 // istanbul ignore next
 export function output(...args: any[]) {
