@@ -1,4 +1,4 @@
-import log from "npmlog";
+import { log } from "@lerna/core";
 import Arborist from "@npmcli/arborist";
 import semver from "semver";
 

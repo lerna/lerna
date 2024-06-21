@@ -21,18 +21,29 @@ export class Logger extends EventEmitter {
   private unicodeEnabled: boolean | undefined;
   private colorEnabled: boolean | undefined;
   private id: number;
-  public record: any[];
-  public maxRecordSize: number;
-  public gauge: any;
-  public tracker: any;
-  public progressEnabled: boolean;
-  public level: string;
-  public prefixStyle: any;
-  public headingStyle: any;
-  public style: any;
-  public levels: any;
-  public disp: any;
-  public heading: string | undefined;
+  record: any[];
+  maxRecordSize: number;
+  gauge: any;
+  tracker: any;
+  progressEnabled: boolean;
+  level: string;
+  prefixStyle: any;
+  headingStyle: any;
+  style: any;
+  levels: any;
+  disp: any;
+  heading: string | undefined;
+
+  // Known log levels, assigned dynamically in the constructor
+  silly!: (prefix: string, ...messageArgs: any[]) => void;
+  verbose!: (prefix: string, ...messageArgs: any[]) => void;
+  info!: (prefix: string, ...messageArgs: any[]) => void;
+  timing!: (prefix: string, ...messageArgs: any[]) => void;
+  http!: (prefix: string, ...messageArgs: any[]) => void;
+  notice!: (prefix: string, ...messageArgs: any[]) => void;
+  warn!: (prefix: string, ...messageArgs: any[]) => void;
+  error!: (prefix: string, ...messageArgs: any[]) => void;
+  silent!: (prefix: string, ...messageArgs: any[]) => void;
 
   [dynamicallyAddedLogLevelMethod: string]: any;
 
@@ -355,11 +366,15 @@ const mixinLog = (tracker: any) => {
       };
     });
   }
+
+  // Add showProgress method to the tracker
+  tracker.showProgress = log.showProgress.bind(log);
+
   return tracker;
 };
 
 trackerConstructors.forEach((C) => {
-  log[C] = function (...args: any[]) {
+  (log as any)[C] = function (...args: any[]) {
     // eslint-disable-next-line prefer-spread
     return mixinLog(this.tracker[C].apply(this.tracker, args));
   };

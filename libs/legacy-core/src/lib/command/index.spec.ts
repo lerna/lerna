@@ -1,9 +1,9 @@
 // NOTE: This file can't use ESM without breaking the spyOn() os.cpus() call right now.
 // TODO: refactor the command index.ts to resolve this
+import { log } from "@lerna/core";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require("fs-extra");
-const log = require("npmlog");
 const path = require("path");
 const tempy = require("tempy");
 

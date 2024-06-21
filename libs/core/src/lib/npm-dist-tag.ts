@@ -58,7 +58,7 @@ export function add(
     };
 
     // success returns HTTP 204, thus no JSON to parse
-    return otplease((wrappedPayload) => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
+    return otplease((wrappedPayload) => fetch(uri, wrappedPayload as any), payload, otpCache).then(() => {
       opts.log.verbose("dist-tag", `added "${cleanTag}" to ${name}@${version}`);
 
       // eslint-disable-next-line no-param-reassign
@@ -103,7 +103,7 @@ export function remove(spec: string, tag: string, options: DistTagOptions, otpCa
     };
 
     // the delete properly returns a 204, so no json to parse
-    return otplease((wrappedPayload) => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
+    return otplease((wrappedPayload) => fetch(uri, wrappedPayload as any), payload, otpCache).then(() => {
       opts.log.verbose("dist-tag", `removed "${tag}" from ${opts.spec.name}@${version}`);
 
       // eslint-disable-next-line no-param-reassign

@@ -5,7 +5,7 @@ import dedent from "dedent";
 import { daemonClient } from "nx/src/daemon/client/client";
 import os from "os";
 import yargs from "yargs";
-import log from "../npmlog";
+import log, { Logger } from "../npmlog";
 import { CommandConfigOptions, Project } from "../project";
 import { ProjectGraphWithPackages } from "../project-graph-with-packages";
 import { ValidationError } from "../validation-error";
@@ -32,7 +32,7 @@ const DEFAULT_CONCURRENCY = os.cpus().length;
 /**
  * Specific logger with log-level success enabled in order to use function without index signature
  */
-export interface LernaLogger extends log.Logger {
+export interface LernaLogger extends Logger {
   /**
    * Log with level success
    * @param prefix

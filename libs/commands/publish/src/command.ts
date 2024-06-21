@@ -1,4 +1,4 @@
-import log from "npmlog";
+import { log } from "@lerna/core";
 import type { CommandModule } from "yargs";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

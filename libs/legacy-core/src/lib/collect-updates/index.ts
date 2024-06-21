@@ -1,9 +1,8 @@
-import { getPackagesForOption, Package } from "@lerna/core";
+import { getPackagesForOption, log, Package } from "@lerna/core";
 // This import can't be from @lerna/core due to unit tests mocking the specific import path.
 // It's not worth fixing due to this being legacy code.
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { describeRefSync } from "libs/core/src/lib/describe-ref";
-import log from "npmlog";
 import { PackageGraph } from "../package-graph";
 import { collectPackages } from "./collect-packages";
 import { hasTags } from "./has-tags";

@@ -1,6 +1,6 @@
 import fs from "fs-extra";
 import upath from "upath";
-import npmlog from "./npmlog";
+import npmlog, { Logger } from "./npmlog";
 
 const hrtimeToMicroseconds = (hrtime: number[]) => {
   return (hrtime[0] * 1e9 + hrtime[1]) / 1000;
@@ -39,7 +39,7 @@ interface ProfilerConfig {
  */
 export class Profiler {
   events: any[];
-  logger: npmlog.Logger;
+  logger: Logger;
   outputPath: string;
   threads: number[];
 
