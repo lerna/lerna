@@ -51,6 +51,7 @@ export { default as tempWrite } from "./lib/temp-write";
 export { timer } from "./lib/timer";
 export { toposortProjects } from "./lib/toposort-projects";
 export { ValidationError } from "./lib/validation-error";
+export { default as log, Logger } from "./lib/npmlog";
 export { npmConf, npmDistTag };
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

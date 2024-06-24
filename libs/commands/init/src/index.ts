@@ -5,6 +5,7 @@ import {
   LernaConfig,
   LernaLogger,
   isGitInitialized,
+  log,
 } from "@lerna/core";
 import {
   PackageManager,
@@ -16,7 +17,6 @@ import {
 } from "@nx/devkit";
 import { existsSync } from "fs";
 import { readFileSync } from "fs-extra";
-import log from "npmlog";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
 
 const LARGE_BUFFER = 1024 * 1000000;

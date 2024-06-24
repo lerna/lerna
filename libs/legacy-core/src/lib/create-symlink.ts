@@ -1,6 +1,6 @@
 import cmdShim from "cmd-shim";
 import fs, { SymlinkType } from "fs-extra";
-import log from "npmlog";
+import { log } from "@lerna/core";
 import path from "path";
 
 type CreateSymlinkType = SymlinkType | "exec";

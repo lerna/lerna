@@ -1,5 +1,5 @@
-import log from "npmlog";
 import PQueue from "p-queue";
+import log from "./npmlog";
 import { Package } from "./package";
 
 // @npmcli/run-script does not have any types

@@ -38,9 +38,6 @@ function serializeTempDir(match: any, cwd: any, subPath: string) {
 // process.umask() differs between macOS and Ubuntu,
 // so we need to overwrite derived hashes for consistency
 expect.addSnapshotSerializer({
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   test(val) {
     if (isObject(val)) {
       // 420 in macOS, 436 in Ubuntu
@@ -51,6 +48,8 @@ expect.addSnapshotSerializer({
       // integrity or shasum
       return /sha512-[\S]{88}/.test(val) || /[0-9a-f]{40}/.test(val) || TAR_DIR_REGEXP.test(val);
     }
+
+    return false;
   },
   serialize(val, config, indentation, depth, refs, printer) {
     if (isString(val)) {
@@ -80,9 +79,6 @@ expect.addSnapshotSerializer({
     /* eslint-enable no-param-reassign */
 
     let result = "Object {";
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     result += printObjectProperties(val, config, indentation, depth, refs, printer);
     result += "}";
 
@@ -98,10 +94,7 @@ describe("pack-directory", () => {
 
     // choose first and last package since the middle two are repetitive
     const [head, tail] = await Promise.all(
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      [pkgs.shift(), pkgs.pop()].map((pkg) => packDirectory(pkg, pkg.location, conf))
+      [pkgs.shift()!, pkgs.pop()!].map((pkg) => packDirectory(pkg, pkg.location, conf))
     );
 
     const INTEGRITY_PATTERN = /sha512-[\S]{88}/;
@@ -136,13 +129,7 @@ describe("pack-directory", () => {
     `);
     // integrity is an instance of Integrity
     // https://github.com/zkat/ssri/blob/a4337cd672f341deee2b52699b6720d82e4d0ddf/index.js#L83
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     expect(head.integrity.toString()).toMatch(INTEGRITY_PATTERN);
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     expect(head.shasum).toMatch(SHASUM_PATTERN);
 
     expect(tail).toMatchInlineSnapshot(`
@@ -172,24 +159,12 @@ describe("pack-directory", () => {
         "version": "4.0.0",
       }
     `);
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     expect(tail.integrity.toString()).toMatch(INTEGRITY_PATTERN);
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     expect(tail.shasum).toMatch(SHASUM_PATTERN);
 
-    const next = pkgs.pop();
+    const next = pkgs.pop()!;
     const pubs = await packDirectory(
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       next,
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       next.location,
       Object.assign({}, conf, {
         ignorePrepublish: true,

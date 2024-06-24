@@ -1,4 +1,4 @@
-import log from "npmlog";
+import { log } from "@lerna/core";
 import { multiLineTrimRight } from "./multi-line-trim-right";
 
 // clear logs between tests

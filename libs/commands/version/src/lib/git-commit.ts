@@ -1,6 +1,5 @@
-import { tempWrite } from "@lerna/core";
+import { log, tempWrite } from "@lerna/core";
 import { ExecOptions } from "child_process";
-import log from "npmlog";
 import { EOL } from "os";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

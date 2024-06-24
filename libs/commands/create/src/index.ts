@@ -132,7 +132,6 @@ class CreateCommand extends Command {
       this.conf.set("silent", true);
     }
 
-    // save read-package-json the trouble
     if (this.binFileName) {
       this.conf.set("bin", {
         [this.binFileName]: `bin/${this.binFileName}`,
@@ -274,10 +273,12 @@ class CreateCommand extends Command {
         return `${savePrefix}${depNode.version}`;
       }
 
-      if (spec.type === "tag" && spec.fetchSpec === "latest") {
-        // resolve the latest version
+      if (
+        (spec.type === "tag" && spec.fetchSpec === "latest") ||
+        (spec.type === "range" && spec.fetchSpec === "*")
+      ) {
+        // resolve the latest version from local external dependency
         if (exts.has(spec.name)) {
-          // from local external dependency
           return exts.get(spec.name);
         }
 

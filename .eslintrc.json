@@ -26,6 +26,13 @@
             ],
             "checkDynamicDependenciesExceptions": [".*"]
           }
+        ],
+        "no-restricted-imports": [
+          "error",
+          {
+            "name": "npmlog",
+            "message": "Please use the inlined core utility instead."
+          }
         ]
       }
     },

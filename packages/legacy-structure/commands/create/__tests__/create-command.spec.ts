@@ -1,5 +1,3 @@
-"use strict";
-
 import { commandRunner, gitAdd, gitSHASerializer, initFixtureFactory } from "@lerna/test-helpers";
 import execa from "execa";
 import fs from "fs-extra";

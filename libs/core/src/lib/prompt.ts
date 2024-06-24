@@ -1,5 +1,5 @@
 import inquirer from "inquirer";
-import log from "npmlog";
+import log from "./npmlog";
 
 /**
  * Prompt for confirmation

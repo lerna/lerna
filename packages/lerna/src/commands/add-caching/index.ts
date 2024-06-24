@@ -1,3 +1,4 @@
+import { log } from "@lerna/core";
 import { Command } from "@lerna/legacy-core";
 import {
   joinPathFragments,
@@ -9,7 +10,6 @@ import {
 import execa from "execa";
 import { appendFile } from "fs-extra";
 import inquirer from "inquirer";
-import log from "npmlog";
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
   return new AddCachingCommand(argv);

@@ -1,6 +1,6 @@
 import byteSize from "byte-size";
 import columnify from "columnify";
-import log from "npmlog";
+import log from "./npmlog";
 
 // has-unicode does not have types.
 // TODO: it is a tiny module, inline it?

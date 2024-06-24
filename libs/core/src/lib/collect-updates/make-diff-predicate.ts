@@ -2,9 +2,9 @@
 const { execSync } = require("@lerna/child-process");
 import { ExecOptions } from "child_process";
 import minimatch from "minimatch";
-import log from "npmlog";
 import { relative } from "path";
 import slash from "slash";
+import log from "../npmlog";
 import { getPackage, ProjectGraphProjectNodeWithPackage } from "../project-graph-with-packages";
 
 export function makeDiffPredicate(

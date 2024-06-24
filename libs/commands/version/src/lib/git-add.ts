@@ -1,7 +1,7 @@
+import { log } from "@lerna/core";
 import { readJsonFile, workspaceRoot } from "@nx/devkit";
 import { ExecOptions } from "child_process";
 import fs from "fs";
-import log from "npmlog";
 import path from "path";
 import slash from "slash";
 

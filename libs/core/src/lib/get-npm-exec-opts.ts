@@ -1,4 +1,4 @@
-import log from "npmlog";
+import log from "./npmlog";
 
 export function getNpmExecOpts(pkg: { name: any; location: string }, registry?: any) {
   // execa automatically extends process.env

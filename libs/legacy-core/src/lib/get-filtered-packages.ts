@@ -1,6 +1,5 @@
-import { FilterOptions, Package } from "@lerna/core";
+import { FilterOptions, Package, log } from "@lerna/core";
 import { ExecOptions } from "child_process";
-import log from "npmlog";
 import { collectUpdates } from "./collect-updates";
 import { filterPackages } from "./filter-packages";
 import { PackageGraph } from "./package-graph";

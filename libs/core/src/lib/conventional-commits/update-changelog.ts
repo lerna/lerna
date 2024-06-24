@@ -1,9 +1,9 @@
 import conventionalChangelogCore from "conventional-changelog-core";
 import fs from "fs-extra";
 import getStream from "get-stream";
-import log from "npmlog";
+import log from "../npmlog";
 import { Package } from "../package";
-import { BaseChangelogOptions, BLANK_LINE, ChangelogType, CHANGELOG_HEADER, EOL } from "./constants";
+import { BLANK_LINE, BaseChangelogOptions, CHANGELOG_HEADER, ChangelogType, EOL } from "./constants";
 import { getChangelogConfig } from "./get-changelog-config";
 import { makeBumpOnlyFilter } from "./make-bump-only-filter";
 import { readExistingChangelog } from "./read-existing-changelog";

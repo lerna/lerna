@@ -1,8 +1,7 @@
-import { CommandConfigOptions, Project, ValidationError } from "@lerna/core";
+import { CommandConfigOptions, Logger, Project, ValidationError, log } from "@lerna/core";
 import cloneDeep from "clone-deep";
 import dedent from "dedent";
 import execa from "execa";
-import log from "npmlog";
 import os from "os";
 import { PackageGraph } from "../package-graph";
 import { writeLogFile } from "../write-log-file";
@@ -22,7 +21,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   toposort = false;
   execOpts?: { cwd: string; maxBuffer?: number };
   packageGraph?: PackageGraph;
-  logger!: log.Logger;
+  logger!: Logger;
 
   private _project?: Project;
   get project(): Project {

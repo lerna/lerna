@@ -16,6 +16,9 @@ const writePkg = jest.mocked(_writePkg);
 
 describe("npm-install", () => {
   childProcess.exec.mockResolvedValue();
+  // TODO: refactor based on TS feedback
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   fs.rename.mockResolvedValue();
   // TODO: refactor based on TS feedback
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

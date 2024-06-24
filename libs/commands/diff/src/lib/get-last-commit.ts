@@ -1,6 +1,5 @@
-import { ExecOptions } from "@lerna/core";
-import log from "npmlog";
 import * as childProcess from "@lerna/child-process";
+import { ExecOptions, log } from "@lerna/core";
 
 /**
  *

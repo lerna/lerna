@@ -1,4 +1,4 @@
-import log from "npmlog";
+import log from "../npmlog";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");

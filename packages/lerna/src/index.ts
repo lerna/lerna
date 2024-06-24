@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import log from "npmlog";
 
 // Currently external until the usage of LERNA_MODULE_DATA can be refactored
 const createCmd = require("@lerna/create/command");
 
 // Bundled
-import { lernaCLI } from "@lerna/core";
+import { lernaCLI, log } from "@lerna/core";
 import changedCmd from "@lerna/commands/changed/command";
 import cleanCmd from "@lerna/commands/clean/command";
 import diffCmd from "@lerna/commands/diff/command";

@@ -1,4 +1,4 @@
-import log from "npmlog";
+import log from "../npmlog";
 // import { ExecaErrorWithLernaPackage } from "../child-process";
 
 export function logPackageError(err: any, stream = false) {

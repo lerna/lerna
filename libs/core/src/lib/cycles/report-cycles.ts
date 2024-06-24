@@ -1,4 +1,4 @@
-import log from "npmlog";
+import log from "../npmlog";
 import { ValidationError } from "../validation-error";
 
 export function reportCycles(cycles: string[][], rejectCycles?: boolean) {

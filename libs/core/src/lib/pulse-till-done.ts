@@ -1,4 +1,4 @@
-import log from "npmlog";
+import log from "./npmlog";
 
 let pulsers = 0;
 let pulse: NodeJS.Timeout;
@@ -10,7 +10,7 @@ function pulseStart(prefix: any) {
     return;
   }
 
-  pulse = setInterval(() => log["gauge"].pulse(prefix), 150);
+  pulse = setInterval(() => log.gauge.pulse(prefix), 150);
 }
 
 function pulseStop() {

@@ -1,6 +1,5 @@
-import { Package, ValidationError } from "@lerna/core";
+import { Package, ValidationError, log } from "@lerna/core";
 import multimatch from "multimatch";
-import log from "npmlog";
 import util from "util";
 
 /**

@@ -1,4 +1,4 @@
-import log from "npmlog";
+import log from "../../npmlog";
 import { GitLabClient } from "./gitlab-client";
 
 function OcktokitAdapter(client: GitLabClient) {

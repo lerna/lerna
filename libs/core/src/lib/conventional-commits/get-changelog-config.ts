@@ -1,6 +1,6 @@
 import npa from "npm-package-arg";
-import log from "npmlog";
 import pify from "pify";
+import log from "../npmlog";
 import { ValidationError } from "../validation-error";
 import { ChangelogPresetConfig } from "./constants";
 

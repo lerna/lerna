@@ -84,9 +84,9 @@ describe("AddCommand", () => {
       expect.objectContaining({
         // an npm-package-arg Result
         name: "tiny-tarball",
-        fetchSpec: "latest",
+        fetchSpec: "*",
         registry: true,
-        type: "tag",
+        type: "range",
       }),
       expect.objectContaining({
         // an npm-conf snapshot

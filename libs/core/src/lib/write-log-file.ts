@@ -1,7 +1,7 @@
-import log from "npmlog";
 import os from "os";
 import path from "path";
 import writeFileAtomic from "write-file-atomic";
+import log from "./npmlog";
 
 export function writeLogFile(cwd: string) {
   let logOutput = "";
@@ -19,8 +19,8 @@ export function writeLogFile(cwd: string) {
     m.message
       .trim()
       .split(/\r?\n/)
-      .map((line) => `${pref} ${line}`.trim())
-      .forEach((line) => {
+      .map((line: string) => `${pref} ${line}`.trim())
+      .forEach((line: string) => {
         logOutput += line + os.EOL;
       });
   });

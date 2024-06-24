@@ -15,7 +15,10 @@ module.exports.getRangeToReference = getRangeToReference;
  */
 function getRangeToReference(spec, deps, loc, prefix) {
   const current = deps[spec.name];
-  const resolved = spec.type === "tag" ? `${prefix}${spec.version}` : spec.fetchSpec;
+  const resolved =
+    spec.type === "tag" || (spec.type === "range" && spec.fetchSpec === "*")
+      ? `${prefix}${spec.version}`
+      : spec.fetchSpec;
 
   if (spec.saveRelativeFileSpec) {
     // "version" has been resolved to pkg.location in getPackageVersion()

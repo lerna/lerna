@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import parseGitUrl from "git-url-parse";
-import log from "npmlog";
+import log from "../../npmlog";
 import { ValidationError } from "../../validation-error";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
