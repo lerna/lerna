@@ -15,6 +15,7 @@ env:
   NX_VERBOSE_LOGGING: false
   COREPACK_ENABLE_AUTO_PIN: "0"
   COREPACK_ENABLE_STRICT: "0"
+  NX_SKIP_NX_CACHE: true
 
 jobs:
   set-node-versions:
