@@ -6,10 +6,10 @@
 import { EventEmitter } from "node:events";
 import { WriteStream } from "node:tty";
 import util from "node:util";
+import { TrackerGroup } from "./are-we-there-yet/tracker-group";
 
 import Gauge = require("./gauge");
 
-const Progress = require("are-we-there-yet");
 const setBlocking = require("set-blocking");
 const consoleControl = require("console-control-strings");
 
@@ -78,7 +78,7 @@ export class Logger extends EventEmitter {
       ],
     });
 
-    this.tracker = new Progress.TrackerGroup();
+    this.tracker = new TrackerGroup();
     this.progressEnabled = this.gauge.isEnabled();
 
     this.addLevel("silly", -Infinity, { inverse: true }, "sill");
@@ -340,40 +340,62 @@ export class Logger extends EventEmitter {
     }
     this.disp[lvl] = disp;
   }
-
-  newGroup(name: string) {
-    const group = this.tracker.newGroup(name);
-    this.mixinLogMethods(group);
-    return group;
-  }
-
-  newItem(name: string, todo: number) {
-    const item = this.tracker.newItem(name, todo);
-    this.mixinLogMethods(item);
-    return item;
-  }
-
-  newStream(name: string, todo: number) {
-    const stream = this.tracker.newStream(name, todo);
-    this.mixinLogMethods(stream);
-    return stream;
-  }
-
-  private mixinLogMethods(tracker: any) {
-    Object.keys(this).forEach((P) => {
-      if (P[0] === "_") return;
-      if (tracker[P]) return;
-      if (typeof this[P] !== "function") return;
-
-      const func = this[P];
-      tracker[P] = (...args: any[]) => {
-        return func.apply(this, args);
-      };
-    });
-
-    tracker.showProgress = this.showProgress.bind(this);
-  }
 }
 
 const log = new Logger();
+
+const trackerConstructors = ["newGroup", "newItem", "newStream"];
+
+const mixinLog = function (tracker: { [x: string]: () => any }) {
+  // mixin the public methods from log into the tracker
+  // (except: conflicts and one's we handle specially)
+  Object.keys(log).forEach(function (P) {
+    if (P[0] === "_") {
+      return;
+    }
+
+    if (
+      trackerConstructors.filter(function (C) {
+        return C === P;
+      }).length
+    ) {
+      return;
+    }
+
+    if (tracker[P]) {
+      return;
+    }
+
+    if (typeof log[P] !== "function") {
+      return;
+    }
+
+    const func = log[P];
+    tracker[P] = function () {
+      // eslint-disable-next-line prefer-rest-params
+      return func.apply(log, arguments);
+    };
+  });
+  // if the new tracker is a group, make sure any subtrackers get
+  // mixed in too
+  if (tracker instanceof TrackerGroup) {
+    trackerConstructors.forEach(function (C) {
+      const func = tracker[C];
+      tracker[C] = function () {
+        // eslint-disable-next-line prefer-rest-params
+        return mixinLog(func.apply(tracker, arguments as any));
+      };
+    });
+  }
+  return tracker;
+};
+
+// Add tracker constructors to the top level log object
+trackerConstructors.forEach(function (C) {
+  log[C] = function () {
+    // eslint-disable-next-line prefer-spread, prefer-rest-params
+    return mixinLog(this.tracker[C].apply(this.tracker, arguments));
+  };
+});
+
 export default log;

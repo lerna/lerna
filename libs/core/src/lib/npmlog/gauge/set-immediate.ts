@@ -5,10 +5,10 @@
  * Inlined from deprecated package https://github.com/npm/gauge/blob/f8092518a47ac6a96027ae3ad97d0251ffe7643b
  */
 
-'use strict'
-var process = require('./process')
+"use strict";
+var process = require("./process");
 try {
-  module.exports = setImmediate
+  module.exports = setImmediate;
 } catch (ex) {
-  module.exports = process.nextTick
+  module.exports = process.nextTick;
 }

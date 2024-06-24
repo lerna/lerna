@@ -2,8 +2,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 import log from "../";
-
-const Progress = require("are-we-there-yet");
+import { TrackerGroup } from "../are-we-there-yet/tracker-group";
 
 let actions: any[] = [];
 
@@ -74,7 +73,7 @@ describe("log module", () => {
     log.useColor = () => false;
     log.disableProgress();
     log.resume();
-    log.tracker = new Progress.TrackerGroup();
+    log.tracker = new TrackerGroup();
     log.enableProgress();
     actions = [];
   });
