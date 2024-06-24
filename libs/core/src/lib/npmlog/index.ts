@@ -7,8 +7,7 @@ import { EventEmitter } from "node:events";
 import { WriteStream } from "node:tty";
 import util from "node:util";
 import { TrackerGroup } from "./are-we-there-yet/tracker-group";
-
-import Gauge = require("./gauge");
+import { Gauge } from "./gauge";
 
 const setBlocking = require("set-blocking");
 const consoleControl = require("console-control-strings");
@@ -66,7 +65,7 @@ export class Logger extends EventEmitter {
     this.levels = {};
     this.disp = {};
 
-    this.gauge = new (Gauge as any)(this._stream, {
+    this.gauge = new Gauge(this._stream, {
       enabled: false,
       theme: { hasColor: this.useColor() },
       template: [
@@ -349,7 +348,9 @@ const trackerConstructors = ["newGroup", "newItem", "newStream"];
 const mixinLog = function (tracker: { [x: string]: () => any }) {
   // mixin the public methods from log into the tracker
   // (except: conflicts and one's we handle specially)
-  Object.keys(log).forEach(function (P) {
+  Array.from(
+    new Set([...Object.keys(log), ...Object.getOwnPropertyNames(Object.getPrototypeOf(log))])
+  ).forEach(function (P) {
     if (P[0] === "_") {
       return;
     }

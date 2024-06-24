@@ -2,9 +2,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires, prefer-rest-params */
 
 // eslint-disable-next-line jest/no-export
-export {};
+import { Gauge } from "../index";
 
-const Gauge = require("..");
 const stream = require("readable-stream");
 const util = require("util");
 const EventEmitter = require("events").EventEmitter;
@@ -41,7 +40,7 @@ function RecordCall(name: string) {
 
 describe("defaults", () => {
   it("default properties", () => {
-    let gauge = new Gauge(process.stdout);
+    let gauge = new Gauge(process.stdout) as any;
     expect(gauge._disabled).toBe(!process.stdout.isTTY);
     expect(gauge._updateInterval).toBe(50);
     if (process.stdout.isTTY) {
