@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
+// eslint-disable-next-line jest/no-export
+export {};
+
 const baseTheme = require("../base-theme");
 jest.mock("../spin", () => (theme: any, spun: any) => [theme, spun]);
 jest.mock("../progress-bar", () => (theme: any, width: any, completed: any) => [theme, width, completed]);

@@ -18,13 +18,13 @@ export class TrackerStream extends stream.Transform {
     this.emit("change", name, completion, this);
   }
 
-  _transform(data: string | any[], encoding: any, cb: () => void) {
+  override _transform(data: string | any[], encoding: any, cb: () => void) {
     this.tracker.completeWork(data.length ? data.length : 1);
     this.push(data);
     cb();
   }
 
-  _flush(cb: () => void) {
+  override _flush(cb: () => void) {
     this.tracker.finish();
     cb();
   }

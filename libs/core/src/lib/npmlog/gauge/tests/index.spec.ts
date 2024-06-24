@@ -1,6 +1,9 @@
 /* eslint-disable jest/no-conditional-expect */
 /* eslint-disable @typescript-eslint/no-var-requires, prefer-rest-params */
 
+// eslint-disable-next-line jest/no-export
+export {};
+
 const Gauge = require("..");
 const stream = require("readable-stream");
 const util = require("util");

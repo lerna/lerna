@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
+// eslint-disable-next-line jest/no-export
+export {};
+
 const wideTruncate = require("../wide-truncate");
 
 describe("wideTruncate", () => {

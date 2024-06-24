@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
+// eslint-disable-next-line jest/no-export
+export {};
+
 const TemplateItem = require("../template-item");
 
 const width = 200;
