@@ -262,8 +262,7 @@ export class Gauge {
       const sectionKeys = Object.keys(section);
       for (let ii = 0; ii < sectionKeys.length; ++ii) {
         const key = sectionKeys[ii];
-        // @ts-expect-error ...
-        this._status[key] = section[key];
+        (this._status as any)[key] = (section as any)[key];
       }
     }
     if (completed != null) {
@@ -328,10 +327,8 @@ export class Gauge {
       this._paused = true;
       this._writeTo.on(
         "drain",
-        callWith(this, function () {
-          // @ts-expect-error ...
+        callWith(this, function (this: any) {
           this._paused = false;
-          // @ts-expect-error ...
           this._doRedraw();
         })
       );

@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
+// eslint-disable-next-line jest/no-export
+export {};
+
 const Plumbing = require("../plumbing");
 jest.mock("../render-template", () => (width: string, template: any, values: { x: any }) => {
   if (values.x) {

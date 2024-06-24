@@ -23,7 +23,6 @@ describe("Tracker", () => {
       expect(track.completed()).toBe(1);
 
       function afterCompleteWork(err: any, onChangeName: string) {
-        console.log("AFTER, err:", err, "onChangeName:", onChangeName);
         expect(err).toBe(null);
         expect(onChangeName).toBe(name);
         resolve();
