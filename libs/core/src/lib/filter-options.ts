@@ -1,6 +1,6 @@
 import dedent from "dedent";
-import log from "npmlog";
 import { Argv, Options } from "yargs";
+import log from "./npmlog";
 
 export function filterOptions<T extends FilterOptions>(yargs: Argv<object>): Argv<T> {
   // Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands

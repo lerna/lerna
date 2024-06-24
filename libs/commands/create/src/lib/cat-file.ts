@@ -9,6 +9,6 @@ module.exports.catFile = catFile;
  * @param {string} content
  * @param {string | import('fs-extra').WriteFileOptions} [opts]
  */
-function catFile(baseDir, fileName, content, opts = "utf8") {
+function catFile(baseDir, fileName, content, opts = "utf8" as const) {
   return fs.writeFile(path.join(baseDir, fileName), `${content}\n`, opts);
 }

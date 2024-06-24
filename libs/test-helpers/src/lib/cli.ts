@@ -17,11 +17,15 @@ export function commandRunner(commandModule: yargs.CommandModule) {
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires
 
-  // prime the pump so slow-as-molasses CI doesn't fail with delayed require()
-  // TODO: refactor to address type issues
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  require(path.resolve(require.main.filename, "../../"));
+  try {
+    // prime the pump so slow-as-molasses CI doesn't fail with delayed require()
+    // TODO: refactor to address type issues
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    require(path.resolve(require.main.filename, "../../"));
+  } catch {
+    /* empty */
+  }
 
   return (cwd: string) => {
     // create a _new_ yargs instance every time cwd changes to avoid singleton pollution

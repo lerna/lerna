@@ -1,10 +1,10 @@
+import Arborist from "@npmcli/arborist";
 import packlist from "npm-packlist";
-import log from "npmlog";
 import path from "path";
 import { IntegrityMap } from "ssri";
-import type { Readable } from "stream";
 import tar from "tar";
 import { getPacked } from "./get-packed";
+import log from "./npmlog";
 import { Package } from "./package";
 import { runLifecycle } from "./run-lifecycle";
 import tempWrite from "./temp-write";
@@ -36,87 +36,67 @@ export interface Packed {
  * @param dir to pack
  * @param options
  */
-export function packDirectory(_pkg: Package | string, dir: string, options: PackConfig): Promise<Packed> {
+export async function packDirectory(
+  _pkg: Package | string,
+  dir: string,
+  options: PackConfig
+): Promise<Packed> {
   const pkg = Package.lazy(_pkg, dir);
-  const opts = {
+  const opts: PackConfig = {
     log,
     ...options,
   };
 
-  opts.log.verbose("pack-directory", path.relative(".", pkg.contents));
-
-  let chain = Promise.resolve<void | Readable>(undefined);
+  opts.log!.verbose("pack-directory", path.relative(".", pkg.contents));
 
   if (opts.ignorePrepublish !== true) {
-    chain = chain.then(() => runLifecycle(pkg, "prepublish", opts));
+    await runLifecycle(pkg, "prepublish", opts);
   }
 
-  chain = chain.then(() => runLifecycle(pkg, "prepare", opts));
+  await runLifecycle(pkg, "prepare", opts);
 
   if (opts.lernaCommand === "publish") {
     // TODO: refactor based on TS feedback
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     opts.stdio = "inherit";
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    chain = chain.then(() => pkg.refresh());
-    chain = chain.then(() => runLifecycle(pkg, "prepublishOnly", opts));
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    chain = chain.then(() => pkg.refresh());
+
+    await pkg.refresh();
+    await runLifecycle(pkg, "prepublishOnly", opts);
+    await pkg.refresh();
   }
 
-  chain = chain.then(() => runLifecycle(pkg, "prepack", opts));
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  chain = chain.then(() => pkg.refresh());
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  chain = chain.then(() => packlist({ path: pkg.contents }));
-  chain = chain.then((files) =>
-    tar.create(
-      {
-        cwd: pkg.contents,
-        prefix: "package/",
-        portable: true,
-        // Provide a specific date in the 1980s for the benefit of zip,
-        // which is confounded by files dated at the Unix epoch 0.
-        // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        mtime: new Date("1985-10-26T08:15:00.000Z"),
-        gzip: true,
-      },
-      // NOTE: node-tar does some Magic Stuff depending on prefixes for files
-      //       specifically with @ signs, so we just neutralize that one
-      //       and any such future "features" by prepending `./`
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      files.map((f) => `./${f}`)
-    )
-  );
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  chain = chain.then((stream) => tempWrite(stream, getTarballName(pkg)));
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  chain = chain.then((tarFilePath) =>
-    getPacked(pkg, tarFilePath).then((packed) =>
-      Promise.resolve()
-        .then(() => runLifecycle(pkg, "postpack", opts))
-        .then(() => packed)
-    )
+  await runLifecycle(pkg, "prepack", opts);
+  await pkg.refresh();
+
+  const arborist = new Arborist({
+    path: pkg.contents,
+  });
+  const tree = await arborist.loadActual();
+  const files = await packlist(tree);
+
+  const stream = tar.create(
+    {
+      cwd: pkg.contents,
+      prefix: "package/",
+      portable: true,
+      // Provide a specific date in the 1980s for the benefit of zip,
+      // which is confounded by files dated at the Unix epoch 0.
+      mtime: new Date("1985-10-26T08:15:00.000Z"),
+      gzip: true,
+    },
+    // NOTE: node-tar does some Magic Stuff depending on prefixes for files
+    //       specifically with @ signs, so we just neutralize that one
+    //       and any such future "features" by prepending `./`
+    files.map((f) => `./${f}`)
   );
 
-  return chain as unknown as Promise<Packed>;
+  const tarFilePath = await tempWrite(stream, getTarballName(pkg));
+  const packed = await getPacked(pkg, tarFilePath);
+
+  await runLifecycle(pkg, "postpack", opts);
+
+  return packed;
 }
 
 function getTarballName(pkg: Package) {

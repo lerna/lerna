@@ -226,7 +226,7 @@ class AddCommand extends Command {
         Array.from(node.localDependencies.values()).some((resolved) => resolved.type === "directory")
     );
 
-    if (fetchSpec === "latest") {
+    if (fetchSpec === "latest" || fetchSpec === "*") {
       return true;
     }
 

@@ -1,19 +1,13 @@
+import { load } from "@npmcli/package-json";
 import fs from "fs-extra";
 import { publish } from "libnpmpublish";
 import npa from "npm-package-arg";
 import { FetchOptions } from "npm-registry-fetch";
-import log from "npmlog";
 import path from "path";
-import pify from "pify";
+import log from "./npmlog";
 import { OneTimePasswordCache, otplease } from "./otplease";
 import { Package } from "./package";
 import { runLifecycle } from "./run-lifecycle";
-
-// read-package-json does not have any types
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const readJSON = require("read-package-json");
-
-const readJSONAsync = pify(readJSON);
 
 interface NpmPublishOptions {
   dryRun?: boolean;
@@ -44,12 +38,12 @@ interface LibNpmPublishOptions extends FetchOptions {
 /**
  * Publish a package to the configured registry.
  */
-export function npmPublish(
+export async function npmPublish(
   pkg: Package,
   tarFilePath: string,
   options: LibNpmPublishOptions & NpmPublishOptions = {},
   otpCache?: OneTimePasswordCache
-) {
+): Promise<void | Response> {
   const { dryRun, ...remainingOptions } = flattenOptions(options);
   const { scope } = npa(pkg.name);
   // pass only the package scope to libnpmpublish
@@ -61,55 +55,49 @@ export function npmPublish(
 
   opts.log.verbose("publish", pkg.name);
 
-  let chain = Promise.resolve();
+  let result: undefined | Response;
 
   if (!dryRun) {
+    let { manifestLocation } = pkg;
+
+    if (pkg.contents !== pkg.location) {
+      // "rebase" manifest used to generated directory
+      manifestLocation = path.join(pkg.contents, "package.json");
+    }
+
+    const [tarData, npmCliPackageJson] = await Promise.all([
+      fs.readFile(tarFilePath),
+      await load(path.dirname(manifestLocation)),
+    ]);
+
+    const manifestContent = npmCliPackageJson.content;
+
+    // non-default tag needs to override publishConfig.tag,
+    // which is merged into opts below if necessary
+    if (
+      opts.defaultTag !== "latest" &&
+      manifestContent.publishConfig &&
+      manifestContent.publishConfig.tag &&
+      manifestContent.publishConfig.tag !== opts.defaultTag
+    ) {
+      manifestContent.publishConfig.tag = opts.defaultTag;
+    }
+
+    // publishConfig is no longer consumed in n-r-f, so merge here
+    if (manifestContent.publishConfig) {
+      Object.assign(opts, publishConfigToOpts(manifestContent.publishConfig));
+    }
+
     // TODO: refactor based on TS feedback
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    chain = chain.then(() => {
-      let { manifestLocation } = pkg;
-
-      if (pkg.contents !== pkg.location) {
-        // "rebase" manifest used to generated directory
-        manifestLocation = path.join(pkg.contents, "package.json");
-      }
-
-      return Promise.all([fs.readFile(tarFilePath), readJSONAsync(manifestLocation)]);
-    });
-
-    // TODO: refactor based on TS feedback
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    chain = chain.then(([tarData, manifest]) => {
-      // non-default tag needs to override publishConfig.tag,
-      // which is merged into opts below if necessary
-      if (
-        opts.defaultTag !== "latest" &&
-        manifest.publishConfig &&
-        manifest.publishConfig.tag &&
-        manifest.publishConfig.tag !== opts.defaultTag
-      ) {
-        // eslint-disable-next-line no-param-reassign
-        manifest.publishConfig.tag = opts.defaultTag;
-      }
-
-      // publishConfig is no longer consumed in n-r-f, so merge here
-      if (manifest.publishConfig) {
-        Object.assign(opts, publishConfigToOpts(manifest.publishConfig));
-      }
-
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      return otplease((innerOpts) => publish(manifest, tarData, innerOpts), opts, otpCache);
-    });
+    result = await otplease((innerOpts) => publish(manifestContent, tarData, innerOpts), opts, otpCache);
   }
 
-  chain = chain.then(() => runLifecycle(pkg, "publish", opts));
-  chain = chain.then(() => runLifecycle(pkg, "postpublish", opts));
+  await runLifecycle(pkg, "publish", opts);
+  await runLifecycle(pkg, "postpublish", opts);
 
-  return chain;
+  return result;
 }
 
 /**

@@ -991,6 +991,7 @@ class PublishCommand extends Command {
             })
             .catch((err) => {
               if (
+                err.code === "E409" ||
                 err.code === "EPUBLISHCONFLICT" ||
                 (err.code === "E403" &&
                   err.body?.error?.includes("You cannot publish over the previously published versions"))

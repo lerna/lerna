@@ -11,7 +11,9 @@
       },
       {
         "runtime": "npm --version"
-      }
+      },
+      "{workspaceRoot}/.github/workflows/ci.yml",
+      "{workspaceRoot}/.github/workflows/other-node-versions.yml"
     ],
     "production": [
       "default",

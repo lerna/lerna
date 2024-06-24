@@ -13,7 +13,11 @@ const linkRelative = (from: string, to: string) => path.relative(path.dirname(to
 
 describe("create-symlink", () => {
   fs.lstat.mockImplementation(() => Promise.reject(new Error("MOCK")));
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   fs.unlink.mockResolvedValue();
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   fs.symlink.mockResolvedValue();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -21,6 +25,8 @@ describe("create-symlink", () => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   fs.outputFile.mockResolvedValue();
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   fs.remove.mockResolvedValue();
   cmdShim.mockResolvedValue();
 
