@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.1.5](https://github.com/lerna/lerna/compare/v8.1.4...v8.1.5) (2024-06-24)
+
+### Bug Fixes
+
+- update npm utility dependencies and related packages ([#4033](https://github.com/lerna/lerna/issues/4033)) ([bd1c2d8](https://github.com/lerna/lerna/commit/bd1c2d8a267af47b409e2933fde2186dd73f4772))
+
 ## [8.1.4](https://github.com/lerna/lerna/compare/v8.1.3...v8.1.4) (2024-06-09)
 
 **Note:** Version bump only for package @lerna/create
