@@ -1,5 +1,5 @@
+import { log } from "@lerna/core";
 import fs from "fs-extra";
-import log from "npmlog";
 import path from "path";
 
 // read-cmd-shim does not have any types

@@ -1,6 +1,6 @@
 import npa from "npm-package-arg";
-import log from "npmlog";
 import url from "url";
+import log from "./npmlog";
 
 // https://github.com/npm/npm/blob/f644018/lib/utils/map-to-registry.js
 export function mapToRegistry(

@@ -1,4 +1,4 @@
-import log from "npmlog";
+import { log } from "@lerna/core";
 import os from "os";
 import path from "path";
 import writeFileAtomic from "write-file-atomic";
@@ -19,8 +19,8 @@ export function writeLogFile(cwd: string) {
     m.message
       .trim()
       .split(/\r?\n/)
-      .map((line) => `${pref} ${line}`.trim())
-      .forEach((line) => {
+      .map((line: string) => `${pref} ${line}`.trim())
+      .forEach((line: string) => {
         logOutput += line + os.EOL;
       });
   });

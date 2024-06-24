@@ -1,9 +1,9 @@
 import fs from "fs-extra";
 import npa from "npm-package-arg";
-import log from "npmlog";
 import onExit from "signal-exit";
 import writePkg from "write-pkg";
 import { getNpmExecOpts } from "./get-npm-exec-opts";
+import log from "./npmlog";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");

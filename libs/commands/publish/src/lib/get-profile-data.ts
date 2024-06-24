@@ -24,7 +24,7 @@ export interface ProfileData {
 export function getProfileData(opts: FetchConfig): Promise<ProfileData> {
   opts.log.verbose("", "Retrieving npm user profile");
 
-  return pulseTillDone(fetch.json("/-/npm/v1/user", opts)).then((data) => {
+  return pulseTillDone(fetch.json("/-/npm/v1/user", opts as any)).then((data) => {
     opts.log.silly("npm profile get", "received %j", data);
 
     return Object.assign(

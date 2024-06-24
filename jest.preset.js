@@ -4,7 +4,7 @@ const nxPreset = require("@nx/jest/preset").default;
 module.exports = {
   ...nxPreset,
   clearMocks: true,
-  modulePathIgnorePatterns: ["/__fixtures__/"],
+  modulePathIgnorePatterns: ["/__fixtures__/", "<rootDir>/dist/"],
   testEnvironment: "node",
   /* TODO: Update to latest Jest snapshotFormat
    * By default Nx has kept the older style of Jest Snapshot formats
