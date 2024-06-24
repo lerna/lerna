@@ -391,7 +391,7 @@ describe("Basic Tests", () => {
     test("themes", () => {
       const _themes = log.gauge._themes;
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const themes = require("gauge/lib/themes");
+      const themes = require("../gauge/themes");
       const newThemes = themes.newThemeSet();
       log.setGaugeThemeset(newThemes);
       expect(log.gauge._themes).toEqual(newThemes);
