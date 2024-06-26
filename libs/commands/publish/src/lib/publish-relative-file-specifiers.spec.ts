@@ -92,7 +92,8 @@ describe("relative 'file:' specifiers", () => {
     // peerDependencies which are relative are resolved to the semantic version
     expect(writePkg.updatedManifest("package-8").peerDependencies).toMatchObject({
       // TODO: Why do we get a caret here, rather than the exact range?
-      "package-1": "^2.0.0",
+      // "package-1": "^2.0.0",  // if #4009 supported
+      "package-1": "file:../package-1", // otherwise
     });
     // peerDependencies which are not relative are left unchanged
     expect(writePkg.updatedManifest("package-9").peerDependencies).toMatchObject({
@@ -100,19 +101,23 @@ describe("relative 'file:' specifiers", () => {
     });
     // peerDependencies which are "workspace:*" are transformed to the exact target workspace version.
     expect(writePkg.updatedManifest("package-a").peerDependencies).toMatchObject({
-      "package-1": "2.0.0",
+      "package-1": "2.0.0", // if #4009 supported
+      // "package-1": "workspace:*",  // otherwise
     });
     // peerDependencies which are "workspace:^" are transformed to the corresponding (^) target workspace version.
     expect(writePkg.updatedManifest("package-b").peerDependencies).toMatchObject({
-      "package-1": "^2.0.0",
+      "package-1": "^2.0.0", // if #4009 supported
+      // "package-1": "workspace:^",  // otherwise
     });
-    // peerDependencies which are "workspace:^" are transformed to the corresponding (~) target workspace version.
+    // peerDependencies which are "workspace:~" are transformed to the corresponding (~) target workspace version.
     expect(writePkg.updatedManifest("package-c").peerDependencies).toMatchObject({
-      "package-1": "~2.0.0",
+      "package-1": "~2.0.0", // if #4009 supported
+      // "package-1": "workspace:~", // otherwise
     });
     // peerDependencies which are "workspace:" followed by a semver range (SHOULD BE) are transformed to the corresponding semver range.
     expect(writePkg.updatedManifest("package-d").peerDependencies).toMatchObject({
-      "package-1": "^2.3.4",
+      "package-1": "^2.3.4", // if #4009 supported
+      // "package-1": "workspace:^2.3.4",  // otherwise
     });
   });
 

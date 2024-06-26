@@ -329,27 +329,30 @@ export class Package {
     }
     if (this.peerDependencies && this.peerDependencies[depName]) {
       const spec = this.peerDependencies[depName];
+      const collection = "peerDependencies";
       const WORKSPACE_PROTOCOL = "workspace:";
+      // by returning null (below) instead of the collection and spec we are saying that we don't support the particular use case.
       if (spec.startsWith(WORKSPACE_PROTOCOL)) {
         const token = spec.substring(WORKSPACE_PROTOCOL.length);
         switch (token) {
           case "*": {
-            return { collection: "peerDependencies", spec };
+            return { collection, spec };
           }
           case "^": {
-            return { collection: "peerDependencies", spec };
+            return { collection, spec };
           }
           case "~": {
-            return { collection: "peerDependencies", spec };
+            return { collection, spec };
           }
           default: {
             // token is a semantic version range
-            return { collection: "peerDependencies", spec };
+            return { collection, spec };
           }
         }
       }
       if (spec.startsWith("file:")) {
-        return { collection: "peerDependencies", spec };
+        // return { collection, spec };
+        return null;
       }
     }
     return null;
@@ -370,15 +373,13 @@ export class Package {
   ) {
     const depName = resolved.name as string;
 
-    // first, try runtime dependencies
+    // determine which dependency collection the resolved name came from.
     let depCollection = this.dependencies;
 
-    // try optionalDependencies if that didn't work
     if (!depCollection || !depCollection[depName]) {
       depCollection = this.optionalDependencies;
     }
 
-    // fall back to devDependencies
     if (!depCollection || !depCollection[depName]) {
       depCollection = this.devDependencies;
     }
@@ -392,28 +393,33 @@ export class Package {
     }
 
     const workspaceSpec = resolved.workspaceSpec;
-    if (workspaceSpec) {
-      if (options.updateWorkspacePrefix) {
-        if (resolved.workspaceAlias) {
-          const prefix = resolved.workspaceAlias === "*" ? "" : resolved.workspaceAlias;
-          depCollection[depName] = `${prefix}${depVersion}`;
-        } else {
-          const semverRange = workspaceSpec.substring("workspace:".length);
-          depCollection[depName] = `${semverRange}`;
-        }
+    const workspaceAlias = resolved.workspaceAlias;
+    const gitCommittish = resolved.gitCommittish;
+    // updateWorkspacePrefix is the logical NOT of the property formerly known as retainWorkspacePrefix
+    if (workspaceSpec && !options.updateWorkspacePrefix) {
+      if (workspaceAlias) {
+        // do nothing is legacy behavior.
+      } else {
+        // legacy behavior is to retain "workspace:[*~^]" and tack on the workspace version.
+        // but do nothing is the correct behavior.
+        // const matches = workspaceSpec.match(/^(workspace:[*~^]?)/) as RegExpMatchArray;
+        // const workspacePrefix = matches[0];
+        // depCollection[depName] = `${workspacePrefix}${depVersion}`;
+      }
+    } else if (workspaceSpec && options.updateWorkspacePrefix) {
+      if (workspaceAlias) {
+        const prefix = workspaceAlias === "*" ? "" : workspaceAlias;
+        depCollection[depName] = `${prefix}${depVersion}`;
+      } else {
+        const semverRange = workspaceSpec.substring("workspace:".length);
+        depCollection[depName] = `${semverRange}`;
       }
     } else if (resolved.registry || resolved.type === "directory") {
       // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       depCollection[depName] = `${savePrefix}${depVersion}`;
-    } else if (resolved.gitCommittish) {
+    } else if (gitCommittish) {
       // a git url with matching committish (#v1.2.3 or #1.2.3)
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const [tagPrefix] = /^\D*/.exec(resolved.gitCommittish);
+      const [tagPrefix] = /^\D*/.exec(gitCommittish) as RegExpExecArray;
 
       // update committish
       const { hosted } = resolved; // take that, lint!
