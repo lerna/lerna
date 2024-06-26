@@ -168,11 +168,11 @@ export class Package {
     const pkg = this[PKG];
     return typeof pkg.bin === "string"
       ? {
-        // See note on function implementation
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        [binSafeName(this.resolved)]: pkg.bin,
-      }
+          // See note on function implementation
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          [binSafeName(this.resolved)]: pkg.bin,
+        }
       : Object.assign({}, pkg.bin);
   }
 
