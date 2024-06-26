@@ -22,6 +22,10 @@ import execa from "execa";
 import fs from "fs-extra";
 import path from "path";
 import _writePkg from "write-pkg";
+import { gitPush as _libPush } from "./git-push";
+import { isAnythingCommitted as _isAnythingCommitted } from "./is-anything-committed";
+import { isBehindUpstream as _isBehindUpstream } from "./is-behind-upstream";
+import { remoteBranchExists as _remoteBranchExists } from "./remote-branch-exists";
 
 // eslint-disable-next-line jest/no-mocks-import
 jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
@@ -39,11 +43,6 @@ jest.mock("./is-behind-upstream", () => ({
 jest.mock("./remote-branch-exists", () => ({
   remoteBranchExists: jest.fn().mockResolvedValue(true),
 }));
-
-import { gitPush as _libPush } from "./git-push";
-import { isAnythingCommitted as _isAnythingCommitted } from "./is-anything-committed";
-import { isBehindUpstream as _isBehindUpstream } from "./is-behind-upstream";
-import { remoteBranchExists as _remoteBranchExists } from "./remote-branch-exists";
 
 const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
 const checkWorkingTree = jest.mocked(_checkWorkingTree);
@@ -870,7 +869,8 @@ Changes:
         "package-1": "workspace:~",
       });
       expect(writePkg.updatedManifest("package-d").peerDependencies).toMatchObject({
-        "package-1": "workspace:^2.3.4",
+        "package-1": "workspace:^2.0.0", // legacy behavior
+        // "package-1": "workspace:^2.3.4",  // #4009?
       });
     });
   });

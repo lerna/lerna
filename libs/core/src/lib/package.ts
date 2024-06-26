@@ -168,11 +168,11 @@ export class Package {
     const pkg = this[PKG];
     return typeof pkg.bin === "string"
       ? {
-          // See note on function implementation
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          [binSafeName(this.resolved)]: pkg.bin,
-        }
+        // See note on function implementation
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        [binSafeName(this.resolved)]: pkg.bin,
+      }
       : Object.assign({}, pkg.bin);
   }
 
@@ -369,7 +369,7 @@ export class Package {
     resolved: ExtendedNpaResult,
     depVersion: string,
     savePrefix: string,
-    options: { updateWorkspacePrefix: boolean } = { updateWorkspacePrefix: false }
+    options: { eraseWorkspacePrefix: boolean } = { eraseWorkspacePrefix: false }
   ) {
     const depName = resolved.name as string;
 
@@ -395,24 +395,22 @@ export class Package {
     const workspaceSpec = resolved.workspaceSpec;
     const workspaceAlias = resolved.workspaceAlias;
     const gitCommittish = resolved.gitCommittish;
-    // updateWorkspacePrefix is the logical NOT of the property formerly known as retainWorkspacePrefix
-    if (workspaceSpec && !options.updateWorkspacePrefix) {
-      if (workspaceAlias) {
-        // do nothing is legacy behavior.
+    if (workspaceSpec) {
+      if (options.eraseWorkspacePrefix) {
+        if (workspaceAlias) {
+          const prefix = workspaceAlias === "*" ? "" : workspaceAlias;
+          depCollection[depName] = `${prefix}${depVersion}`;
+        } else {
+          const semverRange = workspaceSpec.substring("workspace:".length);
+          depCollection[depName] = semverRange;
+        }
       } else {
-        // legacy behavior is to retain "workspace:[*~^]" and tack on the workspace version.
-        // but do nothing is the correct behavior.
-        // const matches = workspaceSpec.match(/^(workspace:[*~^]?)/) as RegExpMatchArray;
-        // const workspacePrefix = matches[0];
-        // depCollection[depName] = `${workspacePrefix}${depVersion}`;
-      }
-    } else if (workspaceSpec && options.updateWorkspacePrefix) {
-      if (workspaceAlias) {
-        const prefix = workspaceAlias === "*" ? "" : workspaceAlias;
-        depCollection[depName] = `${prefix}${depVersion}`;
-      } else {
-        const semverRange = workspaceSpec.substring("workspace:".length);
-        depCollection[depName] = `${semverRange}`;
+        if (!workspaceAlias) {
+          // retain "workspace:[*~^]" prefix but replace the version with the workspace version.
+          const matches = workspaceSpec.match(/^(workspace:[*~^]?)/) as RegExpMatchArray;
+          const workspacePrefix = matches[0];
+          depCollection[depName] = `${workspacePrefix}${depVersion}`;
+        }
       }
     } else if (resolved.registry || resolved.type === "directory") {
       // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)

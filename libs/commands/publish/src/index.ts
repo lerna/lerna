@@ -788,7 +788,7 @@ class PublishCommand extends Command {
           }
 
           // it no longer matters if we mutate the shared Package instance
-          pkg.updateLocalDependency(resolved, depVersion, savePrefix, { updateWorkspacePrefix: true });
+          pkg.updateLocalDependency(resolved, depVersion, savePrefix, { eraseWorkspacePrefix: true });
         }
       });
 
