@@ -62,6 +62,12 @@ describe("relative 'file:' specifiers", () => {
       "package-5": "2.0.0",
       "package-6": "2.0.0",
       "package-7": "2.0.0",
+      "package-8": "2.0.0",
+      "package-9": "2.0.0",
+      "package-a": "2.0.0",
+      "package-b": "2.0.0",
+      "package-c": "2.0.0",
+      "package-d": "2.0.0",
     });
 
     // notably missing is package-1, which has no relative file: dependencies
@@ -82,6 +88,36 @@ describe("relative 'file:' specifiers", () => {
     // private packages do not need local version resolution
     expect(writePkg.updatedManifest("package-7").dependencies).toMatchObject({
       "package-1": "file:../package-1",
+    });
+    // peerDependencies which are relative are resolved to the semantic version
+    expect(writePkg.updatedManifest("package-8").peerDependencies).toMatchObject({
+      // TODO: Why do we get a caret here, rather than the exact range?
+      // "package-1": "^2.0.0",  // if #4009 supported
+      "package-1": "file:../package-1", // otherwise
+    });
+    // peerDependencies which are not relative are left unchanged
+    expect(writePkg.updatedManifest("package-9").peerDependencies).toMatchObject({
+      "package-1": "^1.0.0",
+    });
+    // peerDependencies which are "workspace:*" are transformed to the exact target workspace version.
+    expect(writePkg.updatedManifest("package-a").peerDependencies).toMatchObject({
+      "package-1": "2.0.0", // if #4009 supported
+      // "package-1": "workspace:*",  // otherwise
+    });
+    // peerDependencies which are "workspace:^" are transformed to the corresponding (^) target workspace version.
+    expect(writePkg.updatedManifest("package-b").peerDependencies).toMatchObject({
+      "package-1": "^2.0.0", // if #4009 supported
+      // "package-1": "workspace:^",  // otherwise
+    });
+    // peerDependencies which are "workspace:~" are transformed to the corresponding (~) target workspace version.
+    expect(writePkg.updatedManifest("package-c").peerDependencies).toMatchObject({
+      "package-1": "~2.0.0", // if #4009 supported
+      // "package-1": "workspace:~", // otherwise
+    });
+    // peerDependencies which are "workspace:" followed by a semver range (SHOULD BE) are transformed to the corresponding semver range.
+    expect(writePkg.updatedManifest("package-d").peerDependencies).toMatchObject({
+      "package-1": "^2.3.4", // if #4009 supported
+      // "package-1": "workspace:^2.3.4",  // otherwise
     });
   });
 
