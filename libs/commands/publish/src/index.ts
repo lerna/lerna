@@ -51,7 +51,7 @@ import { getTwoFactorAuthRequired } from "./lib/get-two-factor-auth-required";
 import { gitCheckout } from "./lib/git-checkout";
 import { interpolate } from "./lib/interpolate";
 import { removeTempLicenses } from "./lib/remove-temp-licenses";
-import { ImmediateQueue, TailHeadQueue } from "./lib/throttle-queue";
+import { Queue, TailHeadQueue } from "./lib/throttle-queue";
 import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
 
 module.exports = function factory(argv: Arguments<PublishCommandConfigOptions>) {
@@ -977,14 +977,16 @@ class PublishCommand extends Command {
     };
     process.on("log", logListener);
 
-    let queue;
+    let queue: Queue | undefined = undefined;
     if (this.options.throttle) {
+      const DEFAULT_QUEUE_THROTTLE_SIZE = 25;
+      const DEFAULT_QUEUE_THROTTLE_DELAY = 30;
       queue = new TailHeadQueue(
-        this.options.throttleSize !== undefined ? this.options.throttleSize : 25,
-        (this.options.throttleDelay !== undefined ? this.options.throttleDelay : 30) * 1000
+        this.options.throttleSize !== undefined ? this.options.throttleSize : DEFAULT_QUEUE_THROTTLE_SIZE,
+        (this.options.throttleDelay !== undefined
+          ? this.options.throttleDelay
+          : DEFAULT_QUEUE_THROTTLE_DELAY) * 1000
       );
-    } else {
-      queue = new ImmediateQueue();
     }
     const mapper = pPipe(
       ...[
@@ -994,7 +996,9 @@ class PublishCommand extends Command {
           const pkgOpts = Object.assign({}, opts, { tag });
 
           return pulseTillDone(
-            queue.queue(() => npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache))
+            queue
+              ? queue.queue(() => npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache))
+              : npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache)
           )
             .then(() => {
               this.publishedPackages.push(pkg);

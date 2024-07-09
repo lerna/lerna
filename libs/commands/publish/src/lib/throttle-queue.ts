@@ -11,15 +11,6 @@ export interface Queue {
 }
 
 /**
- * A queue that immediately executes any promise it receives
- */
-export class ImmediateQueue implements Queue {
-  queue<T>(f: () => Promise<T>): Promise<T> {
-    return f();
-  }
-}
-
-/**
  * A sized queue that adds a delay between the end of an item's execution.
  *
  * Use only with async code, multi-threading is not supported.
@@ -35,7 +26,7 @@ export class TailHeadQueue implements Queue {
    * @param size The number of items that may run concurrently
    * @param period The time between the end of the execution of an item and the start of the execution of the next one (ms)
    */
-  constructor(size = 20, period = 30 * 1000) {
+  constructor(size, period) {
     this.queue_list = [];
     this.queue_size = Math.floor(size);
     this.queue_period = period;
