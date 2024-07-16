@@ -88,6 +88,7 @@
     "slash": "^3.0.0",
     "ssri": "^10.0.6",
     "string-width": "^4.2.3",
+    "strip-ansi": "^6.0.1",
     "strong-log-transformer": "2.1.0",
     "tar": "6.2.1",
     "temp-dir": "1.0.0",
