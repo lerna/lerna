@@ -46,6 +46,7 @@ import { getTwoFactorAuthRequired } from "./lib/get-two-factor-auth-required";
 import { gitCheckout } from "./lib/git-checkout";
 import { interpolate } from "./lib/interpolate";
 import { removeTempLicenses } from "./lib/remove-temp-licenses";
+import { Queue, TailHeadQueue } from "./lib/throttle-queue";
 import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -85,6 +86,9 @@ interface PublishCommandConfigOptions extends CommandConfigOptions {
   rejectCycles?: boolean;
   distTag?: string;
   preDistTag?: string;
+  throttle?: boolean;
+  throttleSize?: number;
+  throttleDelay?: number;
 }
 
 class PublishCommand extends Command {
@@ -971,6 +975,17 @@ class PublishCommand extends Command {
     };
     process.on("log", logListener);
 
+    let queue: Queue | undefined = undefined;
+    if (this.options.throttle) {
+      const DEFAULT_QUEUE_THROTTLE_SIZE = 25;
+      const DEFAULT_QUEUE_THROTTLE_DELAY = 30;
+      queue = new TailHeadQueue(
+        this.options.throttleSize !== undefined ? this.options.throttleSize : DEFAULT_QUEUE_THROTTLE_SIZE,
+        (this.options.throttleDelay !== undefined
+          ? this.options.throttleDelay
+          : DEFAULT_QUEUE_THROTTLE_DELAY) * 1000
+      );
+    }
     const mapper = pPipe(
       ...[
         (pkg: Package) => {
@@ -978,7 +993,11 @@ class PublishCommand extends Command {
           const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
           const pkgOpts = Object.assign({}, opts, { tag });
 
-          return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache))
+          return pulseTillDone(
+            queue
+              ? queue.queue(() => npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache))
+              : npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache)
+          )
             .then(() => {
               this.publishedPackages.push(pkg);
 

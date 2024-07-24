@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "8.1.5",
+  "version": "8.1.7",
   "description": "Lerna is a fast, modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository",
   "keywords": [
     "lerna",
@@ -37,7 +37,7 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@lerna/create": "8.1.5",
+    "@lerna/create": "8.1.7",
     "@npmcli/arborist": "7.5.3",
     "@npmcli/package-json": "5.2.0",
     "@npmcli/run-script": "8.1.0",
@@ -103,6 +103,8 @@
     "signal-exit": "3.0.7",
     "slash": "3.0.0",
     "ssri": "^10.0.6",
+    "string-width": "^4.2.3",
+    "strip-ansi": "^6.0.1",
     "strong-log-transformer": "2.1.0",
     "tar": "6.2.1",
     "temp-dir": "1.0.0",
