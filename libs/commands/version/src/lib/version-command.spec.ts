@@ -636,12 +636,13 @@ Changes:
       expect(checkWorkingTree).not.toHaveBeenCalled();
     });
 
-    it("ignores custom messages", async () => {
+    it("considers custom messages", async () => {
       const testDir = await initFixture("normal", "preserved");
       await lernaVersion(testDir)("-m", "ignored", "--amend");
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("preserved");
+      expect(message).toBe("ignored");
     });
   });
 
