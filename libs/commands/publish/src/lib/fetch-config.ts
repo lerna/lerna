@@ -1,4 +1,4 @@
-import log from "npmlog";
+import { log } from "@lerna/core";
 
 export interface FetchConfig {
   [key: string]: unknown;

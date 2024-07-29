@@ -1,5 +1,5 @@
 import { getPackage, ProjectGraphProjectNodeWithPackage } from "@lerna/core";
-import log from "npmlog";
+import { log } from "@lerna/core";
 import pMap from "p-map";
 import pacote from "pacote";
 import { FetchConfig } from "./fetch-config";
@@ -17,7 +17,7 @@ export async function getProjectsWithUnpublishedPackages(
     const pkg = getPackage(node);
     // libnpmpublish / npm-registry-fetch check strictSSL rather than strict-ssl
     opts["strictSSL"] = opts["strict-ssl"];
-    return pacote.packument(pkg.name, opts).then(
+    return pacote.packument(pkg.name, opts as any).then(
       (packument) => {
         if (packument.versions === undefined || packument.versions[pkg.version] === undefined) {
           return node;

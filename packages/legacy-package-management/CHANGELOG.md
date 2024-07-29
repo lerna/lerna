@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.1.7](https://github.com/lerna/lerna/compare/v8.1.6...v8.1.7) (2024-07-21)
+
+### Bug Fixes
+
+- set explicit strip-ansi dependency ([#4045](https://github.com/lerna/lerna/issues/4045)) ([6e5cfbc](https://github.com/lerna/lerna/commit/6e5cfbc7dc80ade930f950c6a56e130b25a512eb))
+
+## [8.1.6](https://github.com/lerna/lerna/compare/v8.1.5...v8.1.6) (2024-07-05)
+
+### Bug Fixes
+
+- set explicit string-width dependency ([#4038](https://github.com/lerna/lerna/issues/4038)) ([5f3603a](https://github.com/lerna/lerna/commit/5f3603a6f44a858ee65b1535ab91d3497812ddb8))
+
+## [8.1.5](https://github.com/lerna/lerna/compare/v8.1.4...v8.1.5) (2024-06-24)
+
+### Bug Fixes
+
+- update npm utility dependencies and related packages ([#4033](https://github.com/lerna/lerna/issues/4033)) ([bd1c2d8](https://github.com/lerna/lerna/commit/bd1c2d8a267af47b409e2933fde2186dd73f4772))
+
+## [8.1.4](https://github.com/lerna/lerna/compare/v8.1.3...v8.1.4) (2024-06-09)
+
+**Note:** Version bump only for package @lerna/legacy-package-management
+
 ## [8.1.3](https://github.com/lerna/lerna/compare/v8.1.2...v8.1.3) (2024-05-13)
 
 ### Bug Fixes

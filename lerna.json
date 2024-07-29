@@ -16,5 +16,5 @@
     }
   },
   "ignoreChanges": ["**/__fixtures__/**", "**/__tests__/**", "**/*.md"],
-  "version": "8.1.3"
+  "version": "8.1.7"
 }
