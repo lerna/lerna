@@ -638,11 +638,11 @@ Changes:
 
     it("considers custom messages", async () => {
       const testDir = await initFixture("normal", "preserved");
-      await lernaVersion(testDir)("-m", "ignored", "--amend");
+      await lernaVersion(testDir)("-m", "custom", "--amend");
 
       const message = await getCommitMessage(testDir);
-      expect(message).toBe("preserved");
-      expect(message).toBe("ignored");
+
+      expect(message).toBe("custom");
     });
   });
 
