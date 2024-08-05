@@ -1,8 +1,8 @@
 {
   "name": "e2e-version",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna", "commands-version"],
   "tags": [],
+  "implicitDependencies": ["lerna", "commands-version"],
   "targets": {
     "e2e": {},
     "run-e2e-tests-process": {},
