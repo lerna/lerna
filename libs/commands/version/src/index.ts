@@ -36,7 +36,7 @@ import pReduce from "p-reduce";
 import pWaterfall from "p-waterfall";
 import path from "path";
 import semver, { ReleaseType } from "semver";
-import { createRelease, createReleaseClient } from "./lib/create-release";
+import { createRelease, createReleaseClient, ReleaseClientType } from "./lib/create-release";
 import { getCurrentBranch } from "./lib/get-current-branch";
 import { gitAdd } from "./lib/git-add";
 import { gitCommit } from "./lib/git-commit";
@@ -76,7 +76,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   forceGitTag?: boolean;
   tagVersionPrefix?: string;
   tagVersionSeparator?: string;
-  createRelease?: "github" | "gitlab";
+  createRelease?: ReleaseClientType;
   changelog?: boolean;
   exact?: boolean;
   conventionalPrerelease?: string;
@@ -390,6 +390,7 @@ class VersionCommand extends Command {
         createRelease(
           this.releaseClient,
           {
+            type: this.options.createRelease,
             tags: this.tags,
             tagVersionSeparator: this.options.tagVersionSeparator || "@",
             releaseNotes: this.releaseNotes,
