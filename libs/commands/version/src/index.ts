@@ -48,7 +48,6 @@ import { isBreakingChange } from "./lib/is-breaking-change";
 import { makePromptVersion } from "./lib/prompt-version";
 import { remoteBranchExists } from "./lib/remote-branch-exists";
 import { updateLockfileVersion } from "./lib/update-lockfile-version";
-import { measureMemory } from "vm";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
