@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@lerna/create": "8.1.7",
-    "@npmcli/arborist": "7.5.3",
+    "@npmcli/arborist": "7.5.4",
     "@npmcli/package-json": "5.2.0",
     "@npmcli/run-script": "8.1.0",
     "@nx/devkit": ">=17.1.2 < 20",
