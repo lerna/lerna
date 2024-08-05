@@ -1,8 +1,8 @@
 {
   "name": "e2e-clean",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna", "commands-clean"],
   "tags": [],
+  "implicitDependencies": ["lerna", "commands-clean"],
   "targets": {
     "e2e": {},
     "run-e2e-tests-process": {},

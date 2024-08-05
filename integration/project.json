@@ -2,6 +2,7 @@
   "name": "integration",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
+  "tags": [],
   "implicitDependencies": ["lerna", "legacy-package-management", "legacy-structure-commands-create"],
   "targets": {
     "lint": {
@@ -15,6 +16,5 @@
         "jestConfig": "integration/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

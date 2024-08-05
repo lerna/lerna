@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/test-helpers/src",
   "projectType": "library",
+  "tags": [],
   "implicitDependencies": ["!test-helpers"],
   "targets": {
     "lint": {
@@ -16,6 +17,5 @@
         "jestConfig": "libs/test-helpers/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }
