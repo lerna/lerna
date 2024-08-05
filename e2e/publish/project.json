@@ -1,8 +1,8 @@
 {
   "name": "e2e-publish",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna", "commands-publish"],
   "tags": [],
+  "implicitDependencies": ["lerna", "commands-publish"],
   "targets": {
     "e2e": {},
     "run-e2e-tests-process": {},

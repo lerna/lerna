@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/lerna/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "dependsOn": ["compile"],
@@ -88,7 +89,7 @@
           "packages/lerna/src/utils/index.ts"
         ],
         "esbuildOptions": {
-          "external": ["*package.json", "@lerna/create", "@lerna/legacy-package-management", "nx/*"],
+          "external": ["*package.json", "@lerna/create", "@lerna/legacy-package-management", "nx/*", "@nx/*"],
           "outExtension": {
             ".js": ".js"
           },
@@ -109,6 +110,5 @@
         "jestConfig": "packages/lerna/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

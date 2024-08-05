@@ -1,8 +1,8 @@
 {
   "name": "e2e-diff",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna", "commands-diff"],
   "tags": [],
+  "implicitDependencies": ["lerna", "commands-diff"],
   "targets": {
     "e2e": {},
     "run-e2e-tests-process": {},

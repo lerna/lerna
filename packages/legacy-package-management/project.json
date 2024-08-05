@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/legacy-package-management/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "dependsOn": ["compile"],
@@ -46,6 +47,5 @@
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
     }
-  },
-  "tags": []
+  }
 }
