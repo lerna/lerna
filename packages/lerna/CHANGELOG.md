@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.1.8](https://github.com/lerna/lerna/compare/v8.1.7...v8.1.8) (2024-08-05)
+
+### Bug Fixes
+
+- **publish:** upgrade @npmcli/arborist to 7.5.4 ([#4058](https://github.com/lerna/lerna/issues/4058)) ([89de0eb](https://github.com/lerna/lerna/commit/89de0eb19f9e90863571deaad2e38bb4833f4e1d))
+
 ## [8.1.7](https://github.com/lerna/lerna/compare/v8.1.6...v8.1.7) (2024-07-21)
 
 ### Bug Fixes

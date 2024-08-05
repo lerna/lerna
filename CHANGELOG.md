@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.1.8](https://github.com/lerna/lerna/compare/v8.1.7...v8.1.8) (2024-08-05)
+
+### Bug Fixes
+
+- **publish:** upgrade @npmcli/arborist to 7.5.4 ([#4058](https://github.com/lerna/lerna/issues/4058)) ([89de0eb](https://github.com/lerna/lerna/commit/89de0eb19f9e90863571deaad2e38bb4833f4e1d))
+- **version:** truncate release body based on maximum size allowed by VCS client ([#4041](https://github.com/lerna/lerna/issues/4041)) ([3c2a3c9](https://github.com/lerna/lerna/commit/3c2a3c9c2682935753c759155384a6044d2b56dc))
+
+### Features
+
+- **publish:** enable throttling when publishing modules ([#4013](https://github.com/lerna/lerna/issues/4013)) ([fccca12](https://github.com/lerna/lerna/commit/fccca12f5ccbe8c888f9e5b1f0626ab1cf6404a1))
+
 ## [8.1.7](https://github.com/lerna/lerna/compare/v8.1.6...v8.1.7) (2024-07-21)
 
 ### Bug Fixes
