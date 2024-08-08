@@ -117,6 +117,7 @@ class VersionCommand extends Command {
     signoffGitCommit?: boolean;
     signGitTag?: boolean;
     forceGitTag?: boolean;
+    overrideMessage?: boolean;
   };
   savePrefix?: string;
   currentBranch?: string;
@@ -175,12 +176,14 @@ class VersionCommand extends Command {
       forceGitTag,
       tagVersionPrefix = "v",
       premajorVersionBump = "default",
+      message,
     } = this.options;
 
     this.gitRemote = gitRemote;
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
     this.pushToRemote = gitTagVersion && amend !== true && push;
+    const overrideMessage: boolean = amend && !!message;
     this.premajorVersionBump = premajorVersionBump;
     // never automatically push to remote when amending a commit
 
@@ -204,6 +207,7 @@ class VersionCommand extends Command {
       signoffGitCommit,
       signGitTag,
       forceGitTag,
+      overrideMessage,
     };
 
     // https://docs.npmjs.com/misc/config#save-prefix
