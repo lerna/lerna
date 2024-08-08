@@ -252,8 +252,8 @@ class PublishCommand extends Command {
     // don't execute recursively if run from a poorly-named script
     this.runRootLifecycle = /^(pre|post)?publish$/.test(process.env.npm_lifecycle_event)
       ? (stage) => {
-        this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
-      }
+          this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
+        }
       : (stage) => this.runPackageLifecycle(this.project.manifest, stage);
 
     this.projectsWithPackage = Object.values(this.projectGraph.nodes).filter((node) => !!node.package);
@@ -587,17 +587,17 @@ class PublishCommand extends Command {
 
     const makeVersion =
       (fallback: string) =>
-        ({ lastVersion = fallback, refCount, sha }) => {
-          // the next version is bumped without concern for preid or current index
-          const nextVersion = semver.inc(
-            lastVersion.replace(this.tagPrefix, ""),
-            release.replace("pre", "") as ReleaseType
-          );
+      ({ lastVersion = fallback, refCount, sha }) => {
+        // the next version is bumped without concern for preid or current index
+        const nextVersion = semver.inc(
+          lastVersion.replace(this.tagPrefix, ""),
+          release.replace("pre", "") as ReleaseType
+        );
 
-          // semver.inc() starts a new prerelease at .0, git describe starts at .1
-          // and build metadata is always ignored when comparing dependency ranges
-          return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
-        };
+        // semver.inc() starts a new prerelease at .0, git describe starts at .1
+        // and build metadata is always ignored when comparing dependency ranges
+        return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
+      };
 
     let updatesVersions: [string, string][];
     if (this.project.isIndependent()) {
@@ -684,8 +684,8 @@ class PublishCommand extends Command {
       const list =
         names.length > 1
           ? `${names.slice(0, -1).join(", ")}${names.length > 2 ? "," : ""} and ${
-            names[names.length - 1] /* oxford commas _are_ that important */
-          }`
+              names[names.length - 1] /* oxford commas _are_ that important */
+            }`
           : names[0];
 
       this.logger.warn(
