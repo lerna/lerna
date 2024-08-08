@@ -415,16 +415,25 @@ class PublishCommand extends Command {
     output("Successfully published:");
 
     if (this.options.summaryFile !== undefined) {
-      // create a json object and output it to a file location.
-      const filePath = this.options.summaryFile
-        ? `${this.options.summaryFile}/lerna-publish-summary.json`
-        : "./lerna-publish-summary.json";
+      const summaryFilePath = fs.lstatSync(this.options.summaryFile);
+
+      let filePath: string;
+
+      if (summaryFilePath.isFile()) {
+        filePath = this.options.summaryFile;
+      } else if (summaryFilePath.isDirectory()) {
+        filePath = join(this.options.summaryFile, "lerna-publish-summary.json");
+      } else {
+        filePath = "./lerna-publish-summary.json";
+      }
+
       const jsonObject = publishedPackagesSorted.map((pkg) => {
         return {
           packageName: pkg.name,
           version: pkg.version,
         };
       });
+
       output(jsonObject);
       try {
         fs.writeFileSync(filePath, JSON.stringify(jsonObject));
