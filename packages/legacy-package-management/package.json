@@ -41,7 +41,7 @@
     "console-control-strings": "^1.1.0",
     "conventional-changelog-core": "5.0.1",
     "conventional-recommended-bump": "7.0.1",
-    "cosmiconfig": "^8.2.0",
+    "cosmiconfig": "9.0.0",
     "dedent": "1.5.3",
     "execa": "5.0.0",
     "file-url": "3.0.0",
