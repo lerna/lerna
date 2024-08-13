@@ -382,7 +382,7 @@ Map {
       ];
       expect(fsSpy).toHaveBeenCalled();
       expect(fsSpy).toHaveBeenCalledWith(
-        "./outputs/lerna-publish-summary.json",
+        path.join(process.cwd(), "outputs/lerna-publish-summary.json"),
         JSON.stringify(expectedJsonResponse)
       );
     });
@@ -398,9 +398,10 @@ Map {
         { packageName: "package-3", version: "1.0.1" },
         { packageName: "package-4", version: "1.0.1" },
       ];
+
       expect(fsSpy).toHaveBeenCalled();
       expect(fsSpy).toHaveBeenCalledWith(
-        "./lerna-publish-summary.json",
+        path.join(process.cwd(), "./lerna-publish-summary.json"),
         JSON.stringify(expectedJsonResponse)
       );
     });
@@ -418,7 +419,7 @@ Map {
       ];
       expect(fsSpy).toHaveBeenCalled();
       expect(fsSpy).toHaveBeenCalledWith(
-        "./outputs/lerna-publish-summary.json",
+        path.join(process.cwd(), "outputs/lerna-publish-summary.json"),
         JSON.stringify(expectedJsonResponse)
       );
     });

@@ -415,17 +415,7 @@ class PublishCommand extends Command {
     output("Successfully published:");
 
     if (this.options.summaryFile !== undefined) {
-      const summaryFilePath = fs.lstatSync(this.options.summaryFile);
-
-      let filePath: string;
-
-      if (summaryFilePath.isFile()) {
-        filePath = this.options.summaryFile;
-      } else if (summaryFilePath.isDirectory()) {
-        filePath = join(this.options.summaryFile, "lerna-publish-summary.json");
-      } else {
-        filePath = "./lerna-publish-summary.json";
-      }
+      const filePath = this.getSummaryFilePath();
 
       const jsonObject = publishedPackagesSorted.map((pkg) => {
         return {
@@ -1228,6 +1218,28 @@ class PublishCommand extends Command {
         );
       }
     }
+  }
+
+  private getSummaryFilePath(): string {
+    if (this.options.summaryFile === undefined) {
+      throw new Error("summaryFile options is not defined. Unable to get path.");
+    }
+
+    if (this.options.summaryFile === "") {
+      return path.join(process.cwd(), "./lerna-publish-summary.json");
+    }
+
+    const normalizedPath = path.normalize(this.options.summaryFile);
+
+    if (normalizedPath === "") {
+      throw new Error("summaryFile is not a valid path.");
+    }
+
+    if (normalizedPath.endsWith(".json")) {
+      return path.join(process.cwd(), normalizedPath);
+    }
+
+    return path.join(process.cwd(), normalizedPath, "lerna-publish-summary.json");
   }
 }
 
