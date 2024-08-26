@@ -55,7 +55,7 @@
     "conventional-changelog-angular": "7.0.0",
     "conventional-changelog-core": "5.0.1",
     "conventional-recommended-bump": "7.0.1",
-    "cosmiconfig": "^8.2.0",
+    "cosmiconfig": "9.0.0",
     "dedent": "1.5.3",
     "envinfo": "7.13.0",
     "execa": "5.0.0",
