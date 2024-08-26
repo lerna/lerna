@@ -7,6 +7,7 @@ const childProcess = require("@lerna/child-process");
 
 export interface GitCommitOptions {
   amend?: boolean;
+  overrideMessage?: boolean;
   commitHooks?: boolean;
   signGitCommit?: boolean;
   signoffGitCommit?: boolean;
@@ -14,7 +15,7 @@ export interface GitCommitOptions {
 
 export function gitCommit(
   message: string,
-  { amend, commitHooks, signGitCommit, signoffGitCommit }: GitCommitOptions,
+  { amend, commitHooks, signGitCommit, signoffGitCommit, overrideMessage }: GitCommitOptions,
   opts: ExecOptions
 ) {
   log.silly("gitCommit", message);
@@ -32,13 +33,20 @@ export function gitCommit(
     args.push("--signoff");
   }
 
+  const shouldChangeMessage = amend ? amend && overrideMessage : true;
   if (amend) {
-    args.push("--amend", "--no-edit");
-  } else if (message.indexOf(EOL) > -1) {
-    // Use tempfile to allow multi\nline strings.
-    args.push("-F", tempWrite.sync(message, "lerna-commit.txt"));
+    args.push("--amend");
+  }
+
+  if (shouldChangeMessage) {
+    if (message.indexOf(EOL) > -1) {
+      // Use tempfile to allow multi\nline strings.
+      args.push("-F", tempWrite.sync(message, "lerna-commit.txt"));
+    } else {
+      args.push("-m", message);
+    }
   } else {
-    args.push("-m", message);
+    args.push("--no-edit");
   }
 
   // TODO: refactor to address type issues
