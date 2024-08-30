@@ -8,10 +8,10 @@ import { satisfies } from "semver";
 import { getPackageManifestPath } from "../get-package-manifest-path";
 import { ExtendedNpaResult, Package, RawManifest } from "../package";
 import {
-  ProjectGraphWithPackages,
-  ProjectGraphWorkspacePackageDependency,
   getPackage,
   isExternalNpmDependency,
+  ProjectGraphWithPackages,
+  ProjectGraphWorkspacePackageDependency,
 } from "../project-graph-with-packages";
 
 export async function createProjectGraphWithPackages(
@@ -89,6 +89,8 @@ export async function createProjectGraphWithPackages(
         continue;
       }
 
+      const has_workspace_protocol = sourceNpmDependency.spec.startsWith("workspace:");
+
       const workspaceDep = dep as ProjectGraphWorkspacePackageDependency;
       const resolvedTarget = resolvePackage(
         targetPkg.name,
@@ -97,6 +99,7 @@ export async function createProjectGraphWithPackages(
         sourcePkg.location
       );
       const targetMatchesRequirement =
+        has_workspace_protocol ||
         resolvedTarget.fetchSpec === targetPkg.location ||
         satisfies(
           targetPkg.version,
@@ -134,10 +137,10 @@ export const resolvePackage = (
   // Support workspace: protocol for pnpm and yarn 2+ (https://pnpm.io/workspaces#workspace-protocol-workspace)
   const isWorkspaceSpec = /^workspace:/.test(spec);
 
-  let fullWorkspaceSpec;
-  let workspaceAlias;
+  let workspaceSpec: string | undefined;
+  let workspaceAlias: "*" | "^" | "~" | undefined;
   if (isWorkspaceSpec) {
-    fullWorkspaceSpec = spec;
+    workspaceSpec = spec;
     spec = spec.replace(/^workspace:/, "");
 
     // replace aliases (https://pnpm.io/workspaces#referencing-workspace-packages-through-aliases)
@@ -153,7 +156,7 @@ export const resolvePackage = (
   }
 
   const resolved = resolve(name, spec, location) as ExtendedNpaResult;
-  resolved.workspaceSpec = fullWorkspaceSpec;
+  resolved.workspaceSpec = workspaceSpec;
   resolved.workspaceAlias = workspaceAlias;
 
   return resolved;
