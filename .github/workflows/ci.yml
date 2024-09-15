@@ -42,7 +42,8 @@ jobs:
           cmd2: npx nx run-many -t build --parallel=3
           cmd3: npx nx run-many -t lint --parallel=3
           cmd4: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
-          cmd5: npx nx run integration:integration --ci --maxWorkers=2
+
+      - run: npx nx run integration:integration --ci --maxWorkers=2
 
       # e2e tests for everything except the primary task runner
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
