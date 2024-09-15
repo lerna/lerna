@@ -41,7 +41,7 @@ jobs:
           cmd1: npx nx-cloud record -- npx nx format:check
           cmd2: npx nx run-many -t build --parallel=3
           cmd3: npx nx run-many -t lint --parallel=3
-          cmd4: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
+          cmd4: npx nx run-many -t test --parallel=3 --ci --maxWorkers=1
 
       - run: npx nx run integration:integration --ci --maxWorkers=2
 
