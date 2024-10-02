@@ -34,13 +34,13 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org",
   "devDependencies": {
-    "@nx/esbuild": "19.7.3",
-    "@nx/eslint": "19.7.3",
-    "@nx/eslint-plugin": "19.7.3",
-    "@nx/jest": "19.7.3",
-    "@nx/js": "19.7.3",
-    "@nx/plugin": "19.7.3",
-    "@nx/web": "19.7.3",
+    "@nx/esbuild": "19.8.3",
+    "@nx/eslint": "19.8.3",
+    "@nx/eslint-plugin": "19.8.3",
+    "@nx/jest": "19.8.3",
+    "@nx/js": "19.8.3",
+    "@nx/plugin": "19.8.3",
+    "@nx/web": "19.8.3",
     "@swc-node/register": "1.9.1",
     "@swc/cli": "0.3.12",
     "@swc/core": "1.5.7",
@@ -96,7 +96,7 @@
     "lodash": "^4.17.21",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
-    "nx": "19.7.3",
+    "nx": "19.8.3",
     "prettier": "^2.2.1",
     "tacks": "1.2.6",
     "signal-exit": "3.0.7",
@@ -107,6 +107,6 @@
     "ts-jest": "29.1.5",
     "ts-node": "10.9.2",
     "typescript": "5.5.4",
-    "verdaccio": "^5.31.1"
+    "verdaccio": "^6.0.0"
   }
 }
