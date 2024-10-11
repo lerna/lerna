@@ -15,6 +15,10 @@
       "message": "chore(release): %s"
     }
   },
-  "ignoreChanges": ["**/__fixtures__/**", "**/__tests__/**", "**/*.md"],
-  "version": "8.1.8"
+  "ignoreChanges": [
+    "**/__fixtures__/**",
+    "**/__tests__/**",
+    "**/*.md"
+  ],
+  "version": "999.9.9-e2e.0"
 }

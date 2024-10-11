@@ -838,6 +838,9 @@ Changes:
         "package-b": "2.0.0",
         "package-c": "2.0.0",
         "package-d": "2.0.0",
+        "package-e": "2.0.0",
+        "package-f": "2.0.0",
+        "package-g": "2.0.0",
       });
 
       // package-1 has no relative file: dependencies
@@ -870,8 +873,16 @@ Changes:
         "package-1": "workspace:~",
       });
       expect(writePkg.updatedManifest("package-d").peerDependencies).toMatchObject({
-        "package-1": "workspace:^2.0.0", // legacy behavior
-        // "package-1": "workspace:^2.3.4",  // #4009?
+        "package-1": "workspace:*2.0.0",
+      });
+      expect(writePkg.updatedManifest("package-e").peerDependencies).toMatchObject({
+        "package-1": "workspace:^2.0.0",
+      });
+      expect(writePkg.updatedManifest("package-f").peerDependencies).toMatchObject({
+        "package-1": "workspace:~2.0.0",
+      });
+      expect(writePkg.updatedManifest("package-g").peerDependencies).toMatchObject({
+        "package-1": "workspace:2.0.0",
       });
     });
   });

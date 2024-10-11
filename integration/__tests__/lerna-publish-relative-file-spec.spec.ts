@@ -137,7 +137,37 @@ index SHA..SHA 100644
 -  "version": "1.0.0",
 +  "version": "2.0.0",
 @@ -5 +5 @@
+-    "package-1": "workspace:*2.3.4"
++    "package-1": "workspace:*2.0.0"
+diff --git a/packages/package-e/package.json b/packages/package-e/package.json
+index SHA..SHA 100644
+--- a/packages/package-e/package.json
++++ b/packages/package-e/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+@@ -5 +5 @@
 -    "package-1": "workspace:^2.3.4"
 +    "package-1": "workspace:^2.0.0"
+diff --git a/packages/package-f/package.json b/packages/package-f/package.json
+index SHA..SHA 100644
+--- a/packages/package-f/package.json
++++ b/packages/package-f/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+@@ -5 +5 @@
+-    "package-1": "workspace:~2.3.4"
++    "package-1": "workspace:~2.0.0"
+diff --git a/packages/package-g/package.json b/packages/package-g/package.json
+index SHA..SHA 100644
+--- a/packages/package-g/package.json
++++ b/packages/package-g/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+@@ -5 +5 @@
+-    "package-1": "workspace:2.3.4"
++    "package-1": "workspace:2.0.0"
 `);
 });

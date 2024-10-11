@@ -89,7 +89,7 @@ export async function createProjectGraphWithPackages(
         continue;
       }
 
-      const has_workspace_protocol = sourceNpmDependency.spec.startsWith("workspace:");
+      const hasWorkspaceProtocol = sourceNpmDependency.spec.startsWith("workspace:");
 
       const workspaceDep = dep as ProjectGraphWorkspacePackageDependency;
       const resolvedTarget = resolvePackage(
@@ -99,7 +99,7 @@ export async function createProjectGraphWithPackages(
         sourcePkg.location
       );
       const targetMatchesRequirement =
-        has_workspace_protocol ||
+        hasWorkspaceProtocol ||
         resolvedTarget.fetchSpec === targetPkg.location ||
         satisfies(
           targetPkg.version,

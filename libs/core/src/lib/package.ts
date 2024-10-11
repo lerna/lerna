@@ -330,6 +330,7 @@ export class Package {
     if (this.peerDependencies && this.peerDependencies[depName]) {
       const spec = this.peerDependencies[depName];
       const collection = "peerDependencies";
+      const FILE_PROTOCOL = "file:";
       const WORKSPACE_PROTOCOL = "workspace:";
       // by returning null (below) instead of the collection and spec we are saying that we don't support the particular use case.
       if (spec.startsWith(WORKSPACE_PROTOCOL)) {
@@ -345,13 +346,14 @@ export class Package {
             return { collection, spec };
           }
           default: {
-            // token is a semantic version range
+            // token is a version.
             return { collection, spec };
           }
         }
       }
-      if (spec.startsWith("file:")) {
-        // return { collection, spec };
+      if (spec.startsWith(FILE_PROTOCOL)) {
+        // peerDependencies which use file protocol are explicitly not changed.
+        // this could change in future but for now we are being conservative in order to not introduce incorrect behavior.
         return null;
       }
     }
@@ -389,7 +391,7 @@ export class Package {
     }
 
     if (!depCollection) {
-      throw new Error(`${JSON.stringify(depName)} SHOULD exist in some dependency collection.`);
+      throw new Error(`${JSON.stringify(depName)} should exist in some dependency collection.`);
     }
 
     const workspaceSpec = resolved.workspaceSpec;
