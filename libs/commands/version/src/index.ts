@@ -36,7 +36,7 @@ import pReduce from "p-reduce";
 import pWaterfall from "p-waterfall";
 import path from "path";
 import semver, { ReleaseType } from "semver";
-import { createRelease, createReleaseClient } from "./lib/create-release";
+import { createRelease, createReleaseClient, ReleaseClientType } from "./lib/create-release";
 import { getCurrentBranch } from "./lib/get-current-branch";
 import { gitAdd } from "./lib/git-add";
 import { gitCommit } from "./lib/git-commit";
@@ -76,7 +76,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   forceGitTag?: boolean;
   tagVersionPrefix?: string;
   tagVersionSeparator?: string;
-  createRelease?: "github" | "gitlab";
+  createRelease?: ReleaseClientType;
   changelog?: boolean;
   exact?: boolean;
   conventionalPrerelease?: string;
@@ -117,6 +117,7 @@ class VersionCommand extends Command {
     signoffGitCommit?: boolean;
     signGitTag?: boolean;
     forceGitTag?: boolean;
+    overrideMessage?: boolean;
   };
   savePrefix?: string;
   currentBranch?: string;
@@ -175,12 +176,14 @@ class VersionCommand extends Command {
       forceGitTag,
       tagVersionPrefix = "v",
       premajorVersionBump = "default",
+      message,
     } = this.options;
 
     this.gitRemote = gitRemote;
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
     this.pushToRemote = gitTagVersion && amend !== true && push;
+    const overrideMessage: boolean = amend && !!message;
     this.premajorVersionBump = premajorVersionBump;
     // never automatically push to remote when amending a commit
 
@@ -204,6 +207,7 @@ class VersionCommand extends Command {
       signoffGitCommit,
       signGitTag,
       forceGitTag,
+      overrideMessage,
     };
 
     // https://docs.npmjs.com/misc/config#save-prefix
@@ -390,6 +394,7 @@ class VersionCommand extends Command {
         createRelease(
           this.releaseClient,
           {
+            type: this.options.createRelease,
             tags: this.tags,
             tagVersionSeparator: this.options.tagVersionSeparator || "@",
             releaseNotes: this.releaseNotes,

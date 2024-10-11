@@ -3,6 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/legacy-structure/commands/create",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
       "dependsOn": ["compile"],
@@ -62,6 +63,5 @@
         "jestConfig": "packages/legacy-structure/commands/create/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

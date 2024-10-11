@@ -2,7 +2,30 @@ import { createGitHubClient, createGitLabClient, parseGitRepo, ValidationError }
 import { ExecOptions } from "child_process";
 import semver from "semver";
 
-export function createReleaseClient(type: "github" | "gitlab") {
+export type ReleaseClientType = "gitlab" | "github";
+
+export function truncateReleaseBody(body: string, type?: ReleaseClientType) {
+  let maxReleaseBodyLength: number | undefined;
+
+  switch (type) {
+    case "gitlab":
+      maxReleaseBodyLength = 1000000;
+      break;
+    case "github":
+      maxReleaseBodyLength = 125000;
+      break;
+    default:
+      return body;
+  }
+
+  if (body.length > maxReleaseBodyLength) {
+    const ellipsis = "...";
+    return body.slice(0, maxReleaseBodyLength - ellipsis.length) + ellipsis;
+  }
+  return body;
+}
+
+export function createReleaseClient(type?: ReleaseClientType) {
   switch (type) {
     case "gitlab":
       return createGitLabClient();
@@ -17,10 +40,16 @@ export function createReleaseClient(type: "github" | "gitlab") {
 export function createRelease(
   client: ReturnType<typeof createReleaseClient>,
   {
+    type,
     tags,
     releaseNotes,
     tagVersionSeparator,
-  }: { tags: string[]; tagVersionSeparator: string; releaseNotes: { name: string; notes: string }[] },
+  }: {
+    type?: ReleaseClientType;
+    tags: string[];
+    tagVersionSeparator: string;
+    releaseNotes: { name: string; notes: string }[];
+  },
   { gitRemote, execOpts }: { gitRemote: string; execOpts: ExecOptions }
 ) {
   const repo = parseGitRepo(gitRemote, execOpts);
@@ -37,12 +66,14 @@ export function createRelease(
 
       const prereleaseParts = semver.prerelease(tag.replace(`${name}${tagVersionSeparator}`, "")) || [];
 
+      const body = truncateReleaseBody(notes, type);
+
       return client.repos.createRelease({
         owner: repo.owner,
         repo: repo.name,
         tag_name: tag,
         name: tag,
-        body: notes,
+        body,
         draft: false,
         prerelease: prereleaseParts.length > 0,
       });

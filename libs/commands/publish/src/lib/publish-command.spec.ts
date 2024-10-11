@@ -382,7 +382,7 @@ Map {
       ];
       expect(fsSpy).toHaveBeenCalled();
       expect(fsSpy).toHaveBeenCalledWith(
-        "./outputs/lerna-publish-summary.json",
+        path.join(process.cwd(), "outputs/lerna-publish-summary.json"),
         JSON.stringify(expectedJsonResponse)
       );
     });
@@ -398,9 +398,28 @@ Map {
         { packageName: "package-3", version: "1.0.1" },
         { packageName: "package-4", version: "1.0.1" },
       ];
+
       expect(fsSpy).toHaveBeenCalled();
       expect(fsSpy).toHaveBeenCalledWith(
-        "./lerna-publish-summary.json",
+        path.join(process.cwd(), "./lerna-publish-summary.json"),
+        JSON.stringify(expectedJsonResponse)
+      );
+    });
+
+    it("creates the summary file in the provided file path", async () => {
+      const cwd = await initFixture("normal");
+      const fsSpy = jest.spyOn(fsmain, "writeFileSync");
+      await lernaPublish(cwd)("--summary-file", "./outputs/lerna-publish-summary.json");
+
+      const expectedJsonResponse = [
+        { packageName: "package-1", version: "1.0.1" },
+        { packageName: "package-2", version: "1.0.1" },
+        { packageName: "package-3", version: "1.0.1" },
+        { packageName: "package-4", version: "1.0.1" },
+      ];
+      expect(fsSpy).toHaveBeenCalled();
+      expect(fsSpy).toHaveBeenCalledWith(
+        path.join(process.cwd(), "outputs/lerna-publish-summary.json"),
         JSON.stringify(expectedJsonResponse)
       );
     });

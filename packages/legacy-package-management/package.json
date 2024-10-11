@@ -1,6 +1,6 @@
 {
   "name": "@lerna/legacy-package-management",
-  "version": "8.1.7",
+  "version": "8.1.8",
   "description": "Legacy package management concerns provided by lerna. Please migrate to use npm/yarn/pnpm workspaces instead.",
   "keywords": [
     "lerna",
@@ -26,7 +26,7 @@
     "directory": "packages/legacy-package-management"
   },
   "dependencies": {
-    "@npmcli/arborist": "7.5.3",
+    "@npmcli/arborist": "7.5.4",
     "@npmcli/package-json": "5.2.0",
     "@npmcli/run-script": "8.1.0",
     "@nx/devkit": ">=17.1.2 < 20",
@@ -41,7 +41,7 @@
     "console-control-strings": "^1.1.0",
     "conventional-changelog-core": "5.0.1",
     "conventional-recommended-bump": "7.0.1",
-    "cosmiconfig": "^8.2.0",
+    "cosmiconfig": "9.0.0",
     "dedent": "1.5.3",
     "execa": "5.0.0",
     "file-url": "3.0.0",

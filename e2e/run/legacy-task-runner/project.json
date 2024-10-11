@@ -1,8 +1,8 @@
 {
   "name": "e2e-run-legacy-task-runner",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lerna"],
   "tags": [],
+  "implicitDependencies": ["lerna"],
   "targets": {
     "e2e": {},
     "run-e2e-tests-process": {},
