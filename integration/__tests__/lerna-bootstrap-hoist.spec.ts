@@ -1,6 +1,6 @@
 import { cliRunner, initFixtureFactory } from "@lerna/test-helpers";
 import fs from "fs-extra";
-import globby from "globby";
+import { glob } from "tinyglobby";
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -42,7 +42,7 @@ package-3 cli2 package-2 OK
     absolute: true,
     followSymbolicLinks: false,
   };
-  const lockfiles = await globby(["**/package-lock.json"], config);
+  const lockfiles = await glob(["**/package-lock.json"], config);
   const [lock3, rootLock] = await Promise.all(lockfiles.sort().map((fp) => fs.readJson(fp)));
 
   expect(lock3).toMatchObject({

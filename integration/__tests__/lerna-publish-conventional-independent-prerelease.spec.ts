@@ -6,7 +6,7 @@ import {
   gitTag,
 } from "@lerna/test-helpers";
 import fs from "fs-extra";
-import globby from "globby";
+import { glob } from "tinyglobby";
 import os from "os";
 import path from "path";
 
@@ -153,7 +153,7 @@ Successfully published:
   });
 
   test(`generate accurate changelog`, async () => {
-    const changelogFilePaths = await globby(["**/CHANGELOG.md"], {
+    const changelogFilePaths = await glob(["**/CHANGELOG.md"], {
       cwd,
       absolute: true,
       followSymbolicLinks: false,

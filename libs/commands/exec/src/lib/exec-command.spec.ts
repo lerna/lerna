@@ -1,7 +1,7 @@
 import { Package } from "@lerna/core";
 import { commandRunner, initFixtureFactory, loggingOutput, normalizeRelativeDir } from "@lerna/test-helpers";
 import fs from "fs-extra";
-import globby from "globby";
+import { glob } from "tinyglobby";
 import path from "path";
 
 const initFixture = initFixtureFactory(__dirname);
@@ -203,7 +203,7 @@ describe("ExecCommand", () => {
 
       await lernaExec(cwd)("--profile", "--", "ls");
 
-      const [profileLocation] = await globby("Lerna-Profile-*.json", { cwd, absolute: true });
+      const [profileLocation] = await glob("Lerna-Profile-*.json", { cwd, absolute: true });
       const json = await fs.readJson(profileLocation);
 
       expect(json).toMatchObject([
@@ -226,7 +226,7 @@ describe("ExecCommand", () => {
 
       await lernaExec(cwd)("--profile", "--profile-location", "foo/bar", "--", "ls");
 
-      const [profileLocation] = await globby("foo/bar/Lerna-Profile-*.json", { cwd, absolute: true });
+      const [profileLocation] = await glob("foo/bar/Lerna-Profile-*.json", { cwd, absolute: true });
       // check if dependency is already installed
       // TODO: refactor based on TS feedback
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

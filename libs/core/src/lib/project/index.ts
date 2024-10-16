@@ -4,7 +4,7 @@ import type { CosmiconfigResult } from "cosmiconfig/dist/types";
 import dedent from "dedent";
 import fs from "fs";
 import globParent from "glob-parent";
-import globby from "globby";
+import { globSync } from "tinyglobby";
 import { load } from "js-yaml";
 import loadJsonFile from "load-json-file";
 import pMap from "p-map";
@@ -128,7 +128,7 @@ export class Project {
     let licensePath;
 
     try {
-      const search = globby.sync(LICENSE_GLOB, {
+      const search = globSync(LICENSE_GLOB, {
         cwd: this.rootPath,
         absolute: true,
         caseSensitiveMatch: false,

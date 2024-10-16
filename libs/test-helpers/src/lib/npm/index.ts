@@ -1,8 +1,8 @@
-import globby from "globby";
+import { glob } from "tinyglobby";
 import loadJsonFile from "load-json-file";
 
 export function loadManifests(cwd: string): any {
-  return globby(
+  return glob(
     [
       // all child packages, at any level
       "**/package.json",
