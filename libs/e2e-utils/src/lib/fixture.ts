@@ -331,11 +331,6 @@ export class Fixture {
     this.debugWriteStream.write(`\n> Fixture.addNxJsonToWorkspace()\n`);
     writeJsonFile(this.getWorkspacePath("nx.json"), {
       extends: "nx/presets/npm.json",
-      tasksRunnerOptions: {
-        default: {
-          runner: "nx/tasks-runners/default",
-        },
-      },
     });
   }
 

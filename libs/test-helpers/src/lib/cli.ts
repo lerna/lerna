@@ -40,6 +40,7 @@ export function commandRunner(commandModule: yargs.CommandModule) {
       // We always need fresh copies of the graph in the unit test fixtures
       process.env.NX_DAEMON = "false";
       process.env.NX_CACHE_PROJECT_GRAPH = "false";
+      process.env.NX_ISOLATE_PLUGINS = "false";
 
       // Update the global workspaceRoot to the current test's cwd
       setWorkspaceRoot(cwd);
