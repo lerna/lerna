@@ -38,7 +38,7 @@ import semver, { ReleaseType } from "semver";
 const versionCommand = require("@lerna/commands/version");
 
 import { copy } from "fs-extra";
-import globby from "globby";
+import { glob } from "tinyglobby";
 import npa from "npm-package-arg";
 import { createTempLicenses } from "./lib/create-temp-licenses";
 import { getCurrentSHA } from "./lib/get-current-sha";
@@ -1157,8 +1157,8 @@ class PublishCommand extends Command {
       to: string;
     }[] = [];
 
-    const getFiles = (glob: string) =>
-      globby(glob, {
+    const getFiles = (assetGlob: string) =>
+      glob(assetGlob, {
         cwd: pkg.location,
         onlyFiles: false,
         expandDirectories: false,
