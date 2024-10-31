@@ -7,7 +7,7 @@
 
 "use strict";
 var stringWidth = require("string-width");
-var stripAnsi = require("strip-ansi");
+var util = require("node:util");
 
 module.exports = wideTruncate;
 
@@ -25,7 +25,7 @@ function wideTruncate(str, target) {
   // We compute the number of bytes of ansi sequences here and add
   // that to our initial truncation to ensure that we don't slice one
   // that we want to keep in half.
-  var noAnsi = stripAnsi(str);
+  var noAnsi = util.stripVTControlCharacters(str);
   var ansiSize = str.length + noAnsi.length;
   var truncated = str.slice(0, target + ansiSize);
 
