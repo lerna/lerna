@@ -14,8 +14,8 @@ The following is a high level overview of what each tool provides. Lerna can con
 
 ### Features
 
-1. [Version](./features/version-and-publish) - Automatically increment versions of packages, generate changelog information, create Github releases etc.
-2. [Publish](./features/version-and-publish) - Automatically create tags and publish packages to package registries, such as npm
+1. [Version](./features/version-and-publish) - Automatically increment versions of packages, generate changelog information, create GitHub releases etc.
+2. [Publish](./features/version-and-publish) - Automatically create tags and publish packages to package registries, such as npm.
 
 ### Cost
 
