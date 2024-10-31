@@ -90,8 +90,8 @@ across all of them.
 You also want to run as many commands in parallel as you can. For instance,
 
 ```yaml
-- lerna run lint --since=main 
-- lerna run test --since=main 
+- lerna run lint --since=main
+- lerna run test --since=main
 - lerna run build --since=main
 ```
 
