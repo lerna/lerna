@@ -36,11 +36,6 @@ describe("lerna-repair", () => {
       - lerna: remove-invalid-use-workspaces (Remove invalid \`useWorkspaces\` config from lerna.json as it no longer exists)
       - lerna: update-options-from-legacy-deprecate-config (Migrate legacy deprecated config usage to their updated counterparts)
       - lerna: add-schema-config (Add \`$schema\` config to lerna.json if not already present to allow for IDE validation of lerna.json)
-      - nx: 16.0.0-remove-nrwl-cli (Remove @nrwl/cli.)
-      - nx: 16.0.0-update-nx-cloud-runner (Replace @nrwl/nx-cloud with nx-cloud)
-      - nx: 16.0.0-tokens-for-depends-on (Replace \`dependsOn.projects\` and \`inputs\` definitions with new configuration format.)
-      - nx: 16.2.0-remove-output-path-from-run-commands (Remove outputPath from run commands)
-      - nx: 16.6.0-prefix-outputs (Prefix outputs with {workspaceRoot}/{projectRoot} if needed)
       - nx: 17.0.0-move-cache-directory (Updates the default cache directory to .nx/cache)
       - nx: 17.0.0-use-minimal-config-for-tasks-runner-options (Use minimal config for tasksRunnerOptions)
       - nx: rm-default-collection-npm-scope (Migration for v17.0.0-rc.1)
@@ -48,6 +43,7 @@ describe("lerna-repair", () => {
       - nx: move-default-base-to-nx-json-root (Moves affected.defaultBase to defaultBase in \`nx.json\`)
       - nx: 19-2-0-move-graph-cache-directory (Updates the default workspace data directory to .nx/workspace-data)
       - nx: 19-2-2-update-nx-wrapper (Updates the nx wrapper.)
+      - nx: move-use-daemon-process (Migration for v20.0.0-beta.7)
       ---------------------------------------------------------
 
       Running migration lerna: remove-unnecessary-use-nx
@@ -83,36 +79,6 @@ describe("lerna-repair", () => {
       Running migration lerna: add-schema-config
       Ran add-schema-config from lerna
         Add \`$schema\` config to lerna.json if not already present to allow for IDE validation of lerna.json
-
-      No changes were made
-
-      Running migration nx: 16.0.0-remove-nrwl-cli
-      Ran 16.0.0-remove-nrwl-cli from nx
-        Remove @nrwl/cli.
-
-      No changes were made
-
-      Running migration nx: 16.0.0-update-nx-cloud-runner
-      Ran 16.0.0-update-nx-cloud-runner from nx
-        Replace @nrwl/nx-cloud with nx-cloud
-
-      No changes were made
-
-      Running migration nx: 16.0.0-tokens-for-depends-on
-      Ran 16.0.0-tokens-for-depends-on from nx
-        Replace \`dependsOn.projects\` and \`inputs\` definitions with new configuration format.
-
-      No changes were made
-
-      Running migration nx: 16.2.0-remove-output-path-from-run-commands
-      Ran 16.2.0-remove-output-path-from-run-commands from nx
-        Remove outputPath from run commands
-
-      No changes were made
-
-      Running migration nx: 16.6.0-prefix-outputs
-      Ran 16.6.0-prefix-outputs from nx
-        Prefix outputs with {workspaceRoot}/{projectRoot} if needed
 
       No changes were made
 
@@ -155,6 +121,12 @@ describe("lerna-repair", () => {
       Running migration nx: 19-2-2-update-nx-wrapper
       Ran 19-2-2-update-nx-wrapper from nx
         Updates the nx wrapper.
+
+      No changes were made
+
+      Running migration nx: move-use-daemon-process
+      Ran move-use-daemon-process from nx
+        Migration for v20.0.0-beta.7
 
       No changes were made
 
