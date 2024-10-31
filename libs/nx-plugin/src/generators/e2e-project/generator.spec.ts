@@ -93,8 +93,7 @@ describe("e2e-project generator", () => {
     `);
 
     expect(appTree.read("e2e/test/jest.config.ts").toString()).toMatchInlineSnapshot(`
-      "/* eslint-disable */
-      export default {
+      "export default {
         displayName: 'e2e-test',
         preset: '../../jest.preset.js',
         transform: {

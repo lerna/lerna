@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.1.9](https://github.com/lerna/lerna/compare/v8.1.8...v8.1.9) (2024-10-31)
+
+### Bug Fixes
+
+- add extends property in schema ([#4075](https://github.com/lerna/lerna/issues/4075)) ([28c8ef2](https://github.com/lerna/lerna/commit/28c8ef232d29085ce9a9ba2bff96fae9017b3963))
+- **core:** avoid reading empty .config.json, upgrade cosmiconfig@v9.0.0 ([#4062](https://github.com/lerna/lerna/issues/4062)) ([960bdd9](https://github.com/lerna/lerna/commit/960bdd97cb8c0c8224283cc962f54e606dd24827))
+- update nx support to latest v20 ([#4103](https://github.com/lerna/lerna/issues/4103)) ([cb37f19](https://github.com/lerna/lerna/commit/cb37f19f1bfed170f3366f7e54154eefd82ea269))
+
 ## [8.1.8](https://github.com/lerna/lerna/compare/v8.1.7...v8.1.8) (2024-08-05)
 
 ### Bug Fixes
