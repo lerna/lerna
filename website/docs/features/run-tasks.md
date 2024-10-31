@@ -12,7 +12,7 @@ them is a key feature of a tool like Lerna.
 ## Definitions
 
 - **Command -** anything the developer types into the terminal (e.g., `lerna run build --scope=header --concurrency=5`).
-- **Target -** the name of an npm script (e.g., `build`)
+- **Target -** the name of an npm script (e.g., `build`).
 - **Task -** an invocation of an npm script (e.g., `header:build`).
 
 ## Example Repository
@@ -79,9 +79,9 @@ Learn more [here](../api-reference/commands).
 
 For more control over the order tasks are executed, edit the [Task Pipeline Configuration](../concepts/task-pipeline-configuration).
 
-To speed up your task execution, learn how to [Cache Task Results](./cache-tasks) and [Distribute Task Execution](./distribute-tasks)
+To speed up your task execution, learn how to [Cache Task Results](./cache-tasks) and [Distribute Task Execution](./distribute-tasks).
 
-## Automatic loading of .env files
+## Automatic loading of `.env` files
 
 By default the modern task runner powered by Nx will automatically load `.env` files for you. You can set `--load-env-files` to false if you want to disable this behavior for any reason.
 
