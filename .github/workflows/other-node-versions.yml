@@ -27,7 +27,7 @@ jobs:
         id: node-matrix
         # These versions intentionally do not contain our primary major version because that has already been tested by ci.yml
         run: |
-          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['18']));")
+          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['18','22']));")
           echo $NODE_VERSIONS_JSON_ARRAY
           echo "node-versions=$NODE_VERSIONS_JSON_ARRAY" >> $GITHUB_OUTPUT
 
@@ -61,8 +61,8 @@ jobs:
         run: corepack enable
         shell: bash
 
-      - name: Install pnpm v8
-        run: corepack install -g pnpm@8
+      - name: Install pnpm v9
+        run: corepack install -g pnpm@9
         shell: bash
 
       - name: Print installed node, npm, yarn and pnpm versions

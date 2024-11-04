@@ -32,8 +32,8 @@ runs:
         COREPACK_ENABLE_AUTO_PIN: "0"
         COREPACK_ENABLE_STRICT: "0"
 
-    - name: Install pnpm v8
-      run: corepack install -g pnpm@8
+    - name: Install pnpm v9
+      run: corepack install -g pnpm@9
       shell: bash
       env:
         COREPACK_ENABLE_AUTO_PIN: "0"
