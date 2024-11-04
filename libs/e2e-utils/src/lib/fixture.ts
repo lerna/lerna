@@ -83,7 +83,7 @@ export class Fixture {
       await fixture.createEmptyDirectoryForWorkspace();
     }
 
-    await fixture.setNpmRegistry();
+    await fixture.setNpmrc();
 
     if (lernaInit) {
       // Use custom lerna init args if provided
@@ -125,11 +125,11 @@ export class Fixture {
     );
   }
 
-  private async setNpmRegistry(): Promise<void> {
+  private async setNpmrc(): Promise<void> {
     if (this.packageManager === "pnpm") {
       await this.exec(`mkdir ${this.fixturePnpmStorePath}`);
       await this.exec(
-        `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false" > .npmrc`
+        `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false\nlink-workspace-packages=true" > .npmrc`
       );
     }
   }
