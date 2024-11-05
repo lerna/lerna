@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import path from "path";
 import log from "../../npmlog";
 

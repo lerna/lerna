@@ -1,11 +1,23 @@
-import _fetch from "node-fetch";
 import { GitLabClient } from "./gitlab-client";
-
-jest.mock("node-fetch");
-
-const fetch = jest.mocked(_fetch);
-
 describe("GitLabClient", () => {
+    let originalFetch: any;
+    let fetchMock: jest.Mock;
+
+    beforeEach(() => {
+        originalFetch = global.fetch;
+        global.fetch = jest.fn(() =>
+          Promise.resolve({
+            json: () => Promise.resolve({ test: 100 }),
+          }),
+        ) as jest.Mock;
+        fetchMock = global.fetch as any;
+    });
+
+    afterEach(() => {
+        global.fetch = originalFetch;
+        fetchMock = undefined as any;
+    });
+
   describe("constructor", () => {
     it("sets `baseUrl` and `token`", () => {
       const client = new GitLabClient("TOKEN", "http://some/host");
@@ -27,7 +39,7 @@ describe("GitLabClient", () => {
   describe("createRelease", () => {
     it("requests releases api with release", () => {
       const client = new GitLabClient("TOKEN", "http://some/host");
-      fetch.mockResolvedValue({ ok: true } as any);
+      fetchMock.mockResolvedValue({ ok: true } as any);
       const release = {
         owner: "the-owner",
         repo: "the-repo",
@@ -38,7 +50,7 @@ describe("GitLabClient", () => {
 
       client.createRelease(release);
 
-      expect(fetch).toHaveBeenCalledWith("http://some/host/projects/the-owner%2Fthe-repo/releases", {
+      expect(fetchMock).toHaveBeenCalledWith("http://some/host/projects/the-owner%2Fthe-repo/releases", {
         method: "post",
         body: JSON.stringify({
           name: "the-name",
