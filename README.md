@@ -21,7 +21,7 @@ Lerna is a fast, modern build system for managing and publishing multiple JavaSc
     <a href="">
       <img alt="MIT Licensed" src="https://img.shields.io/npm/l/@nrwl/workspace.svg?style=flat" />
     </a>
-    <a href="https://www.npmjs.com/package/lerna">
+    <a href="https://github.com/lerna/lerna/blob/main/LICENSE">
       <img alt="NPM Status" src="https://img.shields.io/npm/v/lerna.svg?style=flat" />
     </a>
     <a href="https://github.com/lerna/lerna/actions?query=branch%3Amain+workflow%3Aci">
@@ -54,7 +54,7 @@ A few links to help you get started:
 
 ## Engage with the Core Team and the Community
 
-- [Follow Lerna on Twitter](https://twitter.com/lernajs)
+- [Follow Lerna on X (formerly Twitter)](https://x.com/lernajs)
 - [Community Discord, #forum channel](https://go.nx.dev/community)
 
 ### Want to help?
