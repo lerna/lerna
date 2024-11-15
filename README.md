@@ -18,7 +18,7 @@ Lerna is a fast, modern build system for managing and publishing multiple JavaSc
 <br />
 
 <p align="center">
-    <a href="">
+    <a href="https://github.com/lerna/lerna/blob/main/LICENSE">
       <img alt="MIT Licensed" src="https://img.shields.io/npm/l/@nrwl/workspace.svg?style=flat" />
     </a>
     <a href="https://www.npmjs.com/package/lerna">
