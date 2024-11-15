@@ -114,10 +114,10 @@ Map {
 `);
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
-  "package-4": 1.0.1-alpha.0+SHA,
+  "package-1": 1.0.1-alpha.0.SHA,
+  "package-2": 1.0.1-alpha.0.SHA,
+  "package-3": 1.0.1-alpha.0.SHA,
+  "package-4": 1.0.1-alpha.0.SHA,
 }
 `);
   });
@@ -130,9 +130,9 @@ Object {
 
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-beta.0+SHA,
-  "package-2": 1.0.1-beta.0+SHA,
-  "package-3": 1.0.1-beta.0+SHA,
+  "package-1": 1.0.1-beta.0.SHA,
+  "package-2": 1.0.1-beta.0.SHA,
+  "package-3": 1.0.1-beta.0.SHA,
 }
 `);
   });
@@ -145,9 +145,9 @@ Object {
 
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
+  "package-1": 1.0.1-alpha.0.SHA,
+  "package-2": 1.0.1-alpha.0.SHA,
+  "package-3": 1.0.1-alpha.0.SHA,
 }
 `);
   });
@@ -161,9 +161,9 @@ Object {
 
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
+  "package-1": 1.0.1-alpha.0.SHA,
+  "package-2": 1.0.1-alpha.0.SHA,
+  "package-3": 1.0.1-alpha.0.SHA,
 }
 `);
   });
@@ -176,9 +176,9 @@ Object {
 
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.1.0-alpha.0+SHA,
-  "package-2": 2.1.0-alpha.0+SHA,
-  "package-3": 3.1.0-alpha.0+SHA,
+  "package-1": 1.1.0-alpha.0.SHA,
+  "package-2": 2.1.0-alpha.0.SHA,
+  "package-3": 3.1.0-alpha.0.SHA,
 }
 `);
   });
@@ -204,7 +204,7 @@ Object {
     // there have been two commits since the beginning of the repo
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-6": 1.0.0-alpha.1+SHA,
+  "package-6": 1.0.0-alpha.1.SHA,
 }
 `);
   });
@@ -218,11 +218,11 @@ Object {
 
       expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
-  "package-4": 1.0.1-alpha.0+SHA,
-  "package-5": 1.0.1-alpha.0+SHA,
+  "package-1": 1.0.1-alpha.0.SHA,
+  "package-2": 1.0.1-alpha.0.SHA,
+  "package-3": 1.0.1-alpha.0.SHA,
+  "package-4": 1.0.1-alpha.0.SHA,
+  "package-5": 1.0.1-alpha.0.SHA,
 }
 `);
     });
@@ -235,9 +235,9 @@ Object {
 
       expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-3": 1.1.0-alpha.0+SHA,
-  "package-4": 1.1.0-alpha.0+SHA,
-  "package-5": 1.1.0-alpha.0+SHA,
+  "package-3": 1.1.0-alpha.0.SHA,
+  "package-4": 1.1.0-alpha.0.SHA,
+  "package-5": 1.1.0-alpha.0.SHA,
 }
 `);
     });
@@ -250,7 +250,7 @@ Object {
 
       expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-5": 2.0.0-alpha.0+SHA,
+  "package-5": 2.0.0-alpha.0.SHA,
 }
 `);
     });
@@ -269,7 +269,7 @@ Object {
 
       expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-5": 5.0.1-alpha.0+SHA,
+  "package-5": 5.0.1-alpha.0.SHA,
 }
 `);
     });
@@ -280,9 +280,9 @@ Object {
 
       expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-3": 3.0.1-alpha.1+SHA,
-  "package-4": 4.0.1-alpha.1+SHA,
-  "package-5": 5.0.1-alpha.1+SHA,
+  "package-3": 3.0.1-alpha.1.SHA,
+  "package-4": 4.0.1-alpha.1.SHA,
+  "package-5": 5.0.1-alpha.1.SHA,
 }
 `);
     });
@@ -293,11 +293,11 @@ Object {
 
       expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.2+SHA,
-  "package-2": 2.0.1-alpha.2+SHA,
-  "package-3": 3.0.1-alpha.2+SHA,
-  "package-4": 4.0.1-alpha.2+SHA,
-  "package-5": 5.0.1-alpha.2+SHA,
+  "package-1": 1.0.1-alpha.2.SHA,
+  "package-2": 2.0.1-alpha.2.SHA,
+  "package-3": 3.0.1-alpha.2.SHA,
+  "package-4": 4.0.1-alpha.2.SHA,
+  "package-5": 5.0.1-alpha.2.SHA,
 }
 `);
     });
@@ -308,9 +308,9 @@ Object {
 
       expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-3": 3.0.1-alpha.3+SHA,
-  "package-4": 4.0.1-alpha.3+SHA,
-  "package-5": 5.0.1-alpha.3+SHA,
+  "package-3": 3.0.1-alpha.3.SHA,
+  "package-4": 4.0.1-alpha.3.SHA,
+  "package-5": 5.0.1-alpha.3.SHA,
 }
 `);
     });
@@ -321,7 +321,7 @@ Object {
 
       expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-5": 5.0.1-alpha.4+SHA,
+  "package-5": 5.0.1-alpha.4.SHA,
 }
 `);
     });
@@ -348,10 +348,10 @@ Object {
 
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
-  "package-4": 1.0.1-alpha.0+SHA,
+  "package-1": 1.0.1-alpha.0.SHA,
+  "package-2": 1.0.1-alpha.0.SHA,
+  "package-3": 1.0.1-alpha.0.SHA,
+  "package-4": 1.0.1-alpha.0.SHA,
 }
 `);
   });
@@ -372,8 +372,8 @@ Object {
 
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-2": 2.0.1-alpha.0+SHA,
-  "package-3": 3.0.1-alpha.0+SHA,
+  "package-2": 2.0.1-alpha.0.SHA,
+  "package-3": 3.0.1-alpha.0.SHA,
 }
 `);
   });
@@ -421,10 +421,10 @@ Object {
 
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
     Object {
-      "package-1": 1.0.1-alpha.0+SHA,
-      "package-2": 1.0.1-alpha.0+SHA,
-      "package-3": 1.0.1-alpha.0+SHA,
-      "package-4": 1.0.1-alpha.0+SHA,
+      "package-1": 1.0.1-alpha.0.SHA,
+      "package-2": 1.0.1-alpha.0.SHA,
+      "package-3": 1.0.1-alpha.0.SHA,
+      "package-4": 1.0.1-alpha.0.SHA,
     }
   `);
   });
@@ -435,11 +435,11 @@ Object {
 
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
     Object {
-      "package-1": 1.0.1-alpha.0+SHA,
-      "package-2": 2.0.1-alpha.0+SHA,
-      "package-3": 3.0.1-alpha.0+SHA,
-      "package-4": 4.0.1-alpha.0+SHA,
-      "package-6": 0.1.1-alpha.0+SHA,
+      "package-1": 1.0.1-alpha.0.SHA,
+      "package-2": 2.0.1-alpha.0.SHA,
+      "package-3": 3.0.1-alpha.0.SHA,
+      "package-4": 4.0.1-alpha.0.SHA,
+      "package-6": 0.1.1-alpha.0.SHA,
     }
   `);
   });
@@ -465,8 +465,8 @@ Object {
 
     expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
     Object {
-      "package-1": 1.0.1-alpha.0+SHA,
-      "package-2": 2.0.1-alpha.0+SHA,
+      "package-1": 1.0.1-alpha.0.SHA,
+      "package-2": 2.0.1-alpha.0.SHA,
     }
   `);
   });
