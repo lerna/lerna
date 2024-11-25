@@ -292,16 +292,37 @@ export class Package {
    */
   async syncDistVersion(doSync: boolean) {
     if (doSync) {
-      const distPkg = path.join(this.contents, "package.json");
+      const distPkgPath = path.join(this.contents, "package.json");
 
-      if (distPkg !== this.manifestLocation && fs.existsSync(distPkg)) {
-        const pkg = await loadJsonFile<RawManifest>(distPkg);
-        pkg.version = this[PKG].version;
-        await writePkg(distPkg, pkg as any);
+      if (distPkgPath !== this.manifestLocation && fs.existsSync(distPkgPath)) {
+        const distPkg = await loadJsonFile<RawManifest>(distPkgPath);
+        const rootPkg = this[PKG];
+
+        distPkg.version = rootPkg.version;
+
+        this.updateDependenciesFromRoot(distPkg, rootPkg);
+
+        await writePkg(distPkgPath, distPkg as any);
       }
     }
 
     return this;
+  }
+
+  private updateDependenciesFromRoot(distPkg: RawManifest, rootPkg: RawManifest) {
+    const updateDependencies = (sourceDeps: Record<string, string>, targetDeps: Record<string, string>) => {
+      Object.keys(sourceDeps).forEach(dep => {
+        if (targetDeps[dep] !== sourceDeps[dep]) {
+          const resolved = npa.resolve(dep, sourceDeps[dep]);
+          this.updateLocalDependency(resolved as ExtendedNpaResult, sourceDeps[dep], '', { retainWorkspacePrefix: false });
+        }
+      });
+    };
+
+    updateDependencies(rootPkg.dependencies || {}, distPkg.dependencies || {});
+    updateDependencies(rootPkg.devDependencies || {}, distPkg.devDependencies || {});
+    updateDependencies(rootPkg.optionalDependencies || {}, distPkg.optionalDependencies || {});
+    updateDependencies(rootPkg.peerDependencies || {}, distPkg.peerDependencies || {});
   }
 
   getLocalDependency(
