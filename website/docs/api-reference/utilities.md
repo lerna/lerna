@@ -14,12 +14,14 @@ const utils = require("lerna/utils");
 
 ## `detectProjects()`
 
-The `detectProjects()` function creates the same project graph file mapping that Lerna uses under the covers to execute its commands. This is useful for writing your own scripts that need to operate on the same set of packages that Lerna would.
+The `detectProjects()` function creates the same project graph file mapping that Lerna uses under the covers to execute its commands. This is useful for writing your own scripts that need to operate on the same set of packages that Lerna would. You may pass a parameter for a custom working directory to the function if you need to use a different workspace root.
 
 ```js
+const path = require("path");
 const { detectProjects } = require("lerna/utils");
 
 const { projectGraph, projectFileMap } = await detectProjects();
+const { projectGraph, projectFileMap } = await detectProjects(path.resolve("./custom-workspace-root"));
 ```
 
 The `projectGraph` that is returned will be a `ProjectGraphWithPackages`, which is an extension of the `ProjectGraph` type from `@nx/devkit`. It contains additional metadata about projects that have `package.json` files. It also has a `localPackageDependencies` property that tracks internal npm dependencies between projects (as opposed to external npm dependencies that are downloaded from the registry).
