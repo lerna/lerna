@@ -22,7 +22,7 @@
     "format:check": "prettier --check '**/*.{js,ts,tsx,css,yml,json}'",
     "format:write": "prettier --write '**/*.{js,ts,tsx,css,yml,json}'",
     "integration": "nx integration integration --maxWorkers=2",
-    "lerna-release": "nx build lerna --no-dte && ts-node -P tools/scripts/tsconfig.scripts.json tools/scripts/lerna-release",
+    "lerna-release": "nx build lerna --no-dte --no-cloud && ts-node -P tools/scripts/tsconfig.scripts.json tools/scripts/lerna-release",
     "lint": "nx run-many -t lint",
     "local-registry": "tools/scripts/local-registry.sh",
     "test": "nx run-many -t test"
