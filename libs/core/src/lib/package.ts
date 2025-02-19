@@ -311,10 +311,12 @@ export class Package {
 
   private updateDependenciesFromRoot(distPkg: RawManifest, rootPkg: RawManifest) {
     const updateDependencies = (sourceDeps: Record<string, string>, targetDeps: Record<string, string>) => {
-      Object.keys(sourceDeps).forEach(dep => {
+      Object.keys(sourceDeps).forEach((dep) => {
         if (targetDeps[dep] !== sourceDeps[dep]) {
           const resolved = npa.resolve(dep, sourceDeps[dep]);
-          this.updateLocalDependency(resolved as ExtendedNpaResult, sourceDeps[dep], '', { retainWorkspacePrefix: false });
+          this.updateLocalDependency(resolved as ExtendedNpaResult, sourceDeps[dep], "", {
+            retainWorkspacePrefix: false,
+          });
         }
       });
     };

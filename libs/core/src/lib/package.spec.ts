@@ -186,8 +186,8 @@ describe("Package", () => {
     it("should indicate if the package is private", () => {
       const pkg = factory({ name: "not-private" });
       expect(pkg.private).toBe(false);
-      
-      pkg.private = true; 
+
+      pkg.private = true;
       expect(pkg.private).toBe(true);
     });
   });
@@ -196,8 +196,8 @@ describe("Package", () => {
     it("should get and set the lernaConfig", () => {
       const pkg = factory({ name: "lerna-package" });
       const config = { command: { publish: { directory: "dist" } } };
-      
-      pkg.lernaConfig = config; 
+
+      pkg.lernaConfig = config;
       expect(pkg.lernaConfig).toEqual(config);
     });
   });
