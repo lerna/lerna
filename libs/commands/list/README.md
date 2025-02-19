@@ -67,7 +67,7 @@ package-3
 
 ### `--ndjson`
 
-Show information as [newline-delimited JSON](http://ndjson.org).
+Show information as [newline-delimited JSON](https://github.com/ndjson/ndjson-spec).
 
 ```sh
 $ lerna ls --ndjson
