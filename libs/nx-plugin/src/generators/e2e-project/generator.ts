@@ -42,7 +42,6 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
     directory: normalizedOptions.projectDirectory,
     skipTsConfig: true,
     unitTestRunner: "jest",
-    projectNameAndRootFormat: "as-provided",
   });
 
   tree.delete(`${normalizedOptions.projectRoot}/README.md`);

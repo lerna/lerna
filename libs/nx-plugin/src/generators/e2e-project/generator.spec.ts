@@ -75,6 +75,7 @@ describe("e2e-project generator", () => {
       Object {
         "compilerOptions": Object {
           "module": "commonjs",
+          "moduleResolution": "node10",
           "outDir": "../../dist/out-tsc",
           "types": Array [
             "jest",
@@ -96,6 +97,7 @@ describe("e2e-project generator", () => {
       "export default {
         displayName: 'e2e-test',
         preset: '../../jest.preset.js',
+        testEnvironment: 'node',
         transform: {
           '^.+\\\\\\\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
         },
