@@ -1,3 +1,6 @@
+// Plugin isolation is not relevant to lerna
+process.env["NX_ISOLATE_PLUGINS"] = "false";
+
 import dedent from "dedent";
 import os from "node:os";
 import yargs from "yargs";
