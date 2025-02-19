@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.2.0](https://github.com/lerna/lerna/compare/v8.1.9...v8.2.0) (2025-02-19)
+
+### Bug Fixes
+
+- drop strip-ansi in favor of native stripVTControlCharacters ([#4095](https://github.com/lerna/lerna/issues/4095)) ([9e4ac9c](https://github.com/lerna/lerna/commit/9e4ac9cf720a72d2787a7572b88d12e52139a39b))
+
+### Features
+
+- allow custom working dir for detectProjects ([#4148](https://github.com/lerna/lerna/issues/4148)) ([08d1d0d](https://github.com/lerna/lerna/commit/08d1d0d50d5f4b2cabfacdd2a4396c77ea06d419))
+
 ## [8.1.9](https://github.com/lerna/lerna/compare/v8.1.8...v8.1.9) (2024-10-31)
 
 ### Bug Fixes
