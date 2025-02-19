@@ -35,7 +35,7 @@ describe("e2e-project generator", () => {
                   "command": "npm run e2e-build-package-publish",
                 },
                 Object {
-                  "command": "E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts) nx run-e2e-tests e2e-test",
+                  "command": "E2E_ROOT=$(npx ts-node --project tools/scripts/tsconfig.e2e.json tools/scripts/set-e2e-root.ts) nx run-e2e-tests e2e-test",
                 },
               ],
               "parallel": false,
@@ -60,7 +60,7 @@ describe("e2e-project generator", () => {
             "options": Object {
               "commands": Array [
                 Object {
-                  "command": "E2E_ROOT=$(npx ts-node tools/scripts/set-e2e-root.ts) nx run-e2e-tests e2e-test",
+                  "command": "E2E_ROOT=$(npx ts-node --project tools/scripts/tsconfig.e2e.json tools/scripts/set-e2e-root.ts) nx run-e2e-tests e2e-test",
                   "description": "This additional wrapper target exists so that we can ensure that the e2e tests run in a dedicated process with enough memory",
                 },
               ],
