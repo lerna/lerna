@@ -224,7 +224,7 @@ jobs:
 
       - name: Prepare e2e tests for task-runner
         if: ${{ steps.check_affected.outputs.is_affected }}
-        run: npx nx prepare-for-e2e e2e-run-task-runner
+        run: npx nx prepare-for-e2e e2e-run-task-runner --no-cloud
         shell: bash
 
       # - name: Run e2e tests for task-runner
