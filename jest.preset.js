@@ -1,5 +1,8 @@
-// eslint-disable-next-line import/no-extraneous-dependencies, node/no-unpublished-require
+/* eslint-disable */
 const nxPreset = require("@nx/jest/preset").default;
+const { workspaceRoot } = require("@nx/devkit");
+const { join } = require("node:path");
+/* eslint-enable */
 
 module.exports = {
   ...nxPreset,
@@ -16,4 +19,5 @@ module.exports = {
    * More info: https://jestjs.io/docs/upgrading-to-jest29#snapshot-format
    */
   snapshotFormat: { escapeString: true, printBasicPrototype: true },
+  globalSetup: join(workspaceRoot, "jest-global-setup.js"),
 };

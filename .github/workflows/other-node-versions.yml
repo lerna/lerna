@@ -78,34 +78,34 @@ jobs:
           git config --global user.email test@example.com
           git config --global user.name "Tester McPerson"
 
-      - name: Generate and configure GPG for signing commits and tags in E2E tests
-        run: |
-          # Generate a GPG key for test@example.com and store the output from stderr
-          GPG_OUTPUT=$(echo "Key-Type: default
-          Key-Length: 2048
-          Subkey-Type: default
-          Subkey-Length: 2048
-          Name-Real: Tester McPerson
-          Name-Email: test@example.com
-          Expire-Date: 0
-          %no-protection" | gpg --pinentry-mode loopback --batch --generate-key 2>&1)
+      # - name: Generate and configure GPG for signing commits and tags in E2E tests
+      #   run: |
+      #     # Generate a GPG key for test@example.com and store the output from stderr
+      #     GPG_OUTPUT=$(echo "Key-Type: default
+      #     Key-Length: 2048
+      #     Subkey-Type: default
+      #     Subkey-Length: 2048
+      #     Name-Real: Tester McPerson
+      #     Name-Email: test@example.com
+      #     Expire-Date: 0
+      #     %no-protection" | gpg --pinentry-mode loopback --batch --generate-key 2>&1)
 
-          # Find and extract the revocation file path from sdterr
-          REVOCATION_FILE=$(echo "$GPG_OUTPUT" | grep '.rev' | tr '\n' ' ' | awk -F "'" '{print $4}')
+      #     # Find and extract the revocation file path from sdterr
+      #     REVOCATION_FILE=$(echo "$GPG_OUTPUT" | grep '.rev' | tr '\n' ' ' | awk -F "'" '{print $4}')
 
-          # Get the GPG key ID and the full fingerprint
-          export GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | cut -d'/' -f2)
-          export GPG_FULL_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep "$GPG_KEY_ID" | grep -v "sec" | awk '{print $1}' | cut -d'/' -f2)
+      #     # Get the GPG key ID and the full fingerprint
+      #     export GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | cut -d'/' -f2)
+      #     export GPG_FULL_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep "$GPG_KEY_ID" | grep -v "sec" | awk '{print $1}' | cut -d'/' -f2)
 
-          # Export fingerprint and the path to the revocation file to GITHUB_ENV
-          # This allows the last step in this job to revoke and delete the key
-          echo "GPG_FULL_KEY_ID=$GPG_FULL_KEY_ID" >> $GITHUB_ENV
-          echo "REVOCATION_FILE=$REVOCATION_FILE" >> $GITHUB_ENV
+      #     # Export fingerprint and the path to the revocation file to GITHUB_ENV
+      #     # This allows the last step in this job to revoke and delete the key
+      #     echo "GPG_FULL_KEY_ID=$GPG_FULL_KEY_ID" >> $GITHUB_ENV
+      #     echo "REVOCATION_FILE=$REVOCATION_FILE" >> $GITHUB_ENV
 
-          # Setup git signing for commits and tags
-          git config commit.gpgsign true
-          git config tag.gpgsign true
-          git config --global user.signingkey $GPG_KEY_ID
+      #     # Setup git signing for commits and tags
+      #     git config commit.gpgsign true
+      #     git config tag.gpgsign true
+      #     git config --global user.signingkey $GPG_KEY_ID
 
       - name: Run parallel distributed builds and tests on each node version
         uses: jameshenry/parallel-bash-commands@v1
@@ -133,16 +133,16 @@ jobs:
         if: ${{ always() }}
         run: npx nx-cloud stop-all-agents
 
-      - name: Revoke and delete GPG key
-        # It's important that we always run this step, otherwise the key will remain active if any of the steps above fail
-        if: ${{ always() }}
-        run: |
-          # As instructed in the text of revocation file, there is a colon that needs to be removed manually
-          sed -i "s/:-----BEGIN PGP PUBLIC KEY BLOCK-----/-----BEGIN PGP PUBLIC KEY BLOCK-----/" $REVOCATION_FILE
+      # - name: Revoke and delete GPG key
+      #   # It's important that we always run this step, otherwise the key will remain active if any of the steps above fail
+      #   if: ${{ always() }}
+      #   run: |
+      #     # As instructed in the text of revocation file, there is a colon that needs to be removed manually
+      #     sed -i "s/:-----BEGIN PGP PUBLIC KEY BLOCK-----/-----BEGIN PGP PUBLIC KEY BLOCK-----/" $REVOCATION_FILE
 
-          # Revoke the key and delete it
-          gpg --yes --import $REVOCATION_FILE
-          gpg --batch --yes --delete-secret-and-public-key $GPG_FULL_KEY_ID
+      #     # Revoke the key and delete it
+      #     gpg --yes --import $REVOCATION_FILE
+      #     gpg --batch --yes --delete-secret-and-public-key $GPG_FULL_KEY_ID
 
   agents:
     name: Nx Cloud - Agent - node-${{ matrix.node }}-agent-${{ matrix.agent }}
@@ -165,34 +165,34 @@ jobs:
           git config --global user.email test@example.com
           git config --global user.name "Tester McPerson"
 
-      - name: Generate and configure GPG for signing commits and tags in E2E tests
-        run: |
-          # Generate a GPG key for test@example.com and store the output from stderr
-          GPG_OUTPUT=$(echo "Key-Type: default
-          Key-Length: 2048
-          Subkey-Type: default
-          Subkey-Length: 2048
-          Name-Real: Tester McPerson
-          Name-Email: test@example.com
-          Expire-Date: 0
-          %no-protection" | gpg --pinentry-mode loopback --batch --generate-key 2>&1)
+      # - name: Generate and configure GPG for signing commits and tags in E2E tests
+      #   run: |
+      #     # Generate a GPG key for test@example.com and store the output from stderr
+      #     GPG_OUTPUT=$(echo "Key-Type: default
+      #     Key-Length: 2048
+      #     Subkey-Type: default
+      #     Subkey-Length: 2048
+      #     Name-Real: Tester McPerson
+      #     Name-Email: test@example.com
+      #     Expire-Date: 0
+      #     %no-protection" | gpg --pinentry-mode loopback --batch --generate-key 2>&1)
 
-          # Find and extract the revocation file path from sdterr
-          REVOCATION_FILE=$(echo "$GPG_OUTPUT" | grep '.rev' | tr '\n' ' ' | awk -F "'" '{print $4}')
+      #     # Find and extract the revocation file path from sdterr
+      #     REVOCATION_FILE=$(echo "$GPG_OUTPUT" | grep '.rev' | tr '\n' ' ' | awk -F "'" '{print $4}')
 
-          # Get the GPG key ID and the full fingerprint
-          export GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | cut -d'/' -f2)
-          export GPG_FULL_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep "$GPG_KEY_ID" | grep -v "sec" | awk '{print $1}' | cut -d'/' -f2)
+      #     # Get the GPG key ID and the full fingerprint
+      #     export GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | cut -d'/' -f2)
+      #     export GPG_FULL_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep "$GPG_KEY_ID" | grep -v "sec" | awk '{print $1}' | cut -d'/' -f2)
 
-          # Export fingerprint and the path to the revocation file to GITHUB_ENV
-          # This allows the last step in this job to revoke and delete the key
-          echo "GPG_FULL_KEY_ID=$GPG_FULL_KEY_ID" >> $GITHUB_ENV
-          echo "REVOCATION_FILE=$REVOCATION_FILE" >> $GITHUB_ENV
+      #     # Export fingerprint and the path to the revocation file to GITHUB_ENV
+      #     # This allows the last step in this job to revoke and delete the key
+      #     echo "GPG_FULL_KEY_ID=$GPG_FULL_KEY_ID" >> $GITHUB_ENV
+      #     echo "REVOCATION_FILE=$REVOCATION_FILE" >> $GITHUB_ENV
 
-          # Setup git signing for commits and tags
-          git config commit.gpgsign true
-          git config tag.gpgsign true
-          git config --global user.signingkey $GPG_KEY_ID
+      #     # Setup git signing for commits and tags
+      #     git config commit.gpgsign true
+      #     git config tag.gpgsign true
+      #     git config --global user.signingkey $GPG_KEY_ID
 
       - name: Install node v${{ matrix.node }} and dependencies
         uses: ./.github/actions/install-node-and-dependencies
@@ -209,13 +209,13 @@ jobs:
         env:
           NX_AGENT_NAME: node-${{ matrix.node }}-agent-${{ matrix.agent }}
 
-      - name: Revoke and delete GPG key
-        # It's important that we always run this step, otherwise the key will remain active if any of the steps above fail
-        if: ${{ always() }}
-        run: |
-          # As instructed in the text of revocation file, there is a colon that needs to be removed manually
-          sed -i "s/:-----BEGIN PGP PUBLIC KEY BLOCK-----/-----BEGIN PGP PUBLIC KEY BLOCK-----/" $REVOCATION_FILE
+      # - name: Revoke and delete GPG key
+      #   # It's important that we always run this step, otherwise the key will remain active if any of the steps above fail
+      #   if: ${{ always() }}
+      #   run: |
+      #     # As instructed in the text of revocation file, there is a colon that needs to be removed manually
+      #     sed -i "s/:-----BEGIN PGP PUBLIC KEY BLOCK-----/-----BEGIN PGP PUBLIC KEY BLOCK-----/" $REVOCATION_FILE
 
-          # Revoke the key and delete it
-          gpg --yes --import $REVOCATION_FILE
-          gpg --batch --yes --delete-secret-and-public-key $GPG_FULL_KEY_ID
+      #     # Revoke the key and delete it
+      #     gpg --yes --import $REVOCATION_FILE
+      #     gpg --batch --yes --delete-secret-and-public-key $GPG_FULL_KEY_ID
