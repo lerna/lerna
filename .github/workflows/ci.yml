@@ -192,7 +192,7 @@ jobs:
     env:
       # Silently disable nx cloud for task runner e2e (using NX_NO_CLOUD produces a warning log)
       NX_CLOUD_ACCESS_TOKEN: ""
-      NX_CI_EXECUTION_ENV: "linux"
+      # NX_CI_EXECUTION_ENV: "linux"
       NX_CLOUD_DISTRIBUTED_EXECUTION: false
     steps:
       - uses: actions/checkout@v4
