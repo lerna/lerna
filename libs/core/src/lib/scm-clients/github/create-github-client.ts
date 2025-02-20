@@ -1,4 +1,4 @@
-import { Octokit } from "@octokit/rest";
+import { type Octokit } from "@octokit/rest";
 import parseGitUrl from "git-url-parse";
 import log from "../../npmlog";
 import { ValidationError } from "../../validation-error";
@@ -21,6 +21,7 @@ export function createGitHubClient(): Octokit {
     );
   }
 
+  const { Octokit } = require("@octokit/rest");
   if (GHE_VERSION) {
     // eslint-disable-next-line
     Octokit.plugin(require(`@octokit/plugin-enterprise-rest/ghe-${GHE_VERSION}`));
