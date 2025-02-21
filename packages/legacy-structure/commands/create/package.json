@@ -35,7 +35,7 @@
     "@npmcli/run-script": "8.1.0",
     "@nx/devkit": ">=17.1.2 < 21",
     "@octokit/plugin-enterprise-rest": "6.0.1",
-    "@octokit/rest": "19.0.11",
+    "@octokit/rest": "21.1.1",
     "aproba": "2.0.0",
     "byte-size": "8.1.1",
     "chalk": "4.1.0",

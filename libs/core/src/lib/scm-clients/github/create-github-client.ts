@@ -1,4 +1,4 @@
-import { Octokit } from "@octokit/rest";
+import { type Octokit } from "@octokit/rest";
 import parseGitUrl from "git-url-parse";
 import log from "../../npmlog";
 import { ValidationError } from "../../validation-error";
@@ -20,7 +20,8 @@ export function createGitHubClient(): Octokit {
       `A GH_TOKEN environment variable is required when "createRelease" is set to "github"`
     );
   }
-
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { Octokit } = require("@octokit/rest");
   if (GHE_VERSION) {
     // eslint-disable-next-line
     Octokit.plugin(require(`@octokit/plugin-enterprise-rest/ghe-${GHE_VERSION}`));

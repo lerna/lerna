@@ -1,7 +1,12 @@
 import { Octokit } from "@octokit/rest";
 import { createGitHubClient, parseGitRepo } from "./create-github-client";
 
-jest.mock("@octokit/rest");
+jest.mock("@octokit/rest", () => {
+  const Octokit: any = jest.fn().mockImplementation(() => ({}));
+  Octokit.plugin = jest.fn();
+  return { Octokit };
+});
+
 jest.mock("@lerna/child-process");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
