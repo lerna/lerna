@@ -20,7 +20,7 @@ export function createGitHubClient(): Octokit {
       `A GH_TOKEN environment variable is required when "createRelease" is set to "github"`
     );
   }
-
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { Octokit } = require("@octokit/rest");
   if (GHE_VERSION) {
     // eslint-disable-next-line
