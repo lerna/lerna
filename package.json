@@ -7,9 +7,8 @@
     "packages/legacy-structure/commands/create"
   ],
   "volta": {
-    "node": "20.18.0",
-    "yarn": "1.22.19",
-    "npm": "10.8.0"
+    "node": "20.18.3",
+    "yarn": "1.22.19"
   },
   "packageManager": "npm@10.8.0",
   "engines": {
