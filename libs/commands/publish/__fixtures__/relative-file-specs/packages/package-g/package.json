@@ -1,0 +1,7 @@
+{
+  "name": "package-g",
+  "version": "1.0.0",
+  "peerDependencies": {
+    "package-1": "workspace:2.3.4"
+  }
+}
