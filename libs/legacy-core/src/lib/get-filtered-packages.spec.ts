@@ -23,7 +23,7 @@ async function buildGraph(cwd: string) {
 }
 
 function parseOptions(...args: string[]) {
-  return filterOptions(yargs().exitProcess(false).showHelpOnFail(false)).parse(args);
+  return filterOptions(yargs().locale('en').exitProcess(false).showHelpOnFail(false)).parse(args);
 }
 
 // working dir is never mutated

@@ -259,6 +259,7 @@ export class Project {
           },
         },
         searchPlaces: ["lerna.json", "package.json"],
+        searchStrategy: "global", // Fix breaking change behaviour in cosmiconfig@9.0.0
         transform(obj) {
           // cosmiconfig returns null when nothing is found
           if (!obj) {
