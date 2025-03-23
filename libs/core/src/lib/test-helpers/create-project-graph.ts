@@ -1,7 +1,6 @@
 // We always need fresh copies of the graph in the unit test fixtures
 process.env.NX_DAEMON = "false";
 process.env.NX_CACHE_PROJECT_GRAPH = "false";
-process.env.NX_ISOLATE_PLUGINS = "false";
 
 import { ProjectGraphDependency, ProjectGraphProjectNode } from "@nx/devkit";
 import { resetWorkspaceContext } from "nx/src/utils/workspace-context";
