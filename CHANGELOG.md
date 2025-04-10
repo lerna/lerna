@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.2](https://github.com/lerna/lerna/compare/v8.2.1...v8.2.2) (2025-04-10)
+
+### Bug Fixes
+
+- use searchStrategy: global to fix breaking change behaviour after upgrading cosmiconfig to 9.0.0 ([#4159](https://github.com/lerna/lerna/issues/4159)) ([6242511](https://github.com/lerna/lerna/commit/62425117d45b12c0c7ae33c038c9b7f8c3d8a6fd))
+- **version:** disable legacy peer deps behavior by default ([#4175](https://github.com/lerna/lerna/issues/4175)) ([0cd3241](https://github.com/lerna/lerna/commit/0cd32410a0b264b63103f3bf5081420fe332e773))
+
 ## [8.2.1](https://github.com/lerna/lerna/compare/v8.2.0...v8.2.1) (2025-03-03)
 
 **Note:** Version bump only for package lerna-monorepo

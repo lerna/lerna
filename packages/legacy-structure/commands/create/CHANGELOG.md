@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.2](https://github.com/lerna/lerna/compare/v8.2.1...v8.2.2) (2025-04-10)
+
+**Note:** Version bump only for package @lerna/create
+
 ## [8.2.1](https://github.com/lerna/lerna/compare/v8.2.0...v8.2.1) (2025-03-03)
 
 **Note:** Version bump only for package @lerna/create
