@@ -63,7 +63,6 @@
     "make-dir": "4.0.0",
     "minimatch": "3.0.5",
     "multimatch": "5.0.0",
-    "node-fetch": "2.6.7",
     "npm-package-arg": "11.0.2",
     "npm-packlist": "8.0.2",
     "npm-registry-fetch": "^17.1.0",
