@@ -33,13 +33,13 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org",
   "devDependencies": {
-    "@nx/esbuild": "20.4.5",
-    "@nx/eslint": "20.4.5",
-    "@nx/eslint-plugin": "20.4.5",
-    "@nx/jest": "20.4.5",
-    "@nx/js": "20.4.5",
-    "@nx/plugin": "20.4.5",
-    "@nx/web": "20.4.5",
+    "@nx/esbuild": "20.7.2",
+    "@nx/eslint": "20.7.2",
+    "@nx/eslint-plugin": "20.7.2",
+    "@nx/jest": "20.7.2",
+    "@nx/js": "20.7.2",
+    "@nx/plugin": "20.7.2",
+    "@nx/web": "20.7.2",
     "@swc-node/register": "1.10.9",
     "@swc/core": "1.10.18",
     "@types/byte-size": "^8.1.2",
@@ -82,7 +82,7 @@
     "esbuild": "0.25.0",
     "eslint": "8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "9.1.0",
+    "eslint-config-prettier": "10.1.2",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jest": "^28.6.0",
     "eslint-plugin-node": "^11.1.0",
@@ -94,7 +94,7 @@
     "lodash": "^4.17.21",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
-    "nx": "20.4.5",
+    "nx": "20.7.2",
     "prettier": "^2.2.1",
     "tacks": "1.2.6",
     "signal-exit": "3.0.7",
@@ -104,6 +104,6 @@
     "ts-jest": "29.1.5",
     "ts-node": "10.9.2",
     "typescript": "5.7.3",
-    "verdaccio": "^6.0.5"
+    "verdaccio": "6.1.2"
   }
 }
