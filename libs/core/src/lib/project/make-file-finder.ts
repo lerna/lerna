@@ -1,4 +1,4 @@
-import globby from "globby";
+import { glob, globSync, GlobOptions } from "tinyglobby";
 import pMap from "p-map";
 import path from "path";
 import { ValidationError } from "../validation-error";
@@ -7,7 +7,7 @@ function normalize(results: string[]) {
   return results.map((fp) => path.normalize(fp));
 }
 
-function getGlobOpts(rootPath: string, packageConfigs: any[]): globby.GlobbyOptions {
+function getGlobOpts(rootPath: string, packageConfigs: any[]): GlobOptions {
   const globOpts = {
     cwd: rootPath,
     absolute: true,
@@ -41,7 +41,7 @@ export function makeFileFinder(rootPath: string, packageConfigs: any[]) {
     const promise = pMap(
       Array.from(packageConfigs).sort(),
       (globPath: string) => {
-        let chain = globby(path.posix.join(globPath, fileName), options);
+        let chain = glob(path.posix.join(globPath, fileName), options);
 
         // fast-glob does not respect pattern order, so we re-sort by absolute path
         chain = chain.then((results) => results.sort());
@@ -72,7 +72,7 @@ export function makeSyncFileFinder(rootPath: string, packageConfigs: any[]) {
   return <T>(fileName: string, fileMapper: (filePath: string) => T): T[] => {
     const patterns = packageConfigs.map((globPath) => path.posix.join(globPath, fileName)).sort();
 
-    let results = globby.sync(patterns, globOpts);
+    let results = globSync(patterns, globOpts);
 
     // POSIX results always need to be normalized
     results = normalize(results);

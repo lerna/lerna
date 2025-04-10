@@ -1,5 +1,5 @@
 import { cliRunner, initFixtureFactory } from "@lerna/test-helpers";
-import globby from "globby";
+import { glob } from "tinyglobby";
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -18,7 +18,7 @@ lerna info clean removing __TEST_ROOTDIR__/packages/package-3/node_modules
 lerna success clean finished
 `);
 
-    const found = await globby(["package-*/node_modules"], { cwd, onlyDirectories: true });
+    const found = await glob(["package-*/node_modules"], { cwd, onlyDirectories: true });
     expect(found).toEqual([]);
   });
 });

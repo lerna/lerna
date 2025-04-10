@@ -1,6 +1,6 @@
 import { Fixture, normalizeCommitSHAs, normalizeEnvironment, trimEnds } from "@lerna/e2e-utils";
 import { ensureDir, writeFile } from "fs-extra";
-import globby from "globby";
+import { glob } from "tinyglobby";
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const randomVersion = () => `${randomInt(10, 89)}.${randomInt(10, 89)}.${randomInt(10, 89)}`;
@@ -222,7 +222,7 @@ describe("lerna-publish-custom-publish-directories", () => {
 
       `);
 
-      const files = await globby("**/*", {
+      const files = await glob("**/*", {
         cwd: fixture.getWorkspacePath("dist"),
         onlyFiles: false,
         onlyDirectories: false,
@@ -385,7 +385,7 @@ describe("lerna-publish-custom-publish-directories", () => {
 
       `);
 
-      const files = await globby("**/*", {
+      const files = await glob("**/*", {
         cwd: fixture.getWorkspacePath("dist"),
         onlyFiles: false,
         onlyDirectories: false,
@@ -542,7 +542,7 @@ describe("lerna-publish-custom-publish-directories", () => {
 
       `);
 
-      const files = await globby("**/*", {
+      const files = await glob("**/*", {
         cwd: fixture.getWorkspacePath("dist"),
         onlyFiles: false,
         onlyDirectories: false,
