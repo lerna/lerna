@@ -14,6 +14,8 @@ describe("InitCommand", () => {
 
   beforeEach(() => {
     tree = createTree();
+    // Delete the .prettierrc file in the Nx test tree to avoid confusion with changes within tests
+    tree.delete(".prettierrc");
   });
 
   describe("in an empty directory", () => {
