@@ -82,7 +82,6 @@ function attempt<T extends Record<string, unknown>>(
               // update the otp and release the lock so that waiting
               // callers can see the updated otp.
               if (otpCache != null) {
-                // eslint-disable-next-line no-param-reassign
                 otpCache.otp = otp;
               }
               semaphore.release();

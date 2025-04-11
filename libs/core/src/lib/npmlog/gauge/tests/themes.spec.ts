@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
-// eslint-disable-next-line jest/no-export
 export {};
 
 const themes = require("../themes");

@@ -1,7 +1,6 @@
 import path from "path";
 import { envReplace } from "./env-replace";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { types } = require("./types");
 
 // https://github.com/npm/npm/blob/latest/lib/config/core.js#L362-L407

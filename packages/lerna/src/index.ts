@@ -1,8 +1,6 @@
 // Plugin isolation is not relevant to lerna
 process.env["NX_ISOLATE_PLUGINS"] = "false";
 
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 // Currently external until the usage of LERNA_MODULE_DATA can be refactored
 const createCmd = require("@lerna/create/command");
 

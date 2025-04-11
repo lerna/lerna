@@ -16,12 +16,10 @@ import { URL } from "url";
 import { camelCase } from "yargs-parser";
 import { execSync } from "@lerna/child-process";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const initPackageJson = require("init-package-json");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { builtinNpmrc } = require("./lib/builtin-npmrc");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const { catFile } = require("./lib/cat-file");
 
 const LERNA_MODULE_DATA = require.resolve(path.join(__dirname, "./lib/lerna-module-data.js"));
@@ -408,7 +406,6 @@ class CreateCommand extends Command {
 
       \`\`\`
       ${
-        // eslint-disable-next-line no-nested-ternary
         this.options.bin
           ? dedent`
             npm -g i ${this.pkgName}

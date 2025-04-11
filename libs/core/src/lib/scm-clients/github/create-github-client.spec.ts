@@ -4,7 +4,6 @@ import { createGitHubClient, parseGitRepo } from "./create-github-client";
 jest.mock("@octokit/rest");
 jest.mock("@lerna/child-process");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 childProcess.execSync.mockReturnValue("5.6.0");

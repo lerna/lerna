@@ -5,7 +5,6 @@ import ini from "ini";
 import { join } from "path";
 import { dirSync } from "tmp";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const CC = require("../index").ConfigChain;
 
 const tmpDir = dirSync();
@@ -18,7 +17,6 @@ const f2data = { oof: { rab: "zab" }, oolb: "suaj" };
 fs.writeFileSync(f1, ini.stringify(f1data), "utf8");
 fs.writeFileSync(f2, JSON.stringify(f2data), "utf8");
 
-// eslint-disable-next-line jest/no-done-callback
 test("saving and loading ini files", (done) => {
   new CC()
     .add({ grelb: "blerg" }, "opt")

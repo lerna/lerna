@@ -9,8 +9,6 @@ import { Packed } from "./pack-directory";
 // symbol used to "hide" internal state
 const PKG = Symbol("pkg");
 
-/* eslint-disable no-underscore-dangle */
-
 // private fields
 const _location = Symbol("location");
 const _resolved = Symbol("resolved");
@@ -188,7 +186,6 @@ export class Package {
     return path.join(this.location, "node_modules");
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get __isLernaPackage() {
     // safer than instanceof across module boundaries
     return true;

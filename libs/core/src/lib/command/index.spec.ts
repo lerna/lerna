@@ -4,7 +4,6 @@
 import log from "../npmlog";
 import { createProjectGraph } from "../test-helpers/create-project-graph";
 
-/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require("fs-extra");
 const path = require("path");
 const tempy = require("tempy");
@@ -16,7 +15,6 @@ const os = require("os");
 // normalize concurrency across different environments (localhost, CI, etc)
 jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@nx/devkit", () => ({
   ...jest.requireActual("@nx/devkit"),
   createProjectGraphAsync: () =>
@@ -29,7 +27,7 @@ jest.mock("@nx/devkit", () => ({
 }));
 
 // helpers
-/* eslint-disable @nx/enforce-module-boundaries */
+
 // nx-ignore-next-line
 const { loggingOutput, updateLernaConfig, initFixtureFactory } = require("@lerna/test-helpers");
 const initFixture = initFixtureFactory(__dirname);

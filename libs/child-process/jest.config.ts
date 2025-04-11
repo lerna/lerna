@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: "child-process",
   preset: "../../jest.preset.js",

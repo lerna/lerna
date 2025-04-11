@@ -309,7 +309,6 @@ export class RunCommand extends Command<RunCommandConfigOptions> {
   private async prepNxOptions() {
     const nxJsonExists = existsSync(path.join(this.project.rootPath, "nx.json"));
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { readNxJson } = require("nx/src/config/configuration");
     const nxJson = readNxJson();
     const targetDependenciesAreDefined =
@@ -399,7 +398,6 @@ export class RunCommand extends Command<RunCommandConfigOptions> {
 
   private configureNxOutput() {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const nxOutput = require("nx/src/utils/output");
       nxOutput.output.cliName = "Lerna (powered by Nx)";
       nxOutput.output.formatCommand = (taskId: string) => taskId;

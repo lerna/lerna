@@ -70,7 +70,6 @@ const command: CommandModule = {
     return filterOptions(yargs);
   },
   handler(argv) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require(".")(argv);
   },
 };

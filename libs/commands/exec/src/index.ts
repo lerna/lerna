@@ -12,7 +12,6 @@ import {
 } from "@lerna/core";
 import pMap from "p-map";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 export function factory(argv: Arguments<ExecCommandConfigOptions>) {

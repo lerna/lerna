@@ -6,7 +6,6 @@ import path from "path";
 
 const initFixture = initFixtureFactory(__dirname);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 expect.extend(require("@lerna/test-helpers/src/lib/pkg-matchers"));
 
 // extend jest types with custom matcher toDependOn

@@ -54,7 +54,6 @@ export { ValidationError } from "./lib/validation-error";
 export { default as log, Logger } from "./lib/npmlog";
 export { npmConf, npmDistTag };
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const npmConf = require("./lib/npm-conf");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const npmDistTag = require("./lib/npm-dist-tag");

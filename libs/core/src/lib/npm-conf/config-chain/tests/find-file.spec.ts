@@ -4,7 +4,6 @@ import fs from "fs";
 import { join } from "path";
 import { dirSync } from "tmp";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const cc = require("../index");
 
 const objx = {

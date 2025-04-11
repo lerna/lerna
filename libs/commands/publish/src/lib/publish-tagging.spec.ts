@@ -7,7 +7,6 @@ import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
 jest.mock("@lerna/core", () => {
-  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
   const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
@@ -15,7 +14,6 @@ jest.mock("@lerna/core", () => {
   };
 });
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 // lerna publish mocks
@@ -41,7 +39,7 @@ const collectUpdates = _collectUpdates as any;
 const initFixture = initFixtureFactory(__dirname);
 
 // test command
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaPublish = commandRunner(require("../command"));
 
 describe("publish tagging", () => {

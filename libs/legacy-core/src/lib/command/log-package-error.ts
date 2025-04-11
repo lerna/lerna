@@ -25,6 +25,6 @@ export function logPackageError(err: any, stream = false) {
 
 function directLog(message: string) {
   log.pause();
-  console.error(message); // eslint-disable-line no-console
+  console.error(message);
   log.resume();
 }

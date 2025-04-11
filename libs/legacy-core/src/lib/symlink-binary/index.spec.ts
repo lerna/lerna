@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { Package } from "@lerna/core";
-/* eslint-disable @nx/enforce-module-boundaries */
+
 // nx-ignore-next-line
 import { initFixtureFactory } from "@lerna/test-helpers";
 import path from "path";

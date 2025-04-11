@@ -3,7 +3,6 @@ import { commandRunner, initFixtureFactory, showCommit } from "@lerna/test-helpe
 import path from "path";
 import { makePromptVersion } from "./prompt-version";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 const promptTextInput = jest.mocked(_promptTextInput);
@@ -30,7 +29,7 @@ const versionPrompt = (buildMetadata) => makePromptVersion(resolvePrereleaseId, 
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../publish/__tests__"));
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaVersion = commandRunner(require("../command"));
 
 describe("--build-metadata without prompt", () => {

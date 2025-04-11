@@ -12,7 +12,6 @@ expect.addSnapshotSerializer({
 });
 
 // TODO: re-enable test
-// eslint-disable-next-line jest/no-disabled-tests
 describe.skip("lerna-run-nx-pnpm", () => {
   const fixtureRootPath = process.env.FIXTURE_ROOT_PATH;
   let fixture: Fixture;

@@ -34,7 +34,6 @@ import pPipe from "p-pipe";
 import path, { basename, join, normalize } from "path";
 import semver, { ReleaseType } from "semver";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const versionCommand = require("@lerna/commands/version");
 
 import { copy } from "fs-extra";
@@ -849,7 +848,6 @@ class PublishCommand extends Command {
     const scriptLocation = path.join(pkg.location, "scripts", script);
 
     try {
-      // eslint-disable-next-line import/no-dynamic-require, global-require
       require(scriptLocation);
     } catch (ex) {
       this.logger.silly("execScript", `No ${script} script found at ${scriptLocation}`);

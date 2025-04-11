@@ -8,7 +8,6 @@ import path from "path";
 // Serialize the JSONError output to be more human readable
 expect.addSnapshotSerializer({
   serialize(str: string) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const util = require("node:util");
     return util
       .stripVTControlCharacters(str)

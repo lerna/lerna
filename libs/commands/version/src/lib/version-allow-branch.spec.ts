@@ -2,7 +2,6 @@ import { commandRunner, gitSHASerializer, initFixtureFactory } from "@lerna/test
 import execa from "execa";
 import path from "path";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 jest.mock("./git-push");
@@ -20,7 +19,7 @@ jest.mock("./remote-branch-exists", () => ({
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaVersion = commandRunner(require("../command"));
 
 // stabilize commit SHA

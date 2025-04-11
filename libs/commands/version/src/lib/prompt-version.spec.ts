@@ -6,7 +6,6 @@ import {
 import semver from "semver";
 import { makePromptVersion } from "./prompt-version";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 const promptTextInput = jest.mocked(_promptTextInput);

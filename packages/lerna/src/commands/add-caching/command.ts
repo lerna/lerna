@@ -10,7 +10,6 @@ const command: CommandModule = {
     return yargs;
   },
   handler(argv) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require(".")(argv);
   },
 };

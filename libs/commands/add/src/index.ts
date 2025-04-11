@@ -11,9 +11,8 @@ import pacote from "pacote";
 import path from "path";
 import semver from "semver";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const bootstrap = require("@lerna/commands/bootstrap");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const { getRangeToReference } = require("./lib/get-range-to-reference");
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {

@@ -1,7 +1,7 @@
 jest.mock("@lerna/child-process");
 
 // mocked modules
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const childProcess = require("@lerna/child-process");
 
 // file under test

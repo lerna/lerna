@@ -1,5 +1,4 @@
 /* eslint-disable prefer-rest-params */
-/* eslint-disable @typescript-eslint/no-var-requires */
 
 import log from "../";
 import { TrackerGroup } from "../are-we-there-yet/tracker-group";

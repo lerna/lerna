@@ -1,7 +1,5 @@
-/* eslint-disable jest/no-conditional-expect */
-/* eslint-disable @typescript-eslint/no-var-requires, prefer-rest-params */
+/* eslint-disable prefer-rest-params */
 
-// eslint-disable-next-line jest/no-export
 import { Gauge } from "../index";
 
 const stream = require("readable-stream");
@@ -80,7 +78,6 @@ describe("construct", () => {
 });
 
 describe("show & pulse: fixedframerate", () => {
-  // eslint-disable-next-line jest/no-done-callback
   it("should show and pulse with fixed framerate", (done) => {
     const testtimeout = setTimeout(() => {
       done();
@@ -120,7 +117,6 @@ describe("show & pulse: fixedframerate", () => {
 });
 
 describe("window resizing", () => {
-  // eslint-disable-next-line jest/no-done-callback
   it("should handle window resizing", (done) => {
     const testtimeout = setTimeout(() => {
       done();
@@ -176,7 +172,6 @@ function collectResults(
 }
 
 describe("hideCursor:true", () => {
-  // eslint-disable-next-line jest/no-done-callback
   it("should hide cursor when enabled", (done) => {
     // @ts-expect-error ...
     const output = new Sink();
@@ -207,7 +202,6 @@ describe("hideCursor:true", () => {
 });
 
 describe("hideCursor:false", () => {
-  // eslint-disable-next-line jest/no-done-callback
   it("should not hide cursor when disabled", (done) => {
     // @ts-expect-error ...
     const output = new Sink();

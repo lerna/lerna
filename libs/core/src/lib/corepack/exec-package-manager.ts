@@ -2,7 +2,6 @@ import { ExecOptions } from "child_process";
 import { ExecaReturnValue } from "execa";
 import { isCorepackEnabled } from "./is-corepack-enabled";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 function createCommandAndArgs(npmClient: string, args: string[]) {

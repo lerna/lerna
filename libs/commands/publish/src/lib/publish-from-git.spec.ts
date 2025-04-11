@@ -7,7 +7,6 @@ import {
 import { commandRunner, gitTag, initFixtureFactory, loggingOutput } from "@lerna/test-helpers";
 
 jest.mock("@lerna/core", () => {
-  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
   const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
@@ -48,7 +47,7 @@ const npmPublish = _npmPublish as any;
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaPublish = commandRunner(require("../command"));
 
 describe("publish from-git", () => {

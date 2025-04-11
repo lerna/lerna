@@ -4,7 +4,6 @@ import path from "path";
 import { Conf } from "./conf";
 import { toNerfDart } from "./nerf-dart";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { defaults } = require("./defaults");
 
 module.exports = npmConf;

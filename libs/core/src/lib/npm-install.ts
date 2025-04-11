@@ -5,7 +5,6 @@ import writePkg from "write-pkg";
 import { getNpmExecOpts } from "./get-npm-exec-opts";
 import log from "./npmlog";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 module.exports.npmInstallDependencies = npmInstallDependencies;

@@ -14,7 +14,6 @@ require("@lerna/test-helpers/src/lib/silence-logging");
 // actually _run_ the lifecycles, gorrammit
 jest.unmock("./run-lifecycle");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const npmConf = require("./npm-conf");
 
 const initFixture = initFixtureFactory(__dirname);
@@ -68,7 +67,6 @@ expect.addSnapshotSerializer({
       return '"SHASUM"';
     }
 
-    /* eslint-disable no-param-reassign */
     if (depth) {
       // nested file objects
       val.mode = "MODE";
@@ -76,7 +74,6 @@ expect.addSnapshotSerializer({
       // bloody tar algorithms
       val.size = "TAR_SIZE";
     }
-    /* eslint-enable no-param-reassign */
 
     let result = "Object {";
     result += printObjectProperties(val, config, indentation, depth, refs, printer);

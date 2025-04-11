@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: "legacy-core",
   preset: "../../jest.preset.js",

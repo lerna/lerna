@@ -1,9 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const cc = require("../index");
 
-// eslint-disable-next-line jest/no-done-callback
 test("chain load event", (done) => {
   const chain = cc();
   const name = "forFun";

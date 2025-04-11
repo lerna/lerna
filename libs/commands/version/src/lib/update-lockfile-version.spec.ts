@@ -5,7 +5,6 @@ import _loadJsonFile from "load-json-file";
 import path from "path";
 import { updateLockfileVersion } from "./update-lockfile-version";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("load-json-file", () => require("@lerna/test-helpers/__mocks__/load-json-file"));
 
 // The mocked version isn't the same as the real one

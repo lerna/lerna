@@ -36,7 +36,6 @@ Successfully published:
  - package-6@1.0.0
 `);
 
-  /* eslint-disable max-len */
   const patch = await showCommit(cwd);
   expect(patch).toMatchInlineSnapshot(`
 Publish

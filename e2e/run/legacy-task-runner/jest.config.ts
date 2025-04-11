@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: "e2e-run-legacy-task-runner",
   preset: "../../../jest.preset.js",

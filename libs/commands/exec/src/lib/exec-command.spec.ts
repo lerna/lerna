@@ -7,11 +7,11 @@ import path from "path";
 const initFixture = initFixtureFactory(__dirname);
 
 // mocked modules
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const childProcess = require("@lerna/child-process");
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaExec = commandRunner(require("../command"));
 
 // assertion helpers

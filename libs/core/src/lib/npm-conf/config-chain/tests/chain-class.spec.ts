@@ -4,7 +4,6 @@ import fs from "fs";
 import http from "http";
 import ini from "ini";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const CC = require("../index").ConfigChain;
 
 const env = { foo_blaz: "blzaa", foo_env: "myenv" };
@@ -43,7 +42,6 @@ http
   })
   .listen(1337);
 
-// eslint-disable-next-line jest/no-done-callback
 test("basic class test", (done) => {
   const cc = new CC();
   const expectlist = [

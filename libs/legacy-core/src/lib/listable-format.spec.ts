@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { ListableOptions, Package, Project } from "@lerna/core";
 import { loggingOutput, tempDirSerializer, windowsPathSerializer } from "@lerna/test-helpers";

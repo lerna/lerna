@@ -49,7 +49,6 @@ import { makePromptVersion } from "./lib/prompt-version";
 import { remoteBranchExists } from "./lib/remote-branch-exists";
 import { updateLockfileVersion } from "./lib/update-lockfile-version";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 module.exports = function factory(
@@ -265,7 +264,6 @@ class VersionCommand extends Command {
         this.pushToRemote &&
         isBehindUpstream(this.gitRemote, this.currentBranch, this.execOpts)
       ) {
-        // eslint-disable-next-line max-len
         const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${this.currentBranch}`;
 
         if (!this.options.ci) {

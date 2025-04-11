@@ -183,8 +183,8 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
       runner = runner.then(argv.onResolved, argv.onRejected);
 
       // when nested, never resolve inner with outer callbacks
-      delete argv.onResolved; // eslint-disable-line no-param-reassign
-      delete argv.onRejected; // eslint-disable-line no-param-reassign
+      delete argv.onResolved;
+      delete argv.onRejected;
     }
 
     // "hide" irrelevant argv keys from options
@@ -238,7 +238,6 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   }
 
   configureEnvironment() {
-    // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
     const ci = require("is-ci");
     let loglevel;
     let progress;

@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const normalizeNewline = require("normalize-newline");
 import { gitSHASerializer } from "./serialize-git-sha";
 

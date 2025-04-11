@@ -311,7 +311,6 @@ export class PackageGraph extends Map<string, PackageGraphNode> {
       }
 
       if (walkStack.indexOf(topLevelDependent) === -1) {
-        // eslint-disable-next-line no-use-before-define
         visitWithStack(baseNode, topLevelDependent);
       }
     }

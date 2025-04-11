@@ -10,7 +10,6 @@ jest.mock("@npmcli/package-json");
 jest.mock("libnpmpublish");
 jest.mock("fs-extra");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { load: readJSON } = require("@npmcli/package-json");
 
 // helpers

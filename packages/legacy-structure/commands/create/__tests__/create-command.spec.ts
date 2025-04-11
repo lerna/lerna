@@ -12,7 +12,7 @@ const pacote = jest.mocked(_pacote);
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaCreate = commandRunner(require("../src/command"));
 
 // stabilize commit SHA

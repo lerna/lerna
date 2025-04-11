@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { execSync } = require("@lerna/child-process");
 import { ExecOptions } from "child_process";
 import minimatch from "minimatch";

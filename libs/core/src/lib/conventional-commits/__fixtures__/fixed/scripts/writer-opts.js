@@ -2,7 +2,6 @@
 
 module.exports = {
   transform: (commit, context) => {
-    /* eslint-disable no-param-reassign */
     let discard = true;
     const issues = [];
 
@@ -74,7 +73,6 @@ module.exports = {
     });
 
     return commit;
-    /* eslint-enable no-param-reassign */
   },
   groupBy: `type`,
   commitGroupsSort: `title`,

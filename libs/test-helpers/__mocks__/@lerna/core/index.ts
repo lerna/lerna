@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 const checkWorkingTree = require("./check-working-tree");
 const conventionalCommits = require("./conventional-commits");
 const { output } = require("./output");

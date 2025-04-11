@@ -1,4 +1,3 @@
-/* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { FilterOptions, filterOptions, getPackages } from "@lerna/core";
 import { initFixtureFactory } from "@lerna/test-helpers";

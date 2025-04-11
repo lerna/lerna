@@ -83,7 +83,6 @@ export function filterOptions<T extends FilterOptions>(yargs: Argv<object>): Arg
       type: "boolean",
     })
     .check((argv) => {
-      /* eslint-disable no-param-reassign */
       if (argv["includeFilteredDependents"]) {
         argv["includeDependents"] = true;
         argv["include-dependents"] = true;
@@ -99,7 +98,6 @@ export function filterOptions<T extends FilterOptions>(yargs: Argv<object>): Arg
         delete argv["include-filtered-dependencies"];
         log.warn("deprecated", "--include-filtered-dependencies has been renamed --include-dependencies");
       }
-      /* eslint-enable no-param-reassign */
 
       return argv;
     }) as Argv<T>;

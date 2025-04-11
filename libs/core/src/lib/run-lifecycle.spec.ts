@@ -8,9 +8,8 @@ require("@lerna/test-helpers/src/lib/silence-logging");
 
 jest.mock("@npmcli/run-script", () => jest.fn(() => Promise.resolve({ stdout: "" })));
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const runScript = require("@npmcli/run-script");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const npmConf = require("./npm-conf");
 
 describe("runLifecycle()", () => {

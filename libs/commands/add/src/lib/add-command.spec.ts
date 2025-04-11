@@ -1,24 +1,23 @@
 import { getPackages } from "@lerna/core";
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const bootstrap = require("@lerna/commands/bootstrap");
 
 jest.mock("@lerna/commands/bootstrap", () => jest.fn());
 jest.mock("pacote");
 
 // mocked or stubbed modules
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const pacote = require("pacote");
 
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaAdd = commandRunner(require("../command"));
 
 // assertion helpers
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 expect.extend(require("@lerna/test-helpers/src/lib/pkg-matchers"));
 
 // extend jest types with custom matcher toDependOn

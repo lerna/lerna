@@ -1,7 +1,3 @@
-/* eslint-disable jest/no-conditional-expect */
-/* eslint-disable @typescript-eslint/no-var-requires */
-
-// eslint-disable-next-line jest/no-export
 export {};
 
 const ThemeSet = require("../theme-set");

@@ -1,7 +1,6 @@
 import type { CommandModule } from "yargs";
 
 function handler(argv: any) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   return require(".")(argv);
 }
 

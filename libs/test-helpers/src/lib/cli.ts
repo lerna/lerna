@@ -15,8 +15,6 @@ export function commandRunner(commandModule: yargs.CommandModule) {
   // @ts-ignore
   const cmd = commandModule.command.split(" ")[0];
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-
   try {
     // prime the pump so slow-as-molasses CI doesn't fail with delayed require()
     // TODO: refactor to address type issues
@@ -125,7 +123,6 @@ export function cliRunner(cwd: string, env?: any) {
     // stdio: ["ignore", "inherit", "inherit"],
   };
 
-  // eslint-disable-next-line node/no-unpublished-require, node/no-missing-require
   const LERNA_BIN = require.resolve(join(__dirname, "../../../../", "packages/lerna/dist/cli"));
 
   return (...args: any[]) => execa("node", [LERNA_BIN].concat(args), opts);

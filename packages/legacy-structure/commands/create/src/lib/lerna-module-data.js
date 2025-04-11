@@ -102,7 +102,6 @@ if (!this.package.keywords) {
         }
 
         if (Array.isArray(data)) {
-          // eslint-disable-next-line no-param-reassign
           data = data.join(" ");
         }
 

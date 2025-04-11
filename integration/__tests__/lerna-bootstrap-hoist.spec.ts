@@ -8,7 +8,6 @@ test("lerna bootstrap --hoist", async () => {
   const cwd = await initFixture("lerna-bootstrap");
   const lerna = cliRunner(cwd);
 
-  /* eslint-disable max-len */
   const { stderr } = await lerna("bootstrap", "--concurrency=1", "--no-ci", "--hoist");
   expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__

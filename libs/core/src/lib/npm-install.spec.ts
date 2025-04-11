@@ -8,7 +8,6 @@ jest.mock("fs-extra");
 jest.mock("write-pkg");
 jest.mock("@lerna/child-process");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 const fs = jest.mocked(_fs);

@@ -61,7 +61,6 @@ export function add(
     return otplease((wrappedPayload) => fetch(uri, wrappedPayload as any), payload, otpCache).then(() => {
       opts.log.verbose("dist-tag", `added "${cleanTag}" to ${name}@${version}`);
 
-      // eslint-disable-next-line no-param-reassign
       tags[cleanTag] = version;
 
       return tags;
@@ -106,7 +105,6 @@ export function remove(spec: string, tag: string, options: DistTagOptions, otpCa
     return otplease((wrappedPayload) => fetch(uri, wrappedPayload as any), payload, otpCache).then(() => {
       opts.log.verbose("dist-tag", `removed "${tag}" from ${opts.spec.name}@${version}`);
 
-      // eslint-disable-next-line no-param-reassign
       delete tags[tag];
 
       return tags;
@@ -145,7 +143,6 @@ function fetchTags(opts: Omit<fetch.FetchOptions, "spec"> & { spec: npa.Result }
     })
     .then((data) => {
       if (data && typeof data === "object") {
-        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
         delete data["_etag"];
       }
 

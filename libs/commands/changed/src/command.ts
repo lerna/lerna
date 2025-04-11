@@ -50,7 +50,6 @@ const command: CommandModule = {
     return listableOptions(yargs, "Output Options:");
   },
   async handler(argv) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     return (await import(".")).factory(argv);
   },
 };

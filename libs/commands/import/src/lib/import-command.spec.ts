@@ -16,11 +16,10 @@ const promptConfirmation = jest.mocked(_promptConfirmation);
 const initFixture = initFixtureFactory(__dirname);
 const initNamedFixture = initNamedFixtureFactory(__dirname);
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaImport = commandRunner(require("../command"));
 
 // assertion helpers

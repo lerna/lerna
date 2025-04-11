@@ -156,7 +156,6 @@ describe("lerna-version-build-metadata", () => {
       });
       await fixture.createInitialGitCommit();
       fixture.updateJson("lerna.json", (json) => {
-        // eslint-disable-next-line no-param-reassign
         json.version = "independent";
         return json;
       });
