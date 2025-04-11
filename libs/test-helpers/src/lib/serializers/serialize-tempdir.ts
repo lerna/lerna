@@ -1,7 +1,6 @@
 import path from "path";
 import { Config } from "pretty-format";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const normalizePath = require("normalize-path");
 
 // tempy creates subdirectories with hexadecimal names that are 32 characters long

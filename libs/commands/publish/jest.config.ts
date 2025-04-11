@@ -2,7 +2,6 @@ import { workspaceRoot } from "@nx/devkit";
 import { join } from "node:path";
 import { pathsToModuleNameMapper } from "ts-jest";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const compilerOptions = require(join(workspaceRoot, "tsconfig.base.json")).compilerOptions;
 
 export default {

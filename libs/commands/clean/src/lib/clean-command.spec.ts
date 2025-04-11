@@ -6,10 +6,9 @@ import path from "path";
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaClean = commandRunner(require("../command"));
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 const promptConfirmation = jest.mocked(_promptConfirmation);

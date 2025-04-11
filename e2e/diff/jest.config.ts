@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: "e2e-diff",
   preset: "../../jest.preset.js",

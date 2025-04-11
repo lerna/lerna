@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
-// eslint-disable-next-line jest/no-export
 export {};
 
 const renderTemplate = require("../render-template");
@@ -47,7 +44,6 @@ describe("renderTemplate", () => {
       result = renderTemplate(10, [{ type: "xyzzy" }, "static"], {});
       throw new Error("Test failed"); // intentionally throw error if no error is caught
     } catch (e) {
-      // eslint-disable-next-line jest/no-conditional-expect
       expect(e).toBeDefined(); // missing type
     }
 

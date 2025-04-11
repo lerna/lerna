@@ -1,6 +1,5 @@
 import { mapToRegistry } from "./map-to-registry";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const npmConf = require("./npm-conf");
 
 // override value provided by @lerna/test-helpers/src/lib/npm/set-npm-userconfig, ensuring blank slate

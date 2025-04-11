@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: "packages-nx-plugin",
   preset: "../../jest.preset.js",

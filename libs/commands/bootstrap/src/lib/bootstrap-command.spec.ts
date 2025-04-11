@@ -15,9 +15,8 @@ import {
 import fs from "fs-extra";
 import path from "path";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
-// eslint-disable-next-line jest/no-mocks-import
+
 jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 const npmInstall = jest.mocked(_npmInstall);
@@ -29,7 +28,7 @@ const hasNpmVersion = jest.mocked(_hasNpmVersion);
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaBootstrap = commandRunner(require("../command"));
 
 // The mocked runLifecycle is a little different than the real thing

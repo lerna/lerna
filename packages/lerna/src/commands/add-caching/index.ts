@@ -34,7 +34,7 @@ class AddCachingCommand extends Command {
         "add-caching",
         "The `add-caching` command is only available when using the Nx task runner (do not set `useNx` to `false` in `lerna.json`)"
       );
-      // eslint-disable-next-line no-process-exit
+
       process.exit(1);
     }
 

@@ -9,11 +9,9 @@ import fs from "fs-extra";
 import path from "path";
 import _writePkg from "write-pkg";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
 jest.mock("@lerna/core", () => ({
-  // eslint-disable-next-line jest/no-mocks-import
   ...require("@lerna/test-helpers/__mocks__/@lerna/core"),
   gitCheckout: jest.requireActual("@lerna/core").gitCheckout,
 }));
@@ -61,7 +59,7 @@ const output = _output as jest.MockedFunction<typeof _output> & { logged: () => 
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaPublish = commandRunner(require("../command"));
 
 describe("publish from-package", () => {

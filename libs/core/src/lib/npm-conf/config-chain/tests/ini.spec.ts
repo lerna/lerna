@@ -2,7 +2,6 @@
 // @ts-nocheck
 import ini from "ini";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const cc = require("../index");
 
 test("Testing parse equivalence", () => {

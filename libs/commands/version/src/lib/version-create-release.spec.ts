@@ -6,7 +6,6 @@ import {
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 import { isEqual } from "lodash";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 jest.mock("./git-add");
@@ -48,7 +47,7 @@ const recommendVersion = _recommendVersion as any;
 const initFixture = initFixtureFactory(__dirname);
 
 // test command
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaVersion = commandRunner(require("../command"));
 
 describe.each([

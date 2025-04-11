@@ -7,7 +7,6 @@ jest.mock("./set-exit-code", () => {
   return { setExitCode };
 });
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { setExitCode } = require("./set-exit-code");
 
 describe("childProcess", () => {

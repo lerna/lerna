@@ -2,7 +2,6 @@ import chalk from "chalk";
 
 import npmlog from "./npmlog";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 interface UncommittedConfig {
@@ -24,8 +23,7 @@ const splitOnNewLine = (str: string) => str.split("\n");
 
 const filterEmpty = (lines: string[]) => lines.filter((line) => line.length);
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const o = (l: Function, r: Function) => (x: unknown) => l(r(x));
+const o = (l: any, r: any) => (x: unknown) => l(r(x));
 
 const transformOutput = o(filterEmpty, o(splitOnNewLine, colorizeStats));
 

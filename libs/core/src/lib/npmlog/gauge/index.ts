@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 /**
  * Adapted from deprecated package https://github.com/npm/gauge/blob/f8092518a47ac6a96027ae3ad97d0251ffe7643b/lib/index.js
  */
@@ -251,6 +249,7 @@ export class Gauge {
     }
     this._showing = false;
     this._doRedraw();
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     cb && setImmediate(cb);
   }
 

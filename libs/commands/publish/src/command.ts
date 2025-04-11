@@ -1,7 +1,6 @@
 import { log } from "@lerna/core";
 import type { CommandModule } from "yargs";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const versionCommand = require("@lerna/commands/version/command");
 
 function composeVersionOptions(yargs: any) {
@@ -184,7 +183,6 @@ const command: CommandModule = {
         type: "boolean",
       })
       .check((argv) => {
-        /* eslint-disable no-param-reassign */
         if (argv["npmTag"]) {
           argv["distTag"] = argv["npmTag"];
           argv["dist-tag"] = argv["npmTag"];
@@ -192,20 +190,17 @@ const command: CommandModule = {
           delete argv["npm-tag"];
           log.warn("deprecated", "--npm-tag has been renamed --dist-tag");
         }
-        /* eslint-enable no-param-reassign */
 
         return argv;
       })
       .middleware((args) => {
         const { includePrivate } = args;
         if (includePrivate && Array.isArray(includePrivate)) {
-          // eslint-disable-next-line no-param-reassign
           args["includePrivate"] = includePrivate.reduce((acc, pkg) => [...acc, ...pkg.split(/[\s,]/)], []);
         }
       }, true);
   },
   handler(argv) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require(".")(argv);
   },
 };

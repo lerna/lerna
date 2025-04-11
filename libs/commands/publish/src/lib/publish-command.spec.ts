@@ -13,7 +13,6 @@ import fs from "fs-extra";
 import path from "path";
 import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 // lerna publish mocks
@@ -50,7 +49,7 @@ import { verifyNpmPackageAccess } from "./verify-npm-package-access";
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaPublish = commandRunner(require("../command"));
 
 const getNpmUsername = _getNpmUsername as jest.MockedFunction<typeof _getNpmUsername>;

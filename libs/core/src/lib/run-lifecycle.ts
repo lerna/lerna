@@ -3,10 +3,9 @@ import log from "./npmlog";
 import { Package } from "./package";
 
 // @npmcli/run-script does not have any types
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const runScript = require("@npmcli/run-script");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const npmConf = require("./npm-conf");
 
 const queue = new PQueue({ concurrency: 1 });
@@ -42,7 +41,6 @@ function flattenOptions(obj: any): LifecycleConfig {
  * Modified to add back "path" and make it behave more like "npm-lifecycle"
  */
 function printCommandBanner(id: string, event: string, cmd: string, path: string) {
-  // eslint-disable-next-line no-console
   return console.log(`\n> ${id ? `${id} ` : ""}${event} ${path}\n> ${cmd.trim().replace(/\n/g, "\n> ")}\n`);
 }
 
@@ -101,11 +99,11 @@ export function runLifecycle(pkg: Package, stage: string, options: LifecycleConf
   }
 
   /* istanbul ignore else */
-  // eslint-disable-next-line no-underscore-dangle
+
   if (pkg.__isLernaPackage) {
     // To ensure npm-lifecycle creates the correct npm_package_* env vars,
     // we must pass the _actual_ JSON instead of our fancy Package thingy
-    // eslint-disable-next-line no-param-reassign
+
     pkg = pkg.toJSON();
   }
 
@@ -147,7 +145,7 @@ export function runLifecycle(pkg: Package, stage: string, options: LifecycleConf
            * This adjustment is based on trying to match the existing integration test outputs when migrating
            * from "npm-lifecycle" to "@npmcli/run-script".
            */
-          // eslint-disable-next-line no-console
+
           process.stdout.write(stdout.toString().trimEnd() + "\n");
         }
 

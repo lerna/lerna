@@ -21,7 +21,6 @@ const command: CommandModule = {
       .middleware((args) => {
         const { "--": doubleDash } = args;
         if (doubleDash && Array.isArray(doubleDash)) {
-          // eslint-disable-next-line no-param-reassign
           args.command = doubleDash.join(" ");
         }
       }, true);
@@ -29,7 +28,6 @@ const command: CommandModule = {
     return filterOptions(yargs);
   },
   handler(argv) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require(".")(argv);
   },
 };

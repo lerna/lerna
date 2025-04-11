@@ -6,7 +6,6 @@ import { RawManifest } from "../package";
 import { createProjectGraph, projectNode } from "../test-helpers/create-project-graph";
 import { createProjectGraphWithPackages, resolvePackage } from "./create-project-graph-with-packages";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const fsExtra = require("fs-extra");
 
 jest.mock("@nx/devkit", () => ({

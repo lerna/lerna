@@ -8,7 +8,7 @@ import { parseField } from "./parse-field";
 import { toNerfDart } from "./nerf-dart";
 
 // config-chain does not have types
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const { ConfigChain } = require("./config-chain");
 
 export class Conf extends ConfigChain {
@@ -23,7 +23,6 @@ export class Conf extends ConfigChain {
   // https://github.com/npm/npm/blob/latest/lib/config/core.js#L332-L342
   add(data: any, marker: string) {
     try {
-      /* eslint-disable no-param-reassign */
       for (const x of Object.keys(data)) {
         // https://github.com/npm/npm/commit/f0e998d
         const newKey = envReplace(x) as any;
@@ -32,7 +31,6 @@ export class Conf extends ConfigChain {
         delete data[x];
         data[newKey] = newField;
       }
-      /* eslint-enable no-param-reassign */
     } catch (err) {
       throw err;
     }

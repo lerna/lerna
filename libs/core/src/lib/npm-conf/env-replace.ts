@@ -11,7 +11,6 @@ export function envReplace(str: any) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return str.replace(regex, (orig, esc, name) => {
-    // eslint-disable-next-line no-param-reassign
     esc = esc.length > 0 && esc.length % 2;
 
     if (esc) {

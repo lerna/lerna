@@ -45,7 +45,7 @@ export function getNpmUsername(options: Partial<FetchConfig> = {}): Promise<stri
   function failure(err) {
     // Log the error cleanly to stderr
     opts.log.pause();
-    console.error(err.message); // eslint-disable-line no-console
+    console.error(err.message);
     opts.log.resume();
 
     if (opts.registry === "https://registry.npmjs.org/") {

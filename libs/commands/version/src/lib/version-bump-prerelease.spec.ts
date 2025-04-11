@@ -28,7 +28,7 @@ jest.mock("./remote-branch-exists", () => ({
 
 jest.mock("@lerna/core", () => {
   const realCore = jest.requireActual("@lerna/core");
-  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
+
   const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
@@ -49,7 +49,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish
 const { File, Dir } = Tacks;
 
 // test command
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaVersion = commandRunner(require("../command"));
 
 // remove quotes around top-level strings

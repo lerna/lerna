@@ -3,7 +3,6 @@
 const fs = require("fs");
 const path = require("path");
 const semver = require("semver");
-// eslint-disable-next-line import/no-unresolved, node/no-missing-require
 const { Package } = require("@lerna/core");
 
 exports.toDependOn = createDependencyMatcher("dependencies");
@@ -150,7 +149,6 @@ function toHaveExecutables(received, ...files) {
   const expectedAction = "to be executable";
   const expectation = `${expectedFiles} ${expectedAction}`;
 
-  // eslint-disable-next-line prefer-destructuring
   const X_OK = (fs.constants || fs).X_OK;
   const failed = files.filter((file) => {
     try {

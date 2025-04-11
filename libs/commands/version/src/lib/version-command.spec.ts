@@ -23,10 +23,8 @@ import fs from "fs-extra";
 import path from "path";
 import _writePkg from "write-pkg";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 jest.mock("./git-push");
@@ -72,7 +70,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish
 const collectUpdatesActual = jest.requireActual("@lerna/core").collectProjectUpdates;
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaVersion = commandRunner(require("../command"));
 
 // assertion helpers

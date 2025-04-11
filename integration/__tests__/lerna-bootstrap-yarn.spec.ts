@@ -1,6 +1,6 @@
 import { cliRunner, initFixtureFactory } from "@lerna/test-helpers";
-import globby from "globby";
 import normalizePath from "normalize-path";
+import { glob } from "tinyglobby";
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -35,7 +35,7 @@ package-3 cli2 package-2 OK
   const config = {
     cwd,
   };
-  const lockfiles = await globby(["package-*/yarn.lock"], config);
+  const lockfiles = await glob(["package-*/yarn.lock"], config);
   expect(lockfiles.sort().map((fp) => normalizePath(fp))).toEqual([
     "package-1/yarn.lock",
     "package-2/yarn.lock",

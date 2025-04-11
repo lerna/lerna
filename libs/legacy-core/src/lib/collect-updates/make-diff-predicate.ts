@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 import { log } from "@lerna/core";
 import minimatch from "minimatch";

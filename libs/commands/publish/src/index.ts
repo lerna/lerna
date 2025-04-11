@@ -34,11 +34,10 @@ import pPipe from "p-pipe";
 import path, { basename, join, normalize } from "path";
 import semver, { ReleaseType } from "semver";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const versionCommand = require("@lerna/commands/version");
 
 import { copy } from "fs-extra";
-import globby from "globby";
+import { glob } from "tinyglobby";
 import npa from "npm-package-arg";
 import { createTempLicenses } from "./lib/create-temp-licenses";
 import { getCurrentSHA } from "./lib/get-current-sha";
@@ -849,7 +848,6 @@ class PublishCommand extends Command {
     const scriptLocation = path.join(pkg.location, "scripts", script);
 
     try {
-      // eslint-disable-next-line import/no-dynamic-require, global-require
       require(scriptLocation);
     } catch (ex) {
       this.logger.silly("execScript", `No ${script} script found at ${scriptLocation}`);
@@ -1157,8 +1155,8 @@ class PublishCommand extends Command {
       to: string;
     }[] = [];
 
-    const getFiles = (glob: string) =>
-      globby(glob, {
+    const getFiles = (assetGlob: string) =>
+      glob(assetGlob, {
         cwd: pkg.location,
         onlyFiles: false,
         expandDirectories: false,

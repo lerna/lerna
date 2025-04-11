@@ -13,13 +13,13 @@ import fs from "fs-extra";
 import path from "path";
 
 // mocked modules
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const childProcess = require("@lerna/child-process");
 
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaDiff = commandRunner(require("../command"));
 
 // stabilize commit SHA

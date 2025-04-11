@@ -2,7 +2,6 @@ import { ProjectGraphProjectNodeWithPackage, log } from "@lerna/core";
 import { ProjectFileMap } from "@nx/devkit";
 import { ExecOptions } from "child_process";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 /**

@@ -2,7 +2,6 @@ import { log, tempWrite } from "@lerna/core";
 import { ExecOptions } from "child_process";
 import { EOL } from "os";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 export interface GitCommitOptions {

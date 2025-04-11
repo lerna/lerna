@@ -3,9 +3,7 @@ import { tempDirSerializer } from "./serialize-tempdir";
 import { windowsPathSerializer } from "./serialize-windows-paths";
 import { Config, Refs, Printer } from "pretty-format";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const normalizeNewline = require("normalize-newline");
-// eslint-disable-next-line node/no-unpublished-require, import/no-unresolved, node/no-missing-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
 const LERNA_VERSION = require(path.join(__dirname, "../../../../../", "packages/lerna/package.json")).version;
 
 const VERSION_REGEX = new RegExp(`^((?:.*?notice cli )|\\^?)v?${LERNA_VERSION}`, "g");
@@ -55,7 +53,7 @@ export const placeholderSerializer: jest.SnapshotSerializerPlugin = {
     }
 
     // object properties only contain versions
-    // eslint-disable-next-line no-param-reassign
+
     thing.lerna = stableVersion(thing.lerna);
 
     return printer(thing, config, indentation, depth, refs);

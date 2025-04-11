@@ -31,7 +31,6 @@ interface InitCommandOptions extends CommandConfigOptions {
   skipInstall?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 const PACKAGE_GLOB = "packages/*";

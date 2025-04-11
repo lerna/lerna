@@ -11,45 +11,44 @@ const logInfoEvents: any[] = [];
 const logPrefixEvents: any[] = [];
 
 const resultExpect = [
-  // eslint-disable-next-line max-len
   '\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[7msill\u001b[0m \u001b[0m\u001b[35msilly prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[36;40mverb\u001b[0m \u001b[0m\u001b[35mverbose prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32minfo\u001b[0m \u001b[0m\u001b[35minfo prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32;40mtiming\u001b[0m \u001b[0m\u001b[35mtiming prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32;40mhttp\u001b[0m \u001b[0m\u001b[35mhttp prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[36;40mnotice\u001b[0m \u001b[0m\u001b[35mnotice prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[30;43mWARN\u001b[0m \u001b[0m\u001b[35mwarn prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35merror prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32minfo\u001b[0m \u001b[0m\u001b[35minfo prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32;40mtiming\u001b[0m \u001b[0m\u001b[35mtiming prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[32;40mhttp\u001b[0m \u001b[0m\u001b[35mhttp prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[36;40mnotice\u001b[0m \u001b[0m\u001b[35mnotice prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[30;43mWARN\u001b[0m \u001b[0m\u001b[35mwarn prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   '\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35merror prefix\u001b[0m x = {"foo":{"bar":"baz"}}\n',
-  // eslint-disable-next-line max-len
+
   "\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35m404\u001b[0m This is a longer\n",
-  // eslint-disable-next-line max-len
+
   "\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35m404\u001b[0m message, with some details\n",
-  // eslint-disable-next-line max-len
+
   "\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35m404\u001b[0m and maybe a stack.\n",
-  // eslint-disable-next-line max-len
+
   "\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u001b[31;40mERR!\u001b[0m \u001b[0m\u001b[35m404\u001b[0m \n",
-  // eslint-disable-next-line max-len
+
   "\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u0007noise\u001b[0m\u001b[35m\u001b[0m LOUD NOISES\n",
-  // eslint-disable-next-line max-len
+
   "\u001b[0m\u001b[37;40mnpm\u001b[0m \u001b[0m\u0007noise\u001b[0m \u001b[0m\u001b[35merror\u001b[0m erroring\n",
   "\u001b[0m",
 ];
@@ -282,7 +281,6 @@ const logEventsExpect = [
   { id: 29, level: "noise", prefix: "error", message: "erroring", messageRaw: ["erroring"] },
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Stream = require("stream").Stream;
 const s = new Stream();
 s.write = function (m: any) {
@@ -390,7 +388,7 @@ describe("Basic Tests", () => {
 
     test("themes", () => {
       const _themes = log.gauge._themes;
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
+
       const themes = require("../gauge/themes");
       const newThemes = themes.newThemeSet();
       log.setGaugeThemeset(newThemes);
@@ -428,7 +426,6 @@ describe("Basic Tests", () => {
   });
 
   describe("log.log", () => {
-    // eslint-disable-next-line jest/no-done-callback
     test("emits error on bad loglevel", (done) => {
       log.once("error", (err: { message: any }) => {
         expect(err.message).toMatch(/Undefined log level: "asdf"/);
@@ -437,7 +434,6 @@ describe("Basic Tests", () => {
       log.log("asdf", "bad loglevel");
     });
 
-    // eslint-disable-next-line jest/no-done-callback
     test("resolves stack traces to a plain string", (done) => {
       log.once("log", (m: { message: any }) => {
         expect(m.message).toMatch("Error: with a stack trace");

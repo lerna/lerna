@@ -48,7 +48,6 @@ const setupYarnBerry = async (fixture: Fixture) => {
 };
 
 // TODO: re-enable test
-// eslint-disable-next-line jest/no-disabled-tests
 describe.skip("lerna-version-yarn-lockfiles", () => {
   let fixture: Fixture;
 
@@ -91,7 +90,7 @@ describe.skip("lerna-version-yarn-lockfiles", () => {
        - package-a: 0.0.0 => 3.3.3
        - package-b: 0.0.0 => 3.3.3
 
-      lerna info auto-confirmed 
+      lerna info auto-confirmed
       lerna info execute Skipping releases
       lerna info git Pushing tags...
       lerna success version finished

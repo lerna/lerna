@@ -8,7 +8,7 @@ jest.mock("fs-extra");
 const fs = jest.mocked(_fs);
 
 // read-cmd-shim does not have any types
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const readCmdShim = require("read-cmd-shim");
 
 const linkRelative = (from: string, to: string) => path.relative(path.dirname(to), from);

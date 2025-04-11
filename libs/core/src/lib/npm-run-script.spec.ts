@@ -2,7 +2,6 @@ import { npmRunScript, npmRunScriptStreaming } from "./npm-run-script";
 
 jest.mock("@lerna/child-process");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 describe("npm-run-script", () => {

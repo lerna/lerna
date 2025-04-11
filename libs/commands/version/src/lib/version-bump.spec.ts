@@ -2,7 +2,6 @@ import { promptSelectOne as _promptSelectOne } from "@lerna/core";
 import { commandRunner, getCommitMessage, initFixtureFactory } from "@lerna/test-helpers";
 import path from "path";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 jest.mock("./git-push");
@@ -24,7 +23,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish
 const promptSelectOne = _promptSelectOne as any;
 
 // test command
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaVersion = commandRunner(require("../command"));
 
 describe("version bump", () => {

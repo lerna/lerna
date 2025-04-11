@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: "legacy-structure-commands-create",
   preset: "../../../../jest.preset.js",

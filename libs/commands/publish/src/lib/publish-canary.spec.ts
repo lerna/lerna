@@ -16,7 +16,6 @@ import fs from "fs-extra";
 import path from "path";
 import _writePkg from "write-pkg";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 // local modules _must_ be explicitly mocked
@@ -31,11 +30,9 @@ jest.mock("./get-two-factor-auth-required");
 
 const initFixture = initFixtureFactory(__dirname);
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
 jest.mock("@lerna/core", () => {
-  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
   const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
@@ -53,7 +50,7 @@ const npmPublish = _npmPublish as any;
 const writePkg = _writePkg as any;
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaPublish = commandRunner(require("../command"));
 
 // stabilize commit SHA

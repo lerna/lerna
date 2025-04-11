@@ -1,6 +1,6 @@
 import { Fixture, normalizeCommitSHAs, normalizeEnvironment, trimEnds } from "@lerna/e2e-utils";
 import { ensureDir, writeFile } from "fs-extra";
-import globby from "globby";
+import { glob } from "tinyglobby";
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const randomVersion = () => `${randomInt(10, 89)}.${randomInt(10, 89)}.${randomInt(10, 89)}`;
@@ -222,26 +222,27 @@ describe("lerna-publish-custom-publish-directories", () => {
 
       `);
 
-      const files = await globby("**/*", {
+      const files = await glob("**/*", {
         cwd: fixture.getWorkspacePath("dist"),
         onlyFiles: false,
         onlyDirectories: false,
+        expandDirectories: false,
       });
       expect(files.sort().join("\n")).toMatchInlineSnapshot(`
-        packages
-        packages/package-1
-        packages/package-1/lib
+        packages/
+        packages/package-1/
+        packages/package-1/lib/
         packages/package-1/lib/main.js
         packages/package-1/package.json
-        packages/package-2
+        packages/package-2/
         packages/package-2/CONTRIBUTING.md
-        packages/package-2/assets
+        packages/package-2/assets/
         packages/package-2/assets/image-1.png
         packages/package-2/assets/image-2.png
-        packages/package-2/docs
+        packages/package-2/docs/
         packages/package-2/docs/doc-1.md
         packages/package-2/docs/doc-2.md
-        packages/package-2/lib
+        packages/package-2/lib/
         packages/package-2/lib/main.js
         packages/package-2/package.json
       `);
@@ -385,20 +386,21 @@ describe("lerna-publish-custom-publish-directories", () => {
 
       `);
 
-      const files = await globby("**/*", {
+      const files = await glob("**/*", {
         cwd: fixture.getWorkspacePath("dist"),
         onlyFiles: false,
         onlyDirectories: false,
+        expandDirectories: false,
       });
       expect(files.sort().join("\n")).toMatchInlineSnapshot(`
-        packages
-        packages/package-1
-        packages/package-1/lib
+        packages/
+        packages/package-1/
+        packages/package-1/lib/
         packages/package-1/lib/main.js
         packages/package-1/package-1.txt
         packages/package-1/package.json
-        packages/package-2
-        packages/package-2/lib
+        packages/package-2/
+        packages/package-2/lib/
         packages/package-2/lib/main.js
         packages/package-2/package.json
       `);
@@ -542,15 +544,16 @@ describe("lerna-publish-custom-publish-directories", () => {
 
       `);
 
-      const files = await globby("**/*", {
+      const files = await glob("**/*", {
         cwd: fixture.getWorkspacePath("dist"),
         onlyFiles: false,
         onlyDirectories: false,
+        expandDirectories: false,
       });
       expect(files.sort().join("\n")).toMatchInlineSnapshot(`
-        packages
-        packages/package-1
-        packages/package-1/lib
+        packages/
+        packages/package-1/
+        packages/package-1/lib/
         packages/package-1/lib/main.js
         packages/package-1/package-1.txt
         packages/package-1/package.json

@@ -21,7 +21,6 @@ interface NpmPublishOptions {
  */
 function flattenOptions(obj: NpmPublishOptions) {
   return {
-    // eslint-disable-next-line dot-notation -- (npm v7 compat)
     defaultTag: obj["tag"] || "latest",
     dryRun: obj["dry-run"],
     // libnpmpublish / npm-registry-fetch check strictSSL rather than strict-ssl

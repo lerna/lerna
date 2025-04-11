@@ -4,11 +4,9 @@ import _loadJsonFile from "load-json-file";
 import path from "path";
 import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("load-json-file", () => require("@lerna/test-helpers/__mocks__/load-json-file"));
 
 jest.mock("@lerna/core", () => {
-  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
   const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
@@ -37,7 +35,7 @@ const runLifecycle = _runLifecycle as any;
 const initFixture = initFixtureFactory(__dirname);
 
 // test command
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaPublish = commandRunner(require("../command"));
 
 describe("lifecycle scripts", () => {

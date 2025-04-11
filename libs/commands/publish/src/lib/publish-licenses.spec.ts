@@ -5,7 +5,6 @@ import path from "path";
 import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
 jest.mock("@lerna/core", () => {
-  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
   const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
@@ -30,15 +29,14 @@ setupLernaVersionMocks();
 // The mock differs from the real thing
 const packDirectory = _packDirectory as any;
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { createTempLicenses } = require("./create-temp-licenses");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const { removeTempLicenses } = require("./remove-temp-licenses");
 
 const initFixture = initFixtureFactory(__dirname);
 
 // test command
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaPublish = commandRunner(require("../command"));
 
 describe("licenses", () => {

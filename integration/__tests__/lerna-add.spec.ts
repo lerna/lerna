@@ -1,12 +1,11 @@
 import { cliRunner, initFixtureFactory } from "@lerna/test-helpers";
-import globby from "globby";
+import { glob } from "tinyglobby";
 import loadJson from "load-json-file";
 import pMap from "p-map";
 import path from "path";
 
 const initFixture = initFixtureFactory(__dirname);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 expect.extend(require("@lerna/test-helpers/src/lib/pkg-matchers"));
 
 // extend jest types with custom matcher toDependOn
@@ -35,7 +34,7 @@ lerna info Symlinking packages and binaries
 lerna success Bootstrapped 4 packages
 `);
 
-    const filePaths = await globby("packages/*/package.json", { cwd });
+    const filePaths = await glob("packages/*/package.json", { cwd });
     const [pkg1, pkg2, pkg3, pkg4] = await pMap(filePaths.sort(), (fp) => loadJson(path.join(cwd, fp)));
 
     expect(pkg1).not.toDependOn("@test/package-1");

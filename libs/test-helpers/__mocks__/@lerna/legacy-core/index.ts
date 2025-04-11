@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 const collectUpdates = require("./collect-updates");
 
 module.exports = {

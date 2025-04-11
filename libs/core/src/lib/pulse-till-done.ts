@@ -27,10 +27,8 @@ export function pulseTillDone(promise: any): any;
 export function pulseTillDone(prefix: string, promise: any): any;
 export function pulseTillDone(prefix: string | any, promise?: any): any {
   if (!promise) {
-    /* eslint-disable no-param-reassign */
     promise = prefix;
     prefix = "";
-    /* eslint-enable no-param-reassign */
   }
 
   pulseStart(prefix);

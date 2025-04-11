@@ -4,7 +4,6 @@ import { gitPush } from "./git-push";
 
 const cloneFixture = cloneFixtureFactory(__dirname);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 async function listRemoteTags(cwd) {

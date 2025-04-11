@@ -142,7 +142,7 @@ describe("TrackerGroup", () => {
         throw new Error("Expected cycle error");
       } catch (ex) {
         console.log(ex);
-        // eslint-disable-next-line jest/no-conditional-expect
+
         expect(ex).toBeInstanceOf(Error);
       }
     }
@@ -161,7 +161,6 @@ describe("TrackerGroup", () => {
       track.finish();
       expect(true).toBe(true);
     } catch (e) {
-      // eslint-disable-next-line jest/no-conditional-expect
       expect(false).toBe(true);
     }
   });

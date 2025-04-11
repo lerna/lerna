@@ -5,7 +5,6 @@ import fs from "fs";
 import path from "path";
 import slash from "slash";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 let resolvedPrettier;
@@ -18,7 +17,7 @@ function resolvePrettier() {
       if (!hasPrettier) {
         return;
       }
-      // eslint-disable-next-line import/no-dynamic-require, global-require
+
       resolvedPrettier = require("prettier");
     } catch {
       return;

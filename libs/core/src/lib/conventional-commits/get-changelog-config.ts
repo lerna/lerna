@@ -16,7 +16,6 @@ function isFunction(config: any) {
 function resolveConfigPromise(presetPackageName: string, presetConfig: object) {
   log.verbose("getChangelogConfig", "Attempting to resolve preset %j", presetPackageName);
 
-  // eslint-disable-next-line global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
   let config = require(presetPackageName);
 
   log.info("getChangelogConfig", "Successfully resolved preset %j", presetPackageName);

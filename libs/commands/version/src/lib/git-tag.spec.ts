@@ -1,13 +1,11 @@
 // Force module
-// eslint-disable-next-line jest/no-export
+
 export {};
 
 jest.mock("@lerna/child-process");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { gitTag } = require("./git-tag");
 
 describe("gitTag", () => {

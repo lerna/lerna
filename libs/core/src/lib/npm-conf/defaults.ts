@@ -1,6 +1,5 @@
 // TODO: what is lib/make.js? Is it from the npm/npm repo?
 // Generated with `lib/make.js`
-/* eslint-disable no-useless-concat */
 
 import os from "os";
 import path from "path";

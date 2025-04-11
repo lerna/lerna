@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: "commands-version",
   preset: "../../../jest.preset.js",

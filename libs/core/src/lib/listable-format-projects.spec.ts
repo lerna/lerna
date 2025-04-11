@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { loggingOutput, tempDirSerializer, windowsPathSerializer } from "@lerna/test-helpers";

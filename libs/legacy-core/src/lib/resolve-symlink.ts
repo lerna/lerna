@@ -3,7 +3,7 @@ import fs from "fs-extra";
 import path from "path";
 
 // read-cmd-shim does not have any types
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const readCmdShim = require("read-cmd-shim");
 
 export function resolveSymlink(filePath: string) {

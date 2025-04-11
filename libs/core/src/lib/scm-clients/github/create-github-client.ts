@@ -3,7 +3,6 @@ import parseGitUrl from "git-url-parse";
 import log from "../../npmlog";
 import { ValidationError } from "../../validation-error";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 export function createGitHubClient(): Octokit {
@@ -22,7 +21,6 @@ export function createGitHubClient(): Octokit {
   }
 
   if (GHE_VERSION) {
-    // eslint-disable-next-line
     Octokit.plugin(require(`@octokit/plugin-enterprise-rest/ghe-${GHE_VERSION}`));
   }
 

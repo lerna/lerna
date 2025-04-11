@@ -532,7 +532,6 @@ describe("lerna-version-conventional-commits", () => {
         await fixture.createInitialGitCommit();
 
         fixture.updateJson("lerna.json", (json) => {
-          // eslint-disable-next-line no-param-reassign
           json.version = "independent";
           return json;
         });
@@ -730,7 +729,6 @@ describe("lerna-version-conventional-commits", () => {
         await fixture.createInitialGitCommit();
 
         fixture.updateJson("lerna.json", (json) => {
-          // eslint-disable-next-line no-param-reassign
           json.version = "independent";
           return json;
         });

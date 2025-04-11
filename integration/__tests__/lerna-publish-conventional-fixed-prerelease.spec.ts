@@ -6,7 +6,7 @@ import {
   gitTag,
 } from "@lerna/test-helpers";
 import fs from "fs-extra";
-import globby from "globby";
+import { glob } from "tinyglobby";
 import os from "os";
 import path from "path";
 
@@ -135,7 +135,7 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
     await commitChangeToPackage(cwd, "package-2", "fix(package-2): And another thing", { thing: true });
     await cliRunner(cwd, env)(...args);
 
-    const changelogFilePaths = await globby(["**/CHANGELOG.md"], {
+    const changelogFilePaths = await glob(["**/CHANGELOG.md"], {
       cwd,
       absolute: true,
       followSymbolicLinks: false,

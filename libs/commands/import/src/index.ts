@@ -12,7 +12,6 @@ import fs from "fs-extra";
 import pMapSeries from "p-map-series";
 import path from "path";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const childProcess = require("@lerna/child-process");
 
 export function factory(argv: Arguments<ImportCommandOptions>) {
@@ -70,7 +69,7 @@ export class ImportCommand extends Command<ImportCommandOptions> {
     }
 
     const packageJson = path.join(externalRepoPath, "package.json");
-    // eslint-disable-next-line import/no-dynamic-require, global-require, @typescript-eslint/no-var-requires
+
     const packageName = require(packageJson).name;
 
     if (!packageName) {

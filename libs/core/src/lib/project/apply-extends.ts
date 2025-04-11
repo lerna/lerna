@@ -21,9 +21,8 @@ export function applyExtends(config: { [x: string]: unknown; extends?: any }, cw
 
     seen.add(pathToDefault);
 
-    // eslint-disable-next-line import/no-dynamic-require, global-require
     defaultConfig = require(pathToDefault);
-    delete config.extends; // eslint-disable-line no-param-reassign
+    delete config.extends;
 
     defaultConfig = applyExtends(defaultConfig, path.dirname(pathToDefault), seen);
   }

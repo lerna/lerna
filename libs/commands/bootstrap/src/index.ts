@@ -27,9 +27,8 @@ import pMapSeries from "p-map-series";
 import pWaterfall from "p-waterfall";
 import path from "path";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { hasDependencyInstalled } = require("./lib/has-dependency-installed");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const { isHoistedPackage } = require("./lib/is-hoisted-package");
 
 module.exports = function factory(argv: NodeJS.Process["argv"]) {
@@ -280,7 +279,6 @@ class BootstrapCommand extends Command {
 
   hoistedPackageJson(dependency) {
     try {
-      // eslint-disable-next-line import/no-dynamic-require, global-require
       return require(path.join(this.hoistedDirectory(dependency), "package.json"));
     } catch (e) {
       // Pass.

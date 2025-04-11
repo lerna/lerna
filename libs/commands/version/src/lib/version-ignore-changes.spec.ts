@@ -11,7 +11,6 @@ import fs from "fs-extra";
 import path from "path";
 
 jest.mock("@lerna/core", () => {
-  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
   const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
@@ -37,7 +36,7 @@ jest.mock("./remote-branch-exists", () => ({
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
 
 // test command
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaVersion = commandRunner(require("../command"));
 
 // stabilize commit SHA

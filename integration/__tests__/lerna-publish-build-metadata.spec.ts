@@ -161,7 +161,6 @@ test("lerna publish applies build metadata independent versions", async () => {
      - package-6@1.0.0+001
   `);
 
-  /* eslint-disable max-len */
   const patch = await showCommit(cwd);
   expect(patch).toMatchInlineSnapshot(`
     Publish

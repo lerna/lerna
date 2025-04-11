@@ -15,7 +15,7 @@ export function mapToRegistry(
 
   if (data.scope) {
     // the name is definitely scoped, so escape now
-    name = name.replace("/", "%2f"); // eslint-disable-line no-param-reassign
+    name = name.replace("/", "%2f");
 
     log.silly("mapToRegistry", "scope (from package name)", data.scope);
 

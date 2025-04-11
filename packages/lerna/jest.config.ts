@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: "lerna",
   preset: "../../jest.preset.js",

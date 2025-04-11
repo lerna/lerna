@@ -3,16 +3,14 @@ import { commandRunner, initFixtureFactory, normalizeRelativeDir } from "@lerna/
 
 const initFixture = initFixtureFactory(__dirname);
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/legacy-core", () => require("@lerna/test-helpers/__mocks__/@lerna/legacy-core"));
 
 const createSymlink = jest.mocked(_createSymlink);
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaLink = commandRunner(require("../command"));
 
 // assertion helpers

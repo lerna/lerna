@@ -1,7 +1,6 @@
 import { Arguments, Command, CommandConfigOptions, log } from "@lerna/core";
 import { repair } from "nx/src/command-line/repair/repair";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const migrationsJson = require("../../../migrations.json");
 
 module.exports = function factory(argv: Arguments<CommandConfigOptions>) {
@@ -36,7 +35,6 @@ class RepairCommand extends Command {
 
   configureNxOutput() {
     try {
-      // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
       const nxOutput = require("nx/src/utils/output");
       nxOutput.output.cliName = "Lerna";
       nxOutput.output.formatCommand = (taskId: number) => taskId;

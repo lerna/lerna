@@ -2,7 +2,6 @@
 // TODO: refactor the command index.ts to resolve this
 import { log } from "@lerna/core";
 
-/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require("fs-extra");
 const path = require("path");
 const tempy = require("tempy");
@@ -15,7 +14,7 @@ const os = require("os");
 jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
 
 // helpers
-/* eslint-disable @nx/enforce-module-boundaries */
+
 // nx-ignore-next-line
 const { loggingOutput, updateLernaConfig, initFixtureFactory } = require("@lerna/test-helpers");
 const initFixture = initFixtureFactory(__dirname);

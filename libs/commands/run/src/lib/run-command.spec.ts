@@ -6,16 +6,15 @@ import {
 } from "@lerna/core";
 import { commandRunner, initFixtureFactory, loggingOutput, normalizeRelativeDir } from "@lerna/test-helpers";
 import fs from "fs-extra";
-import globby from "globby";
+import { glob } from "tinyglobby";
 import { afterEach } from "jest-circus";
 
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaRun = commandRunner(require("../command"));
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
 // The mock modifies the exported symbols and therefore types
@@ -200,7 +199,7 @@ describe("RunCommand", () => {
 
       await lernaRun(cwd)("--profile", "my-script");
 
-      const [profileLocation] = await globby("Lerna-Profile-*.json", { cwd, absolute: true });
+      const [profileLocation] = await glob("Lerna-Profile-*.json", { cwd, absolute: true });
       const json = await fs.readJson(profileLocation);
 
       expect(json).toMatchObject([
@@ -223,7 +222,7 @@ describe("RunCommand", () => {
 
       await lernaRun(cwd)("--profile", "--profile-location", "foo/bar", "my-script");
 
-      const [profileLocation] = await globby("foo/bar/Lerna-Profile-*.json", { cwd, absolute: true });
+      const [profileLocation] = await glob("foo/bar/Lerna-Profile-*.json", { cwd, absolute: true });
       // TODO: refactor based on TS feedback
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore

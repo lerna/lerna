@@ -4,11 +4,9 @@ import path from "path";
 import _writePkg from "write-pkg";
 import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
-// eslint-disable-next-line jest/no-mocks-import
 jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
 jest.mock("@lerna/core", () => {
-  // eslint-disable-next-line jest/no-mocks-import, @typescript-eslint/no-var-requires
   const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
     ...mockCore,
@@ -37,7 +35,7 @@ const writePkg = _writePkg as any;
 const initFixture = initFixtureFactory(__dirname);
 
 // test command
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const lernaPublish = commandRunner(require("../command"));
 
 describe("relative 'file:' specifiers", () => {

@@ -3,7 +3,6 @@ import { createTree } from "@nx/devkit/testing";
 
 require("@lerna/test-helpers/src/lib/silence-logging");
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { InitCommand } = require("../index");
 
 describe("InitCommand", () => {
