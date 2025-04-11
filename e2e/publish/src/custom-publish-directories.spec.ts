@@ -226,22 +226,23 @@ describe("lerna-publish-custom-publish-directories", () => {
         cwd: fixture.getWorkspacePath("dist"),
         onlyFiles: false,
         onlyDirectories: false,
+        expandDirectories: false,
       });
       expect(files.sort().join("\n")).toMatchInlineSnapshot(`
-        packages
-        packages/package-1
-        packages/package-1/lib
+        packages/
+        packages/package-1/
+        packages/package-1/lib/
         packages/package-1/lib/main.js
         packages/package-1/package.json
-        packages/package-2
+        packages/package-2/
         packages/package-2/CONTRIBUTING.md
-        packages/package-2/assets
+        packages/package-2/assets/
         packages/package-2/assets/image-1.png
         packages/package-2/assets/image-2.png
-        packages/package-2/docs
+        packages/package-2/docs/
         packages/package-2/docs/doc-1.md
         packages/package-2/docs/doc-2.md
-        packages/package-2/lib
+        packages/package-2/lib/
         packages/package-2/lib/main.js
         packages/package-2/package.json
       `);
@@ -389,16 +390,17 @@ describe("lerna-publish-custom-publish-directories", () => {
         cwd: fixture.getWorkspacePath("dist"),
         onlyFiles: false,
         onlyDirectories: false,
+        expandDirectories: false,
       });
       expect(files.sort().join("\n")).toMatchInlineSnapshot(`
-        packages
-        packages/package-1
-        packages/package-1/lib
+        packages/
+        packages/package-1/
+        packages/package-1/lib/
         packages/package-1/lib/main.js
         packages/package-1/package-1.txt
         packages/package-1/package.json
-        packages/package-2
-        packages/package-2/lib
+        packages/package-2/
+        packages/package-2/lib/
         packages/package-2/lib/main.js
         packages/package-2/package.json
       `);
@@ -546,11 +548,12 @@ describe("lerna-publish-custom-publish-directories", () => {
         cwd: fixture.getWorkspacePath("dist"),
         onlyFiles: false,
         onlyDirectories: false,
+        expandDirectories: false,
       });
       expect(files.sort().join("\n")).toMatchInlineSnapshot(`
-        packages
-        packages/package-1
-        packages/package-1/lib
+        packages/
+        packages/package-1/
+        packages/package-1/lib/
         packages/package-1/lib/main.js
         packages/package-1/package-1.txt
         packages/package-1/package.json
