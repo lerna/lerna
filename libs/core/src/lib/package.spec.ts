@@ -186,6 +186,32 @@ describe("Package", () => {
     it("should indicate if the package is private", () => {
       const pkg = factory({ name: "not-private" });
       expect(pkg.private).toBe(false);
+
+      pkg.private = true;
+      expect(pkg.private).toBe(true);
+    });
+  });
+
+  describe("get/set .lernaConfig", () => {
+    it("should get and set the lernaConfig", () => {
+      const pkg = factory({ name: "lerna-package" });
+      const config = { command: { publish: { directory: "dist" } } };
+
+      pkg.lernaConfig = config;
+      expect(pkg.lernaConfig).toEqual(config);
+    });
+  });
+
+  describe("get/set .contents", () => {
+    it("should return the correct contents based on publishConfig", () => {
+      const pkg = factory({
+        name: "package-with-contents",
+        publishConfig: { directory: "dist" },
+      });
+      expect(pkg.contents).toBe(path.normalize("/root/path/to/package/dist"));
+
+      pkg.contents = "new-directory";
+      expect(pkg.contents).toBe(path.normalize("/root/path/to/package/new-directory"));
     });
   });
 
