@@ -25,7 +25,7 @@ Lerna is a fast, modern build system for managing and publishing multiple JavaSc
       <img alt="NPM Status" src="https://img.shields.io/npm/v/lerna.svg?style=flat" />
     </a>
     <a href="https://github.com/lerna/lerna/actions?query=branch%3Amain+workflow%3Aci">
-      <img alt="CI Status" src="https://github.com/lerna/lerna/workflows/ci/badge.svg?branch=main" />
+      <img alt="CI Status" src="https://github.com/lerna/lerna/actions/workflows/ci.yml/badge.svg" />
     </a>
     <a href="">
       <img alt="Semantic Release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg?style=flat" />
