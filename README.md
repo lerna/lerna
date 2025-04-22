@@ -36,6 +36,9 @@ Lerna is a fast, modern build system for managing and publishing multiple JavaSc
     <a href="http://go.nx.dev/community">
       <img alt="Discord" src="https://img.shields.io/discord/1143497901675401286?label=Community%20Discord&labelColor=404eee">
     </a>
+    <a href="https://x.com/lernajs">
+      <img alt="Twitter" src="https://img.shields.io/twitter/follow/lernajs">
+    </a>
 </p>
 
 <hr />
