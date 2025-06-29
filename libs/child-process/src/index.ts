@@ -1,7 +1,7 @@
-import os from "os";
 import chalk from "chalk";
 import execa from "execa";
-import strongLogTransformer from "strong-log-transformer";
+import os from "node:os";
+import strongLogTransformer from "./forked-strong-log-transformer";
 import { setExitCode } from "./set-exit-code";
 
 type withPkg<T> = T & { pkg?: unknown };
