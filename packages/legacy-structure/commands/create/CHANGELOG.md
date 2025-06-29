@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.3](https://github.com/lerna/lerna/compare/v8.2.2...v8.2.3) (2025-06-29)
+
+### Bug Fixes
+
+- use internal fork of unmaintained strong-log-transformer ([#4195](https://github.com/lerna/lerna/issues/4195)) ([7115485](https://github.com/lerna/lerna/commit/71154858134982b6d8b829bad226b7b81b0c6498))
+
 ## [8.2.2](https://github.com/lerna/lerna/compare/v8.2.1...v8.2.2) (2025-04-10)
 
 **Note:** Version bump only for package @lerna/create
