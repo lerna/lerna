@@ -70,7 +70,6 @@
     "@types/semver": "^7.5.8",
     "@types/signal-exit": "^3.0.4",
     "@types/ssri": "^7.1.5",
-    "@types/strong-log-transformer": "^1.0.2",
     "@types/tar": "^6.1.13",
     "@types/temp-dir": "^1.0.0",
     "@types/tmp": "^0.2.6",
