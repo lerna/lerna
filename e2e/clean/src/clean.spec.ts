@@ -28,12 +28,12 @@ describe("lerna-clean", () => {
 
     await fixture.addDependencyToPackage({
       packagePath: "packages/package-a",
-      dependencyName: "lodash",
+      dependencyName: "es-toolkit",
       version: "*",
     });
     await fixture.addDependencyToPackage({
       packagePath: "packages/package-b",
-      dependencyName: "lodash",
+      dependencyName: "es-toolkit",
       version: "*",
     });
   });

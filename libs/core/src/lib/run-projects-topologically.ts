@@ -1,4 +1,4 @@
-import { flatten } from "lodash";
+import { flatten } from "es-toolkit/compat";
 import PQueue from "p-queue";
 import { getCycles, mergeOverlappingCycles, reportCycles } from "./cycles";
 import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";

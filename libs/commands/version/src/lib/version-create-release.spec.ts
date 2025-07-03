@@ -4,7 +4,7 @@ import {
   recommendVersion as _recommendVersion,
 } from "@lerna/core";
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
-import { isEqual } from "lodash";
+import { isEqual } from "es-toolkit/compat";
 
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 

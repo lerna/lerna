@@ -1,6 +1,6 @@
 import { ProjectFileMap, ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nx/devkit";
 import { readJson } from "fs-extra";
-import { reduce, sortBy } from "lodash";
+import { reduce, sortBy } from "es-toolkit/compat";
 import minimatch from "minimatch";
 import { resolve } from "npm-package-arg";
 import { join } from "path";

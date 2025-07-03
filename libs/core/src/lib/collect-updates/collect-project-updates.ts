@@ -1,5 +1,5 @@
 import { ExecOptions } from "child_process";
-import { flatten } from "lodash";
+import { flatten } from "es-toolkit/compat";
 import { describeRefSync } from "../describe-ref";
 import { getPackagesForOption } from "../get-packages-for-option";
 import log from "../npmlog";
