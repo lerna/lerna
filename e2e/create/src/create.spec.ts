@@ -301,7 +301,7 @@ describe("lerna-create", () => {
     const packageName = "option-dependencies";
 
     beforeAll(async () => {
-      await fixture.lerna(`create ${packageName} -y --dependencies yarn@latest lodash@3.0.0 lerna`, {
+      await fixture.lerna(`create ${packageName} -y --dependencies yarn@latest es-toolkit@1.39.6 lerna`, {
         allowNetworkRequests: true,
       });
     });
@@ -351,7 +351,7 @@ describe("lerna-create", () => {
           },
           "dependencies": {
             "lerna": "^XX.XX.XX",
-            "lodash": "3.0.0",
+            "es-toolkit": "^1.39.6",
             "yarn": "^XX.XX.XX"
           }
         }

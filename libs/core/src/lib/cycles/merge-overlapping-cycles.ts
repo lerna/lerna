@@ -1,4 +1,4 @@
-import { difference, intersection } from "lodash";
+import { difference, intersection } from "es-toolkit/compat";
 
 /**
  * Merges all cycles that share nodes into a single cycle, then returns all merged cycles. This allows all cycle nodes to be traversed without repeating any nodes.

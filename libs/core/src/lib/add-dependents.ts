@@ -1,4 +1,4 @@
-import { flatten } from "lodash";
+import { flatten } from "es-toolkit/compat";
 import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";
 
 export function addDependents(
