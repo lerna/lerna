@@ -57,7 +57,6 @@
     "@types/jest": "29.5.14",
     "@types/js-yaml": "^4.0.9",
     "@types/libnpmpublish": "^9.0.0",
-    "@types/lodash": "^4.17.5",
     "@types/node": "18.19.10",
     "@types/node-fetch": "^2.6.11",
     "@types/normalize-path": "^3.0.2",
@@ -83,7 +82,6 @@
     "js-yaml": "^4.1.0",
     "jsonc-eslint-parser": "^2.4.0",
     "lerna": "file:packages/lerna",
-    "lodash": "^4.17.21",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
     "nx": "20.7.2",
@@ -98,6 +96,5 @@
     "typescript": "5.8.3",
     "typescript-eslint": "^8.38.0",
     "verdaccio": "6.1.5"
-  },
-  "dependencies": {}
+  }
 }

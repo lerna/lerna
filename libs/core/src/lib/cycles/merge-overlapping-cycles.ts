@@ -1,4 +1,16 @@
-import { difference, intersection } from "lodash";
+/**
+ * Returns an array of elements that are present in both input arrays
+ */
+function intersection<T>(arr1: T[], arr2: T[]): T[] {
+  return arr1.filter(item => arr2.includes(item));
+}
+
+/**
+ * Returns an array of elements from the first array that are not present in the second array
+ */
+function difference<T>(arr1: T[], arr2: T[]): T[] {
+  return arr1.filter(item => !arr2.includes(item));
+}
 
 /**
  * Merges all cycles that share nodes into a single cycle, then returns all merged cycles. This allows all cycle nodes to be traversed without repeating any nodes.
