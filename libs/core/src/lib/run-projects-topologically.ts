@@ -1,4 +1,3 @@
-import { flatten } from "lodash";
 import PQueue from "p-queue";
 import { getCycles, mergeOverlappingCycles, reportCycles } from "./cycles";
 import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";
@@ -24,7 +23,7 @@ export async function runProjectsTopologically<T>(
 
   const projectsMap = new Map(projects.map((p) => [p.name, p]));
   const localDependencies = projectGraph.localPackageDependencies;
-  const flattenedLocalDependencies = flatten(Object.values(localDependencies));
+  const flattenedLocalDependencies = Object.values(localDependencies).flat();
 
   const getProject = (name: string) => {
     const project = projectsMap.get(name);

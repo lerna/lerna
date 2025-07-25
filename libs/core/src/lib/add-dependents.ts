@@ -1,4 +1,3 @@
-import { flatten } from "lodash";
 import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";
 
 export function addDependents(
@@ -6,15 +5,15 @@ export function addDependents(
   projectGraph: ProjectGraphWithPackages
 ): ProjectGraphProjectNodeWithPackage[] {
   const projectsLookup = new Set(projects.map((p) => p.name));
-  const dependents: Record<string, string[]> = flatten(
-    Object.values(projectGraph.localPackageDependencies)
-  ).reduce(
-    (prev, next) => ({
-      ...prev,
-      [next.target]: [...(prev[next.target] || []), next.source],
-    }),
-    {} as Record<string, string[]>
-  );
+  const dependents: Record<string, string[]> = Object.values(projectGraph.localPackageDependencies)
+    .flat()
+    .reduce(
+      (prev, next) => ({
+        ...prev,
+        [next.target]: [...(prev[next.target] || []), next.source],
+      }),
+      {} as Record<string, string[]>
+    );
 
   const collected = new Set<ProjectGraphProjectNodeWithPackage>();
 
