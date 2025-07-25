@@ -73,7 +73,7 @@ export interface RawManifest {
 
 export type ExtendedNpaResult = npa.Result & {
   workspaceSpec?: string;
-  workspaceAlias?: string;
+  workspaceAlias?: "*" | "^" | "~";
 };
 
 /**
@@ -200,22 +200,23 @@ export class Package {
     this[PKG].version = version;
   }
 
-  get contents() {
+  get contents(): string {
     // if modified with setter, use that value
     if (this[_contents]) {
-      return this[_contents];
+      return this[_contents] as string;
     }
 
     // if provided by pkg.publishConfig.directory value
-    if (this[PKG].publishConfig && this[PKG].publishConfig.directory) {
-      return path.join(this.location, this[PKG].publishConfig.directory);
+    const publishConfig = this[PKG].publishConfig;
+    if (publishConfig && publishConfig.directory) {
+      return path.join(this.location, publishConfig.directory);
     }
 
     // default to package root
     return this.location;
   }
 
-  set contents(subDirectory) {
+  set contents(subDirectory: string) {
     // If absolute path starting with workspace root, set it directly, otherwise join with package location (historical behavior)
     const _workspaceRoot = process.env["NX_WORKSPACE_ROOT_PATH"] || workspaceRoot;
     if (subDirectory.startsWith(_workspaceRoot)) {
@@ -301,9 +302,10 @@ export class Package {
     return this;
   }
 
-  getLocalDependency(
-    depName: string
-  ): { collection: "dependencies" | "devDependencies" | "optionalDependencies"; spec: string } | null {
+  getLocalDependency(depName: string): {
+    collection: "dependencies" | "devDependencies" | "optionalDependencies" | "peerDependencies";
+    spec: string;
+  } | null {
     if (this.dependencies && this.dependencies[depName]) {
       return {
         collection: "dependencies",
@@ -322,6 +324,36 @@ export class Package {
         spec: this.optionalDependencies[depName],
       };
     }
+    if (this.peerDependencies && this.peerDependencies[depName]) {
+      const spec = this.peerDependencies[depName];
+      const collection = "peerDependencies";
+      const FILE_PROTOCOL = "file:";
+      const WORKSPACE_PROTOCOL = "workspace:";
+      // by returning null (below) instead of the collection and spec we are saying that we don't support the particular use case.
+      if (spec.startsWith(WORKSPACE_PROTOCOL)) {
+        const token = spec.substring(WORKSPACE_PROTOCOL.length);
+        switch (token) {
+          case "*": {
+            return { collection, spec };
+          }
+          case "^": {
+            return { collection, spec };
+          }
+          case "~": {
+            return { collection, spec };
+          }
+          default: {
+            // token is a version.
+            return { collection, spec };
+          }
+        }
+      }
+      if (spec.startsWith(FILE_PROTOCOL)) {
+        // peerDependencies which use file protocol are explicitly not changed.
+        // this could change in future but for now we are being conservative in order to not introduce incorrect behavior.
+        return null;
+      }
+    }
     return null;
   }
 
@@ -330,52 +362,61 @@ export class Package {
    * @param resolved npa metadata
    * @param depVersion semver
    * @param savePrefix npm_config_save_prefix
+   * @param options
    */
   updateLocalDependency(
     resolved: ExtendedNpaResult,
     depVersion: string,
     savePrefix: string,
-    options = { retainWorkspacePrefix: true }
+    options: { eraseWorkspacePrefix: boolean } = { eraseWorkspacePrefix: false }
   ) {
     const depName = resolved.name as string;
 
-    // first, try runtime dependencies
+    // determine which dependency collection the resolved name came from.
     let depCollection = this.dependencies;
 
-    // try optionalDependencies if that didn't work
     if (!depCollection || !depCollection[depName]) {
       depCollection = this.optionalDependencies;
     }
 
-    // fall back to devDependencies
     if (!depCollection || !depCollection[depName]) {
       depCollection = this.devDependencies;
     }
 
-    if (resolved.workspaceSpec && options.retainWorkspacePrefix) {
-      // do nothing if there is a workspace alias since they don't specify a version number
-      if (!resolved.workspaceAlias) {
-        // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const workspacePrefix = resolved.workspaceSpec.match(/^(workspace:[*~^]?)/)[0];
-        // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        depCollection[depName] = `${workspacePrefix}${depVersion}`;
+    if (!depCollection || !depCollection[depName]) {
+      depCollection = this.peerDependencies;
+    }
+
+    if (!depCollection) {
+      throw new Error(`${JSON.stringify(depName)} should exist in some dependency collection.`);
+    }
+
+    const workspaceSpec = resolved.workspaceSpec;
+    const workspaceAlias = resolved.workspaceAlias;
+    const gitCommittish = resolved.gitCommittish;
+    if (workspaceSpec) {
+      if (options.eraseWorkspacePrefix) {
+        if (workspaceAlias) {
+          const prefix = workspaceAlias === "*" ? "" : workspaceAlias;
+          depCollection[depName] = `${prefix}${depVersion}`;
+        } else {
+          const semverRange = workspaceSpec.substring("workspace:".length);
+          depCollection[depName] = semverRange;
+        }
+      } else {
+        if (!workspaceAlias) {
+          // retain "workspace:[*~^]" prefix but replace the version with the workspace version.
+          const matches = workspaceSpec.match(/^(workspace:[*~^]?)/) as RegExpMatchArray;
+          const workspacePrefix = matches[0];
+          depCollection[depName] = `${workspacePrefix}${depVersion}`;
+        }
       }
     } else if (resolved.registry || resolved.type === "directory") {
       // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       depCollection[depName] = `${savePrefix}${depVersion}`;
-    } else if (resolved.gitCommittish) {
+    } else if (gitCommittish) {
       // a git url with matching committish (#v1.2.3 or #1.2.3)
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const [tagPrefix] = /^\D*/.exec(resolved.gitCommittish);
+      const [tagPrefix] = /^\D*/.exec(gitCommittish) as RegExpExecArray;
 
       // update committish
       const { hosted } = resolved; // take that, lint!

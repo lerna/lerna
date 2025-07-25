@@ -94,5 +94,70 @@ index SHA..SHA 100644
 @@ -3 +3 @@
 -  "version": "1.0.0",
 +  "version": "2.0.0",
+diff --git a/packages/package-8/package.json b/packages/package-8/package.json
+index SHA..SHA 100644
+--- a/packages/package-8/package.json
++++ b/packages/package-8/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-9/package.json b/packages/package-9/package.json
+index SHA..SHA 100644
+--- a/packages/package-9/package.json
++++ b/packages/package-9/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-a/package.json b/packages/package-a/package.json
+index SHA..SHA 100644
+--- a/packages/package-a/package.json
++++ b/packages/package-a/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-b/package.json b/packages/package-b/package.json
+index SHA..SHA 100644
+--- a/packages/package-b/package.json
++++ b/packages/package-b/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-c/package.json b/packages/package-c/package.json
+index SHA..SHA 100644
+--- a/packages/package-c/package.json
++++ b/packages/package-c/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-d/package.json b/packages/package-d/package.json
+index SHA..SHA 100644
+--- a/packages/package-d/package.json
++++ b/packages/package-d/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+@@ -5 +5 @@
+-    "package-1": "workspace:^2.3.4"
++    "package-1": "workspace:^2.0.0"
+diff --git a/packages/package-e/package.json b/packages/package-e/package.json
+index SHA..SHA 100644
+--- a/packages/package-e/package.json
++++ b/packages/package-e/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+@@ -5 +5 @@
+-    "package-1": "workspace:~2.3.4"
++    "package-1": "workspace:~2.0.0"
+diff --git a/packages/package-g/package.json b/packages/package-g/package.json
+index SHA..SHA 100644
+--- a/packages/package-g/package.json
++++ b/packages/package-g/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+@@ -5 +5 @@
+-    "package-1": "workspace:2.3.4"
++    "package-1": "workspace:2.0.0"
 `);
 });
