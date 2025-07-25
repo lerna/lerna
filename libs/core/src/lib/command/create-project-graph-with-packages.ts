@@ -1,6 +1,5 @@
 import { ProjectFileMap, ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nx/devkit";
 import { readJson } from "fs-extra";
-import { reduce, sortBy } from "lodash";
 import minimatch from "minimatch";
 import { resolve } from "npm-package-arg";
 import { join } from "path";
@@ -49,7 +48,7 @@ export async function createProjectGraphWithPackages(
     localPackageDependencies: {},
   };
   const projectLookupByPackageName: Record<string, string> = {};
-  const sortedTuples = sortBy(tuples, (t) => t[0].data.root);
+  const sortedTuples = [...tuples].sort((a, b) => a[0].data.root.localeCompare(b[0].data.root));
   sortedTuples.forEach(([node, manifest]) => {
     let pkg: Package | null = null;
     if (manifest) {
@@ -63,11 +62,15 @@ export async function createProjectGraphWithPackages(
   });
 
   // order dependencies to create consistent results when iterating over them
-  projectGraphWithOrderedNodes.dependencies = reduce(
-    sortBy(Object.keys(projectGraphWithOrderedNodes.dependencies)),
-    (prev, next) => ({ ...prev, [next]: projectGraphWithOrderedNodes.dependencies[next] }),
-    {}
-  );
+  projectGraphWithOrderedNodes.dependencies = Object.keys(projectGraphWithOrderedNodes.dependencies)
+    .sort((a, b) => a.localeCompare(b))
+    .reduce(
+      (prev, next) => ({
+        ...prev,
+        [next]: projectGraphWithOrderedNodes.dependencies[next],
+      }),
+      {}
+    );
 
   // populate local npm package dependencies
   Object.values(projectGraphWithOrderedNodes.dependencies).forEach((projectDeps) => {
