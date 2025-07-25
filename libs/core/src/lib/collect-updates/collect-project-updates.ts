@@ -1,5 +1,4 @@
 import { ExecOptions } from "child_process";
-import { flatten } from "lodash";
 import { describeRefSync } from "../describe-ref";
 import { getPackagesForOption } from "../get-packages-for-option";
 import log from "../npmlog";
@@ -178,15 +177,15 @@ export function collectDependents(
   nodes: Record<string, ProjectGraphProjectNodeWithPackage>,
   projectGraph: ProjectGraphWithPackages
 ): Set<ProjectGraphProjectNodeWithPackage> {
-  const dependents: Record<string, string[]> = flatten(
-    Object.values(projectGraph.localPackageDependencies)
-  ).reduce(
-    (prev, next) => ({
-      ...prev,
-      [next.target]: [...(prev[next.target] || []), next.source],
-    }),
-    {} as Record<string, string[]>
-  );
+  const dependents: Record<string, string[]> = Object.values(projectGraph.localPackageDependencies)
+    .flat()
+    .reduce(
+      (prev, next) => ({
+        ...prev,
+        [next.target]: [...(prev[next.target] || []), next.source],
+      }),
+      {} as Record<string, string[]>
+    );
 
   const collected = new Set<ProjectGraphProjectNodeWithPackage>();
 
