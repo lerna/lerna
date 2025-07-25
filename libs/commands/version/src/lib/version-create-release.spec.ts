@@ -4,7 +4,6 @@ import {
   recommendVersion as _recommendVersion,
 } from "@lerna/core";
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
-import { isEqual } from "lodash";
 
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
@@ -26,7 +25,13 @@ jest.mock("execa", () => {
 
   const mockExeca = (...args) => {
     // assume there are changes if git diff is called
-    if (args[0] === "git" && isEqual(args[1], ["diff", "--staged", "--quiet"])) {
+    if (
+      args[0] === "git" &&
+      args[1].length === 3 &&
+      args[1][0] === "diff" &&
+      args[1][1] === "--staged" &&
+      args[1][2] === "--quiet"
+    ) {
       return Promise.reject(new Error("Changes found"));
     }
 
