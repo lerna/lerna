@@ -63,7 +63,6 @@
     "js-yaml": "4.1.0",
     "libnpmpublish": "9.0.9",
     "load-json-file": "6.2.0",
-    "lodash": "^4.17.21",
     "make-dir": "4.0.0",
     "minimatch": "3.0.5",
     "multimatch": "5.0.0",

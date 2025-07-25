@@ -18,4 +18,42 @@ describe("mergeOverlappingCycles", () => {
       ["package-z", "package-zz", "package-zzz", "package-zzzz"],
     ]);
   });
+
+  it("should handle empty cycles", () => {
+    expect(mergeOverlappingCycles([])).toEqual([]);
+  });
+
+  it("should handle single cycle", () => {
+    const cycles = [["package-a", "package-b", "package-c"]];
+    expect(mergeOverlappingCycles(cycles)).toEqual([["package-a", "package-b", "package-c"]]);
+  });
+
+  it("should handle cycles with no overlaps", () => {
+    const cycles = [
+      ["package-a", "package-b"],
+      ["package-c", "package-d"],
+      ["package-e", "package-f"],
+    ];
+    expect(mergeOverlappingCycles(cycles)).toEqual([
+      ["package-a", "package-b"],
+      ["package-c", "package-d"],
+      ["package-e", "package-f"],
+    ]);
+  });
+
+  it("should handle cycles with complete overlap", () => {
+    const cycles = [
+      ["package-a", "package-b", "package-c"],
+      ["package-a", "package-b", "package-c"],
+    ];
+    expect(mergeOverlappingCycles(cycles)).toEqual([["package-a", "package-b", "package-c"]]);
+  });
+
+  it("should handle cycles with partial overlap", () => {
+    const cycles = [
+      ["package-a", "package-b"],
+      ["package-b", "package-c"],
+    ];
+    expect(mergeOverlappingCycles(cycles)).toEqual([["package-a", "package-b", "package-c"]]);
+  });
 });
