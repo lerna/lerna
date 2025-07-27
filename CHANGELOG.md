@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.4](https://github.com/lerna/lerna/compare/v8.2.3...v8.2.4) (2025-07-27)
+
+### Bug Fixes
+
+- remove all remaining lodash usage ([#4207](https://github.com/lerna/lerna/issues/4207)) ([8211512](https://github.com/lerna/lerna/commit/8211512df9b4ced9be48e62ba0672de261fc2246))
+- remove lodash sortBy, reduce, isEqual usage ([#4206](https://github.com/lerna/lerna/issues/4206)) ([8889a42](https://github.com/lerna/lerna/commit/8889a42f8d406df43b19ad1f20143126847686bc))
+- remove usage of lodash flatten ([#4205](https://github.com/lerna/lerna/issues/4205)) ([3029033](https://github.com/lerna/lerna/commit/3029033aaeb7c42cea1d154227d6df76ebc39517))
+
+### Features
+
+- **version:** update workspace specifiers in peerDependencies ([#4203](https://github.com/lerna/lerna/issues/4203)) ([45e00ce](https://github.com/lerna/lerna/commit/45e00cec7ad68247088ad58840197215e386091e))
+
 ## [8.2.3](https://github.com/lerna/lerna/compare/v8.2.2...v8.2.3) (2025-06-29)
 
 ### Bug Fixes

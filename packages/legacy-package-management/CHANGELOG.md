@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.4](https://github.com/lerna/lerna/compare/v8.2.3...v8.2.4) (2025-07-27)
+
+**Note:** Version bump only for package @lerna/legacy-package-management
+
 ## [8.2.3](https://github.com/lerna/lerna/compare/v8.2.2...v8.2.3) (2025-06-29)
 
 ### Bug Fixes
