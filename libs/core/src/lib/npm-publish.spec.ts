@@ -10,7 +10,7 @@ jest.mock("@npmcli/package-json");
 jest.mock("libnpmpublish");
 jest.mock("fs-extra");
 
-const { load: readJSON } = require("@npmcli/package-json");
+const { prepare: readJSON } = require("@npmcli/package-json");
 
 // helpers
 import path from "path";
@@ -26,7 +26,7 @@ const otplease = jest.mocked(_otplease);
 
 describe("npm-publish", () => {
   const mockTarData = Buffer.from("MOCK") as never;
-  const mockManifest = { _normalized: true };
+  const mockManifest = { _prepared: true, readmeFilename: "README.md", _normalized: true };
 
   fs.readFile.mockName("fs.readFile").mockResolvedValue(mockTarData);
   // TODO: refactor based on TS feedback
@@ -220,5 +220,18 @@ describe("npm-publish", () => {
 
     expect(runLifecycle).toHaveBeenCalledWith(pkg, "publish", options);
     expect(runLifecycle).toHaveBeenLastCalledWith(pkg, "postpublish", options);
+  });
+
+  it("ensures package.json is prepared and has readmeFilename added to it", async () => {
+    await npmPublish(pkg, tarFilePath);
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        _prepared: true,
+        readmeFilename: "README.md",
+      }),
+      expect.anything(),
+      expect.anything()
+    );
   });
 });
