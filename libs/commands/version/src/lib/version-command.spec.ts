@@ -108,7 +108,8 @@ describe("VersionCommand", () => {
         "main",
         expect.objectContaining({
           cwd: testDir,
-        })
+        }),
+        false
       );
       expect(output.logged()).toMatchSnapshot("console output");
     });
@@ -242,7 +243,8 @@ describe("VersionCommand", () => {
         "main",
         expect.objectContaining({
           cwd: testDir,
-        })
+        }),
+        false
       );
       expect(output.logged()).toMatchSnapshot("console output");
     });
@@ -594,7 +596,8 @@ Changes:
         "main",
         expect.objectContaining({
           cwd: testDir,
-        })
+        }),
+        false
       );
     });
 
@@ -617,7 +620,8 @@ Changes:
         "main",
         expect.objectContaining({
           cwd: testDir,
-        })
+        }),
+        false
       );
     });
   });

@@ -1,13 +1,27 @@
 import { log } from "@lerna/core";
-import { ExecOptions } from "child_process";
+import type { SyncOptions } from "execa";
 
 const childProcess = require("@lerna/child-process");
 
-export function gitPush(remote: string, branch: string, opts: ExecOptions) {
+/**
+ * Pushes commits and tags to the remote git repository.
+ *
+ * @param remote - The remote repository name
+ * @param branch - The branch name to push
+ * @param execOpts - Execution options for child process
+ * @param dryRun - If true, only logs what would be done without executing
+ * @returns Promise that resolves when operation completes
+ */
+export function gitPush(remote: string, branch: string, execOpts: SyncOptions, dryRun = false) {
   log.silly("gitPush", remote, branch);
 
+  if (dryRun) {
+    log.info("dry-run", `Would execute: git push --follow-tags --no-verify --atomic ${remote} ${branch}`);
+    return Promise.resolve();
+  }
+
   return childProcess
-    .exec("git", ["push", "--follow-tags", "--no-verify", "--atomic", remote, branch], opts)
+    .exec("git", ["push", "--follow-tags", "--no-verify", "--atomic", remote, branch], execOpts)
     .catch((error) => {
       // @see https://github.com/sindresorhus/execa/blob/v1.0.0/index.js#L159-L179
       // the error message _should_ be on stderr except when GIT_REDIRECT_STDERR has been configured to redirect
@@ -21,7 +35,7 @@ export function gitPush(remote: string, branch: string, opts: ExecOptions) {
         log.warn("gitPush", error.stderr);
         log.info("gitPush", "--atomic failed, attempting non-atomic push");
 
-        return childProcess.exec("git", ["push", "--follow-tags", "--no-verify", remote, branch], opts);
+        return childProcess.exec("git", ["push", "--follow-tags", "--no-verify", remote, branch], execOpts);
       }
 
       // ensure unexpected errors still break chain

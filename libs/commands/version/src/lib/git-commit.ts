@@ -1,8 +1,7 @@
+import * as childProcess from "@lerna/child-process";
 import { log, tempWrite } from "@lerna/core";
-import { ExecOptions } from "child_process";
-import { EOL } from "os";
-
-const childProcess = require("@lerna/child-process");
+import type { SyncOptions } from "execa";
+import { EOL } from "node:os";
 
 export interface GitCommitOptions {
   amend?: boolean;
@@ -12,10 +11,20 @@ export interface GitCommitOptions {
   signoffGitCommit?: boolean;
 }
 
+/**
+ * Creates a git commit with the specified message and options.
+ *
+ * @param message - The commit message
+ * @param gitOpts - Git commit options
+ * @param execOpts - Execution options for child process
+ * @param dryRun - If true, only logs what would be done without executing
+ * @returns Promise that resolves when operation completes
+ */
 export function gitCommit(
   message: string,
   { amend, commitHooks, signGitCommit, signoffGitCommit, overrideMessage }: GitCommitOptions,
-  opts: ExecOptions
+  execOpts: SyncOptions,
+  dryRun = false
 ) {
   log.silly("gitCommit", message);
   const args = ["commit"];
@@ -48,9 +57,13 @@ export function gitCommit(
     args.push("--no-edit");
   }
 
-  // TODO: refactor to address type issues
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  log.verbose("git", args);
-  return childProcess.exec("git", args, opts);
+  if (dryRun) {
+    // Safely escape the message for display
+    const displayMessage = message.replace(/"/g, '\\"').replace(/\n/g, "\\\\n");
+    log.info("dry-run", `Would execute: git ${args.slice(0, -1).join(" ")} "${displayMessage}"`);
+    return Promise.resolve();
+  }
+
+  log.verbose("git", args.join(" "));
+  return childProcess.exec("git", args, execOpts);
 }

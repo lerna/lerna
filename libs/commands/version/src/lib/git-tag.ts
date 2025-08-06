@@ -1,13 +1,23 @@
+import * as childProcess from "@lerna/child-process";
 import { log } from "@lerna/core";
-import { ExecOptions } from "child_process";
+import type { SyncOptions } from "execa";
 
-const childProcess = require("@lerna/child-process");
-
+/**
+ * Creates a git tag with the specified name and options.
+ *
+ * @param tag - The tag name
+ * @param gitOpts - Git tag options
+ * @param execOpts - Execution options for child process
+ * @param command - Custom git tag command template
+ * @param dryRun - If true, only logs what would be done without executing
+ * @returns Promise that resolves when operation completes
+ */
 export function gitTag(
   tag: string,
   { forceGitTag, signGitTag }: { forceGitTag?: boolean; signGitTag?: boolean },
-  opts: ExecOptions,
-  command = "git tag %s -m %s"
+  execOpts: SyncOptions,
+  command = "git tag %s -m %s",
+  dryRun = false
 ) {
   log.silly("gitTag", tag, command);
 
@@ -23,9 +33,17 @@ export function gitTag(
     interpolatedArgs.push("--sign");
   }
 
-  // TODO: refactor to address type issues
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  log.verbose(cmd, interpolatedArgs);
-  return childProcess.exec(cmd, interpolatedArgs, opts);
+  if (dryRun) {
+    // Display the command that would be executed
+    log.info(
+      "dry-run",
+      `Would execute: ${cmd} ${interpolatedArgs
+        .map((arg) => (arg.includes(" ") ? `"${arg}"` : arg))
+        .join(" ")}`
+    );
+    return Promise.resolve();
+  }
+
+  log.verbose("git", `${cmd} ${interpolatedArgs.join(" ")}`);
+  return childProcess.exec(cmd, interpolatedArgs, execOpts);
 }

@@ -243,6 +243,11 @@ const command: CommandModule = {
         alias: "yes",
         type: "boolean",
       },
+      "dry-run": {
+        describe:
+          "Display the actions that would be performed during versioning without actually executing them.",
+        type: "boolean",
+      },
     };
 
     if (composed) {

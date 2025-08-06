@@ -1,11 +1,10 @@
+import * as childProcess from "@lerna/child-process";
 import { log } from "@lerna/core";
 import { readJsonFile, workspaceRoot } from "@nx/devkit";
-import { ExecOptions } from "child_process";
-import fs from "fs";
-import path from "path";
+import type { SyncOptions } from "execa";
+import fs from "node:fs";
+import path from "node:path";
 import slash from "slash";
-
-const childProcess = require("@lerna/child-process");
 
 let resolvedPrettier;
 function resolvePrettier() {
@@ -54,14 +53,24 @@ async function maybeFormatFile(filePath) {
   }
 }
 
+/**
+ * Adds files to git staging area, with optional dry-run support.
+ *
+ * @param changedFiles - Array of file paths to add
+ * @param gitOpts - Git options including granular pathspec setting
+ * @param execOpts - Execution options for child process
+ * @param dryRun - If true, only logs what would be done without executing
+ * @returns Promise that resolves when operation completes
+ */
 export async function gitAdd(
   changedFiles: string[],
   gitOpts: { granularPathspec?: boolean },
-  execOpts: ExecOptions
+  execOpts: SyncOptions,
+  dryRun = false
 ) {
   let files: string | string[] = [];
   for (const file of changedFiles) {
-    const filePath = slash(path.relative(execOpts.cwd as string, path.resolve(execOpts.cwd as string, file)));
+    const filePath = slash(path.relative(execOpts.cwd, path.resolve(execOpts.cwd, file)));
     await maybeFormatFile(filePath);
     if (gitOpts.granularPathspec) {
       files.push(filePath);
@@ -73,10 +82,14 @@ export async function gitAdd(
     files = ".";
   }
 
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  log.silly("gitAdd", files);
+  const args = ["add", "--", ...files];
 
-  return childProcess.exec("git", ["add", "--", ...files], execOpts);
+  if (dryRun) {
+    log.info("dry-run", `Would execute: git ${args.join(" ")}`);
+    return Promise.resolve();
+  }
+
+  log.silly("gitAdd", Array.isArray(files) ? files.join(" ") : files);
+
+  return childProcess.exec("git", args, execOpts);
 }

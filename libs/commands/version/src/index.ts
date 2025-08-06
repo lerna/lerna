@@ -48,8 +48,8 @@ import { isBreakingChange } from "./lib/is-breaking-change";
 import { makePromptVersion } from "./lib/prompt-version";
 import { remoteBranchExists } from "./lib/remote-branch-exists";
 import { updateLockfileVersion } from "./lib/update-lockfile-version";
-
-const childProcess = require("@lerna/child-process");
+import { getModifiedLockfilePaths } from "./lib/lockfile-utils";
+import * as childProcess from "@lerna/child-process";
 
 module.exports = function factory(
   argv: Arguments<VersionCommandConfigOptions>,
@@ -96,6 +96,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   yes?: boolean;
   rejectCycles?: boolean;
   premajorVersionBump?: "default" | "force-patch";
+  dryRun?: boolean;
 }
 
 class VersionCommand extends Command {
@@ -372,40 +373,70 @@ class VersionCommand extends Command {
   }
 
   execute() {
-    const tasks: (() => Promise<unknown>)[] = [() => this.updatePackageVersions()];
+    const dryRun = !!this.options.dryRun;
+
+    if (dryRun) {
+      this.logger.info("dry-run", "Executing in dry-run mode - no changes will be made");
+      this.logger.info("dry-run", "");
+    }
+
+    const tasks: (() => Promise<unknown>)[] = [() => this.updatePackageVersions(dryRun)];
 
     if (this.commitAndTag) {
-      tasks.push(() => this.commitAndTagUpdates());
+      tasks.push(() => this.commitAndTagUpdates(dryRun));
     } else {
-      this.logger.info("execute", "Skipping git tag/commit");
+      const message = "Skipping git tag/commit";
+      if (dryRun) {
+        this.logger.info("dry-run", message + " (--no-git-tag-version)");
+      } else {
+        this.logger.info("execute", message);
+      }
     }
 
     if (this.pushToRemote) {
-      tasks.push(() => this.gitPushToRemote());
+      tasks.push(() => this.gitPushToRemote(dryRun));
     } else {
-      this.logger.info("execute", "Skipping git push");
+      const message = "Skipping git push";
+      if (dryRun) {
+        this.logger.info("dry-run", message + " (--no-push)");
+      } else {
+        this.logger.info("execute", message);
+      }
     }
 
     if (this.releaseClient) {
-      this.logger.info("execute", "Creating releases...");
-      tasks.push(() =>
-        createRelease(
-          this.releaseClient,
-          {
-            type: this.options.createRelease,
-            tags: this.tags,
-            tagVersionSeparator: this.options.tagVersionSeparator || "@",
-            releaseNotes: this.releaseNotes,
-          },
-          { gitRemote: this.options.gitRemote, execOpts: this.execOpts }
-        )
-      );
+      if (dryRun) {
+        this.logger.info("dry-run", `Would create releases...`);
+        this.logReleaseOperations();
+      } else {
+        this.logger.info("execute", "Creating releases...");
+        tasks.push(() =>
+          createRelease(
+            this.releaseClient,
+            {
+              type: this.options.createRelease,
+              tags: this.tags,
+              tagVersionSeparator: this.options.tagVersionSeparator || "@",
+              releaseNotes: this.releaseNotes,
+            },
+            { gitRemote: this.options.gitRemote, execOpts: this.execOpts }
+          )
+        );
+      }
     } else {
-      this.logger.info("execute", "Skipping releases");
+      const message = "Skipping releases";
+      if (dryRun) {
+        this.logger.info("dry-run", message);
+      } else {
+        this.logger.info("execute", message);
+      }
     }
 
     return pWaterfall(tasks).then(() => {
-      if (!this.composed) {
+      if (dryRun) {
+        this.logger.info("dry-run", "");
+        this.logger.success("version", "dry-run finished - no changes were made");
+      } else if (!this.composed) {
         this.logger.success("version", "finished");
       }
       return {
@@ -413,6 +444,205 @@ class VersionCommand extends Command {
         updatesVersions: this.updatesVersions,
       };
     });
+  }
+
+  /**
+   * Logs what would be updated during package version updates.
+   */
+  private logVersionUpdatesPreview() {
+    this.logPackageVersionChanges();
+    this.logFileModifications();
+    this.logLifecycleScriptsPreview();
+  }
+
+  /**
+   * Logs the package version changes that would be made.
+   */
+  private logPackageVersionChanges() {
+    this.logger.info("dry-run", "The following package versions would be updated:");
+
+    this.updates.forEach((node) => {
+      const pkg = getPackage(node);
+      const newVersion = this.updatesVersions.get(node.name);
+      this.logger.info("dry-run", `  ${pkg.name}: ${pkg.version} => ${newVersion}`);
+    });
+
+    this.logger.info("dry-run", "");
+  }
+
+  /**
+   * Logs the files that would be modified during versioning.
+   */
+  private logFileModifications() {
+    const { conventionalCommits, changelog = true, syncDistVersion = false } = this.options;
+    const independentVersions = this.project.isIndependent();
+
+    this.logger.info("dry-run", "The following files would be modified:");
+
+    this.logPackageManifestFiles(syncDistVersion);
+    this.logLockfileModifications();
+    this.logChangelogModifications(conventionalCommits, changelog, independentVersions);
+    this.logConfigurationFileModifications(independentVersions);
+  }
+
+  /**
+   * Logs package.json files that would be updated.
+   */
+  private logPackageManifestFiles(syncDistVersion: boolean) {
+    this.updates.forEach((node) => {
+      const pkg = getPackage(node);
+      this.logger.info("dry-run", `  ${pkg.manifestLocation}`);
+
+      if (syncDistVersion) {
+        const manifestDir = path.dirname(pkg.manifestLocation);
+        let contents = pkg.contents || "dist";
+
+        // If contents is an absolute path, use relative "dist" instead
+        if (path.isAbsolute(contents)) {
+          contents = "dist";
+        }
+
+        const distPackageLocation = path.join(manifestDir, contents, "package.json");
+        if (fs.existsSync(distPackageLocation)) {
+          this.logger.info("dry-run", `  ${distPackageLocation}`);
+        }
+      }
+    });
+  }
+
+  /**
+   * Logs lockfile modifications using the lockfile utility.
+   */
+  private logLockfileModifications() {
+    const lockfilePaths = getModifiedLockfilePaths(this.project.rootPath, this.options.npmClient);
+    lockfilePaths.forEach((lockfilePath) => {
+      this.logger.info("dry-run", `  ${lockfilePath}`);
+    });
+  }
+
+  /**
+   * Logs changelog files that would be updated.
+   */
+  private logChangelogModifications(
+    conventionalCommits: boolean,
+    changelog: boolean,
+    independentVersions: boolean
+  ) {
+    if (!conventionalCommits || !changelog) {
+      return;
+    }
+
+    if (independentVersions) {
+      this.updates.forEach((node) => {
+        const pkg = getPackage(node);
+        const changelogPath = path.join(path.dirname(pkg.manifestLocation), "CHANGELOG.md");
+        this.logger.info("dry-run", `  ${changelogPath}`);
+      });
+    } else {
+      const rootChangelogPath = path.join(this.project.rootPath, "CHANGELOG.md");
+      this.logger.info("dry-run", `  ${rootChangelogPath}`);
+    }
+  }
+
+  /**
+   * Logs configuration file modifications (lerna.json for fixed versioning).
+   */
+  private logConfigurationFileModifications(independentVersions: boolean) {
+    if (!independentVersions) {
+      this.logger.info("dry-run", `  ${this.project.rootConfigLocation}`);
+    }
+  }
+
+  /**
+   * Logs lifecycle scripts that would be executed.
+   */
+  private logLifecycleScriptsPreview() {
+    this.logger.info("dry-run", "");
+    this.logger.info("dry-run", "The following lifecycle scripts would be executed:");
+
+    if (!this.hasRootedLeaf) {
+      this.logger.info("dry-run", "  root preversion");
+      this.logger.info("dry-run", "  root version");
+    }
+
+    this.updates.forEach((node) => {
+      const pkg = getPackage(node);
+      this.logger.info("dry-run", `  ${pkg.name} preversion`);
+      this.logger.info("dry-run", `  ${pkg.name} version`);
+    });
+  }
+
+  /**
+   * Logs git operations that would be performed.
+   */
+  private logGitOperationsPreview() {
+    this.logger.info("dry-run", "");
+    this.logger.info("dry-run", "The following git operations would be performed:");
+
+    // Show git add operations
+    this.logger.info("dry-run", "  git add <modified files>");
+
+    // Show commit and tag operations
+    if (this.project.isIndependent()) {
+      const tagVersionSeparator = this.options.tagVersionSeparator || "@";
+      const tags = this.updates.map((node) => {
+        const pkg = getPackage(node);
+        return `${pkg.name}${tagVersionSeparator}${this.updatesVersions.get(node.name)}`;
+      });
+      const subject = this.options.message || "Publish";
+      const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
+      const displayMessage = message.replace(/"/g, '\\"').replace(/\n/g, "\\\\n");
+      this.logger.info("dry-run", `  git commit -m "${displayMessage}"`);
+
+      // Show tag operations
+      tags.forEach((tag) => {
+        this.logger.info("dry-run", `  git tag ${tag} -m ${tag}`);
+      });
+    } else {
+      const version = this.globalVersion;
+      const tag = `${this.tagPrefix}${version}`;
+      const message = this.options.message
+        ? this.options.message.replace(/%s/g, tag).replace(/%v/g, version)
+        : tag;
+      const displayMessage = message.replace(/"/g, '\\"');
+
+      this.logger.info("dry-run", `  git commit -m "${displayMessage}"`);
+      this.logger.info("dry-run", `  git tag ${tag} -m ${tag}`);
+    }
+  }
+
+  /**
+   * Logs postversion lifecycle scripts that would run.
+   */
+  private logPostVersionScriptsPreview() {
+    this.logger.info("dry-run", "");
+    this.logger.info("dry-run", "The following postversion lifecycle scripts would be executed:");
+
+    this.updates.forEach((node) => {
+      const pkg = getPackage(node);
+      this.logger.info("dry-run", `  ${pkg.name} postversion`);
+    });
+
+    if (!this.hasRootedLeaf) {
+      this.logger.info("dry-run", "  root postversion");
+    }
+  }
+
+  /**
+   * Logs release operations that would be performed.
+   */
+  private logReleaseOperations() {
+    if (this.project.isIndependent()) {
+      this.updates.forEach((node) => {
+        const pkg = getPackage(node);
+        const tagVersionSeparator = this.options.tagVersionSeparator || "@";
+        const tag = `${pkg.name}${tagVersionSeparator}${this.updatesVersions.get(node.name)}`;
+        this.logger.info("dry-run", `  ${this.options.createRelease} release for ${tag}`);
+      });
+    } else {
+      const tag = `${this.tagPrefix}${this.globalVersion}`;
+      this.logger.info("dry-run", `  ${this.options.createRelease} release for ${tag}`);
+    }
   }
 
   /**
@@ -636,6 +866,11 @@ class VersionCommand extends Command {
       output("");
     }
 
+    // Skip confirmation prompts in dry-run mode
+    if (this.options.dryRun) {
+      return true;
+    }
+
     if (this.options.yes) {
       this.logger.info("auto-confirmed", "");
       return true;
@@ -649,7 +884,14 @@ class VersionCommand extends Command {
     return promptConfirmation(message);
   }
 
-  async updatePackageVersions() {
+  /**
+   * Updates package versions, with optional dry-run support.
+   * In dry-run mode, logs what would be done without making changes.
+   *
+   * @param dryRun - If true, only logs operations without executing them
+   * @returns Promise that resolves when operation completes
+   */
+  async updatePackageVersions(dryRun = false) {
     const {
       conventionalCommits,
       changelogPreset,
@@ -661,6 +903,11 @@ class VersionCommand extends Command {
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
     const changedFiles = new Set<string>();
+
+    if (dryRun) {
+      this.logVersionUpdatesPreview();
+      return;
+    }
 
     // preversion:  Run BEFORE bumping the package version.
     // version:     Run AFTER bumping the package version, but BEFORE commit.
@@ -830,7 +1077,7 @@ class VersionCommand extends Command {
     }
 
     if (this.commitAndTag) {
-      await gitAdd(Array.from(changedFiles), this.gitOpts, this.execOpts);
+      await gitAdd(Array.from(changedFiles), this.gitOpts, this.execOpts, dryRun);
     }
   }
 
@@ -851,13 +1098,24 @@ class VersionCommand extends Command {
     });
   }
 
-  async commitAndTagUpdates() {
+  /**
+   * Commits and tags version updates, with optional dry-run support.
+   *
+   * @param dryRun - If true, only logs what would be done without executing
+   * @returns Promise that resolves when operation completes
+   */
+  async commitAndTagUpdates(dryRun = false) {
+    if (dryRun) {
+      this.logGitOperationsPreview();
+      this.logPostVersionScriptsPreview();
+      return;
+    }
     let tags: string[] = [];
 
     if (this.project.isIndependent()) {
-      tags = await this.gitCommitAndTagVersionForUpdates();
+      tags = await this.gitCommitAndTagVersionForUpdates(dryRun);
     } else {
-      tags = await this.gitCommitAndTagVersion();
+      tags = await this.gitCommitAndTagVersion(dryRun);
     }
 
     this.tags = tags;
@@ -871,7 +1129,7 @@ class VersionCommand extends Command {
     }
   }
 
-  async gitCommitAndTagVersionForUpdates() {
+  async gitCommitAndTagVersionForUpdates(dryRun = false) {
     const tagVersionSeparator = this.options.tagVersionSeparator || "@";
     const tags = this.updates.map((node) => {
       const pkg = getPackage(node);
@@ -881,20 +1139,21 @@ class VersionCommand extends Command {
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
     if (await this.hasChanges()) {
-      await gitCommit(message, this.gitOpts, this.execOpts);
+      await gitCommit(message, this.gitOpts, this.execOpts, dryRun);
     }
     if (this.gitOpts.signGitTag) {
-      for (const tag of tags) await gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand);
+      for (const tag of tags)
+        await gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand, dryRun);
     } else {
       await Promise.all(
-        tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand))
+        tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand, dryRun))
       );
     }
 
     return tags;
   }
 
-  async gitCommitAndTagVersion() {
+  async gitCommitAndTagVersion(dryRun = false) {
     const version = this.globalVersion;
     const tag = `${this.tagPrefix}${version}`;
     const message = this.options.message
@@ -902,18 +1161,31 @@ class VersionCommand extends Command {
       : tag;
 
     if (await this.hasChanges()) {
-      await gitCommit(message, this.gitOpts, this.execOpts);
+      await gitCommit(message, this.gitOpts, this.execOpts, dryRun);
     }
 
-    await gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand);
+    await gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand, dryRun);
 
     return [tag];
   }
 
-  gitPushToRemote() {
+  /**
+   * Pushes git changes to remote repository, with optional dry-run support.
+   *
+   * @param dryRun - If true, only logs what would be done without executing
+   * @returns Promise that resolves when operation completes
+   */
+  gitPushToRemote(dryRun = false) {
+    if (dryRun) {
+      this.logger.info(
+        "dry-run",
+        `Would push to remote: git push ${this.gitRemote} ${this.currentBranch} --follow-tags`
+      );
+      return Promise.resolve();
+    }
     this.logger.info("git", "Pushing tags...");
 
-    return gitPush(this.gitRemote, this.currentBranch, this.execOpts);
+    return gitPush(this.gitRemote, this.currentBranch, this.execOpts, dryRun);
   }
 
   private async hasChanges() {
@@ -923,8 +1195,9 @@ class VersionCommand extends Command {
         ...this.execOpts,
         cwd: this.execOpts.cwd as string, // force it to a string
       });
-    } catch (e) {
-      // git diff exited with a non-zero exit code, so we assume changes were found
+      return false;
+    } catch (error) {
+      this.logger.verbose("git", `Git diff check failed: ${error.message}`);
       return true;
     }
   }
