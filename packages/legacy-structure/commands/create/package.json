@@ -91,7 +91,7 @@
     "through": "2.3.8",
     "tinyglobby": "0.2.12",
     "upath": "2.0.1",
-    "uuid": "^10.0.0",
+    "uuid": "^11.1.0",
     "validate-npm-package-license": "^3.0.4",
     "validate-npm-package-name": "5.0.1",
     "wide-align": "1.1.5",
