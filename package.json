@@ -43,7 +43,6 @@
     "@swc-node/register": "1.10.10",
     "@swc/core": "1.13.3",
     "@types/byte-size": "^8.1.2",
-    "@types/clone-deep": "^4.0.4",
     "@types/cmd-shim": "^5.0.2",
     "@types/columnify": "^1.5.4",
     "@types/conventional-recommended-bump": "^6.1.0",

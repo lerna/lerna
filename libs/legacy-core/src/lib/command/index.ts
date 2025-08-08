@@ -1,5 +1,4 @@
 import { CommandConfigOptions, Logger, Project, ValidationError, log } from "@lerna/core";
-import cloneDeep from "clone-deep";
 import dedent from "dedent";
 import execa from "execa";
 import os from "os";
@@ -35,11 +34,11 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     this._project = project;
   }
 
-  constructor(_argv: any, { skipValidations } = { skipValidations: false }) {
+  constructor(readonly _argv: any, { skipValidations } = { skipValidations: false }) {
     log.pause();
     log.heading = "lerna";
 
-    const argv = cloneDeep(_argv);
+    const argv = { ..._argv };
     log.silly("argv", argv);
 
     // "FooCommand" => "foo"
