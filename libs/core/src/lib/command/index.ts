@@ -1,6 +1,5 @@
 import { ProjectFileMap } from "@nx/devkit";
 import { ExecOptions as NodeExecOptions } from "child_process";
-import cloneDeep from "clone-deep";
 import dedent from "dedent";
 import { daemonClient } from "nx/src/daemon/client/client";
 import os from "os";
@@ -93,7 +92,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
     log.pause();
     log.heading = "lerna";
 
-    const argv = cloneDeep(_argv);
+    const argv = structuredClone(_argv);
     log.silly("argv", argv);
 
     // "FooCommand" => "foo"
