@@ -993,8 +993,8 @@ class PublishCommand extends Command {
 
           return pulseTillDone(
             queue
-              ? queue.queue(() => npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache))
-              : npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache)
+              ? queue.queue(() => npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.conf, this.otpCache))
+              : npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.conf, this.otpCache)
           )
             .then(() => {
               this.publishedPackages.push(pkg);
