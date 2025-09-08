@@ -74,7 +74,7 @@
     "jest-diff": ">=29.4.3 < 30",
     "js-yaml": "4.1.0",
     "libnpmaccess": "8.0.6",
-    "libnpmpublish": "9.0.9",
+    "libnpmpublish": "11.1.0",
     "load-json-file": "6.2.0",
     "make-dir": "4.0.0",
     "minimatch": "3.0.5",
