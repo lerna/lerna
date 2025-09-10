@@ -162,12 +162,12 @@ async function oidc({ pkg, conf, opts }: { pkg: Package; conf: Conf; opts: any }
       const json = await response.json();
 
       if (!response.ok) {
-        log.verbose("publish", `failed to fetch OIDC id_token from GitHub: received an invalid response`);
+        log.verbose("publish", "oidc failed to fetch id_token from GitHub: received an invalid response");
         return undefined;
       }
 
       if (!(json as { value: string }).value) {
-        log.verbose("publish", `failed to fetch OIDC id_token from GitHub: missing value`);
+        log.verbose("publish", "oidc failed to fetch id_token from GitHub: missing value");
         return undefined;
       }
 
@@ -188,7 +188,7 @@ async function oidc({ pkg, conf, opts }: { pkg: Package; conf: Conf; opts: any }
 
     try {
       res = await npmFetchJson(
-        new URL(`/-/npm/v1/oidc/token/exchange/package/${escapedPackageName}`, registry).toString(),
+        new URL(`/-/npm/v1/oidc/token/exchange/package/${escapedPackageName}`, registry).href,
         {
           ...opts,
           [authTokenKey]: idToken,
@@ -196,24 +196,27 @@ async function oidc({ pkg, conf, opts }: { pkg: Package; conf: Conf; opts: any }
         }
       );
     } catch (error) {
-      log.verbose(
-        "publish",
-        `Failed token exchange request with body message:: ${error?.body?.message || "Unknown error"}`
-      );
+      let err = "Unknown error";
+
+      if (hasBodyMessage(error)) {
+        err = error.body.message;
+      } else if (hasMessage(error)) {
+        err = error.message;
+      }
+
+      log.verbose("publish", `oidc failed token exchange request with message: ${err}`);
+
       return undefined;
     }
 
     if (!res?.token) {
-      log.verbose(
-        "publish",
-        '"OIDC: Failed because token exchange was missing the token in the response body"'
-      );
+      log.verbose("publish", "oidc failed because token exchange was missing the token in the response body");
       return undefined;
     }
     // Attach token to opts which is passed through to `otplease`.
     opts[authTokenKey] = res.token;
     conf.set(authTokenKey, res.token, "user");
-    log.verbose("publish", "Successfully retrieved and set OIDC token");
+    log.verbose("publish", "oidc successfully retrieved and set OIDC token");
 
     try {
       const [headerB64, payloadB64] = idToken.split(".");
@@ -227,19 +230,33 @@ async function oidc({ pkg, conf, opts }: { pkg: Package; conf: Conf; opts: any }
         ) {
           const isPublic = opts.access === "public";
           if (isPublic) {
-            log.verbose("oidc", `Enabling provenance`);
+            log.verbose("publish", "oidc enabling provenance");
             opts.provenance = true;
             conf.set("provenance", true, "user");
           }
         }
       }
-    } catch (error) {
-      log.verbose(
-        "publish",
-        `OIDC: Failed to set provenance with message: ${error?.message || "Unknown error"}`
-      );
+    } catch (error: unknown) {
+      const err = hasMessage(error) ? error.message : "Unknown error";
+      log.verbose("publish", `oidc failed to set provenance with message: ${err}`);
     }
-  } catch (error) {
-    log.verbose("publish", `OIDC: Failure with message: ${error?.message || "Unknown error"}`);
+  } catch (error: unknown) {
+    const err = hasMessage(error) ? error.message : "Unknown error";
+    log.verbose("publish", `oidc failure with message: ${err}`);
   }
+}
+
+function hasMessage(error: unknown): error is { message: string } {
+  return error instanceof Error || (typeof error === "object" && error !== null && "message" in error);
+}
+
+function hasBodyMessage(error: unknown): error is { body: { message: string } } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "body" in error &&
+    typeof error.body === "object" &&
+    error.body !== null &&
+    "message" in error.body
+  );
 }
