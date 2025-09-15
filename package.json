@@ -84,6 +84,7 @@
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
     "nx": "20.7.2",
+    "pkg-pr-new": "0.0.60",
     "prettier": "^2.2.1",
     "signal-exit": "3.0.7",
     "string-width": "^4.2.3",
