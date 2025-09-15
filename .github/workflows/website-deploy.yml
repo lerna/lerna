@@ -21,29 +21,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: 20
-          cache: npm
+
       - name: Install dependencies
         run: npm ci --omit=optional
+
       - name: Test build website
         run: npm run build
+
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.repository == 'lerna/lerna' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: webfactory/ssh-agent@v0.5.4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - uses: webfactory/ssh-agent@fc49353b67b2b7c1e0e6a600572d01a69f2672dd # v0.5.4
         with:
           ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
-      - uses: actions/setup-node@v4
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: 20
-          cache: npm
+
       - name: Install dependencies
         run: npm ci --omit=optional
+
       - name: Deploy to lerna/website
         env:
           USE_SSH: true

@@ -13,7 +13,7 @@ runs:
   using: "composite"
   steps:
     - name: Install node and npm based on the given values (or the volta config in package.json)
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
       with:
         node-version-file: ${{ inputs.node-version == '' && 'package.json' || '' }}
         node-version: ${{ inputs.node-version }}

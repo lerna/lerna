@@ -47,7 +47,7 @@ jobs:
       matrix:
         node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           fetch-depth: 0
 
@@ -112,7 +112,7 @@ jobs:
       #     git config --global user.signingkey $GPG_KEY_ID
 
       - name: Run parallel distributed builds and tests on each node version
-        uses: jameshenry/parallel-bash-commands@v1
+        uses: jameshenry/parallel-bash-commands@943dfd1eebfab8bbf19782c47a85c9ca7e8d245c # v1
         with:
           cmd1: npx nx run-many -t build --parallel=3
           cmd2: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
@@ -162,7 +162,7 @@ jobs:
         # Create 4 agents per node version
         agent: [1, 2, 3, 4]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Configure git metadata
         run: |
