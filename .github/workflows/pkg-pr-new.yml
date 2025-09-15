@@ -1,0 +1,80 @@
+# WARNING: This workflow can be run on forks, so it is important to not perform any sensitive operations
+# or expose any secrets.
+#
+# pkg.pr.new as a registry is not the source of truth for the packages, npm is, so even if somehow a
+# malicious actor were able to leverage this workflow to publish malware, nobody would receive it
+# automatically, they would have to install a super specific URL.
+
+name: Publish PR branch to pkg.pr.new
+
+# Dynamically generate the display name for the GitHub UI based on the event type and inputs
+run-name: Publish PR branch to pkg.pr.new for PR ${{ github.event.pull_request.number }}
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+# Minimal permissions by default
+permissions:
+  contents: read
+
+env:
+  # Intentionally no access to Nx Cloud
+  NX_NO_CLOUD: true
+  NX_CLOUD_ACCESS_TOKEN: ""
+
+jobs:
+  publish_pr_branch_to_pkg_pr_new:
+    name: Publish PR branch to pkg.pr.new
+    if: github.actor == 'JamesHenry' && github.event.review.state == 'commented' && github.event.review.body == '@pkg-pr-new publish'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print review comment SHA
+        run: echo "${{ github.event.review.commit_id }}"
+
+      - name: Print pull request URL
+        run: echo "${{ github.event.pull_request.html_url }}"
+
+      # Check out the PR branch HEAD as a shallow clone
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install Node.js per package.json
+        uses: actions/setup-node@v5
+        with:
+          # Use the volta.node property as the source of truth
+          node-version-file: "package.json"
+          # Disable caching given this workflow could be run on forks (security risk)
+          package-manager-cache: false
+
+      - name: Check PR branch HEAD has not changed since review comment
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = ${{ github.event.pull_request.number }};
+            const response = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+            const headSha = response.data.head.sha;
+            console.log(`The latest commit SHA on PR #${prNumber} is ${headSha}`);
+            if (headSha !== '${{ github.event.review.commit_id }}') {
+              throw new Error('PR branch HEAD has changed since the triggering review comment was made')
+            }
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Build packages
+        run: npm run build
+
+      - name: Publish PR branch to pkg.pr.new
+        run: npx pkg-pr-new publish --compact --peerDeps --no-template --comment=off './packages/*,./packages/legacy-structure/commands/create'
