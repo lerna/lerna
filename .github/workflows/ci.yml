@@ -16,6 +16,10 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_VERBOSE_LOGGING: false
 
+# Minimal permissions by default
+permissions:
+  contents: read
+
 jobs:
   main:
     name: Nx Cloud - Main Job

@@ -16,6 +16,10 @@ env:
   COREPACK_ENABLE_AUTO_PIN: "0"
   COREPACK_ENABLE_STRICT: "0"
 
+# Minimal permissions by default
+permissions:
+  contents: read
+
 jobs:
   set-node-versions:
     name: Set Node Versions
