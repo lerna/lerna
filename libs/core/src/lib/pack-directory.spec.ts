@@ -34,6 +34,59 @@ function serializeTempDir(match: any, cwd: any, subPath: string) {
   return normalizePath(path.join("__TMP_DIR__", subPath));
 }
 
+/**
+ * Extraced from pretty-format codebase as no longer exported in v30
+ *
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+const getKeysOfEnumerableProperties = (object: any, compareKeys: any) => {
+  const rawKeys = Object.keys(object);
+  const keys = compareKeys === null ? rawKeys : rawKeys.sort(compareKeys);
+  if (Object.getOwnPropertySymbols) {
+    for (const symbol of Object.getOwnPropertySymbols(object)) {
+      if (Object.getOwnPropertyDescriptor(object, symbol)?.enumerable) {
+        keys.push(symbol.toString());
+      }
+    }
+  }
+  return keys;
+};
+
+/**
+ * Extraced from pretty-format codebase as no longer exported in v30
+ *
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+function printObjectProperties(val: any, config: any, indentation: any, depth: any, refs: any, printer: any) {
+  let result = "";
+  const keys = getKeysOfEnumerableProperties(val, config.compareKeys);
+  if (keys.length > 0) {
+    result += config.spacingOuter;
+    const indentationNext = indentation + config.indent;
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const name = printer(key, config, indentationNext, depth, refs);
+      const value = printer(val[key], config, indentationNext, depth, refs);
+      result += `${indentationNext + name}: ${value}`;
+      if (i < keys.length - 1) {
+        result += `,${config.spacingInner}`;
+      } else if (!config.min) {
+        result += ",";
+      }
+    }
+    result += config.spacingOuter + indentation;
+  }
+  return result;
+}
+
 // process.umask() differs between macOS and Ubuntu,
 // so we need to overwrite derived hashes for consistency
 expect.addSnapshotSerializer({

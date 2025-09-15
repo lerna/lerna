@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`CreateCommand creates a stub cli 1`] = `
 diff --git a/packages/my-cli/README.md b/packages/my-cli/README.md

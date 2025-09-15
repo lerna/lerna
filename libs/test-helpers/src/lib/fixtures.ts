@@ -1,8 +1,8 @@
 import execa from "execa";
-import fileUrl from "file-url";
 import findUp from "find-up";
 import { copy, ensureDir } from "fs-extra";
-import { join } from "path";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { directory } from "tempy";
 import { gitAdd, gitCommit, gitInit } from "./git";
 
@@ -15,7 +15,7 @@ export function cloneFixtureFactory(startDir: any) {
     // @ts-ignore
     initFixture(...args).then((cwd) => {
       const repoDir = directory();
-      const repoUrl = fileUrl(repoDir, { resolve: false });
+      const repoUrl = pathToFileURL(repoDir).toString();
 
       return execa("git", ["init", "--bare"], { cwd: repoDir })
         .then(() => execa("git", ["checkout", "-B", "main"], { cwd }))
