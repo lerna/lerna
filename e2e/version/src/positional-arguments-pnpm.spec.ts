@@ -75,7 +75,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
           devDependencies: Object {
             lerna: Object {
               specifier: ^999.9.9-e2e.0,
-              version: 999.9.9-e2e.0(@type/noe@24.2.1),
+              version: 999.9.9-e2e.0,
             },
           },
         },
@@ -140,7 +140,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
           devDependencies: Object {
             lerna: Object {
               specifier: ^999.9.9-e2e.0,
-              version: 999.9.9-e2e.0(@type/noe@24.2.1),
+              version: 999.9.9-e2e.0,
             },
           },
         },
@@ -209,7 +209,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
           devDependencies: Object {
             lerna: Object {
               specifier: ^999.9.9-e2e.0,
-              version: 999.9.9-e2e.0(@type/noe@24.2.1),
+              version: 999.9.9-e2e.0,
             },
           },
         },
