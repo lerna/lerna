@@ -24,6 +24,7 @@ const { catFile } = require("./lib/cat-file");
 
 const LERNA_MODULE_DATA = require.resolve(path.join(__dirname, "./lib/lerna-module-data.js"));
 const DEFAULT_DESCRIPTION = [
+  "A different start to the description...",
   "Now I’m the model of a modern major general",
   "The venerated Virginian veteran whose men are all",
   "Lining up, to put me up on a pedestal",
