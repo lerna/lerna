@@ -40,11 +40,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          run_install: false
-
       - name: Install Node.js per package.json
         uses: actions/setup-node@v5
         with:
