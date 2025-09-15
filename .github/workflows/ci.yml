@@ -27,11 +27,11 @@ jobs:
     env:
       NX_CI_EXECUTION_ENV: "linux"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           fetch-depth: 0
 
-      - uses: nrwl/nx-set-shas@v4
+      - uses: nrwl/nx-set-shas@826660b82addbef3abff5fa871492ebad618c9e1 # v4
 
       - name: Start Nx Cloud CI Run - Linux
         run: npx nx-cloud start-ci-run --stop-agents-after="e2e"
@@ -40,7 +40,7 @@ jobs:
         uses: ./.github/actions/install-node-and-dependencies
 
       - name: Run parallel distributed tasks
-        uses: jameshenry/parallel-bash-commands@v1
+        uses: jameshenry/parallel-bash-commands@943dfd1eebfab8bbf19782c47a85c9ca7e8d245c # v1
         with:
           cmd1: npx nx-cloud record -- npx nx format:check
           cmd2: npx nx run-many -t build --parallel=3
@@ -65,7 +65,7 @@ jobs:
       matrix:
         agent: [1, 2, 3, 4]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Configure git metadata
         run: |
@@ -130,7 +130,7 @@ jobs:
       TEMP: C:\temp
       TMP: C:\temp
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Start Nx Cloud CI Run - Windows
         run: npx nx-cloud start-ci-run --stop-agents-after="test"
@@ -174,7 +174,7 @@ jobs:
       TEMP: C:\temp
       TMP: C:\temp
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Configure git metadata
         run: |
@@ -199,12 +199,12 @@ jobs:
       NX_CI_EXECUTION_ENV: "linux"
       NX_CLOUD_DISTRIBUTED_EXECUTION: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           fetch-depth: 0
 
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v4
+        uses: nrwl/nx-set-shas@826660b82addbef3abff5fa871492ebad618c9e1 # v4
 
       - name: Configure git metadata
         run: |

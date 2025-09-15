@@ -36,12 +36,12 @@ jobs:
         run: echo "${{ github.event.pull_request.html_url }}"
 
       # Check out the PR branch HEAD as a shallow clone
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           persist-credentials: false
 
       - name: Install Node.js per package.json
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           # Use the volta.node property as the source of truth
           node-version-file: "package.json"
@@ -49,7 +49,7 @@ jobs:
           package-manager-cache: false
 
       - name: Check PR branch HEAD has not changed since review comment
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
