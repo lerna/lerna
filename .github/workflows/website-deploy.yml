@@ -6,6 +6,10 @@ on:
   push:
     branches: [main]
 
+# Minimal permissions by default
+permissions:
+  contents: read
+
 defaults:
   run:
     shell: bash
