@@ -6,11 +6,18 @@ type: explainer
 
 # Legacy Package Management
 
+:::note
+In v9 of lerna, released in September 2025, the `lerna bootstrap`, `lerna add` and `lerna link` commands were finally fully removed **after over 2 years of being deprecated**.
+If you are still using these commands, please migrate to using your package manager's long-supported `workspaces` feature.
+
+The following guide will provide the background and help you understand why and how to migrate.
+:::
+
 <iframe height="400" src="https://www.youtube.com/embed/NEFJNz4wx1k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
 
 ## Migrating from `lerna bootstrap`, `lerna add` and `lerna link` in lerna v7 and later
 
-In lerna v7.0.0, we removed the `lerna bootstrap`, `lerna add` and `lerna link` commands in lerna by default.
+Back in June 2023, in lerna v7.0.0, we removed the `lerna bootstrap`, `lerna add` and `lerna link` commands in lerna by default. Over two years later, in lerna v9.0.0, the commands were finally fully removed.
 
 This section covers how best to migrate away from using them and modernize your setup using package manager `workspaces`. For full context on _why_ this necessary, see [Background](#background) below.
 
@@ -94,19 +101,17 @@ If you were just using `lerna bootstrap` without any advanced hoisting concerns,
 
 ### Temporarily polyfilling legacy package management commands
 
-If you really find yourself stuck and needing the legacy package management commands of `lerna bootstrap`, `lerna add` and `lerna link` in v7, you can install the `@lerna/legacy-package-management` package at the same version as your `lerna` package, and this will polyfill the commands with their old implementations.
+If you really found yourself stuck and needing the legacy package management commands of `lerna bootstrap`, `lerna add` and `lerna link` in v7 or v8, you could have installed the `@lerna/legacy-package-management` package at the same version as your `lerna` package, and this polyfilled the commands with their old implementations.
 
-It's important to note that this is just a stop gap and this new package can be thought of as being in maintenance mode only - no new features will be considered for legacy package management concerns (such as `lerna bootstrap`, `lerna add` and `lerna link`), and we will only look to merge critical patches and security updates.
+It's important to note that this was only ever just a stop gap and that package was immediately in maintenance mode only - no new features were considered for legacy package management concerns (such as `lerna bootstrap`, `lerna add` and `lerna link`), but we did merge critical patches and security updates.
 
-If you find yourself in this position, please open an issue on the lerna repo so that we can learn more about the difficulties you are facing and help you find a way forward:
-
-https://github.com/lerna/lerna/issues/new/choose
+All support for `@lerna/legacy-package-management` was removed in v9, over 2 years after it was introduced as a temporary polyfill, giving teams a good amount of time to migrate.
 
 ## Background
 
 Lerna is the original monorepo/workspace tool in the JavaScript ecosystem. When it was created in 2015/2016 the ecosystem looked totally different, and there were no built in capabilities to handle working with multiple packages in a single repository (a "workspace"). Commands like `lerna bootstrap`, `lerna add` and `lerna link` were all a critical part of the lerna project, because there were no other options.
 
-However, the fact is that - for many years now - the package managers we know and love (`npm`, `yarn` and `pnpm`) all fully support that concept of workspaces as a first-class use-case.
+However, the fact is that - for many, many years now - the package managers we know and love (`npm`, `yarn` and `pnpm`) all fully support that concept of workspaces as a first-class use-case.
 
 They have battle tested implementations covering adding, removing and linking local packages, and combining them with third party dependencies in a natural way.
 
@@ -114,7 +119,7 @@ This is the reason why, for the final several years of his tenure as lead mainta
 
 We knew about this context from afar, but as new stewards of the project in 2022 we did not want to jump straight in and start removing capabilities without first taking the time to get familiar with the reality up close. Now that we have been actively maintaining for a while, we are in full agreement with Daniel and others that the legacy package management commands in lerna needed to be retired.
 
-By removing these legacy pieces which have better alternatives natively in package managers, we and the rest of the lerna community are now freed up to concentrate our efforts on things which are uniquely valuable about lerna (such as, but not limited to, versioning and publishing), and making them the best they can be!
+By removing these legacy pieces which have better alternatives natively in package managers, we and the rest of the lerna community are now freed up to concentrate our efforts on things which are most valuable about lerna (such as, but not limited to, versioning and publishing), and making them the best they can be!
 
 :::info
 

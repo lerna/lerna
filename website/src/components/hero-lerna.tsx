@@ -1,7 +1,7 @@
-import { ChevronRightIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import React, { useEffect, useState } from "react";
+import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
+import { useEffect, useState } from "react";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import styles from "./hero-lerna.module.css";
 import LernaIcon from "./lerna-icon";
 
@@ -26,16 +26,6 @@ export default function HeroLerna(): JSX.Element {
       <div className="container">
         <div className="row">
           <div className="col col--8 margin-vert--xl">
-            <a
-              href="https://github.com/lerna/lerna/issues/3121"
-              target="_blank"
-              rel="noreferrer"
-              className={styles.callout}
-            >
-              <span className="badge badge--primary callout__badge">NEW</span>
-              <span className={styles.callout__text}>Nrwl takes stewardship!</span>
-              <ChevronRightIcon className={styles.callout__icon} aria-hidden="true" />
-            </a>
             <h1 className={styles.slogan}>
               <span>The Original Tool for</span>
               <span className={styles.slogan__highlight}>JavaScript Monorepos</span>

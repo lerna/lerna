@@ -11,28 +11,12 @@ of the cache or use Nx Cloud. Nx Cloud is an app that provides a fast and zero-c
 caching. It's completely free for OSS projects and for most closed-sourced
 projects ([read more here](https://dev.to/nrwl/more-time-saved-for-free-with-nx-cloud-4a2j)).
 
-You can connect your workspace to Nx Cloud by running:
-
-```bash
-npx nx connect-to-nx-cloud
-```
+**Connecting your workspace to Nx Cloud is easy via the interactive, browser-baseed workflow.** You can start the process by running the following command from your lerna workspace root which will automatically open a browser window to your unique connection URL:
 
 ```bash title="Terminal Output"
-✔ Enable distributed caching to make your CI faster · Yes
+npx nx connect-to-nx-cloud
 
->  NX  Generating @nrwl/nx-cloud:init
-
-UPDATE nx.json
-
- >  NX   Distributed caching via Nx Cloud has been enabled
-
-   In addition to the caching, Nx Cloud provides config-free distributed execution,
-   UI for viewing complex runs and GitHub integration. Learn more at https://nx.app
-
-   Your workspace is currently unclaimed. Run details from unclaimed workspaces can be viewed on cloud.nx.app by anyone
-   with the link. Claim your workspace at the following link to restrict access.
-
-   https://cloud.nx.app/orgs/workspace-setup?accessToken=YOURACCESSTOKEN
+✔ Opening Nx Cloud https://cloud.nx.app/connect/abc123456 in your browser to connect your workspace.
 ```
 
 To see the remote cache in action, run:
@@ -87,33 +71,7 @@ created dist in 786ms
    Nx Cloud made it possible to reuse header: https://nx.app/runs/P0X6ZGTkqZ
 ```
 
-## Connecting Your Workspace to Your Nx Cloud Account
-
-After you have enabled Nx Cloud in your workspace, you will see the following:
-
-```shell
->  NX   NOTE  Nx Cloud has been enabled
-
-  Your workspace is currently public. Anybody with code access
-  can view the workspace on nx.app.
-
-  You can connect the workspace to your Nx Cloud account at
-  https://nx.app/orgs/workspace-setup?accessToken=N2Y3NzcyO...
-  (You can do this later.)
-```
-
-Click on this link to associate the workspace with your Nx Cloud account. If you don't have an Nx Cloud account, you can
-create one on the spot.
-
-After you claim your workspace, you will be able to manage permissions, create access tokens, set up billing, and so
-forth.
-
-**You will also see an interactive tutorial helping you explore distributed caching and the Nx Cloud user interface.**
-
-If you lose this link, you can still connect your workspace to Nx Cloud. Go to [nx.app](https://nx.app), create an
-account, and connect your workspace using the access token from `nx.json`.
-
 ## Skipping Cloud
 
 Similar to how `--skip-nx-cache` will instruct Nx not to use the cache, passing `--no-cloud` will tell Nx not to use Nx
-Cloud.
+Cloud. You can also set `NX_NO_CLOUD` to `true` in your environment.

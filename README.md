@@ -1,4 +1,4 @@
-> **Important note: this project [recently changed stewardship to Nrwl](https://github.com/lerna/lerna/issues/3121)!**
+> **Important note: this project [changed stewardship to Nx](https://github.com/lerna/lerna/issues/3121)!**
 >
 > **Your favorite tool is alive and well: https://blog.nrwl.io/lerna-5-1-new-website-new-guides-new-lerna-example-repo-distributed-caching-support-and-speed-64d66410bec7**
 
@@ -19,7 +19,7 @@ Lerna is a fast, modern build system for managing and publishing multiple JavaSc
 
 <p align="center">
     <a href="https://github.com/lerna/lerna/blob/main/LICENSE">
-      <img alt="MIT Licensed" src="https://img.shields.io/npm/l/@nrwl/workspace.svg?style=flat" />
+      <img alt="MIT Licensed" src="https://img.shields.io/npm/l/lerna.svg?style=flat" />
     </a>
     <a href="https://www.npmjs.com/package/lerna">
       <img alt="NPM Status" src="https://img.shields.io/npm/v/lerna.svg?style=flat" />
@@ -51,7 +51,7 @@ A few links to help you get started:
 - [Getting Started](https://lerna.js.org/docs/getting-started)
 - [Features](https://lerna.js.org/docs/features)
 - [Official Nx and Lerna YouTube Channel](https://www.youtube.com/@nxdevtools)
-- [Blog Posts About Lerna and Nx](https://blog.nrwl.io/nx/home)
+- [Blog Posts About Lerna and Nx](https://nx.dev/blog)
 
 <br />
 
@@ -63,7 +63,7 @@ A few links to help you get started:
 ### Want to help?
 
 If you want to file a bug or submit a PR, read up on
-our [guidelines for contributing](https://github.com/lerna/lerna/blob/master/CONTRIBUTING.md)
+our [guidelines for contributing](https://github.com/lerna/lerna/blob/main/CONTRIBUTING.md)
 
 <br />
 

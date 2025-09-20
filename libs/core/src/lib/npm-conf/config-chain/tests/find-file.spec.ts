@@ -1,8 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import fs from "fs";
-import { join } from "path";
-import { dirSync } from "tmp";
+import fs from "node:fs";
+import { join } from "node:path";
+import { directory } from "tempy";
 
 const cc = require("../index");
 
@@ -10,8 +8,8 @@ const objx = {
   rand: Math.random(),
 };
 
-const tmpDir = dirSync();
-const tmpFile = join(tmpDir.name, "random-test-config.json");
+const tmpDir = directory();
+const tmpFile = join(tmpDir, "random-test-config.json");
 
 fs.writeFileSync(tmpFile, JSON.stringify(objx));
 

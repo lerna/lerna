@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`version --conventional-commits accepts --build-metadata option 1`] = `
 "v1.0.1+exp.sha.SHA

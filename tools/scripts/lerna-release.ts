@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-import { execSync } from "child_process";
-import { readFileSync, writeFileSync } from "fs";
-import { join } from "path";
-import { URL } from "url";
+
+import { execSync } from "node:child_process";
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { URL } from "node:url";
 import * as yargs from "yargs";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -141,7 +142,7 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
   }
 
   if (originalLernaJson) {
-    writeFileSync(lernaJsonPath, originalLernaJson);
+    writeFileSync(lernaJsonPath, originalLernaJson.toString());
   }
 })();
 

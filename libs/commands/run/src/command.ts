@@ -3,7 +3,7 @@ import type { CommandModule } from "yargs";
 import { RunCommandConfigOptions, factory } from ".";
 
 /**
- * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
+ * @see https://github.com/yargs/yargs/blob/main/docs/advanced.md#providing-a-command-module
  */
 const command: CommandModule<object, RunCommandConfigOptions> = {
   command: "run <script>",

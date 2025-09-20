@@ -41,21 +41,27 @@ const noopWriteStream = {
  *
  */
 export class Fixture {
-  private readonly fixtureRootPath = joinPathFragments(this.e2eRoot, this.name);
-  private readonly fixtureWorkspacePath = joinPathFragments(this.fixtureRootPath, "lerna-workspace");
-  private readonly fixtureOriginPath = joinPathFragments(this.fixtureRootPath, ORIGIN_GIT);
-  private readonly fixturePnpmStorePath = joinPathFragments(this.fixtureRootPath, PNPM_STORE);
-  debugWriteStream: WriteStream =
-    process.env.LERNA_E2E_DEBUG === "true"
-      ? createWriteStream(joinPathFragments(this.fixtureRootPath, "debug.log"), { flags: "a" })
-      : noopWriteStream;
+  private readonly fixtureRootPath: string;
+  private readonly fixtureWorkspacePath: string;
+  private readonly fixtureOriginPath: string;
+  private readonly fixturePnpmStorePath: string;
+  debugWriteStream: WriteStream;
 
   constructor(
     private readonly e2eRoot: string,
     private readonly name: string,
     private readonly packageManager: PackageManager = "npm",
     private readonly forceDeterministicTerminalOutput: boolean
-  ) {}
+  ) {
+    this.fixtureRootPath = joinPathFragments(this.e2eRoot, this.name);
+    this.fixtureWorkspacePath = joinPathFragments(this.fixtureRootPath, "lerna-workspace");
+    this.fixtureOriginPath = joinPathFragments(this.fixtureRootPath, ORIGIN_GIT);
+    this.fixturePnpmStorePath = joinPathFragments(this.fixtureRootPath, PNPM_STORE);
+    this.debugWriteStream =
+      process.env.LERNA_E2E_DEBUG === "true"
+        ? createWriteStream(joinPathFragments(this.fixtureRootPath, "debug.log"), { flags: "a" })
+        : noopWriteStream;
+  }
 
   static async create({
     name,

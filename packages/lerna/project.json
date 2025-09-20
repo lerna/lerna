@@ -89,7 +89,7 @@
           "packages/lerna/src/utils/index.ts"
         ],
         "esbuildOptions": {
-          "external": ["*package.json", "@lerna/create", "@lerna/legacy-package-management", "nx/*", "@nx/*"],
+          "external": ["*package.json", "@lerna/create", "nx/*", "@nx/*"],
           "outExtension": {
             ".js": ".js"
           },

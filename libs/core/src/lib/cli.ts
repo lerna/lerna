@@ -1,5 +1,6 @@
 // Plugin isolation is not relevant to lerna
 process.env["NX_ISOLATE_PLUGINS"] = "false";
+process.env["NX_TUI"] = "false";
 // If plugin isolation is off, also make sure we're not using the legacy peer deps behavior.
 // See: https://github.com/lerna/lerna/issues/4167
 // This could be removed if Nx is not setting this to true by default.

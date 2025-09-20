@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`--build-metadata with prompt accepts build metadata 1`] = `
 "v1.1.0+20130313144700

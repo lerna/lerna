@@ -3,7 +3,7 @@
  *
  * Embedded here into lerna directly because we cannot yet migrate to ESM only, and we needed to bump outdated deps.
  */
-import fs from "graceful-fs";
+import fs from "node:fs";
 import isStream from "is-stream";
 import makeDir from "make-dir";
 import path from "path";

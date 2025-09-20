@@ -99,7 +99,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
 }
 
 class VersionCommand extends Command {
-  options: VersionCommandConfigOptions;
+  declare options: VersionCommandConfigOptions;
 
   commitAndTag?: boolean;
   pushToRemote?: boolean;

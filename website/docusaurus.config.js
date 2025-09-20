@@ -113,38 +113,6 @@ const config = {
             position: "left",
             label: "Get Started",
           },
-          // { to: "/upgrade", label: "Upgrade", position: "left" },
-          // {
-          //   href: "https://www.youtube.com/watch?v=ASCSTKX21jE",
-          //   "aria-label": "What's New in Lerna 6.5",
-          //   position: "left",
-          //   title: "What's New in Lerna 6.5",
-          //   label: `🎥 Lerna 6.5`,
-          // },
-          // {
-          //   href: "https://nx.dev",
-          //   className: "header-nxdev-link",
-          //   "aria-label": "Nx documentation",
-          //   position: "right",
-          //   title: "Check Nx",
-          //   label: "Nx",
-          // },
-          // {
-          //   href: "https://nx.app",
-          //   className: "header-nxdev-link",
-          //   "aria-label": "Nx Cloud",
-          //   position: "right",
-          //   title: "Check Nx Cloud",
-          //   label: "Nx Cloud",
-          // },
-          // {
-          //   href: "https://nrwl.io",
-          //   className: "header-nrwlio-link",
-          //   "aria-label": "Nrwl consulting",
-          //   position: "right",
-          //   title: "Check Nrwl",
-          //   label: "Nrwl",
-          // },
           {
             href: "https://github.com/lerna/lerna",
             className: "header-github-link",
@@ -162,7 +130,7 @@ const config = {
             items: [
               {
                 label: "Blog",
-                href: "https://blog.nrwl.io/?utm_source=lerna.js.org",
+                href: "https://nx.dev/blog?utm_source=lerna.js.org",
               },
               {
                 label: "Youtube Channel",
@@ -204,7 +172,7 @@ const config = {
               },
               {
                 label: "Newsletter",
-                href: "https://go.nrwl.io/nx-newsletter?utm_source=lerna.js.org",
+                href: "https://go.nx.dev/nx-newsletter?utm_source=lerna.js.org",
               },
               {
                 label: "Community Discord",

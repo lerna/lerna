@@ -13,7 +13,8 @@ export function promptConfirmation(message: string): Promise<boolean> {
         type: "expand",
         name: "confirm",
         message,
-        default: 2, // default to help in order to avoid clicking straight through
+        // We put any invalid default value here to help avoid accidentally clicking straight through
+        default: "2",
         choices: [
           { key: "y", name: "Yes", value: true },
           { key: "n", name: "No", value: false },
@@ -27,18 +28,20 @@ export function promptConfirmation(message: string): Promise<boolean> {
     });
 }
 
-type PromptSelectOneOptions = Partial<
-  {
-    choices: inquirer.ListChoiceOptions[];
-  } & Pick<inquirer.Question, "filter" | "validate">
->;
-
 /**
  * Prompt for selection
  */
 export function promptSelectOne(
   message: string,
-  { choices, filter, validate }: PromptSelectOneOptions = {}
+  {
+    choices,
+    filter,
+    validate,
+  }: {
+    choices?: any;
+    filter?: (input: string) => string;
+    validate?: (input: string) => string | boolean;
+  } = {}
 ): Promise<string> {
   log.pause();
 
@@ -52,7 +55,7 @@ export function promptSelectOne(
         pageSize: choices?.length,
         filter,
         validate,
-      },
+      } as any,
     ])
     .then((answers) => {
       log.resume();
@@ -66,7 +69,10 @@ export function promptSelectOne(
  */
 export function promptTextInput(
   message: string,
-  { filter, validate }: Pick<inquirer.Question, "filter" | "validate"> = {}
+  {
+    filter,
+    validate,
+  }: { filter?: (input: string) => string; validate?: (input: string) => string | boolean } = {}
 ): Promise<string> {
   log.pause();
 

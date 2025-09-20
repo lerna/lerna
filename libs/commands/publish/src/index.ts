@@ -92,7 +92,7 @@ interface PublishCommandConfigOptions extends CommandConfigOptions {
 }
 
 class PublishCommand extends Command {
-  options: PublishCommandConfigOptions;
+  declare options: PublishCommandConfigOptions;
 
   savePrefix?: string;
   tagPrefix?: string;

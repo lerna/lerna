@@ -44,6 +44,11 @@ describe("lerna-repair", () => {
       - nx: 19-2-0-move-graph-cache-directory (Updates the default workspace data directory to .nx/workspace-data)
       - nx: 19-2-2-update-nx-wrapper (Updates the nx wrapper.)
       - nx: move-use-daemon-process (Migration for v20.0.0-beta.7)
+      - nx: remove-legacy-cache (Removes the legacy cache configuration from nx.json)
+      - nx: remove-custom-tasks-runner (Removes the legacy cache configuration from nx.json)
+      - nx: release-version-config-changes (Updates release version config based on the breaking changes in Nx v21)
+      - nx: release-changelog-config-changes (Updates release changelog config based on the breaking changes in Nx v21)
+      - nx: 21-1-0-add-ignore-entries-for-nx-rule-files (Adds **/nx-rules.mdc and **/nx.instructions.md to .gitignore if not present)
       ---------------------------------------------------------
 
       Running migration lerna: remove-unnecessary-use-nx
@@ -52,84 +57,133 @@ describe("lerna-repair", () => {
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration lerna: remove-invalid-init-config
       Ran remove-invalid-init-config from lerna
         Remove invalid \`init\` config from lerna.json as it is no longer applicable, given init cannot be run on an existing workspace
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration lerna: remove-invalid-lerna-config
       Ran remove-invalid-lerna-config from lerna
         Remove invalid \`lerna\` config from lerna.json as it is no longer used for anything
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration lerna: remove-invalid-use-workspaces
       Ran remove-invalid-use-workspaces from lerna
         Remove invalid \`useWorkspaces\` config from lerna.json as it no longer exists
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration lerna: update-options-from-legacy-deprecate-config
       Ran update-options-from-legacy-deprecate-config from lerna
         Migrate legacy deprecated config usage to their updated counterparts
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration lerna: add-schema-config
       Ran add-schema-config from lerna
         Add \`$schema\` config to lerna.json if not already present to allow for IDE validation of lerna.json
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration nx: 17.0.0-move-cache-directory
       Ran 17.0.0-move-cache-directory from nx
         Updates the default cache directory to .nx/cache
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration nx: 17.0.0-use-minimal-config-for-tasks-runner-options
       Ran 17.0.0-use-minimal-config-for-tasks-runner-options from nx
         Use minimal config for tasksRunnerOptions
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration nx: rm-default-collection-npm-scope
       Ran rm-default-collection-npm-scope from nx
         Migration for v17.0.0-rc.1
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration nx: 17.3.0-update-nx-wrapper
       Ran 17.3.0-update-nx-wrapper from nx
         Updates the nx wrapper.
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration nx: move-default-base-to-nx-json-root
       Ran move-default-base-to-nx-json-root from nx
         Moves affected.defaultBase to defaultBase in \`nx.json\`
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration nx: 19-2-0-move-graph-cache-directory
       Ran 19-2-0-move-graph-cache-directory from nx
         Updates the default workspace data directory to .nx/workspace-data
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration nx: 19-2-2-update-nx-wrapper
       Ran 19-2-2-update-nx-wrapper from nx
         Updates the nx wrapper.
 
       No changes were made
 
+      ---------------------------------------------------------
       Running migration nx: move-use-daemon-process
       Ran move-use-daemon-process from nx
         Migration for v20.0.0-beta.7
 
       No changes were made
 
+      ---------------------------------------------------------
+      Running migration nx: remove-legacy-cache
+      Ran remove-legacy-cache from nx
+        Removes the legacy cache configuration from nx.json
+
+      No changes were made
+
+      ---------------------------------------------------------
+      Running migration nx: remove-custom-tasks-runner
+      Ran remove-custom-tasks-runner from nx
+        Removes the legacy cache configuration from nx.json
+
+      No changes were made
+
+      ---------------------------------------------------------
+      Running migration nx: release-version-config-changes
+      Ran release-version-config-changes from nx
+        Updates release version config based on the breaking changes in Nx v21
+
+      No changes were made
+
+      ---------------------------------------------------------
+      Running migration nx: release-changelog-config-changes
+      Ran release-changelog-config-changes from nx
+        Updates release changelog config based on the breaking changes in Nx v21
+
+      No changes were made
+
+      ---------------------------------------------------------
+      Running migration nx: 21-1-0-add-ignore-entries-for-nx-rule-files
+      Ran 21-1-0-add-ignore-entries-for-nx-rule-files from nx
+        Adds **/nx-rules.mdc and **/nx.instructions.md to .gitignore if not present
+
+      No changes were made
+
+      ---------------------------------------------------------
 
        Lerna   No changes were necessary. This workspace is up to date!
 

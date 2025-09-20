@@ -24,17 +24,27 @@ Find more information in this [detailed guide to improve your worst case CI time
 
 ## Set up
 
-To distribute your task execution, you need to (1) connect to Nx Cloud and (2) enable DTE in your CI workflow. Each of these steps can be enabled with a single command:
+To distribute your task execution, you need to (1) connect to Nx Cloud and (2) enable DTE in your CI workflow.
 
-```shell title="1. Connect to Nx Cloud"
-nx connect-to-nx-cloud
+```shell title="1. Connect to Nx Cloud via the interactive, browser-based workflow"
+npx nx connect-to-nx-cloud
 ```
 
-```shell title="2. Enable DTE in CI"
-nx generate @nrwl/workspace:ci-workflow --ci=github
-```
+### Configure your CI workflow
 
-The `--ci` flag can be `github`, `circleci` or `azure`. For more details on setting up DTE, read [this guide](https://nx.dev/nx-cloud/set-up/set-up-dte).
+Every organization manages their CI/CD pipelines differently, so it's not possible to cover every possible case, but the following examples of configuring DTE for the Nx CLI in popular providers should give you a good starting point, and are straigthforward to adapt to lerna specific commands like `lerna run` (instead of `nx run-many` or `nx affected`):
+
+- [Overview](https://nx.dev/ci/recipes/set-up)
+- [Azure Pipelines](https://nx.dev/ci/recipes/set-up/monorepo-ci-azure)
+- [Circle CI](https://nx.dev/ci/recipes/set-up/monorepo-ci-circle-ci)
+- [GitHub Actions](https://nx.dev/ci/recipes/set-up/monorepo-ci-github-actions)
+- [Jenkins](https://nx.dev/ci/recipes/set-up/monorepo-ci-jenkins)
+- [GitLab](https://nx.dev/ci/recipes/set-up/monorepo-ci-gitlab)
+- [Bitbucket](https://nx.dev/ci/recipes/set-up/monorepo-ci-bitbucket-pipelines)
+
+Note that only cacheable operations can be distributed because they have to be replayed on the main job.
+
+For more details on setting up DTE, read [this guide](https://nx.dev/nx-cloud/set-up/set-up-dte).
 
 ## CI Execution Flow
 
@@ -73,7 +83,7 @@ Nx Cloud tells it to terminate.
 > will be stopped.
 
 It's also important to note that an Nx Cloud agent isn't a machine but rather a long-running process that runs on a
-machine. I.e., Nx Cloud doesn't manage your agents--you need to do it in your CI config (check out CI examples below).
+machine. I.e., Nx Cloud doesn't manage your agents - you need to do it in your CI config (check out CI examples above).
 
 Nx Cloud is an orchestrator. The main job tells Nx Cloud what you want to run, and Nx Cloud will distribute those tasks
 across the agents. Nx Cloud will automatically move files from one agent to another, from the agents to the main job.
@@ -102,25 +112,6 @@ is worse than
 ```
 
 The latter is going to schedule all the three commands at the same time, so if an agent cannot find anything to build, it will start running tests and lints. The result is better agent utilization and shorter CI time.
-
-## CI/CD Examples
-
-The examples below show how to set up CI using Nx and Nx Cloud using distributed task execution and distributed caching.
-
-Every organization manages their CI/CD pipelines differently, so the examples don't cover org-specific aspects of
-CI/CD (e.g., deployment). They mainly focus on configuring Nx correctly.
-
-Read the guides for more information on how to configure them in CI.
-
-- [Overview](https://nx.dev/ci/recipes/set-up)
-- [Azure Pipelines](https://nx.dev/ci/recipes/set-up/monorepo-ci-azure)
-- [Circle CI](https://nx.dev/ci/recipes/set-up/monorepo-ci-circle-ci)
-- [GitHub Actions](https://nx.dev/ci/recipes/set-up/monorepo-ci-github-actions)
-- [Jenkins](https://nx.dev/ci/recipes/set-up/monorepo-ci-jenkins)
-- [GitLab](https://nx.dev/ci/recipes/set-up/monorepo-ci-gitlab)
-- [Bitbucket](https://nx.dev/ci/recipes/set-up/monorepo-ci-bitbucket-pipelines)
-
-Note that only cacheable operations can be distributed because they have to be replayed on the main job.
 
 ## Relevant Repositories and Examples
 

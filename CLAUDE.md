@@ -54,7 +54,6 @@ This is a monorepo with the following main structure:
 ### `/packages/` - Published Packages
 
 - **lerna/**: Main Lerna package that gets published to npm
-- **legacy-package-management/**: Legacy package management functionality
 - **legacy-structure/**: Legacy structure maintained for compatibility
 
 ### `/e2e/` - End-to-End Tests

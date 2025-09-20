@@ -1,15 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import fs from "fs";
+import fs from "node:fs";
+// @ts-expect-error - No types
 import ini from "ini";
-import { join } from "path";
-import { dirSync } from "tmp";
+import { join } from "node:path";
+import { directory } from "tempy";
 
 const CC = require("../index").ConfigChain;
 
-const tmpDir = dirSync();
-const f1 = join(tmpDir.name, "f1.ini");
-const f2 = join(tmpDir.name, "f2.json");
+const tmpDir = directory();
+const f1 = join(tmpDir, "f1.ini");
+const f2 = join(tmpDir, "f2.json");
 
 const f1data = { foo: { bar: "baz" }, bloo: "jaus" };
 const f2data = { oof: { rab: "zab" }, oolb: "suaj" };
@@ -22,7 +21,7 @@ test("saving and loading ini files", (done) => {
     .add({ grelb: "blerg" }, "opt")
     .addFile(f1, "ini", "inifile")
     .addFile(f2, "json", "jsonfile")
-    .on("load", function (cc) {
+    .on("load", function (cc: any) {
       expect(cc.snapshot).toEqual({
         grelb: "blerg",
         bloo: "jaus",
