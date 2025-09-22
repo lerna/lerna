@@ -61,7 +61,7 @@ const sidebars = {
     {
       type: "category",
       label: "Recipes",
-      items: ["recipes/using-pnpm-with-lerna"],
+      items: ["recipes/using-pnpm-with-lerna", "recipes/oidc-trusted-publishing"],
     },
     {
       type: "category",
