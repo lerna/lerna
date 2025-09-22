@@ -54,7 +54,6 @@ This is a monorepo with the following main structure:
 ### `/packages/` - Published Packages
 
 - **lerna/**: Main Lerna package that gets published to npm
-- **legacy-package-management/**: Legacy package management functionality
 - **legacy-structure/**: Legacy structure maintained for compatibility
 
 ### `/e2e/` - End-to-End Tests
@@ -72,7 +71,7 @@ This is a monorepo with the following main structure:
 - **Strict TypeScript**: Uses strict mode with modern ES2022 target
 - **Target**: ES2022 with Node.js module resolution
 - **Module system**: Modern Node.js compatibility
-- **Node.js version**: 20.18.3 (managed by Volta)
+- **Node.js version**: 22.19.0 (managed by Volta)
 
 ### ESLint Configuration
 

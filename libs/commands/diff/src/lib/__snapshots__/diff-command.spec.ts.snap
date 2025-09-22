@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`DiffCommand passes diff exclude globs configured with --ignored-changes 1`] = `
 diff --git a/packages/package-1/package.json b/packages/package-1/package.json
