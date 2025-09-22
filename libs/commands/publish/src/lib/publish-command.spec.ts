@@ -260,6 +260,7 @@ Map {
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
         expect.objectContaining({ otp }),
+        expect.objectContaining({ root: expect.any(Object) }),
         expect.objectContaining({ otp })
       );
       expect(getOneTimePassword).not.toHaveBeenCalled();
@@ -276,6 +277,7 @@ Map {
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
         expect.objectContaining({ otp: undefined }),
+        expect.objectContaining({ root: expect.any(Object) }),
         expect.objectContaining({ otp: "654321" })
       );
       expect(getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
@@ -292,6 +294,7 @@ Map {
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
         expect.objectContaining({ otp: undefined }),
+        expect.objectContaining({ root: expect.any(Object) }),
         expect.objectContaining({ otp: undefined })
       );
       expect(getOneTimePassword).not.toHaveBeenCalled();
@@ -310,6 +313,7 @@ Map {
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
         expect.objectContaining({ "auth-type": "legacy", _auth: auth }),
+        expect.objectContaining({ root: expect.any(Object) }),
         expect.objectContaining({ otp: undefined })
       );
     });
@@ -326,6 +330,7 @@ Map {
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
         expect.objectContaining({ registry }),
+        expect.objectContaining({ root: expect.any(Object) }),
         expect.objectContaining({ otp: undefined })
       );
     });
@@ -340,6 +345,7 @@ Map {
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
         expect.objectContaining({ registry: "https://registry.npmjs.org/" }),
+        expect.objectContaining({ root: expect.any(Object) }),
         expect.objectContaining({ otp: undefined })
       );
 
