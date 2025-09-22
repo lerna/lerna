@@ -1,7 +1,7 @@
-import _fetch from "node-fetch";
+import _fetch from "make-fetch-happen";
 import { GitLabClient } from "./gitlab-client";
 
-jest.mock("node-fetch");
+jest.mock("make-fetch-happen");
 
 const fetch = jest.mocked(_fetch);
 
