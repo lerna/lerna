@@ -4,9 +4,11 @@ import { publish } from "libnpmpublish";
 import npa from "npm-package-arg";
 import { FetchOptions } from "npm-registry-fetch";
 import path from "path";
+import type { Conf } from "./npm-conf/conf";
 import log from "./npmlog";
+import { oidc } from "./oidc";
 import { OneTimePasswordCache, otplease } from "./otplease";
-import { Package } from "./package";
+import type { Package } from "./package";
 import { runLifecycle } from "./run-lifecycle";
 
 interface NpmPublishOptions {
@@ -14,6 +16,7 @@ interface NpmPublishOptions {
   ["dry-run"]?: boolean;
   ["strict-ssl"]?: boolean;
   tag?: string; // Passed to libnpmpublish as `opts.defaultTag` to preserve npm v6 back-compat
+  registry?: string;
 }
 
 /**
@@ -40,7 +43,8 @@ interface LibNpmPublishOptions extends FetchOptions {
 export async function npmPublish(
   pkg: Package,
   tarFilePath: string,
-  options: LibNpmPublishOptions & NpmPublishOptions = {},
+  options: LibNpmPublishOptions & NpmPublishOptions,
+  conf: Conf,
   otpCache?: OneTimePasswordCache
 ): Promise<void | Response> {
   const { dryRun, ...remainingOptions } = flattenOptions(options);
@@ -86,6 +90,13 @@ export async function npmPublish(
     if (manifestContent.publishConfig) {
       Object.assign(opts, publishConfigToOpts(manifestContent.publishConfig));
     }
+
+    await oidc({
+      packageName: pkg.name,
+      registry: opts.registry ?? "https://registry.npmjs.org/",
+      opts,
+      config: conf,
+    });
 
     // TODO: refactor based on TS feedback
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

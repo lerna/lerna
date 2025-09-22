@@ -15,6 +15,7 @@
     "__tests__/**/*.spec.js",
     "__tests__/**/*.test.jsx",
     "__tests__/**/*.spec.jsx",
-    "__tests__/**/*.d.ts"
+    "__tests__/**/*.d.ts",
+    "../libs/core/src/types.d.ts"
   ]
 }

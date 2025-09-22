@@ -1,11 +1,13 @@
 // mocked modules
 import _fs from "fs-extra";
 import { publish as _publish } from "libnpmpublish";
+import { oidc as _oidc } from "./oidc";
 import { otplease as _otplease } from "./otplease";
 import { runLifecycle as _runLifecycle } from "./run-lifecycle";
 
 jest.mock("./run-lifecycle");
 jest.mock("./otplease");
+jest.mock("./oidc");
 jest.mock("@npmcli/package-json");
 jest.mock("libnpmpublish");
 jest.mock("fs-extra");
@@ -17,12 +19,14 @@ import path from "path";
 import { Package } from "./package";
 
 // file under test
+import { Conf } from "./npm-conf/conf";
 import { npmPublish } from "./npm-publish";
 
 const fs = jest.mocked(_fs);
 const publish = jest.mocked(_publish);
 const runLifecycle = jest.mocked(_runLifecycle);
 const otplease = jest.mocked(_otplease);
+const oidc = jest.mocked(_oidc);
 
 describe("npm-publish", () => {
   const mockTarData = Buffer.from("MOCK") as never;
@@ -34,11 +38,9 @@ describe("npm-publish", () => {
   // @ts-ignore
   publish.mockName("libnpmpublish").mockResolvedValue();
   readJSON.mockName("@npmcli/package-json").mockImplementation(() => ({ content: mockManifest }));
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  runLifecycle.mockName("./run-lifecycle").mockResolvedValue();
+  runLifecycle.mockName("./run-lifecycle").mockResolvedValue(undefined);
   otplease.mockName("./otplease").mockImplementation((cb, opts) => Promise.resolve(cb(opts)));
+  oidc.mockName("./oidc").mockResolvedValue(undefined);
 
   const tarFilePath = "/tmp/test-1.10.100.tgz";
   const rootPath = path.normalize("/test");
@@ -47,11 +49,12 @@ describe("npm-publish", () => {
     path.join(rootPath, "npmPublish/test"),
     rootPath
   );
+  const conf = new Conf({});
 
   it("calls external libraries with correct arguments", async () => {
     const opts = { tag: "published-tag" };
 
-    await npmPublish(pkg, tarFilePath, opts);
+    await npmPublish(pkg, tarFilePath, opts, conf);
 
     expect(fs.readFile).toHaveBeenCalledWith(tarFilePath);
     expect(readJSON).toHaveBeenCalledWith(path.dirname(pkg.manifestLocation));
@@ -66,7 +69,7 @@ describe("npm-publish", () => {
   });
 
   it("defaults opts.tag to 'latest'", async () => {
-    await npmPublish(pkg, tarFilePath);
+    await npmPublish(pkg, tarFilePath, {}, conf);
 
     expect(publish).toHaveBeenCalledWith(
       mockManifest,
@@ -87,7 +90,7 @@ describe("npm-publish", () => {
     }));
     const opts = { tag: "temp-tag" };
 
-    await npmPublish(pkg, tarFilePath, opts);
+    await npmPublish(pkg, tarFilePath, opts, conf);
 
     expect(publish).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -111,7 +114,7 @@ describe("npm-publish", () => {
       },
     }));
 
-    await npmPublish(pkg, tarFilePath);
+    await npmPublish(pkg, tarFilePath, {}, conf);
 
     expect(publish).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -146,7 +149,7 @@ describe("npm-publish", () => {
       },
     }));
 
-    await npmPublish(fancyPkg, tarFilePath);
+    await npmPublish(fancyPkg, tarFilePath, {}, conf);
 
     expect(readJSON).toHaveBeenCalledWith(path.join(fancyPkg.location, "dist"));
     expect(publish).toHaveBeenCalledWith(
@@ -170,7 +173,7 @@ describe("npm-publish", () => {
     }));
     const opts = { registry: "https://global-registry.com" };
 
-    await npmPublish(pkg, tarFilePath, opts);
+    await npmPublish(pkg, tarFilePath, opts, conf);
 
     expect(publish).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -188,7 +191,7 @@ describe("npm-publish", () => {
   it("respects opts.dryRun", async () => {
     const opts = { dryRun: true };
 
-    await npmPublish(pkg, tarFilePath, opts);
+    await npmPublish(pkg, tarFilePath, opts, conf);
 
     expect(publish).not.toHaveBeenCalled();
     expect(runLifecycle).toHaveBeenCalledTimes(2);
@@ -199,7 +202,7 @@ describe("npm-publish", () => {
     async (strictSSLValue) => {
       const opts = { "strict-ssl": strictSSLValue };
 
-      await npmPublish(pkg, tarFilePath, opts as any);
+      await npmPublish(pkg, tarFilePath, opts as any, conf);
 
       expect(publish).toHaveBeenCalledWith(
         expect.anything(),
@@ -216,14 +219,14 @@ describe("npm-publish", () => {
       projectScope: "@scope",
     });
 
-    await npmPublish(pkg, tarFilePath);
+    await npmPublish(pkg, tarFilePath, {}, conf);
 
     expect(runLifecycle).toHaveBeenCalledWith(pkg, "publish", options);
     expect(runLifecycle).toHaveBeenLastCalledWith(pkg, "postpublish", options);
   });
 
   it("ensures package.json is prepared and has readmeFilename added to it", async () => {
-    await npmPublish(pkg, tarFilePath);
+    await npmPublish(pkg, tarFilePath, {}, conf);
 
     expect(publish).toHaveBeenCalledWith(
       expect.objectContaining({
