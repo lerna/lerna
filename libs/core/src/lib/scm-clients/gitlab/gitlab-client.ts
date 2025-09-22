@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import fetch from "make-fetch-happen";
 import path from "path";
 import log from "../../npmlog";
 

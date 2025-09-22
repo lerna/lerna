@@ -3,7 +3,7 @@ import type { CommandModule } from "yargs";
 import { factory } from "./index";
 
 /**
- * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
+ * @see https://github.com/yargs/yargs/blob/main/docs/advanced.md#providing-a-command-module
  */
 const command: CommandModule = {
   command: "exec [cmd] [args..]",
