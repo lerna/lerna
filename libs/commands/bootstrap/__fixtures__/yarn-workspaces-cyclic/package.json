@@ -1,7 +1,0 @@
-{
-  "name": "root",
-  "private": true,
-  "workspaces": [
-    "workspaces/*"
-  ]
-}
