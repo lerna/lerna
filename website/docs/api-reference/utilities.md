@@ -28,4 +28,4 @@ The `projectGraph` that is returned will be a `ProjectGraphWithPackages`, which 
 
 The `projectFileMap` is a mapping of project names to the files within them. This is used to determine which project needs to be versioned when a file changes.
 
-See [Lerna's TypeScript source code](https://github.com/lerna/lerna/blob/main/libs/core/src/lib/project-graph-with-packages.ts) for specific type details.
+See [Lerna's source code](https://github.com/lerna/lerna/blob/main/libs/core/src/lib/project-graph-with-packages.ts) for specific type details.
