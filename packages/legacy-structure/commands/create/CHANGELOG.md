@@ -7,10 +7,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 **Note:** Version bump only for package @lerna/create
 
-
-
-
-
 ## [8.2.4](https://github.com/lerna/lerna/compare/v8.2.3...v8.2.4) (2025-07-27)
 
 ### Bug Fixes
