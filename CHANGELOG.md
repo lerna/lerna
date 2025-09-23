@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0](https://github.com/lerna/lerna/compare/v8.2.4...v9.0.0) (2025-09-23)
+
+### Bug Fixes
+
+- **publish:** ensure README file names are populated on package.json ([#4211](https://github.com/lerna/lerna/issues/4211)) ([362875d](https://github.com/lerna/lerna/commit/362875d7379a40f54fe75024c75946e41fb32d6e))
+
+### Features
+
+- support OIDC trusted publishing ([d51e344](https://github.com/lerna/lerna/commit/d51e344e016ebc2308a2185ca7e660a0cb47d143))
+
+OIDC trusted publishing is now supported by Lerna with no specification configuration required.
+
+- A new guide has been added: https://lerna.js.org/docs/recipes/oidc-trusted-publishing
+- A fully working example repo has been set up here https://github.com/JamesHenry/lerna-v9-oidc-publishing-example
+
+### BREAKING CHANGES
+
+> After updating we strongly recommend running `lerna repair` in your project. This will migrate your `lerna.json` to the latest and greatest and remove any outdated options.
+
+As this is a major release there are a few breaking changes to be aware of, which may or may not affect your lerna repos, depending on how you are using the tool.
+
+- **node v18 support is dropped because it is end of life**
+
+When a node version becomes end of life (EOL) it means that it does not receive any updates or maintenance whatsoever, even if critical security vulnerabilities have been uncovered.
+
+We strongly encourage all folks here to keep up with the maintenance LTS version of Node at an absolute minimum:
+
+https://github.com/nodejs/release#release-schedule
+
+The versions of node supported by lerna are now `^20.19.0 || ^22.12.0 || >=24.0.0`.
+
+- **The @lerna/legacy-package-management package has been formally removed after 2 years of deprecation**.
+
+If you are still using `lerna add`, `lerna bootstrap` or `lerna link` commands, please migrate to using your package manager's long-supported workspaces feature. The updated guide should help with this https://lerna.js.org/docs/legacy-package-management**
+
 ## [8.2.4](https://github.com/lerna/lerna/compare/v8.2.3...v8.2.4) (2025-07-27)
 
 ### Bug Fixes
