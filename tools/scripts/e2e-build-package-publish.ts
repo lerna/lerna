@@ -18,7 +18,7 @@ const DIRECTORIES_TO_REMOVE = ["./dist", "/tmp/lerna-e2e", "./tmp/local-registry
 
 // ============================= JH: extracted the above customization points to constants
 
-process.env.npm_config_registry = `http://localhost:4872`;
+process.env.npm_config_registry = `http://localhost:4873`;
 process.env.YARN_REGISTRY = process.env.npm_config_registry;
 
 async function buildPackagePublishAndCleanPorts() {

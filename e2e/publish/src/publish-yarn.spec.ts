@@ -42,9 +42,9 @@ describe("lerna-publish-yarn", () => {
       const version = randomVersion();
       await fixture.lerna(`version ${version} -y`);
 
-      const output = await fixture.lerna("publish from-git --registry=http://localhost:4872 -y");
+      const output = await fixture.lerna("publish from-git --registry=http://localhost:4873 -y");
       const unpublishOutput = await fixture.exec(
-        `npm unpublish --force test-1@${version} --registry=http://localhost:4872`
+        `npm unpublish --force test-1@${version} --registry=http://localhost:4873`
       );
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");
@@ -103,11 +103,11 @@ describe("lerna-publish-yarn", () => {
         const version = randomVersion();
         await fixture.lerna(`version ${version} -y`);
 
-        await fixture.exec('echo "registry=http://localhost:4872" > .npmrc');
+        await fixture.exec('echo "registry=http://localhost:4873" > .npmrc');
 
         const output = await fixture.lerna("publish from-git -y");
         const unpublishOutput = await fixture.exec(
-          `npm unpublish --force test-1@${version} --registry=http://localhost:4872`
+          `npm unpublish --force test-1@${version} --registry=http://localhost:4873`
         );
 
         const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");

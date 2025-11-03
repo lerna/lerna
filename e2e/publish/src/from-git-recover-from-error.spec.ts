@@ -41,7 +41,7 @@ describe("lerna-publish-from-git-recover-from-error", () => {
 
       const version = randomVersion();
       await fixture.lerna(`version ${version} -y`);
-      await fixture.lerna("publish from-git --registry=http://localhost:4872 -y");
+      await fixture.lerna("publish from-git --registry=http://localhost:4873 -y");
 
       // set up a scenario where one package needs to be published but the
       // other has already been published.
@@ -55,12 +55,12 @@ describe("lerna-publish-from-git-recover-from-error", () => {
 
       // publish both packages again, with test-1 failing
       // because it is already published
-      const output = await fixture.lerna("publish from-git --registry=http://localhost:4872 -y");
+      const output = await fixture.lerna("publish from-git --registry=http://localhost:4873 -y");
       const unpublishOutput1 = await fixture.exec(
-        `npm unpublish --force test-1@${version} --registry=http://localhost:4872`
+        `npm unpublish --force test-1@${version} --registry=http://localhost:4873`
       );
       const unpublishOutput2 = await fixture.exec(
-        `npm unpublish --force test-2@${version} --registry=http://localhost:4872`
+        `npm unpublish --force test-2@${version} --registry=http://localhost:4873`
       );
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");

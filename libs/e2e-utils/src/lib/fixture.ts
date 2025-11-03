@@ -25,7 +25,7 @@ type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string
 
 const PNPM_STORE = "pnpm.store";
 const ORIGIN_GIT = "origin.git";
-const REGISTRY = "http://localhost:4872/";
+const REGISTRY = "http://localhost:4873/";
 
 const noopWriteStream = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

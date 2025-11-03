@@ -44,7 +44,7 @@ describe("lerna-publish-pnpm", () => {
 
       const output = await fixture.lerna("publish from-git -y");
       const unpublishOutput = await fixture.exec(
-        `npm unpublish --force test-1@${version} --registry=http://localhost:4872`
+        `npm unpublish --force test-1@${version} --registry=http://localhost:4873`
       );
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");

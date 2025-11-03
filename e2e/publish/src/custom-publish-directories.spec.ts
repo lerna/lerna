@@ -109,11 +109,11 @@ describe("lerna-publish-custom-publish-directories", () => {
       await fixture.lerna(`version ${version} -y`);
 
       const output = await fixture.lerna(
-        "publish from-git --registry=http://localhost:4872 --loglevel verbose --concurrency 1 -y"
+        "publish from-git --registry=http://localhost:4873 --loglevel verbose --concurrency 1 -y"
       );
-      await fixture.exec(`npm unpublish --force package-1@${version} --registry=http://localhost:4872`);
-      await fixture.exec(`npm unpublish --force package-2@${version} --registry=http://localhost:4872`);
-      await fixture.exec(`npm unpublish --force package-3@${version} --registry=http://localhost:4872`);
+      await fixture.exec(`npm unpublish --force package-1@${version} --registry=http://localhost:4873`);
+      await fixture.exec(`npm unpublish --force package-2@${version} --registry=http://localhost:4873`);
+      await fixture.exec(`npm unpublish --force package-3@${version} --registry=http://localhost:4873`);
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");
 
@@ -301,10 +301,10 @@ describe("lerna-publish-custom-publish-directories", () => {
       await fixture.lerna(`version ${version} -y`);
 
       const output = await fixture.lerna(
-        "publish from-git --registry=http://localhost:4872 --loglevel verbose --concurrency 1 -y"
+        "publish from-git --registry=http://localhost:4873 --loglevel verbose --concurrency 1 -y"
       );
-      await fixture.exec(`npm unpublish --force package-1@${version} --registry=http://localhost:4872`);
-      await fixture.exec(`npm unpublish --force package-2@${version} --registry=http://localhost:4872`);
+      await fixture.exec(`npm unpublish --force package-1@${version} --registry=http://localhost:4873`);
+      await fixture.exec(`npm unpublish --force package-2@${version} --registry=http://localhost:4873`);
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");
 
@@ -463,10 +463,10 @@ describe("lerna-publish-custom-publish-directories", () => {
       await fixture.lerna(`version ${version} -y`);
 
       const output = await fixture.lerna(
-        "publish from-git --registry=http://localhost:4872 --loglevel verbose --concurrency 1 -y"
+        "publish from-git --registry=http://localhost:4873 --loglevel verbose --concurrency 1 -y"
       );
-      await fixture.exec(`npm unpublish --force package-1@${version} --registry=http://localhost:4872`);
-      await fixture.exec(`npm unpublish --force package-2@${version} --registry=http://localhost:4872`);
+      await fixture.exec(`npm unpublish --force package-1@${version} --registry=http://localhost:4873`);
+      await fixture.exec(`npm unpublish --force package-2@${version} --registry=http://localhost:4873`);
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");
 
@@ -601,14 +601,14 @@ describe("lerna-publish-custom-publish-directories", () => {
       await fixture.lerna("run build,copyManifest");
 
       await fixture.lerna(
-        `publish ${version} --registry=http://localhost:4872 --loglevel verbose --concurrency 1 -y`
+        `publish ${version} --registry=http://localhost:4873 --loglevel verbose --concurrency 1 -y`
       );
 
       const distVersion = JSON.parse(
         await fixture.readWorkspaceFile("dist/packages/package-1/package.json")
       ).version;
 
-      await fixture.exec(`npm unpublish --force package-1@${version} --registry=http://localhost:4872`);
+      await fixture.exec(`npm unpublish --force package-1@${version} --registry=http://localhost:4873`);
 
       expect(JSON.parse(await fixture.readWorkspaceFile("packages/package-1/package.json")).version).toEqual(
         distVersion

@@ -1,8 +1,6 @@
 # path to a directory with all packages
 storage: ../../../tmp/local-registry/storage
 
-listen: localhost:4872
-
 # a list of other known repositories we can talk to
 uplinks:
   npmjs:

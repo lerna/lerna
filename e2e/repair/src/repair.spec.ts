@@ -98,44 +98,45 @@ describe("lerna-repair", () => {
       No changes were made
 
       ---------------------------------------------------------
-      Running migration nx: 17.0.0-move-cache-directory
-      Ran 17.0.0-move-cache-directory from nx
-        Updates the default cache directory to .nx/cache
-
-      No changes were made
-      ---------------------------------------------------------
       Running migration nx: 16.0.0-remove-nrwl-cli
       Ran 16.0.0-remove-nrwl-cli from nx
         Remove @nrwl/cli.
-     
+
       No changes were made
-     
+
       ---------------------------------------------------------
       Running migration nx: 16.0.0-update-nx-cloud-runner
       Ran 16.0.0-update-nx-cloud-runner from nx
         Replace @nrwl/nx-cloud with nx-cloud
-     
+
       No changes were made
-     
+
       ---------------------------------------------------------
       Running migration nx: 16.0.0-tokens-for-depends-on
       Ran 16.0.0-tokens-for-depends-on from nx
         Replace \`dependsOn.projects\` and \`inputs\` definitions with new configuration format.
-     
+
       No changes were made
-     
+
       ---------------------------------------------------------
       Running migration nx: 16.2.0-remove-output-path-from-run-commands
       Ran 16.2.0-remove-output-path-from-run-commands from nx
         Remove outputPath from run commands
-     
+
       No changes were made
-     
+
       ---------------------------------------------------------
       Running migration nx: 16.6.0-prefix-outputs
       Ran 16.6.0-prefix-outputs from nx
         Prefix outputs with {workspaceRoot}/{projectRoot} if needed
-     
+
+      No changes were made
+
+      ---------------------------------------------------------
+      Running migration nx: 17.0.0-move-cache-directory
+      Ran 17.0.0-move-cache-directory from nx
+        Updates the default cache directory to .nx/cache
+
       No changes were made
 
       ---------------------------------------------------------
