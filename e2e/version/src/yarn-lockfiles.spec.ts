@@ -13,7 +13,7 @@ expect.addSnapshotSerializer({
 const setupYarnBerry = async (fixture: Fixture) => {
   await fixture.exec("yarn set version berry");
   await fixture.exec("yarn config set nodeLinker node-modules");
-  await fixture.exec("yarn config set npmRegistryServer http://localhost:4872");
+  await fixture.exec("yarn config set npmRegistryServer http://localhost:4873");
   await fixture.exec("yarn config set unsafeHttpWhitelist localhost");
 
   await fixture.createInitialGitCommit();

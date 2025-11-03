@@ -71,14 +71,14 @@ describe("lerna-publish-workspace-prefix", () => {
       await fixture.lerna(`version ${version} -y`);
 
       const output = await fixture.lerna(
-        "publish from-git --registry=http://localhost:4872 -y --concurrency 1"
+        "publish from-git --registry=http://localhost:4873 -y --concurrency 1"
       );
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");
 
       const unpublish = async (packageName: string) => {
         const unpublishOutput = await fixture.exec(
-          `npm unpublish ${packageName}@${version} --force --registry=http://localhost:4872`
+          `npm unpublish ${packageName}@${version} --force --registry=http://localhost:4873`
         );
         expect(replaceVersion(unpublishOutput.combinedOutput)).toContain(packageName);
       };
@@ -263,7 +263,7 @@ describe("lerna-publish-workspace-prefix", () => {
       // ensure that the published packages can be installed
       // this verifies the validity of the updated package.json file that was published by `lerna publish`
       await fixture.exec(
-        "npm --prefix ./test-install-published-packages install --registry=http://localhost:4872"
+        "npm --prefix ./test-install-published-packages install --registry=http://localhost:4873"
       );
 
       await unpublish("test-workspace-alias-star");

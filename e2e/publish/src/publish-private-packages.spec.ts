@@ -44,7 +44,7 @@ describe("lerna-publish-private", () => {
       const version = randomVersion();
       await fixture.lerna(`version ${version} -y`);
 
-      const output = await fixture.lerna("publish from-git --registry=http://localhost:4872 -y");
+      const output = await fixture.lerna("publish from-git --registry=http://localhost:4873 -y");
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");
 
@@ -66,7 +66,7 @@ describe("lerna-publish-private", () => {
         await fixture.lerna(`version ${version} -y`);
 
         const output = await fixture.lerna(
-          "publish from-git --include-private --registry=http://localhost:4872 -y",
+          "publish from-git --include-private --registry=http://localhost:4873 -y",
           { silenceError: true }
         );
 
@@ -90,11 +90,11 @@ describe("lerna-publish-private", () => {
         await fixture.lerna(`version ${version} -y`);
 
         const output = await fixture.lerna(
-          "publish from-git --include-private test-1 test-2 --registry=http://localhost:4872 -y"
+          "publish from-git --include-private test-1 test-2 --registry=http://localhost:4873 -y"
         );
         const unpublish = async (packageName: string) => {
           const unpublishOutput = await fixture.exec(
-            `npm unpublish ${packageName}@${version} --force --registry=http://localhost:4872`
+            `npm unpublish ${packageName}@${version} --force --registry=http://localhost:4873`
           );
           expect(replaceVersion(unpublishOutput.combinedOutput)).toContain(`${packageName}@XX.XX.XX`);
         };
@@ -193,11 +193,11 @@ describe("lerna-publish-private", () => {
         await fixture.lerna(`version ${version} -y`);
 
         const output = await fixture.lerna(
-          'publish from-git --include-private "*" --registry=http://localhost:4872 -y'
+          'publish from-git --include-private "*" --registry=http://localhost:4873 -y'
         );
         const unpublish = async (packageName: string) => {
           const unpublishOutput = await fixture.exec(
-            `npm unpublish ${packageName}@${version} --force --registry=http://localhost:4872`
+            `npm unpublish ${packageName}@${version} --force --registry=http://localhost:4873`
           );
           expect(replaceVersion(unpublishOutput.combinedOutput)).toContain(`${packageName}@XX.XX.XX`);
         };
@@ -296,7 +296,7 @@ describe("lerna-publish-private", () => {
       const version = randomVersion();
       await fixture.lerna(`version ${version} -y`);
 
-      const output = await fixture.lerna("publish from-package --registry=http://localhost:4872 -y");
+      const output = await fixture.lerna("publish from-package --registry=http://localhost:4873 -y");
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");
 
@@ -323,11 +323,11 @@ describe("lerna-publish-private", () => {
         await fixture.lerna(`version ${version} -y`);
 
         const output = await fixture.lerna(
-          "publish from-package --include-private test-1 test-2 --registry=http://localhost:4872 -y"
+          "publish from-package --include-private test-1 test-2 --registry=http://localhost:4873 -y"
         );
         const unpublish = async (packageName: string) => {
           const unpublishOutput = await fixture.exec(
-            `npm unpublish ${packageName}@${version} --force --registry=http://localhost:4872`
+            `npm unpublish ${packageName}@${version} --force --registry=http://localhost:4873`
           );
           expect(replaceVersion(unpublishOutput.combinedOutput)).toContain(`${packageName}@XX.XX.XX`);
         };
@@ -427,7 +427,7 @@ describe("lerna-publish-private", () => {
       await fixture.createInitialGitCommit();
       await fixture.exec("git push origin test-main");
 
-      const output = await fixture.lerna("publish --canary major --registry=http://localhost:4872 -y");
+      const output = await fixture.lerna("publish --canary major --registry=http://localhost:4873 -y");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
@@ -449,11 +449,11 @@ describe("lerna-publish-private", () => {
         await fixture.exec("git push origin test-main");
 
         const output = await fixture.lerna(
-          "publish --canary major --include-private test-1 test-2 --registry=http://localhost:4872 -y"
+          "publish --canary major --include-private test-1 test-2 --registry=http://localhost:4873 -y"
         );
         const unpublish = async (packageName: string) => {
           const unpublishOutput = await fixture.exec(
-            `npm unpublish ${packageName}@1.0.0-alpha.0 --force --registry=http://localhost:4872`
+            `npm unpublish ${packageName}@1.0.0-alpha.0 --force --registry=http://localhost:4873`
           );
           expect(replaceVersion(unpublishOutput.combinedOutput)).toContain(`${packageName}@XX.XX.XX`);
         };
