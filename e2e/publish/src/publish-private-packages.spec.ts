@@ -467,9 +467,9 @@ describe("lerna-publish-private", () => {
           lerna info Assuming all packages changed
 
           Found 3 packages to publish:
-           - test-X => XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA} (private!)
-           - test-X => XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA} (private!)
-           - test-X => XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
+           - test-X => XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA} (private!)
+           - test-X => XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA} (private!)
+           - test-X => XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
 
           lerna info auto-confirmed
           lerna info publish Publishing packages to npm...
@@ -478,51 +478,51 @@ describe("lerna-publish-private", () => {
           lerna WARN ENOLICENSE Packages test-X, test-X, and test-X are missing a license.
           lerna WARN ENOLICENSE One way to fix this is to add a LICENSE.md file to the root of this repository.
           lerna WARN ENOLICENSE See https://choosealicense.com for additional guidance.
-          lerna success published test-X XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
+          lerna success published test-X XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
           lerna notice
-          lerna notice 📦  test-X@XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
+          lerna notice 📦  test-X@XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
           lerna notice === Tarball Contents ===
           lerna notice 90B  lib/test-X.js
           lerna notice XXXB package.json
           lerna notice 110B README.md
           lerna notice === Tarball Details ===
           lerna notice name:          test-X
-          lerna notice version:       XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
-          lerna notice filename:      test-X-XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}.tgz
+          lerna notice version:       XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
+          lerna notice filename:      test-X-XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}.tgz
           lerna notice package size: XXXB
           lerna notice unpacked size: XXX.XXX kb
           lerna notice shasum:        {FULL_COMMIT_SHA}
           lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           lerna notice total files:   3
           lerna notice
-          lerna success published test-X XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
+          lerna success published test-X XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
           lerna notice
-          lerna notice 📦  test-X@XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
+          lerna notice 📦  test-X@XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
           lerna notice === Tarball Contents ===
           lerna notice 90B  lib/test-X.js
           lerna notice XXXB package.json
           lerna notice 110B README.md
           lerna notice === Tarball Details ===
           lerna notice name:          test-X
-          lerna notice version:       XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
-          lerna notice filename:      test-X-XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}.tgz
+          lerna notice version:       XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
+          lerna notice filename:      test-X-XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}.tgz
           lerna notice package size: XXXB
           lerna notice unpacked size: XXX.XXX kb
           lerna notice shasum:        {FULL_COMMIT_SHA}
           lerna notice integrity: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           lerna notice total files:   3
           lerna notice
-          lerna success published test-X XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
+          lerna success published test-X XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
           lerna notice
-          lerna notice 📦  test-X@XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
+          lerna notice 📦  test-X@XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
           lerna notice === Tarball Contents ===
           lerna notice 90B  lib/test-X.js
           lerna notice XXXB package.json
           lerna notice 110B README.md
           lerna notice === Tarball Details ===
           lerna notice name:          test-X
-          lerna notice version:       XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
-          lerna notice filename:      test-X-XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}.tgz
+          lerna notice version:       XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
+          lerna notice filename:      test-X-XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}.tgz
           lerna notice package size: XXXB
           lerna notice unpacked size: XXX.XXX kb
           lerna notice shasum:        {FULL_COMMIT_SHA}
@@ -530,9 +530,9 @@ describe("lerna-publish-private", () => {
           lerna notice total files:   3
           lerna notice
           Successfully published:
-           - test-X@XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
-           - test-X@XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
-           - test-X@XX.XX.XX-alpha.0+{SHORT_COMMIT_SHA}
+           - test-X@XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
+           - test-X@XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
+           - test-X@XX.XX.XX-alpha.0.{SHORT_COMMIT_SHA}
           lerna success published 3 packages
 
         `);
