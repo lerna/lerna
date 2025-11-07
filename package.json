@@ -57,8 +57,8 @@
     "@types/normalize-path": "^3.0.2",
     "@types/npm-package-arg": "^6.1.4",
     "@types/npm-packlist": "^7.0.3",
-    "@types/npm-registry-fetch": "^8.0.8",
-    "@types/npmcli__arborist": "^5.6.6",
+    "@types/npm-registry-fetch": "^8.0.9",
+    "@types/npmcli__arborist": "^6.3.1",
     "@types/npmlog": "^7.0.0",
     "@types/pify": "^5.0.4",
     "@types/semver": "^7.7.0",
@@ -92,6 +92,6 @@
     "ts-node": "10.9.2",
     "typescript": "5.9.2",
     "typescript-eslint": "8.43.0",
-    "verdaccio": "6.1.6"
+    "verdaccio": "6.2.1"
   }
 }
