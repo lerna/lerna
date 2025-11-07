@@ -54,6 +54,8 @@ describe("lerna-repair", () => {
       - nx: release-version-config-changes (Updates release version config based on the breaking changes in Nx v21)
       - nx: release-changelog-config-changes (Updates release changelog config based on the breaking changes in Nx v21)
       - nx: 21-1-0-add-ignore-entries-for-nx-rule-files (Adds **/nx-rules.mdc and **/nx.instructions.md to .gitignore if not present)
+      - nx: 22-0-0-release-version-config-changes (Updates release version config based on the breaking changes in Nx v22)
+      - nx: 22-0-0-consolidate-release-tag-config (Consolidates releaseTag* options into nested releaseTag object structure)
       ---------------------------------------------------------
 
       Running migration lerna: remove-unnecessary-use-nx
@@ -220,6 +222,20 @@ describe("lerna-repair", () => {
       Running migration nx: 21-1-0-add-ignore-entries-for-nx-rule-files
       Ran 21-1-0-add-ignore-entries-for-nx-rule-files from nx
         Adds **/nx-rules.mdc and **/nx.instructions.md to .gitignore if not present
+
+      No changes were made
+
+      ---------------------------------------------------------
+      Running migration nx: 22-0-0-release-version-config-changes
+      Ran 22-0-0-release-version-config-changes from nx
+        Updates release version config based on the breaking changes in Nx v22
+
+      No changes were made
+
+      ---------------------------------------------------------
+      Running migration nx: 22-0-0-consolidate-release-tag-config
+      Ran 22-0-0-consolidate-release-tag-config from nx
+        Consolidates releaseTag* options into nested releaseTag object structure
 
       No changes were made
 
