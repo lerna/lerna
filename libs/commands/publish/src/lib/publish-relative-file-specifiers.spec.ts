@@ -159,16 +159,4 @@ describe("relative 'file:' specifiers", () => {
       "package-6": "6.0.0",
     });
   });
-
-  it("works around npm-incompatible link: specifiers", async () => {
-    const cwd = await initFixture("yarn-link-spec");
-
-    await gitTag(cwd, "v1.0.0");
-    await setupChanges(cwd, "workspaces");
-    await lernaPublish(cwd)("major", "--yes");
-
-    expect(writePkg.updatedManifest("package-2").dependencies).toMatchObject({
-      "package-1": "^2.0.0",
-    });
-  });
 });

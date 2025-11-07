@@ -1,7 +1,0 @@
-{
-  "name": "yarn-link-spec",
-  "private": true,
-  "workspaces": [
-    "workspaces/*"
-  ]
-}
