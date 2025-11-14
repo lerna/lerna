@@ -59,7 +59,7 @@
     "inquirer": "12.9.6",
     "is-ci": "3.0.1",
     "is-stream": "2.0.0",
-    "js-yaml": "4.1.0",
+    "js-yaml": "4.1.1",
     "libnpmpublish": "11.1.2",
     "load-json-file": "6.2.0",
     "make-dir": "4.0.0",
