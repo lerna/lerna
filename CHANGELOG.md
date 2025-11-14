@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.1](https://github.com/lerna/lerna/compare/v9.0.0...v9.0.1) (2025-11-14)
+
+### Bug Fixes
+
+- expand version range to include nx v22.x ([#4242](https://github.com/lerna/lerna/issues/4242)) ([0cca286](https://github.com/lerna/lerna/commit/0cca28612be720d39f55cc278a9a4a93e112d1e1))
+
 # [9.0.0](https://github.com/lerna/lerna/compare/v8.2.4...v9.0.0) (2025-09-23)
 
 ### Bug Fixes
