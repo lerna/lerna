@@ -85,6 +85,7 @@ describe("e2e-project generator", () => {
         "extends": "./tsconfig.json",
         "include": Array [
           "jest.config.ts",
+          "jest.config.cts",
           "src/**/*.test.ts",
           "src/**/*.spec.ts",
           "src/**/*.d.ts",
@@ -93,8 +94,8 @@ describe("e2e-project generator", () => {
       }
     `);
 
-    expect(appTree.read("e2e/test/jest.config.ts").toString()).toMatchInlineSnapshot(`
-      "export default {
+    expect(appTree.read("e2e/test/jest.config.cts").toString()).toMatchInlineSnapshot(`
+      "module.exports = {
         displayName: 'e2e-test',
         preset: '../../jest.preset.js',
         testEnvironment: 'node',

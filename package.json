@@ -30,13 +30,13 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org",
   "devDependencies": {
-    "@nx/esbuild": "21.5.3",
-    "@nx/eslint": "21.5.3",
-    "@nx/eslint-plugin": "21.5.3",
-    "@nx/jest": "21.5.3",
-    "@nx/js": "21.5.3",
-    "@nx/plugin": "21.5.3",
-    "@nx/web": "21.5.3",
+    "@nx/esbuild": "22.0.3",
+    "@nx/eslint": "22.0.3",
+    "@nx/eslint-plugin": "22.0.3",
+    "@nx/jest": "22.0.3",
+    "@nx/js": "22.0.3",
+    "@nx/plugin": "22.0.3",
+    "@nx/web": "22.0.3",
     "@swc-node/register": "1.10.10",
     "@swc/core": "1.13.3",
     "@types/byte-size": "^8.1.2",
@@ -57,8 +57,8 @@
     "@types/normalize-path": "^3.0.2",
     "@types/npm-package-arg": "^6.1.4",
     "@types/npm-packlist": "^7.0.3",
-    "@types/npm-registry-fetch": "^8.0.8",
-    "@types/npmcli__arborist": "^5.6.6",
+    "@types/npm-registry-fetch": "^8.0.9",
+    "@types/npmcli__arborist": "^6.3.1",
     "@types/npmlog": "^7.0.0",
     "@types/pify": "^5.0.4",
     "@types/semver": "^7.7.0",
@@ -80,7 +80,7 @@
     "lerna": "file:packages/lerna",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
-    "nx": "21.5.3",
+    "nx": "22.0.3",
     "pkg-pr-new": "0.0.60",
     "prettier": "^2.2.1",
     "signal-exit": "3.0.7",
@@ -92,6 +92,6 @@
     "ts-node": "10.9.2",
     "typescript": "5.9.2",
     "typescript-eslint": "8.43.0",
-    "verdaccio": "6.1.6"
+    "verdaccio": "6.2.1"
   }
 }
