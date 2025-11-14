@@ -50,15 +50,15 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
     tree.delete(`${normalizedOptions.projectRoot}/src/lib/${file}`);
   });
 
-  addPropertyToJestConfig(tree, `${normalizedOptions.projectRoot}/jest.config.ts`, "maxWorkers", 1, {
+  addPropertyToJestConfig(tree, `${normalizedOptions.projectRoot}/jest.config.cts`, "maxWorkers", 1, {
     valueAsString: false,
   });
-  addPropertyToJestConfig(tree, `${normalizedOptions.projectRoot}/jest.config.ts`, "testTimeout", 60000, {
+  addPropertyToJestConfig(tree, `${normalizedOptions.projectRoot}/jest.config.cts`, "testTimeout", 60000, {
     valueAsString: false,
   });
   addPropertyToJestConfig(
     tree,
-    `${normalizedOptions.projectRoot}/jest.config.ts`,
+    `${normalizedOptions.projectRoot}/jest.config.cts`,
     "setupFiles",
     ["<rootDir>/src/test-setup.ts"],
     {
