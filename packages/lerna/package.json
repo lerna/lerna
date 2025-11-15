@@ -72,7 +72,7 @@
     "is-ci": "3.0.1",
     "is-stream": "2.0.0",
     "jest-diff": ">=30.0.0 < 31",
-    "js-yaml": "4.1.0",
+    "js-yaml": "4.1.1",
     "libnpmaccess": "10.0.3",
     "libnpmpublish": "11.1.2",
     "load-json-file": "6.2.0",
