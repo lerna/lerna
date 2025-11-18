@@ -4,7 +4,7 @@
 export interface Queue {
   /**
    * Run a task once the queue is cleared
-   * @param f A function that will be executed once the queue is useable
+   * @param f A function that will be executed once the queue is usable
    * @return A promise that wraps the value returned by f
    */
   queue<T>(f: () => Promise<T>): Promise<T>;
