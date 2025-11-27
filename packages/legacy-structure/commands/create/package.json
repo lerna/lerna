@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "9.0.2",
+  "version": "9.0.3",
   "type": "commonjs",
   "description": "Create a new lerna-managed package",
   "keywords": [
