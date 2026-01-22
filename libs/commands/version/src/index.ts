@@ -830,9 +830,16 @@ class VersionCommand extends Command {
     }
 
     if (this.options.npmClient === "bun") {
-      const lockfilePath = path.join(this.project.rootPath, "bun.lockb");
-      if (fs.existsSync(lockfilePath)) {
-        this.logger.verbose("version", "Updating root bun.lockb");
+      // Check for both bun.lockb (legacy binary format) and bun.lock (new text format)
+      const lockfilePaths = [
+        path.join(this.project.rootPath, "bun.lockb"),
+        path.join(this.project.rootPath, "bun.lock"),
+      ];
+      const lockfilePath = lockfilePaths.find((p) => fs.existsSync(p));
+
+      if (lockfilePath) {
+        const lockfileName = path.basename(lockfilePath);
+        this.logger.verbose("version", `Updating root ${lockfileName}`);
         await childProcess.exec(
           "bun",
           [

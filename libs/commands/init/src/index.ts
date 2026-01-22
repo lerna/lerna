@@ -245,15 +245,16 @@ export class InitCommand {
   }
 
   private detectPackageManager(): PackageManager | null {
-    const packageManager = existsSync("bun.lockb")
-      ? "bun"
-      : existsSync("yarn.lock")
-      ? "yarn"
-      : existsSync("pnpm-lock.yaml")
-      ? "pnpm"
-      : existsSync("package-lock.json")
-      ? "npm"
-      : null;
+    const packageManager =
+      existsSync("bun.lockb") || existsSync("bun.lock")
+        ? "bun"
+        : existsSync("yarn.lock")
+        ? "yarn"
+        : existsSync("pnpm-lock.yaml")
+        ? "pnpm"
+        : existsSync("package-lock.json")
+        ? "npm"
+        : null;
     if (packageManager) {
       this.logger.verbose("", `Detected lock file for ${packageManager}`);
     }

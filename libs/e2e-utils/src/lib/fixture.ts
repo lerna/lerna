@@ -115,7 +115,10 @@ export class Fixture {
   }
 
   private static inferPackageManagerFromExistingFixture(fixtureRootPath: string): PackageManager {
-    if (existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "bun.lockb"))) {
+    if (
+      existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "bun.lockb")) ||
+      existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "bun.lock"))
+    ) {
       return "bun";
     }
     if (existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "pnpm-workspace.yaml"))) {
