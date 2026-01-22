@@ -829,6 +829,24 @@ class VersionCommand extends Command {
       }
     }
 
+    if (this.options.npmClient === "bun") {
+      const lockfilePath = path.join(this.project.rootPath, "bun.lockb");
+      if (fs.existsSync(lockfilePath)) {
+        this.logger.verbose("version", "Updating root bun.lockb");
+        await childProcess.exec(
+          "bun",
+          [
+            "install",
+            "--lockfile-only",
+            !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
+            ...npmClientArgs,
+          ].filter(Boolean),
+          this.execOpts
+        );
+        changedFiles.add(lockfilePath);
+      }
+    }
+
     if (this.commitAndTag) {
       await gitAdd(Array.from(changedFiles), this.gitOpts, this.execOpts);
     }

@@ -12,7 +12,23 @@ Lerna's configuration is split into two files: `lerna.json` and `nx.json`.
 
 ### npmClient
 
-It is important to set this value if you are not using `npm` as your package manager (e.g. if you are using `yarn` or `pnpm`) so that lerna can adjust some of its internal logic when resolving configuration and packages. This is particularly true in the case of `pnpm` because it uses a separate `pnpm-workspaces.yaml` file to define its workspaces configuration.
+The package manager to use for running commands. Lerna supports `npm`, `yarn`, `pnpm`, and `bun`.
+
+It is important to set this value if you are not using `npm` as your package manager (e.g. if you are using `yarn`, `pnpm`, or `bun`) so that lerna can adjust some of its internal logic when resolving configuration and packages. This is particularly true in the case of `pnpm` because it uses a separate `pnpm-workspaces.yaml` file to define its workspaces configuration.
+
+**Options:** `"npm"` | `"yarn"` | `"pnpm"` | `"bun"`
+
+**Default:** `"npm"`
+
+**Example:**
+
+```json title="lerna.json"
+{
+  "npmClient": "bun"
+}
+```
+
+For detailed guidance on using Bun with Lerna, see the [Using Bun with Lerna recipe](/docs/recipes/using-bun-with-lerna).
 
 ### packages
 
