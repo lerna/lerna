@@ -92,6 +92,6 @@
     "ts-node": "10.9.2",
     "typescript": "5.9.2",
     "typescript-eslint": "8.43.0",
-    "verdaccio": "6.2.1"
+    "verdaccio": "6.2.2"
   }
 }
