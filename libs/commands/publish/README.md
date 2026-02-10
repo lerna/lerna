@@ -124,7 +124,7 @@ lerna publish --dist-tag next
 
 When run with this flag, `lerna publish` will publish to npm with the given npm [dist-tag](https://docs.npmjs.com/cli/dist-tag) (defaults to `latest`).
 
-This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_prerelease) or `beta` version under a non-`latest` dist-tag, helping consumers avoid automatically upgrading to prerelease-quality code.
+This option can be used to publish a `prerelease` or `beta` version under a non-`latest` dist-tag, helping consumers avoid automatically upgrading to prerelease-quality code.
 
 > Note: the `latest` tag is the one that is used when a user runs `npm install my-package`.
 > To install a different tag, a user can run `npm install my-package@prerelease`.
