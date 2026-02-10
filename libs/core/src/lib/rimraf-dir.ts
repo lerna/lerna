@@ -1,5 +1,5 @@
 import { existsSync } from "fs";
-import rimraf from "rimraf";
+import { rimraf } from "rimraf";
 import log from "./npmlog";
 
 export async function rimrafDir(dirPath: string) {

@@ -5,7 +5,7 @@
 import fs from "fs-extra";
 import path from "path";
 import ssri from "ssri";
-import tar from "tar";
+import * as tar from "tar";
 
 export function getPacked(pkg, tarFilePath) {
   const bundledWanted = new Set(pkg.bundleDependencies || pkg.bundledDependencies || []);
