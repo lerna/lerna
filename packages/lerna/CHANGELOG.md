@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.4](https://github.com/lerna/lerna/compare/v9.0.3...v9.0.4) (2026-02-10)
+
+### Bug Fixes
+
+- bump tar to 7.5.7, rimraf to 6.1.2, @npmcli/run-script to 10.0.3 ([#4267](https://github.com/lerna/lerna/issues/4267)) ([43e3d46](https://github.com/lerna/lerna/commit/43e3d46fd6d76f05e130e8f8f5a6299f0e93f2ae))
+
 ## [9.0.3](https://github.com/lerna/lerna/compare/v9.0.2...v9.0.3) (2025-11-27)
 
 **Note:** Version bump only for package lerna
