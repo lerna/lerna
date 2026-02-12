@@ -27,7 +27,6 @@ describe("lerna-version-bun-lockfile", () => {
   afterEach(() => fixture.destroy());
 
   it("should update bun.lockb when packages are versioned", async () => {
-    // Create test packages
     await fixture.lerna("create package-a -y");
     await fixture.lerna("create package-b --dependencies package-a -y");
 
@@ -36,27 +35,22 @@ describe("lerna-version-bun-lockfile", () => {
     await fixture.exec("git commit -m 'chore: add packages'");
     await fixture.exec("git push origin test-main");
 
-    // Get the lockfile's initial modification time
     const lockfilePath = fixture.getWorkspacePath("bun.lockb");
     expect(existsSync(lockfilePath)).toBe(true);
     const initialMtime = statSync(lockfilePath).mtimeMs;
 
-    // Wait a moment to ensure different timestamp
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // Version the packages
     const output = await fixture.lerna("version 1.0.0 -y");
 
     expect(output.combinedOutput).toContain("lerna success version finished");
 
-    // Verify lockfile was updated
     expect(existsSync(lockfilePath)).toBe(true);
     const updatedMtime = statSync(lockfilePath).mtimeMs;
     expect(updatedMtime).toBeGreaterThan(initialMtime);
   });
 
   it("should respect --ignore-scripts flag during lockfile update", async () => {
-    // Override lerna config to test ignore-scripts
     await fixture.overrideLernaConfig({
       npmClient: "bun",
       command: {
@@ -75,7 +69,6 @@ describe("lerna-version-bun-lockfile", () => {
     const lockfilePath = fixture.getWorkspacePath("bun.lockb");
     expect(existsSync(lockfilePath)).toBe(true);
 
-    // Version should still work with ignore-scripts
     const output = await fixture.lerna("version 2.0.0 -y");
     expect(output.combinedOutput).toContain("lerna success version finished");
     expect(existsSync(lockfilePath)).toBe(true);
