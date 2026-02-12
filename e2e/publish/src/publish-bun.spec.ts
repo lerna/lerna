@@ -100,19 +100,15 @@ describe("lerna-publish-bun", () => {
 
       const version = randomVersion();
 
-      // Version should update the lockfile
       const versionOutput = await fixture.lerna(`version ${version} -y`);
       expect(versionOutput.combinedOutput).toContain("lerna success version finished");
 
-      // Verify lockfile was committed
       const gitLogOutput = await fixture.exec("git log -1 --name-only --oneline");
       expect(gitLogOutput.combinedOutput).toContain("bun.lockb");
 
-      // Publish should work with updated lockfile
       const publishOutput = await fixture.lerna("publish from-git -y");
       expect(publishOutput.combinedOutput).toContain("lerna success published 2 packages");
 
-      // Cleanup
       await fixture.exec(`npm unpublish --force package-a@${version} --registry=http://localhost:4873`);
       await fixture.exec(`npm unpublish --force package-b@${version} --registry=http://localhost:4873`);
     });
@@ -126,7 +122,6 @@ describe("lerna-publish-bun", () => {
 
       const version = randomVersion();
 
-      // Update version in package.json without using lerna version
       await fixture.updateJson("packages/test-2/package.json", (json) => ({
         ...json,
         version,
