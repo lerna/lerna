@@ -40,17 +40,13 @@ describe("lerna-run-nx-include-dependencies-with-target-config-in-package-json",
       > package-X:print-name
 
 
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
-      test-package-X
-
       > package-X:print-name
 
-
       > package-X@0.0.0 print-name
       > echo test-package-X
-
+      > package-X@0.0.0 print-name
+      > echo test-package-X
+      test-package-X
       test-package-X
 
       > package-X:print-name
