@@ -157,7 +157,6 @@ describe("lerna-run-bun", () => {
 
   describe("environment variables", () => {
     it("should pass npm_package_* environment variables correctly", async () => {
-      // Add a script that prints an environment variable
       await fixture.addScriptsToPackage({
         packagePath: "packages/package-1",
         scripts: {
@@ -167,7 +166,6 @@ describe("lerna-run-bun", () => {
 
       const output = await fixture.lerna("run print-env --scope=package-1 -- --silent");
 
-      // Bun should set npm_package_* environment variables
       expect(output.combinedOutput).toContain("package-");
       expect(output.combinedOutput).toContain("lerna success run Ran npm script 'print-env' in 1 package");
     });
