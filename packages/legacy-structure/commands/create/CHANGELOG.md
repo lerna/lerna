@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.5](https://github.com/lerna/lerna/compare/v9.0.4...v9.0.5) (2026-02-28)
+
+### Bug Fixes
+
+- bump minimatch from 3.0.5 to 3.1.4 ([#4285](https://github.com/lerna/lerna/issues/4285)) ([2e3f99e](https://github.com/lerna/lerna/commit/2e3f99ed2dfa5be614ba3f740ab0579bbd4c51c9))
+- bump tar from 7.5.7 to 7.5.8 ([#4273](https://github.com/lerna/lerna/issues/4273)) ([bdffd1d](https://github.com/lerna/lerna/commit/bdffd1d97c27cd2a43e853d73296936fbc0e4f27))
+
 ## [9.0.4](https://github.com/lerna/lerna/compare/v9.0.3...v9.0.4) (2026-02-10)
 
 ### Bug Fixes
