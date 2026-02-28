@@ -1,5 +1,5 @@
-import copy from 'copy-to-clipboard';
-import * as React from 'react';
+import copy from "copy-to-clipboard";
+import * as React from "react";
 
 export interface CopyToClipboardOptions {
   debug?: boolean;
@@ -28,9 +28,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
 }) => {
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
-      const elem = React.Children.only(
-        children
-      ) as React.ReactElement<ChildProps>;
+      const elem = React.Children.only(children) as React.ReactElement<ChildProps>;
       const result = copy(text, options);
 
       if (onCopy) {
@@ -38,7 +36,7 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
       }
 
       // Bypass onClick if it was present
-      if (elem.props.onClick && typeof elem.props.onClick === 'function') {
+      if (elem.props.onClick && typeof elem.props.onClick === "function") {
         elem.props.onClick(event);
       }
     },
