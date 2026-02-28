@@ -1,14 +1,11 @@
 import {
   ArrowDownTrayIcon,
-  Cog8ToothIcon,
   CogIcon,
-  DocumentDuplicateIcon,
-  InboxArrowDownIcon,
+  DocumentDuplicateIcon
 } from "@heroicons/react/24/outline";
-import LernaIcon from "@site/src/components/lerna-icon";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import React, { useEffect, useState } from "react";
 import clsx from "clsx";
+import { useEffect, useState } from "react";
+import { CopyToClipboard } from "./copy-to-clipboard";
 import styles from "./hero-upgrade.module.css";
 
 export default function HeroUpgrade(): JSX.Element {
