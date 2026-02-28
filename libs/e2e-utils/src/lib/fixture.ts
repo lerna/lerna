@@ -9,7 +9,7 @@ interface RunCommandOptions {
   silent?: boolean;
 }
 
-type PackageManager = "npm" | "yarn" | "pnpm";
+type PackageManager = "npm" | "yarn" | "pnpm" | "bun";
 
 interface FixtureCreateOptions {
   name: string;
@@ -115,6 +115,12 @@ export class Fixture {
   }
 
   private static inferPackageManagerFromExistingFixture(fixtureRootPath: string): PackageManager {
+    if (
+      existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "bun.lockb")) ||
+      existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "bun.lock"))
+    ) {
+      return "bun";
+    }
     if (existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "pnpm-workspace.yaml"))) {
       return "pnpm";
     }
@@ -245,6 +251,8 @@ export class Fixture {
         return this.exec(`yarn --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
       case "pnpm":
         return this.exec(`pnpm install${args ? ` ${args}` : ""}`);
+      case "bun":
+        return this.exec(`bun install${args ? ` ${args}` : ""}`);
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
@@ -266,6 +274,9 @@ export class Fixture {
         return this.exec(`npx ${offlineFlag}--no lerna ${args}`, { silenceError: opts.silenceError });
       case "pnpm":
         return this.exec(`pnpm exec lerna ${args}`, { silenceError: opts.silenceError });
+      case "bun":
+        // Note: bunx doesn't support --offline flag, so we skip it for bun (accepts network requests)
+        return this.exec(`bunx lerna ${args}`, { silenceError: opts.silenceError });
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }

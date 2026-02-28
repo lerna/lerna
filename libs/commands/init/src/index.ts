@@ -245,13 +245,16 @@ export class InitCommand {
   }
 
   private detectPackageManager(): PackageManager | null {
-    const packageManager = existsSync("yarn.lock")
-      ? "yarn"
-      : existsSync("pnpm-lock.yaml")
-      ? "pnpm"
-      : existsSync("package-lock.json")
-      ? "npm"
-      : null;
+    const packageManager =
+      existsSync("bun.lockb") || existsSync("bun.lock")
+        ? "bun"
+        : existsSync("yarn.lock")
+        ? "yarn"
+        : existsSync("pnpm-lock.yaml")
+        ? "pnpm"
+        : existsSync("package-lock.json")
+        ? "npm"
+        : null;
     if (packageManager) {
       this.logger.verbose("", `Detected lock file for ${packageManager}`);
     }
@@ -274,7 +277,7 @@ export class InitCommand {
       this.logger.verbose("", "Could not detect package manager from process");
       return detectedPackageManager;
     }
-    for (const pkgManager of ["pnpm", "yarn", "npm"] as const) {
+    for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
       if (invoker.path.includes(pkgManager)) {
         this.logger.verbose("", `Detected package manager ${pkgManager} from process`);
         detectedPackageManager = pkgManager;
