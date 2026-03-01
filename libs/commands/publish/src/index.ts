@@ -584,7 +584,7 @@ class PublishCommand extends Command {
 
         // semver.inc() starts a new prerelease at .0, git describe starts at .1
         // and build metadata is always ignored when comparing dependency ranges
-        return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
+        return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}.${sha}`;
       };
 
     let updatesVersions: [string, string][];
