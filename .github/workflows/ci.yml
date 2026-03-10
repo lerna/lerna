@@ -206,6 +206,9 @@ jobs:
       NX_CLOUD_ACCESS_TOKEN: ""
       NX_CI_EXECUTION_ENV: "linux"
       NX_CLOUD_DISTRIBUTED_EXECUTION: false
+      # Disable colored output so captured stdout matches local (non-TTY) snapshots
+      NO_COLOR: "1"
+      FORCE_COLOR: "0"
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
@@ -245,7 +248,5 @@ jobs:
         run: |
           # We do not want the automatic Github Actions grouping to be applied to the e2e tests, or the snapshots won't match local
           unset GITHUB_ACTIONS
-          # Disable colored output so captured stdout matches local (non-TTY) snapshots
-          export FORCE_COLOR=0
           e2e/run/task-runner/src/run-tests.sh
         shell: bash
