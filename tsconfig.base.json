@@ -49,7 +49,6 @@
       "@lerna/commands/version": ["libs/commands/version/src/index.ts"],
       "@lerna/commands/version/*": ["libs/commands/version/src/*"],
       "@lerna/core": ["libs/core/src/index.ts"],
-      "@lerna/create": ["packages/legacy-structure/commands/create"],
       "@lerna/e2e-utils": ["libs/e2e-utils/src/index.ts"],
       "@lerna/legacy-core": ["libs/legacy-core/src/index.ts"],
       "@lerna/nx-plugin": ["libs/nx-plugin/src/index.ts"],

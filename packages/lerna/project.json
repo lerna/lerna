@@ -26,6 +26,11 @@
             "input": "packages/lerna/src",
             "glob": "cli.js",
             "output": "."
+          },
+          {
+            "input": "libs/commands/create/src/lib",
+            "glob": "lerna-module-data.js",
+            "output": "commands/create/lib"
           }
         ],
         "thirdParty": false,
@@ -36,6 +41,8 @@
           "packages/lerna/src/commands/changed/index.ts",
           "packages/lerna/src/commands/clean/command.ts",
           "packages/lerna/src/commands/clean/index.ts",
+          "packages/lerna/src/commands/create/command.ts",
+          "packages/lerna/src/commands/create/index.ts",
           "packages/lerna/src/commands/diff/command.ts",
           "packages/lerna/src/commands/diff/index.ts",
           "packages/lerna/src/commands/diff/lib/get-last-commit.ts",
@@ -89,7 +96,7 @@
           "packages/lerna/src/utils/index.ts"
         ],
         "esbuildOptions": {
-          "external": ["*package.json", "@lerna/create", "nx/*", "@nx/*"],
+          "external": ["*package.json", "nx/*", "@nx/*"],
           "outExtension": {
             ".js": ".js"
           },

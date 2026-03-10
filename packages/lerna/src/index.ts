@@ -2,13 +2,11 @@
 process.env["NX_ISOLATE_PLUGINS"] = "false";
 process.env["NX_TUI"] = "false";
 
-// Currently external until the usage of LERNA_MODULE_DATA can be refactored
-const createCmd = require("@lerna/create/command");
-
 // Bundled
 import { lernaCLI, log } from "@lerna/core";
 import changedCmd from "@lerna/commands/changed/command";
 import cleanCmd from "@lerna/commands/clean/command";
+import createCmd from "@lerna/commands/create/command";
 import diffCmd from "@lerna/commands/diff/command";
 import execCmd from "@lerna/commands/exec/command";
 import importCmd from "@lerna/commands/import/command";
