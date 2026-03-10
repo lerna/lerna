@@ -245,5 +245,7 @@ jobs:
         run: |
           # We do not want the automatic Github Actions grouping to be applied to the e2e tests, or the snapshots won't match local
           unset GITHUB_ACTIONS
+          # Disable colored output so captured stdout matches local (non-TTY) snapshots
+          export FORCE_COLOR=0
           e2e/run/task-runner/src/run-tests.sh
         shell: bash
