@@ -40,19 +40,25 @@ describe("lerna-run-nx", () => {
       > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
+
+      test-package-X
+
       > package-X:print-name
 
 
+      > package-X@0.0.0 print-name
+      > echo test-package-X
+
+      test-package-X
+
       > package-X:print-name
+
 
       > package-X@0.0.0 print-name
       > echo test-package-X
-      test-package-X
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-      test-package-X
+
       test-package-X
 
 
@@ -125,19 +131,25 @@ describe("lerna-run-nx", () => {
         > package-X:print-name
 
 
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+
         > package-X:print-name
 
 
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+
         > package-X:print-name
+
 
         > package-X@0.0.0 print-name
         > echo test-package-X
-        test-package-X
-        > package-X@0.0.0 print-name
-        > echo test-package-X
-        > package-X@0.0.0 print-name
-        > echo test-package-X
-        test-package-X
+
         test-package-X
 
 
@@ -170,19 +182,25 @@ describe("lerna-run-nx", () => {
           > package-X:print-name
 
 
+          > package-X@0.0.0 print-name
+          > echo test-package-X
+
+          test-package-X
+
           > package-X:print-name
 
 
+          > package-X@0.0.0 print-name
+          > echo test-package-X
+
+          test-package-X
+
           > package-X:print-name
+
 
           > package-X@0.0.0 print-name
           > echo test-package-X
-          test-package-X
-          > package-X@0.0.0 print-name
-          > echo test-package-X
-          > package-X@0.0.0 print-name
-          > echo test-package-X
-          test-package-X
+
           test-package-X
 
 
@@ -257,19 +275,25 @@ describe("lerna-run-nx", () => {
         > package-X:print-name
 
 
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+
         > package-X:print-name
 
 
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+
         > package-X:print-name
+
 
         > package-X@0.0.0 print-name
         > echo test-package-X
-        test-package-X
-        > package-X@0.0.0 print-name
-        > echo test-package-X
-        > package-X@0.0.0 print-name
-        > echo test-package-X
-        test-package-X
+
         test-package-X
 
 
@@ -303,19 +327,25 @@ describe("lerna-run-nx", () => {
         > package-X:print-name
 
 
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+
         > package-X:print-name
 
 
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+
         > package-X:print-name
+
 
         > package-X@0.0.0 print-name
         > echo test-package-X
-        test-package-X
-        > package-X@0.0.0 print-name
-        > echo test-package-X
-        > package-X@0.0.0 print-name
-        > echo test-package-X
-        test-package-X
+
         test-package-X
 
 
