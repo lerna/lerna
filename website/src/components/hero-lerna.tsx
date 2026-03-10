@@ -1,7 +1,7 @@
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+import { CopyToClipboard } from "./copy-to-clipboard";
 import styles from "./hero-lerna.module.css";
 import LernaIcon from "./lerna-icon";
 

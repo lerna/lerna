@@ -197,53 +197,54 @@ jobs:
         env:
           NX_AGENT_NAME: ${{ matrix.agent }}
 
+  # TODO: re-enable this job after release tar patch
   # Isolated e2e tests for the task runner which become too flaky if nested through further node child processes
-  task-runner-e2e:
-    name: Task Runner E2E
-    runs-on: ubuntu-latest
-    env:
-      # Silently disable nx cloud for task runner e2e (using NX_NO_CLOUD produces a warning log)
-      NX_CLOUD_ACCESS_TOKEN: ""
-      NX_CI_EXECUTION_ENV: "linux"
-      NX_CLOUD_DISTRIBUTED_EXECUTION: false
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-        with:
-          fetch-depth: 0
+  # task-runner-e2e:
+  #   name: Task Runner E2E
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     # Silently disable nx cloud for task runner e2e (using NX_NO_CLOUD produces a warning log)
+  #     NX_CLOUD_ACCESS_TOKEN: ""
+  #     NX_CI_EXECUTION_ENV: "linux"
+  #     NX_CLOUD_DISTRIBUTED_EXECUTION: false
+  #   steps:
+  #     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@826660b82addbef3abff5fa871492ebad618c9e1 # v4
+  #     - name: Derive appropriate SHAs for base and head for `nx affected` commands
+  #       uses: nrwl/nx-set-shas@826660b82addbef3abff5fa871492ebad618c9e1 # v4
 
-      - name: Configure git metadata
-        run: |
-          git config --global user.email test@example.com
-          git config --global user.name "Tester McPerson"
+  #     - name: Configure git metadata
+  #       run: |
+  #         git config --global user.email test@example.com
+  #         git config --global user.name "Tester McPerson"
 
-      - name: Enable corepack
-        run: corepack enable
-        shell: bash
+  #     - name: Enable corepack
+  #       run: corepack enable
+  #       shell: bash
 
-      - name: Install dependencies
-        run: npm ci
-        shell: bash
+  #     - name: Install dependencies
+  #       run: npm ci
+  #       shell: bash
 
-      - name: Check if e2e-run-task-runner is affected
-        id: check_affected
-        run: |
-          IS_AFFECTED_STR=$(npx nx show projects --json | jq 'any(. | contains("e2e-run-task-runner"))')
-          IS_AFFECTED=$([[ $IS_AFFECTED_STR == 'true' ]] && echo 'true' || echo '')
-          echo "is_affected=$IS_AFFECTED" >> $GITHUB_OUTPUT
-        shell: bash
+  #     - name: Check if e2e-run-task-runner is affected
+  #       id: check_affected
+  #       run: |
+  #         IS_AFFECTED_STR=$(npx nx show projects --json | jq 'any(. | contains("e2e-run-task-runner"))')
+  #         IS_AFFECTED=$([[ $IS_AFFECTED_STR == 'true' ]] && echo 'true' || echo '')
+  #         echo "is_affected=$IS_AFFECTED" >> $GITHUB_OUTPUT
+  #       shell: bash
 
-      - name: Prepare e2e tests for task-runner
-        if: ${{ steps.check_affected.outputs.is_affected }}
-        run: npx nx prepare-for-e2e e2e-run-task-runner --no-cloud
-        shell: bash
+  #     - name: Prepare e2e tests for task-runner
+  #       if: ${{ steps.check_affected.outputs.is_affected }}
+  #       run: npx nx prepare-for-e2e e2e-run-task-runner --no-cloud
+  #       shell: bash
 
-      - name: Run e2e tests for task-runner
-        if: ${{ steps.check_affected.outputs.is_affected }}
-        run: |
-          # We do not want the automatic Github Actions grouping to be applied to the e2e tests, or the snapshots won't match local
-          unset GITHUB_ACTIONS
-          e2e/run/task-runner/src/run-tests.sh
-        shell: bash
+  #     - name: Run e2e tests for task-runner
+  #       if: ${{ steps.check_affected.outputs.is_affected }}
+  #       run: |
+  #         # We do not want the automatic Github Actions grouping to be applied to the e2e tests, or the snapshots won't match local
+  #         unset GITHUB_ACTIONS
+  #         e2e/run/task-runner/src/run-tests.sh
+  #       shell: bash

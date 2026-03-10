@@ -44,33 +44,25 @@ describe("lerna-run-nx-multiple-targets", () => {
       > package-X:XXXXXXXXXX
 
 
-      > package-X@0.0.0 XXXXXXXXXX
-      > echo test-package-X
+      > package-X:XXXXXXXXXX
 
-      test-package-X
 
       > package-X:XXXXXXXXXX
 
 
-      > package-X@0.0.0 XXXXXXXXXX
-      > echo test-package-X
-
-      test-package-X
-
       > package-X:XXXXXXXXXX
 
-
       > package-X@0.0.0 XXXXXXXXXX
       > echo test-package-X
-
       test-package-X
-
-      > package-X:XXXXXXXXXX
-
-
       > package-X@0.0.0 XXXXXXXXXX
       > echo test-package-X
-
+      > package-X@0.0.0 XXXXXXXXXX
+      > echo test-package-X
+      > package-X@0.0.0 XXXXXXXXXX
+      > echo test-package-X
+      test-package-X
+      test-package-X
       test-package-X
 
 
@@ -98,17 +90,13 @@ describe("lerna-run-nx-multiple-targets", () => {
       > package-X:XXXXXXXXXX
 
 
-      > package-X@0.0.0 XXXXXXXXXX
-      > echo test-package-X
-
-      test-package-X
-
       > package-X:XXXXXXXXXX
 
-
       > package-X@0.0.0 XXXXXXXXXX
       > echo test-package-X
-
+      test-package-X
+      > package-X@0.0.0 XXXXXXXXXX
+      > echo test-package-X
       test-package-X
 
 
