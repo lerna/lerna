@@ -30,6 +30,11 @@
           {
             "input": "libs/commands/create/src/lib",
             "glob": "lerna-module-data.js",
+            "output": "lib"
+          },
+          {
+            "input": "libs/commands/create/src/lib",
+            "glob": "lerna-module-data.js",
             "output": "commands/create/lib"
           }
         ],
