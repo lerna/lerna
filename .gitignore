@@ -23,7 +23,6 @@ composer.lock
 # Project Specific
 /node_modules
 /packages/*/node_modules
-/packages/legacy-structure/commands/*/node_modules
 *.log
 /lib
 tmp
