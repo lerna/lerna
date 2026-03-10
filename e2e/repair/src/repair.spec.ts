@@ -56,6 +56,7 @@ describe("lerna-repair", () => {
       - nx: 22-0-0-release-version-config-changes (Updates release version config based on the breaking changes in Nx v22)
       - nx: 22-0-0-consolidate-release-tag-config (Consolidates releaseTag* options into nested releaseTag object structure)
       - nx: 22-1-0-update-nx-wrapper (Updates the nx wrapper.)
+      - nx: 22-7-0-add-polygraph-to-git-ignore (Adds .nx/polygraph to .gitignore)
       ---------------------------------------------------------
 
       Running migration lerna: remove-unnecessary-use-nx
@@ -236,6 +237,13 @@ describe("lerna-repair", () => {
       Running migration nx: 22-1-0-update-nx-wrapper
       Ran 22-1-0-update-nx-wrapper from nx
         Updates the nx wrapper.
+
+      No changes were made
+
+      ---------------------------------------------------------
+      Running migration nx: 22-7-0-add-polygraph-to-git-ignore
+      Ran 22-7-0-add-polygraph-to-git-ignore from nx
+        Adds .nx/polygraph to .gitignore
 
       No changes were made
 
