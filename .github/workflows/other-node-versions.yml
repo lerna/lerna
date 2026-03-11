@@ -131,6 +131,9 @@ jobs:
           # Silently disable nx cloud for task runner e2e (using NX_NO_CLOUD produces a warning log)
           NX_CLOUD_ACCESS_TOKEN: ""
           NX_CLOUD_DISTRIBUTED_EXECUTION: false
+          # Disable colored output so captured stdout matches local (non-TTY) snapshots
+          NO_COLOR: "1"
+          FORCE_COLOR: "0"
 
       - name: Stop all running agents
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
