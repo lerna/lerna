@@ -54,7 +54,7 @@
       "@lerna/nx-plugin": ["libs/nx-plugin/src/index.ts"],
       "@lerna/test-helpers": ["libs/test-helpers/src/index.ts"],
       "@lerna/test-helpers/*": ["libs/test-helpers/*"],
-      "tar/raw": ["node_modules/tar/dist/commonjs/index.d.ts"]
+      "tar/raw": ["node_modules/tar/dist/commonjs/index.js"]
     }
   },
   "exclude": ["node_modules", "tmp"]
