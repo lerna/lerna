@@ -1,1 +1,1 @@
-should not be included
+export const ignored = true;
