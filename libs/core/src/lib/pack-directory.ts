@@ -2,9 +2,7 @@ import Arborist from "@npmcli/arborist";
 import packlist from "npm-packlist";
 import path from "path";
 import { IntegrityMap } from "ssri";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - use non-minified tar to avoid bundle bug in tar@7.5.9+ (index.min.js)
-import * as tar from "tar/raw";
+import * as tar from "tar";
 import { getPacked } from "./get-packed";
 import log from "./npmlog";
 import { Package } from "./package";
