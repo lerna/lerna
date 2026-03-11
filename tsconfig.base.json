@@ -53,7 +53,8 @@
       "@lerna/legacy-core": ["libs/legacy-core/src/index.ts"],
       "@lerna/nx-plugin": ["libs/nx-plugin/src/index.ts"],
       "@lerna/test-helpers": ["libs/test-helpers/src/index.ts"],
-      "@lerna/test-helpers/*": ["libs/test-helpers/*"]
+      "@lerna/test-helpers/*": ["libs/test-helpers/*"],
+      "tar/raw": ["node_modules/tar/dist/commonjs/index.d.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
