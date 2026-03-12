@@ -35,7 +35,7 @@ async function maybeFormatFile(filePath) {
   const ignorePath = path.join(workspaceRoot, ".prettierignore");
   const fullFilePath = path.join(workspaceRoot, filePath);
 
-  const fileInfo = await resolvedPrettier.getFileInfo(fullFilePath, { ignorePath });
+  const fileInfo = await resolvedPrettier.getFileInfo(fullFilePath, { ignorePath, resolveConfig: false });
 
   if (fileInfo.ignored) {
     log.silly("version", `Skipped applying prettier to ignored file: ${filePath}`);
