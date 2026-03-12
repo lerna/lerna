@@ -78,6 +78,21 @@ describe("createProjectGraphWithPackages", () => {
     expect(Object.keys(result.nodes)).toEqual(expected);
   });
 
+  it("should match projects when packageConfigs globs use ./ prefix", async () => {
+    const result = await createProjectGraphWithPackages(projectGraph(), projectFileMap(), [
+      "./packages/*",
+      "./other-packages/*",
+    ]);
+
+    expect(Object.keys(result.nodes)).toEqual([
+      "otherProjectB",
+      "otherProjectA",
+      "project",
+      "projectA",
+      "projectB",
+    ]);
+  });
+
   it("should augment dependency metadata", async () => {
     const result = await createProjectGraphWithPackages(projectGraph(), projectFileMap(), [
       "packages/*",
