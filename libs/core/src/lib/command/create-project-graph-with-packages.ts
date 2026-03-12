@@ -21,10 +21,11 @@ export async function createProjectGraphWithPackages(
   // We respect the NX_WORKSPACE_ROOT_PATH environment variable at runtime in order to support existing unit tests
   const _workspaceRoot = process.env["NX_WORKSPACE_ROOT_PATH"] || workspaceRoot;
 
+  const normalizedPackageConfigs = packageConfigs.map((config) => config.replace(/^\.\//, ""));
   const projectNodes = Object.values(projectGraph.nodes);
   const projectNodesMatchingPackageConfigs = projectNodes.filter((node) => {
     const matchesRootPath = (config: string) => minimatch(node.data.root, config);
-    return packageConfigs.some(matchesRootPath);
+    return normalizedPackageConfigs.some(matchesRootPath);
   });
   const tuples = await Promise.all(
     projectNodesMatchingPackageConfigs.map(
