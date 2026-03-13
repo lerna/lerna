@@ -12,7 +12,6 @@ import pacote from "pacote";
 import path from "path";
 import { slash } from "@lerna/core";
 import { URL } from "url";
-import { camelCase } from "yargs-parser";
 
 const initPackageJson = require("init-package-json");
 
@@ -72,7 +71,7 @@ class CreateCommand extends Command {
 
     this.pkgsDir = this._getPackagesDir(pkgLocation);
 
-    this.camelName = camelCase(this.dirName);
+    this.camelName = this.dirName.replace(/[-_]+([a-zA-Z])/g, (_, ch) => ch.toUpperCase());
 
     // when transpiling, src => dist; otherwise everything in lib
     this.outDir = esModule ? "dist" : "lib";

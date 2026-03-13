@@ -237,7 +237,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   }
 
   configureEnvironment() {
-    const ci = require("is-ci");
+    const ci = require("ci-info").isCI;
     let loglevel;
     let progress;
 

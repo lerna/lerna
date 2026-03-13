@@ -1,9 +1,11 @@
 import { joinPathFragments } from "@nx/devkit";
 import { ensureDirSync } from "fs-extra";
-import isCI from "is-ci";
+import ciInfo from "ci-info";
 import { dirSync } from "tmp";
 
-const E2E_ROOT = isCI ? dirSync({ prefix: "lerna-e2e-" }).name : joinPathFragments("/tmp", "lerna-e2e");
+const E2E_ROOT = ciInfo.isCI
+  ? dirSync({ prefix: "lerna-e2e-" }).name
+  : joinPathFragments("/tmp", "lerna-e2e");
 
 ensureDirSync(E2E_ROOT);
 
