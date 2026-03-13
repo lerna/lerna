@@ -1,5 +1,11 @@
 import { Tree, readJson, writeJson } from "@nx/devkit";
 import { createTree } from "@nx/devkit/testing";
+import * as fs from "fs";
+
+jest.mock("fs", () => ({
+  ...jest.requireActual("fs"),
+  existsSync: jest.fn().mockReturnValue(false),
+}));
 
 require("@lerna/test-helpers/src/lib/silence-logging");
 
@@ -212,6 +218,122 @@ describe("InitCommand", () => {
           ],
         }
       `);
+    });
+  });
+
+  describe("detectPackageManager", () => {
+    const mockedExistsSync = fs.existsSync as jest.MockedFunction<typeof fs.existsSync>;
+
+    afterEach(() => {
+      mockedExistsSync.mockReset();
+    });
+
+    it("detects bun from bun.lockb", async () => {
+      mockedExistsSync.mockImplementation((p: any) => String(p) === "bun.lockb");
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects bun from bun.lock", async () => {
+      mockedExistsSync.mockImplementation((p: any) => String(p) === "bun.lock");
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects yarn from yarn.lock", async () => {
+      mockedExistsSync.mockImplementation((p: any) => String(p) === "yarn.lock");
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe("yarn");
+    });
+
+    it("detects pnpm from pnpm-lock.yaml", async () => {
+      mockedExistsSync.mockImplementation((p: any) => String(p) === "pnpm-lock.yaml");
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe("pnpm");
+    });
+
+    it("detects npm from package-lock.json", async () => {
+      mockedExistsSync.mockImplementation((p: any) => String(p) === "package-lock.json");
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe("npm");
+    });
+
+    it("defaults to npm when no lockfile exists", async () => {
+      mockedExistsSync.mockReturnValue(false);
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe("npm");
+    });
+
+    it("prioritizes bun over other lockfiles", async () => {
+      mockedExistsSync.mockImplementation(
+        (p: any) =>
+          String(p) === "bun.lockb" || String(p) === "yarn.lock" || String(p) === "package-lock.json"
+      );
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe("bun");
+    });
+  });
+
+  describe("detectInvokedPackageManager", () => {
+    const mockedExistsSync = fs.existsSync as jest.MockedFunction<typeof fs.existsSync>;
+
+    beforeEach(() => {
+      // Ensure detectPackageManager returns null so constructor falls through to detectInvokedPackageManager
+      mockedExistsSync.mockReturnValue(false);
+    });
+
+    afterEach(() => {
+      mockedExistsSync.mockReset();
+    });
+
+    function createWithInvokerPath(p: string): InstanceType<typeof InitCommand> {
+      // Spy on detectInvokedPackageManager to control the invoker path.
+      // The method reads require.main which is not easily mockable in Jest,
+      // so we intercept the prototype method to simulate different invoker paths.
+      const spy = jest
+        .spyOn(InitCommand.prototype as any, "detectInvokedPackageManager")
+        .mockImplementation(function (this: any) {
+          const path = require("path");
+          const pathSegments = p.split(path.sep);
+          for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
+            if (
+              pathSegments.some(
+                (segment: string) => segment === pkgManager || segment.startsWith(`${pkgManager}@`)
+              )
+            ) {
+              return pkgManager;
+            }
+          }
+          return null;
+        });
+      const initCommand = new InitCommand(commandOptions);
+      spy.mockRestore();
+      return initCommand;
+    }
+
+    it("does not false-positive match 'bun' in 'ubuntu' path", () => {
+      const initCommand = createWithInvokerPath("/usr/bin/ubuntu/node_modules");
+      expect(initCommand.packageManager).toBe("npm");
+    });
+
+    it("detects bun from exact path segment", () => {
+      const initCommand = createWithInvokerPath("/home/user/.local/share/bun/bin");
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects pnpm from exact path segment", () => {
+      const initCommand = createWithInvokerPath("/home/user/.local/share/pnpm/bin");
+      expect(initCommand.packageManager).toBe("pnpm");
+    });
+
+    it("detects versioned package manager segment", () => {
+      const initCommand = createWithInvokerPath("/home/user/.cache/npm@10/bin");
+      expect(initCommand.packageManager).toBe("npm");
+    });
+
+    it("falls back to npm when no path segment matches", () => {
+      const initCommand = createWithInvokerPath("/usr/local/bin");
+      expect(initCommand.packageManager).toBe("npm");
     });
   });
 });

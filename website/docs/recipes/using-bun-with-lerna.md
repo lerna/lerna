@@ -71,6 +71,12 @@ Bun uses a binary lockfile format (`bun.lockb`) which is not human-readable like
 - Merge conflicts in the lockfile require careful resolution (though Bun handles most cases automatically)
 - Debugging lockfile issues requires using Bun's CLI tools
 
+### Lockfile Detection Priority
+
+When `lerna init` auto-detects the package manager, it checks lockfiles in this order: `bun.lockb`/`bun.lock` > `yarn.lock` > `pnpm-lock.yaml` > `package-lock.json`. If your project has multiple lockfiles, remove the ones you don't need to avoid unexpected detection results.
+
+Bun v1.2+ uses a text-based `bun.lock` format by default instead of the binary `bun.lockb`. Lerna supports both formats.
+
 ### Command Compatibility
 
 Most Lerna commands work seamlessly with Bun:
@@ -115,7 +121,7 @@ curl -fsSL https://bun.sh/install | bash
 # pnpm-workspace.yaml:
 #   packages:
 #     - "packages/*"
-# 
+#
 # becomes package.json:
 #   "workspaces": ["packages/*"]
 

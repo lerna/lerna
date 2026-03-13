@@ -144,6 +144,8 @@ export class Fixture {
         `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false" > .npmrc`
       );
     }
+    // bun does not need file-based config here because BUN_CONFIG_REGISTRY is set
+    // as an environment variable in install(), lerna(), and lernaInit().
   }
 
   private async initializeNpmEnvironment(): Promise<void> {
@@ -224,6 +226,11 @@ export class Fixture {
       case "pnpm":
         execCommandResult = this.exec(`pnpm dlx lerna@${getPublishedVersion()} init ${args || ""}`);
         break;
+      case "bun":
+        execCommandResult = this.exec(`bunx lerna@${getPublishedVersion()} init ${args || ""}`, {
+          env: { ...process.env, BUN_CONFIG_REGISTRY: REGISTRY },
+        });
+        break;
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
@@ -252,7 +259,9 @@ export class Fixture {
       case "pnpm":
         return this.exec(`pnpm install${args ? ` ${args}` : ""}`);
       case "bun":
-        return this.exec(`bun install${args ? ` ${args}` : ""}`);
+        return this.exec(`bun install${args ? ` ${args}` : ""}`, {
+          env: { ...process.env, BUN_CONFIG_REGISTRY: REGISTRY },
+        });
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
@@ -275,8 +284,11 @@ export class Fixture {
       case "pnpm":
         return this.exec(`pnpm exec lerna ${args}`, { silenceError: opts.silenceError });
       case "bun":
-        // Note: bunx doesn't support --offline flag, so we skip it for bun (accepts network requests)
-        return this.exec(`bunx lerna ${args}`, { silenceError: opts.silenceError });
+        // bunx doesn't support --offline
+        return this.exec(`bunx lerna ${args}`, {
+          silenceError: opts.silenceError,
+          env: { ...process.env, BUN_CONFIG_REGISTRY: REGISTRY },
+        });
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }

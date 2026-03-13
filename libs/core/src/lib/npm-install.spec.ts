@@ -57,6 +57,32 @@ describe("npm-install", () => {
       );
     });
 
+    it("installs with bun without yarn-specific flags", async () => {
+      const pkg = new Package(
+        {
+          name: "test-npm-install",
+        } as any,
+        path.normalize("/test/npm-install-bun"),
+        path.normalize("/test")
+      );
+
+      await npmInstall(pkg, {
+        npmClient: "bun",
+        mutex: "file:foo",
+      });
+
+      expect(childProcess.exec).toHaveBeenLastCalledWith("bun", ["install"], {
+        cwd: pkg.location,
+        env: {
+          LERNA_PACKAGE_NAME: "test-npm-install",
+          LERNA_EXEC_PATH: pkg.location,
+          LERNA_ROOT_PATH: pkg.rootPath,
+        },
+        pkg,
+        stdio: "pipe",
+      });
+    });
+
     it("allows override of opts.stdio", async () => {
       const pkg = new Package(
         {

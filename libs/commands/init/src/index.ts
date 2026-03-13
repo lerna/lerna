@@ -17,6 +17,7 @@ import {
 } from "@nx/devkit";
 import { existsSync } from "fs";
 import { readFileSync } from "fs-extra";
+import path from "path";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
 
 const LARGE_BUFFER = 1024 * 1000000;
@@ -277,8 +278,11 @@ export class InitCommand {
       this.logger.verbose("", "Could not detect package manager from process");
       return detectedPackageManager;
     }
+    const pathSegments = invoker.path.split(path.sep);
     for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
-      if (invoker.path.includes(pkgManager)) {
+      if (
+        pathSegments.some((segment: string) => segment === pkgManager || segment.startsWith(`${pkgManager}@`))
+      ) {
         this.logger.verbose("", `Detected package manager ${pkgManager} from process`);
         detectedPackageManager = pkgManager;
         break;

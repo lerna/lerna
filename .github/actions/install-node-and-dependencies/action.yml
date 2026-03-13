@@ -46,12 +46,18 @@ runs:
         COREPACK_ENABLE_AUTO_PIN: "0"
         COREPACK_ENABLE_STRICT: "0"
 
-    - name: Print installed node, npm, yarn and pnpm versions
+    - name: Install Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: "1.1"
+
+    - name: Print installed node, npm, yarn, pnpm and bun versions
       run: |
         node --version
         npm --version
         yarn --version
         pnpm --version
+        bun --version
       shell: bash
       env:
         COREPACK_ENABLE_AUTO_PIN: "0"

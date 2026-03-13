@@ -8,6 +8,7 @@ export function getNpmExecOpts(pkg: { name: any; location: string }, registry?: 
 
   if (registry) {
     env.npm_config_registry = registry;
+    env.BUN_CONFIG_REGISTRY = registry;
   }
 
   log.silly("getNpmExecOpts", pkg.location, registry);

@@ -8,7 +8,7 @@ function createCommandAndArgs(npmClient: string, args: string[]) {
   let command = npmClient;
   const commandArgs = [...args];
 
-  if (isCorepackEnabled()) {
+  if (isCorepackEnabled() && npmClient !== "bun") {
     commandArgs.unshift(command);
     command = "corepack";
   }
