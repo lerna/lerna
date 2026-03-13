@@ -103,7 +103,6 @@
     "validate-npm-package-name": "6.0.2",
     "wide-align": "1.1.5",
     "write-file-atomic": "5.0.1",
-    "write-pkg": "4.0.0",
     "yargs": "17.7.2",
     "yargs-parser": "21.1.1"
   },

@@ -2,6 +2,7 @@ import {
   npmPublish as _npmPublish,
   promptConfirmation as _promptConfirmation,
   throwIfUncommitted as _throwIfUncommitted,
+  writePackage as _writePackage,
 } from "@lerna/core";
 import {
   commandRunner,
@@ -14,7 +15,6 @@ import {
 } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import path from "path";
-import _writePkg from "write-pkg";
 
 const childProcess = require("@lerna/child-process");
 
@@ -29,8 +29,6 @@ jest.mock("./get-npm-username");
 jest.mock("./get-two-factor-auth-required");
 
 const initFixture = initFixtureFactory(__dirname);
-
-jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
 jest.mock("@lerna/core", () => {
   const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
@@ -47,7 +45,7 @@ const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
 
 // The mock differs from the real thing
 const npmPublish = _npmPublish as any;
-const writePkg = _writePkg as any;
+const writePackage = _writePackage as any;
 
 // file under test
 
@@ -109,7 +107,7 @@ Map {
   "package-3" => "canary",
 }
 `);
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-1": 1.0.1-alpha.0+SHA,
   "package-2": 1.0.1-alpha.0+SHA,
@@ -125,7 +123,7 @@ Object {
     await setupChanges(cwd, ["packages/package-1/all-your-base.js", "belong to us"]);
     await lernaPublish(cwd)("--canary", "--preid", "beta");
 
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-1": 1.0.1-beta.0+SHA,
   "package-2": 1.0.1-beta.0+SHA,
@@ -140,7 +138,7 @@ Object {
     await setupChanges(cwd, ["packages/package-1/all-your-base.js", "belong to us"]);
     await lernaPublish(cwd)("--canary", "--tag-version-prefix", "abc");
 
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-1": 1.0.1-alpha.0+SHA,
   "package-2": 1.0.1-alpha.0+SHA,
@@ -156,7 +154,7 @@ Object {
     await lernaPublish(cwd)("--canary", "prerelease");
     // prerelease === prepatch, which is the default
 
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-1": 1.0.1-alpha.0+SHA,
   "package-2": 1.0.1-alpha.0+SHA,
@@ -171,7 +169,7 @@ Object {
     await setupChanges(cwd, ["packages/package-1/all-your-base.js", "belong to us"]);
     await lernaPublish(cwd)("--canary", "preminor");
 
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-1": 1.1.0-alpha.0+SHA,
   "package-2": 2.1.0-alpha.0+SHA,
@@ -199,7 +197,7 @@ Object {
     await lernaPublish(cwd)("--canary", "premajor");
 
     // there have been two commits since the beginning of the repo
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-6": 1.0.0-alpha.1+SHA,
 }
@@ -213,7 +211,7 @@ Object {
       await setupChanges(cwd, ["packages/package-1/all-your-base.js", "belong to us"]);
       await lernaPublish(cwd)("--canary", "patch");
 
-      expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+      expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-1": 1.0.1-alpha.0+SHA,
   "package-2": 1.0.1-alpha.0+SHA,
@@ -230,7 +228,7 @@ Object {
       await setupChanges(cwd, ["packages/package-3/malcolm.js", "in the middle"]);
       await lernaPublish(cwd)("--canary", "minor");
 
-      expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+      expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-3": 1.1.0-alpha.0+SHA,
   "package-4": 1.1.0-alpha.0+SHA,
@@ -245,7 +243,7 @@ Object {
       await setupChanges(cwd, ["packages/package-5/celine-dion.js", "all by myself"]);
       await lernaPublish(cwd)("--canary", "major");
 
-      expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+      expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-5": 2.0.0-alpha.0+SHA,
 }
@@ -264,7 +262,7 @@ Object {
       await setupChanges(cwd, ["packages/package-5/celine-dion.js", "all by myself"]);
       await lernaPublish(cwd)("--canary");
 
-      expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+      expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-5": 5.0.1-alpha.0+SHA,
 }
@@ -275,7 +273,7 @@ Object {
       await setupChanges(cwd, ["packages/package-3/malcolm.js", "in the middle"]);
       await lernaPublish(cwd)("--canary");
 
-      expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+      expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-3": 3.0.1-alpha.1+SHA,
   "package-4": 4.0.1-alpha.1+SHA,
@@ -288,7 +286,7 @@ Object {
       await setupChanges(cwd, ["packages/package-1/all-your-base.js", "belong to us"]);
       await lernaPublish(cwd)("--canary");
 
-      expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+      expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-1": 1.0.1-alpha.2+SHA,
   "package-2": 2.0.1-alpha.2+SHA,
@@ -303,7 +301,7 @@ Object {
       await setupChanges(cwd, ["packages/package-3/malcolm.js", "tucker"]);
       await lernaPublish(cwd)("--canary");
 
-      expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+      expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-3": 3.0.1-alpha.3+SHA,
   "package-4": 4.0.1-alpha.3+SHA,
@@ -316,7 +314,7 @@ Object {
       await setupChanges(cwd, ["packages/package-5/celine-dion.js", "my heart will go on"]);
       await lernaPublish(cwd)("--canary");
 
-      expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+      expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-5": 5.0.1-alpha.4+SHA,
 }
@@ -343,7 +341,7 @@ Object {
     expect(logMessages).toContain("all packages");
     // lerna WARN force-publish all packages
 
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-1": 1.0.1-alpha.0+SHA,
   "package-2": 1.0.1-alpha.0+SHA,
@@ -367,7 +365,7 @@ Object {
     expect(logMessages).toContain("package-2");
     // lerna WARN force-publish package-2
 
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-2": 2.0.1-alpha.0+SHA,
   "package-3": 3.0.1-alpha.0+SHA,
@@ -416,7 +414,7 @@ Object {
     const cwd = await initFixture("normal");
     await lernaPublish(cwd)("--canary");
 
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
     Object {
       "package-1": 1.0.1-alpha.0+SHA,
       "package-2": 1.0.1-alpha.0+SHA,
@@ -430,7 +428,7 @@ Object {
     const cwd = await initFixture("independent");
     await lernaPublish(cwd)("--canary");
 
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
     Object {
       "package-1": 1.0.1-alpha.0+SHA,
       "package-2": 2.0.1-alpha.0+SHA,
@@ -460,7 +458,7 @@ Object {
 
     await lernaPublish(cwd)("--canary", "--no-private");
 
-    expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
     Object {
       "package-1": 1.0.1-alpha.0+SHA,
       "package-2": 2.0.1-alpha.0+SHA,

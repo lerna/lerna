@@ -2,13 +2,11 @@ import {
   collectProjectUpdates as _collectUpdates,
   recommendVersion as _recommendVersion,
   updateChangelog as _updateChangelog,
+  writePackage as _writePackage,
 } from "@lerna/core";
 import { commandRunner, initFixtureFactory, showCommit } from "@lerna/test-helpers";
 import path from "path";
 import semver from "semver";
-import _writePkg from "write-pkg";
-
-jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
@@ -31,7 +29,7 @@ const collectUpdates = _collectUpdates as any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const recommendVersion = _recommendVersion as any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const writePkg = _writePkg as any;
+const writePackage = _writePackage as any;
 
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
 
@@ -493,20 +491,20 @@ describe("version --conventional-commits", () => {
 
     await lernaVersion(cwd)("--conventional-commits");
 
-    expect(writePkg.updatedVersions()).toEqual({
+    expect(writePackage.updatedVersions()).toEqual({
       "package-1": "1.1.0",
     });
 
     // clear previous publish mock records
     jest.clearAllMocks();
-    writePkg.registry.clear();
+    writePackage.registry.clear();
 
     collectUpdates.setUpdated(cwd, "package-2");
     recommendVersion.mockImplementationOnce((pkg) => Promise.resolve(semver.inc(pkg.version, "patch")));
 
     await lernaVersion(cwd)("--conventional-commits");
 
-    expect(writePkg.updatedVersions()).toEqual({
+    expect(writePackage.updatedVersions()).toEqual({
       "package-2": "1.1.1",
     });
   });

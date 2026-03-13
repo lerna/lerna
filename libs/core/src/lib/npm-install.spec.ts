@@ -1,17 +1,17 @@
 import path from "path";
 import _fs from "fs-extra";
-import _writePkg from "write-pkg";
+import { writePackage as _writePackage } from "./write-package";
 import { Package } from "./package";
 import { npmInstall, npmInstallDependencies } from "./npm-install";
 
 jest.mock("fs-extra");
-jest.mock("write-pkg");
+jest.mock("./write-package");
 jest.mock("@lerna/child-process");
 
 const childProcess = require("@lerna/child-process");
 
 const fs = jest.mocked(_fs);
-const writePkg = jest.mocked(_writePkg);
+const writePackage = jest.mocked(_writePackage);
 
 describe("npm-install", () => {
   childProcess.exec.mockResolvedValue();
@@ -23,7 +23,7 @@ describe("npm-install", () => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   fs.copy.mockResolvedValue();
-  writePkg.mockResolvedValue();
+  writePackage.mockResolvedValue();
 
   describe("npmInstall()", () => {
     it("returns a promise for a non-mangling install", async () => {
@@ -151,7 +151,7 @@ describe("npm-install", () => {
 
       expect(fs.copy).toHaveBeenLastCalledWith(pkg.manifestLocation, backupManifest);
       expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
-      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
+      expect(writePackage).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -204,7 +204,7 @@ describe("npm-install", () => {
 
       await npmInstallDependencies(pkg, dependencies, config);
 
-      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
+      expect(writePackage).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -245,7 +245,7 @@ describe("npm-install", () => {
         npmGlobalStyle: true,
       });
 
-      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
+      expect(writePackage).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -283,7 +283,7 @@ describe("npm-install", () => {
         mutex: "network:12345",
       });
 
-      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
+      expect(writePackage).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -320,7 +320,7 @@ describe("npm-install", () => {
         npmClientArgs: ["--production", "--no-optional"],
       });
 
-      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
+      expect(writePackage).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         optionalDependencies: {
@@ -366,7 +366,7 @@ describe("npm-install", () => {
         mutex: "network:12345",
       });
 
-      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
+      expect(writePackage).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -406,7 +406,7 @@ describe("npm-install", () => {
         subCommand: "ci",
       });
 
-      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
+      expect(writePackage).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -460,7 +460,7 @@ describe("npm-install", () => {
 
       await npmInstallDependencies(pkg, dependencies, {});
 
-      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
+      expect(writePackage).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -500,7 +500,7 @@ describe("npm-install", () => {
       const backupManifest = `${pkg.manifestLocation}.lerna_backup`;
       const dependencies = ["just-here-so-we-dont-exit-early"];
 
-      writePkg.mockRejectedValueOnce(new Error("Unable to write file"));
+      writePackage.mockRejectedValueOnce(new Error("Unable to write file"));
 
       await expect(npmInstallDependencies(pkg, dependencies, {})).rejects.toThrow("Unable to write file");
       expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);

@@ -13,8 +13,36 @@ const { createGitLabClient } = require("./gitlab-client");
 const { createGitHubClient, parseGitRepo } = require("./github-client");
 const collectProjectUpdates = require("./collect-project-updates");
 
+// writePackage mock: intercepts Package.prototype.serialize to record
+// what was written, exposing updatedVersions() and updatedManifest() helpers.
+const realCore = jest.requireActual("@lerna/core");
+
+const registry = new Map();
+const origSerialize = realCore.Package.prototype.serialize;
+
+realCore.Package.prototype.serialize = function () {
+  const json = this.toJSON();
+  registry.set(json.name, json);
+  return origSerialize.call(this);
+};
+
+const writePackage: any = jest.fn();
+writePackage.registry = registry;
+writePackage.updatedManifest = (name: string) => registry.get(name);
+writePackage.updatedVersions = () => {
+  const result: Record<string, string> = {};
+  registry.forEach((pkg: any, name: string) => {
+    result[name] = pkg.version;
+  });
+  return result;
+};
+
+afterEach(() => {
+  registry.clear();
+});
+
 module.exports = {
-  ...jest.requireActual("@lerna/core"),
+  ...realCore,
   output,
   ...prompt,
   ...checkWorkingTree,
@@ -37,4 +65,5 @@ module.exports = {
   npmInstallDependencies: jest.fn(),
   getOneTimePassword: jest.fn(),
   gitCheckout: jest.fn(),
+  writePackage,
 };

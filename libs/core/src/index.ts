@@ -48,6 +48,7 @@ export { createRunner, runLifecycle } from "./lib/run-lifecycle";
 export { runProjectsTopologically } from "./lib/run-projects-topologically";
 export { createGitHubClient, createGitLabClient, parseGitRepo } from "./lib/scm-clients";
 export { default as tempWrite } from "./lib/temp-write";
+export { writePackage } from "./lib/write-package";
 export { timer } from "./lib/timer";
 export { toposortProjects } from "./lib/toposort-projects";
 export { ValidationError } from "./lib/validation-error";

@@ -5,6 +5,7 @@ import {
   promptConfirmation,
   promptSelectOne as _promptSelectOne,
   throwIfUncommitted as _throwIfUncommitted,
+  writePackage as _writePackage,
 } from "@lerna/core";
 import {
   commandRunner,
@@ -21,13 +22,10 @@ import {
 import execa from "execa";
 import fs from "fs-extra";
 import path from "path";
-import _writePkg from "write-pkg";
 import { gitPush as _libPush } from "./git-push";
 import { isAnythingCommitted as _isAnythingCommitted } from "./is-anything-committed";
 import { isBehindUpstream as _isBehindUpstream } from "./is-behind-upstream";
 import { remoteBranchExists as _remoteBranchExists } from "./remote-branch-exists";
-
-jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
 jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
 
@@ -51,7 +49,7 @@ const promptSelectOne = _promptSelectOne as any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const collectUpdates = _collectUpdates as any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const writePkg = _writePkg as any;
+const writePackage = _writePackage as any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const output = _output as any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -98,7 +96,7 @@ describe("VersionCommand", () => {
       expect(promptSelectOne.mock.calls).toMatchSnapshot("prompt");
       expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to create these versions?");
 
-      expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
+      expect(writePackage.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
       const patch = await showCommit(testDir);
       expect(patch).toMatchSnapshot("commit");
@@ -232,7 +230,7 @@ describe("VersionCommand", () => {
 
       expect(promptConfirmation).toHaveBeenCalled();
 
-      expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
+      expect(writePackage.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
       const patch = await showCommit(testDir);
       expect(patch).toMatchSnapshot("commit");
@@ -287,7 +285,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--no-git-tag-version");
 
-      expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
+      expect(writePackage.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
       expect(libPush).not.toHaveBeenCalled();
 
@@ -687,7 +685,7 @@ Changes:
     it("ignores private packages with no version", async () => {
       const testDir = await initFixture("not-versioned-private");
       await lernaVersion(testDir)();
-      expect(Object.keys(writePkg.updatedVersions())).not.toContain("package-4");
+      expect(Object.keys(writePackage.updatedVersions())).not.toContain("package-4");
     });
   });
 
@@ -822,7 +820,7 @@ Changes:
       await setupChanges(testDir);
       await lernaVersion(testDir)("major", "--yes");
 
-      expect(writePkg.updatedVersions()).toEqual({
+      expect(writePackage.updatedVersions()).toEqual({
         "package-1": "2.0.0",
         "package-2": "2.0.0",
         "package-3": "2.0.0",
@@ -841,41 +839,41 @@ Changes:
       });
 
       // package-1 has no relative file: dependencies
-      expect(writePkg.updatedManifest("package-2").dependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-2").dependencies).toMatchObject({
         "package-1": "file:../package-1",
       });
-      expect(writePkg.updatedManifest("package-3").dependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-3").dependencies).toMatchObject({
         "package-2": "file:../package-2",
       });
-      expect(writePkg.updatedManifest("package-4").optionalDependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-4").optionalDependencies).toMatchObject({
         "package-3": "file:../package-3",
       });
-      expect(writePkg.updatedManifest("package-5").dependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-5").dependencies).toMatchObject({
         "package-4": "file:../package-4",
         "package-6": "file:../package-6",
       });
-      expect(writePkg.updatedManifest("package-8").peerDependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-8").peerDependencies).toMatchObject({
         "package-1": "file:../package-1",
       });
-      expect(writePkg.updatedManifest("package-9").peerDependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-9").peerDependencies).toMatchObject({
         "package-1": "^1.0.0",
       });
-      expect(writePkg.updatedManifest("package-a").peerDependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-a").peerDependencies).toMatchObject({
         "package-1": "workspace:*",
       });
-      expect(writePkg.updatedManifest("package-b").peerDependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-b").peerDependencies).toMatchObject({
         "package-1": "workspace:^",
       });
-      expect(writePkg.updatedManifest("package-c").peerDependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-c").peerDependencies).toMatchObject({
         "package-1": "workspace:~",
       });
-      expect(writePkg.updatedManifest("package-d").peerDependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-d").peerDependencies).toMatchObject({
         "package-1": "workspace:^2.0.0",
       });
-      expect(writePkg.updatedManifest("package-e").peerDependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-e").peerDependencies).toMatchObject({
         "package-1": "workspace:~2.0.0",
       });
-      expect(writePkg.updatedManifest("package-f").peerDependencies).toMatchObject({
+      expect(writePackage.updatedManifest("package-f").peerDependencies).toMatchObject({
         "package-1": "workspace:2.0.0",
       });
     });

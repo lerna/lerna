@@ -3,13 +3,11 @@ import {
   output as _output,
   promptConfirmation as _promptConfirmation,
   throwIfUncommitted as _throwIfUncommitted,
+  writePackage as _writePackage,
 } from "@lerna/core";
 import { commandRunner, initFixtureFactory, loggingOutput } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import path from "path";
-import _writePkg from "write-pkg";
-
-jest.mock("write-pkg", () => require("@lerna/test-helpers/__mocks__/write-pkg"));
 
 jest.mock("@lerna/core", () => ({
   ...require("@lerna/test-helpers/__mocks__/@lerna/core"),
@@ -51,7 +49,7 @@ const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
 
 // The mock differs from the real thing
 const npmPublish = _npmPublish as jest.MockedFunction<typeof _npmPublish> & { order: () => string[] };
-const writePkg = _writePkg as jest.MockedFunction<typeof _writePkg> & {
+const writePackage = _writePackage as jest.MockedFunction<typeof _writePackage> & {
   updatedManifest: (name: string) => { gitHead?: string };
 };
 const output = _output as jest.MockedFunction<typeof _output> & { logged: () => string[] };
@@ -167,7 +165,7 @@ describe("publish from-package", () => {
     await lernaPublish(cwd)("from-package");
 
     expect(npmPublish).toHaveBeenCalled();
-    expect(writePkg.updatedManifest("package-1")).not.toHaveProperty("gitHead");
+    expect(writePackage.updatedManifest("package-1")).not.toHaveProperty("gitHead");
 
     const logMessages = loggingOutput("notice");
     expect(logMessages).toContain("Unable to verify working tree, proceed at your own risk");
@@ -187,6 +185,6 @@ describe("publish from-package", () => {
     await lernaPublish(cwd)("from-package", "--git-head", "deadbeef");
 
     expect(npmPublish).toHaveBeenCalled();
-    expect(writePkg.updatedManifest("package-1").gitHead).toBe("deadbeef");
+    expect(writePackage.updatedManifest("package-1").gitHead).toBe("deadbeef");
   });
 });

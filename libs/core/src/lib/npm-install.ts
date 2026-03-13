@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import npa from "npm-package-arg";
 import onExit from "signal-exit";
-import writePkg from "write-pkg";
+import { writePackage } from "./write-package";
 import { getNpmExecOpts } from "./get-npm-exec-opts";
 import log from "./npmlog";
 
@@ -92,7 +92,7 @@ export function npmInstallDependencies(pkg: any, dependencies: any, config: any)
     log.silly("npmInstallDependencies", "writing tempJson", tempJson);
 
     // Write out our temporary cooked up package.json and then install.
-    return writePkg(pkg.manifestLocation, tempJson)
+    return writePackage(pkg.manifestLocation, tempJson)
       .then(() => npmInstall(pkg, config))
       .then(() => done(), done);
   });

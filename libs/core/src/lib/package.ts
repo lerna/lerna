@@ -3,7 +3,7 @@ import fs from "fs";
 import loadJsonFile from "load-json-file";
 import npa from "npm-package-arg";
 import path from "path";
-import writePkg from "write-pkg";
+import { writePackage } from "./write-package";
 import { Packed } from "./pack-directory";
 
 // symbol used to "hide" internal state
@@ -282,7 +282,7 @@ export class Package {
    * @returns {Promise} resolves when write finished
    */
   serialize() {
-    return writePkg(this.manifestLocation, this[PKG] as any).then(() => this);
+    return writePackage(this.manifestLocation, this[PKG] as any).then(() => this);
   }
 
   /**
@@ -295,7 +295,7 @@ export class Package {
       if (distPkg !== this.manifestLocation && fs.existsSync(distPkg)) {
         const pkg = await loadJsonFile<RawManifest>(distPkg);
         pkg.version = this[PKG].version;
-        await writePkg(distPkg, pkg as any);
+        await writePackage(distPkg, pkg as any);
       }
     }
 

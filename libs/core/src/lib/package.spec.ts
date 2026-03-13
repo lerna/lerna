@@ -1,10 +1,10 @@
 jest.mock("load-json-file");
-jest.mock("write-pkg");
+jest.mock("./write-package");
 
 import os from "os";
 import path from "path";
 import loadJsonFile from "load-json-file";
-import writePkg from "write-pkg";
+import { writePackage as writePackage } from "./write-package";
 
 // file under test
 import { Package } from "./package";
@@ -256,13 +256,13 @@ describe("Package", () => {
 
   describe(".serialize()", () => {
     it("writes changes to disk", async () => {
-      (writePkg as any).mockImplementation(() => Promise.resolve());
+      (writePackage as any).mockImplementation(() => Promise.resolve());
 
       const pkg = factory({ name: "serialize-me" });
       const result = await pkg.set("woo" as any, "hoo").serialize();
 
       expect(result).toBe(pkg);
-      expect(writePkg).toHaveBeenLastCalledWith(
+      expect(writePackage).toHaveBeenLastCalledWith(
         pkg.manifestLocation,
         expect.objectContaining({
           name: "serialize-me",
