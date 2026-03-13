@@ -275,10 +275,10 @@ export class ImportCommand extends Command<ImportCommandOptions> {
     tracker.addWork(this.commits.length);
 
     return (async () => {
-        for (const commit of this.commits) {
-          await mapper(commit);
-        }
-      })()
+      for (const commit of this.commits) {
+        await mapper(commit);
+      }
+    })()
       .then(() => {
         tracker.finish();
 
