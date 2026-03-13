@@ -3,7 +3,7 @@ import { readJsonFile, workspaceRoot } from "@nx/devkit";
 import { ExecOptions } from "child_process";
 import fs from "fs";
 import path from "path";
-import slash from "slash";
+import { slash } from "@lerna/core";
 
 const childProcess = require("@lerna/child-process");
 

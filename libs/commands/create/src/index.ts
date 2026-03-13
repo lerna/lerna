@@ -11,7 +11,7 @@ import os from "os";
 import pReduce from "p-reduce";
 import pacote from "pacote";
 import path from "path";
-import slash from "slash";
+import { slash } from "@lerna/core";
 import { URL } from "url";
 import { camelCase } from "yargs-parser";
 

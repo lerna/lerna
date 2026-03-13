@@ -23,6 +23,7 @@ export { hasNpmVersion } from "./lib/has-npm-version";
 export { formatJSON, listableFormatProjects } from "./lib/listable-format-projects";
 export { multimatch } from "./lib/multimatch";
 export { ListableOptions, listableOptions } from "./lib/listable-options";
+export { slash } from "./lib/slash";
 export { logPacked } from "./lib/log-packed";
 export { Conf } from "./lib/npm-conf/conf";
 export { npmInstall, npmInstallDependencies } from "./lib/npm-install";

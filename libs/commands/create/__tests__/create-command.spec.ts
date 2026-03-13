@@ -3,7 +3,7 @@ import execa from "execa";
 import fs from "fs-extra";
 import _pacote from "pacote";
 import path from "path";
-import slash from "slash";
+import { slash } from "@lerna/core";
 
 jest.mock("pacote");
 

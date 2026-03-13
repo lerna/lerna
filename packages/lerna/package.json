@@ -90,7 +90,6 @@
     "read-cmd-shim": "4.0.0",
     "semver": "7.7.2",
     "signal-exit": "3.0.7",
-    "slash": "3.0.0",
     "ssri": "12.0.0",
     "string-width": "^4.2.3",
     "tar": "7.5.11",
