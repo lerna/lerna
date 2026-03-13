@@ -2,7 +2,9 @@
 // nx-ignore-next-line
 import { loggingOutput, tempDirSerializer, windowsPathSerializer } from "@lerna/test-helpers";
 import chalk from "chalk";
-import tempy from "tempy";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { formatJSON, listableFormatProjects } from "./listable-format-projects";
 import { ListableOptions } from "./listable-options";
 import { Package, RawManifest } from "./package";
@@ -41,7 +43,7 @@ describe("listableFormatProjects", () => {
     listableFormatProjects(projectNodes, projectGraph, { _: ["ls"], ...opts });
 
   beforeAll(() => {
-    const cwd = tempy.directory();
+    const cwd = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "lerna-test-"));
     process.chdir(cwd);
 
     projectNodes = createProjectNodes(cwd);

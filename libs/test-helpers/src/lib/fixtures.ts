@@ -1,9 +1,10 @@
 import execa from "execa";
 import findUp from "find-up";
 import { copy, ensureDir } from "fs-extra";
+import { mkdtempSync, realpathSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { directory } from "tempy";
 import { gitAdd, gitCommit, gitInit } from "./git";
 
 export function cloneFixtureFactory(startDir: any) {
@@ -14,7 +15,7 @@ export function cloneFixtureFactory(startDir: any) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     initFixture(...args).then((cwd) => {
-      const repoDir = directory();
+      const repoDir = mkdtempSync(join(realpathSync(tmpdir()), "lerna-test-"));
       const repoUrl = pathToFileURL(repoDir).toString();
 
       return execa("git", ["init", "--bare"], { cwd: repoDir })
@@ -44,7 +45,7 @@ export function copyFixture(targetDir: string, fixtureName: string, cwd: any) {
 
 export function initFixtureFactory(startDir: any) {
   return (fixtureName: string, commitMessage: string | false = "Init commit") => {
-    const cwd = directory();
+    const cwd = mkdtempSync(join(realpathSync(tmpdir()), "lerna-test-"));
     let chain = Promise.resolve();
 
     chain = chain.then(() => process.chdir(cwd));
@@ -74,7 +75,7 @@ export function initNamedFixtureFactory(startDir: any) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return (dirName: string, fixtureName: string, commitMessage = "Init commit") => {
-    const cwd = join(directory(), dirName);
+    const cwd = join(mkdtempSync(join(realpathSync(tmpdir()), "lerna-test-")), dirName);
     let chain = Promise.resolve();
 
     chain = chain.then(() => ensureDir(cwd));

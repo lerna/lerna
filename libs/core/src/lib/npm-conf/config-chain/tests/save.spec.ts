@@ -1,12 +1,12 @@
 import fs from "node:fs";
 // @ts-expect-error - No types
 import ini from "ini";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { directory } from "tempy";
 
 const CC = require("../index").ConfigChain;
 
-const tmpDir = directory();
+const tmpDir = fs.mkdtempSync(join(fs.realpathSync(tmpdir()), "lerna-test-"));
 const f1 = join(tmpDir, "f1.ini");
 const f2 = join(tmpDir, "f2.json");
 

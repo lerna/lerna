@@ -1,7 +1,8 @@
 import { cliRunner, initFixtureFactory } from "@lerna/test-helpers";
 import loadJsonFile from "load-json-file";
-import path from "path";
-import tempy from "tempy";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -11,7 +12,7 @@ describe("lerna init", () => {
   const loadMetaData = (cwd: string) => Promise.all([parsePackageJson(cwd), parseLernaJson(cwd)]);
 
   test("initializes empty directory", async () => {
-    const cwd = tempy.directory();
+    const cwd = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "lerna-test-"));
 
     const { stderr } = await cliRunner(cwd)("init");
     expect(stderr).toMatchInlineSnapshot(`
@@ -49,7 +50,7 @@ describe("lerna init", () => {
   });
 
   test("works with dryRun", async () => {
-    const cwd = tempy.directory();
+    const cwd = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "lerna-test-"));
 
     const { stderr } = await cliRunner(cwd)("init", "--dryRun");
     const stderrWithoutVersion = stderr.replace(/\^[\d.]+-?[\w.]+/g, "<lerna-version>");

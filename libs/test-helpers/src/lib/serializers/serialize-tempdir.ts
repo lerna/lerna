@@ -3,8 +3,8 @@ import { Config } from "pretty-format";
 
 const normalizePath = require("normalize-path");
 
-// tempy creates subdirectories with hexadecimal names that are 32 characters long
-const TEMP_DIR_REGEXP = /([^\s"]*[\\/][0-9a-f]{32})([^\s"]*)/g;
+// Match temp directories created by mkdtempSync with "lerna-test-" prefix (6 random chars)
+const TEMP_DIR_REGEXP = /([^\s"]*[\\/]lerna-test-[A-Za-z0-9]{6})([^\s"]*)/g;
 // the excluded quotes are due to other snapshot serializers mutating the raw input
 
 export const tempDirSerializer = {

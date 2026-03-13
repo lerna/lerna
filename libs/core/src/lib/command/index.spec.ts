@@ -6,7 +6,7 @@ import { createProjectGraph } from "../test-helpers/create-project-graph";
 
 const fs = require("fs-extra");
 const path = require("path");
-const tempy = require("tempy");
+const nodeFs = require("node:fs");
 
 // partially mocked
 const childProcess = require("@lerna/child-process");
@@ -347,7 +347,7 @@ describe("command", () => {
 
   describe("validations", () => {
     it("throws ENOGIT when repository is not initialized", async () => {
-      const cwd = tempy.directory();
+      const cwd = nodeFs.mkdtempSync(path.join(nodeFs.realpathSync(os.tmpdir()), "lerna-test-"));
 
       const lernaConfigPath = path.join(cwd, "lerna.json");
       await fs.writeJson(lernaConfigPath, { version: "1.0.0", packages: [] });

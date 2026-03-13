@@ -1,8 +1,8 @@
 import { changelogSerializer, cliRunner, cloneFixtureFactory, gitAdd, gitCommit } from "@lerna/test-helpers";
 import execa from "execa";
 import fs from "fs-extra";
-import path from "path";
-import tempy from "tempy";
+import os from "node:os";
+import path from "node:path";
 
 const cloneFixture = cloneFixtureFactory(path.resolve(__dirname, "../../libs/commands/publish"));
 
@@ -18,7 +18,7 @@ const env = {
 
 test("lerna publish exits with EBEHIND when behind upstream remote", async () => {
   const { cwd, repository } = await cloneFixture("normal");
-  const cloneDir = tempy.directory();
+  const cloneDir = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "lerna-test-"));
 
   // simulate upstream change from another clone
   await execa("git", ["clone", repository, cloneDir]);

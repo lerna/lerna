@@ -85,8 +85,6 @@
     "prettier": "^2.2.1",
     "signal-exit": "3.0.7",
     "string-width": "^4.2.3",
-    "tacks": "1.2.6",
-    "tempy": "1.0.1",
     "touch": "^3.1.1",
     "ts-jest": "29.4.1",
     "ts-node": "10.9.2",

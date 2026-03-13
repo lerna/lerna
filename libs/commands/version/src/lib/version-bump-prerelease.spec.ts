@@ -11,9 +11,8 @@ import {
   showCommit,
 } from "@lerna/test-helpers";
 import fs from "fs-extra";
-import path from "path";
-import Tacks from "tacks";
-import tempy from "tempy";
+import os from "node:os";
+import path from "node:path";
 
 jest.mock("./git-push");
 jest.mock("./is-anything-committed", () => ({
@@ -45,8 +44,6 @@ const promptTextInput = jest.mocked(_promptTextInput);
 const promptSelectOne = _promptSelectOne as any;
 
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
-
-const { File, Dir } = Tacks;
 
 // test command
 
@@ -138,36 +135,24 @@ describe("version bump prerelease", () => {
   });
 
   test("independent version prerelease does not bump on every unrelated change", async () => {
-    const cwd = tempy.directory();
-    const fixture = new Tacks(
-      Dir({
-        "lerna.json": File({
-          version: "independent",
-          packages: ["packages/*"],
-        }),
-        "package.json": File({
-          name: "unrelated-bumps",
-        }),
-        packages: Dir({
-          "pkg-a": Dir({
-            "package.json": File({
-              name: "pkg-a",
-              version: "1.0.0",
-            }),
-          }),
-          "pkg-b": Dir({
-            "package.json": File({
-              name: "pkg-b",
-              version: "1.0.0-bumps.1",
-              // TODO: (major) make --no-private the default
-              private: true,
-            }),
-          }),
-        }),
-      })
-    );
+    const cwd = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "lerna-test-"));
 
-    fixture.create(cwd);
+    fs.mkdirSync(path.join(cwd, "packages", "pkg-a"), { recursive: true });
+    fs.mkdirSync(path.join(cwd, "packages", "pkg-b"), { recursive: true });
+    fs.writeFileSync(
+      path.join(cwd, "lerna.json"),
+      JSON.stringify({ version: "independent", packages: ["packages/*"] })
+    );
+    fs.writeFileSync(path.join(cwd, "package.json"), JSON.stringify({ name: "unrelated-bumps" }));
+    fs.writeFileSync(
+      path.join(cwd, "packages", "pkg-a", "package.json"),
+      JSON.stringify({ name: "pkg-a", version: "1.0.0" })
+    );
+    fs.writeFileSync(
+      path.join(cwd, "packages", "pkg-b", "package.json"),
+      // TODO: (major) make --no-private the default
+      JSON.stringify({ name: "pkg-b", version: "1.0.0-bumps.1", private: true })
+    );
 
     await gitInit(cwd, ".");
     await gitAdd(cwd, "-A");
@@ -210,37 +195,23 @@ Publish
   });
 
   test("independent version prerelease respects --no-private", async () => {
-    const cwd = tempy.directory();
-    const fixture = new Tacks(
-      Dir({
-        "lerna.json": File({
-          version: "independent",
-          packages: ["packages/*"],
-        }),
-        "package.json": File({
-          name: "no-private-versioning",
-        }),
-        packages: Dir({
-          "pkg-1": Dir({
-            "package.json": File({
-              name: "pkg-1",
-              version: "1.0.0",
-              devDependencies: {
-                "pkg-2": "^2.0.0",
-              },
-            }),
-          }),
-          "pkg-2": Dir({
-            "package.json": File({
-              name: "pkg-2",
-              version: "2.0.0",
-              private: true,
-            }),
-          }),
-        }),
-      })
+    const cwd = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "lerna-test-"));
+
+    fs.mkdirSync(path.join(cwd, "packages", "pkg-1"), { recursive: true });
+    fs.mkdirSync(path.join(cwd, "packages", "pkg-2"), { recursive: true });
+    fs.writeFileSync(
+      path.join(cwd, "lerna.json"),
+      JSON.stringify({ version: "independent", packages: ["packages/*"] })
     );
-    fixture.create(cwd);
+    fs.writeFileSync(path.join(cwd, "package.json"), JSON.stringify({ name: "no-private-versioning" }));
+    fs.writeFileSync(
+      path.join(cwd, "packages", "pkg-1", "package.json"),
+      JSON.stringify({ name: "pkg-1", version: "1.0.0", devDependencies: { "pkg-2": "^2.0.0" } })
+    );
+    fs.writeFileSync(
+      path.join(cwd, "packages", "pkg-2", "package.json"),
+      JSON.stringify({ name: "pkg-2", version: "2.0.0", private: true })
+    );
 
     await gitInit(cwd, ".");
     await gitAdd(cwd, "-A");
