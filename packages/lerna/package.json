@@ -96,7 +96,6 @@
     "tar": "7.5.11",
     "through": "2.3.8",
     "tinyglobby": "0.2.12",
-    "upath": "2.0.1",
     "validate-npm-package-license": "3.0.4",
     "validate-npm-package-name": "6.0.2",
     "wide-align": "1.1.5",

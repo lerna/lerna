@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import upath from "upath";
+import path from "path";
 import npmlog, { Logger } from "./npmlog";
 
 const hrtimeToMicroseconds = (hrtime: number[]) => {
@@ -25,7 +25,7 @@ const getTimeBasedFilename = () => {
 };
 
 export function generateProfileOutputPath(outputDirectory?: string) {
-  return upath.join(upath.resolve(outputDirectory || "."), getTimeBasedFilename());
+  return path.join(path.resolve(outputDirectory || "."), getTimeBasedFilename());
 }
 
 interface ProfilerConfig {
