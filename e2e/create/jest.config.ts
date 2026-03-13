@@ -13,4 +13,5 @@ export default {
   coverageDirectory: "../../coverage/e2e/create",
   maxWorkers: 1,
   testTimeout: 60000,
+  setupFiles: ["<rootDir>/src/test-setup.ts"],
 };

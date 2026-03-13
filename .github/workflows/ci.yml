@@ -67,7 +67,7 @@ jobs:
       NX_CI_EXECUTION_ENV: "linux"
     strategy:
       matrix:
-        agent: [1, 2, 3, 4]
+        agent: [1, 2, 3, 4, 5, 6, 7, 8]
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
@@ -174,7 +174,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        agent: [1, 2, 3, 4]
+        agent: [1, 2, 3, 4, 5, 6, 7, 8]
     env:
       NX_CI_EXECUTION_ENV: "windows"
       LERNA_OS_TYPE: windows
