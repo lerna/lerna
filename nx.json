@@ -74,6 +74,32 @@
       },
       "cache": true
     },
+    "prepare-for-e2e": {
+      "executor": "nx:run-commands",
+      "inputs": ["default", "^production"],
+      "options": {
+        "commands": [
+          {
+            "command": "npm run e2e-start-local-registry"
+          },
+          {
+            "command": "npm run e2e-build-package-publish"
+          }
+        ],
+        "parallel": false
+      },
+      "cache": false
+    },
+    "run-e2e-tests-ci--**/*": {
+      "dependsOn": ["prepare-for-e2e"],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js",
+        "{workspaceRoot}/jest.config.ts"
+      ],
+      "cache": true
+    },
     "run-e2e-tests": {
       "inputs": [
         "default",
@@ -115,6 +141,17 @@
       "cache": true
     }
   },
+  "plugins": [
+    {
+      "plugin": "@nx/jest/plugin",
+      "include": ["e2e/**"],
+      "exclude": ["e2e/run/**"],
+      "options": {
+        "targetName": "run-e2e-tests",
+        "ciTargetName": "run-e2e-tests-ci"
+      }
+    }
+  ],
   "nxCloudAccessToken": "MGQ4ZjkyMWYtYTVhNi00ZWQ4LWE0OTctNTkxM2U0ZDUzYWQ1fHJlYWQ=",
   "bust": 1
 }

@@ -5,8 +5,7 @@
   "implicitDependencies": ["lerna", "commands-init"],
   "targets": {
     "e2e": {},
-    "run-e2e-tests-process": {},
-    "run-e2e-tests": {},
+    "prepare-for-e2e": {},
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
