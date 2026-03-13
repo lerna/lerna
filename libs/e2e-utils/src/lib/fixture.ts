@@ -143,9 +143,13 @@ export class Fixture {
       await this.exec(
         `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false" > .npmrc`
       );
+    } else if (this.packageManager === "bun") {
+      // Write .npmrc so that any npm operations triggered internally by lerna
+      // (e.g. the `bun install` called by `lerna init` after generating files)
+      // resolve packages from the local Verdaccio registry rather than the public npm registry.
+      // BUN_CONFIG_REGISTRY is also set as an env var in install(), lerna(), and lernaInit().
+      await this.exec(`echo "registry=${REGISTRY}" > .npmrc`);
     }
-    // bun does not need file-based config here because BUN_CONFIG_REGISTRY is set
-    // as an environment variable in install(), lerna(), and lernaInit().
   }
 
   private async initializeNpmEnvironment(): Promise<void> {

@@ -47,7 +47,7 @@ runs:
         COREPACK_ENABLE_STRICT: "0"
 
     - name: Install Bun
-      uses: oven-sh/setup-bun@ecf28ddc73e819eb6fa29df6b34ef8921c743461 # v2
+      uses: oven-sh/setup-bun@e3914758a49697077f7bcd190d36582a61667aad # v2 (Node.js 24 runtime)
       with:
         bun-version: "1.1"
 

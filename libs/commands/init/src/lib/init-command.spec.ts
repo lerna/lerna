@@ -293,13 +293,16 @@ describe("InitCommand", () => {
       const spy = jest
         .spyOn(InitCommand.prototype as any, "detectInvokedPackageManager")
         .mockImplementation(function (this: any) {
-          const path = require("path");
-          const pathSegments = p.split(path.sep);
+          // Use /[\\/]/ to split on both POSIX (/) and Windows (\) separators,
+          // and strip leading dots (e.g. ".pnpm" -> "pnpm") to match virtual
+          // store directories used by pnpm dlx and bun's install directory.
+          const pathSegments = p.split(/[\\/]/);
           for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
             if (
-              pathSegments.some(
-                (segment: string) => segment === pkgManager || segment.startsWith(`${pkgManager}@`)
-              )
+              pathSegments.some((segment: string) => {
+                const normalized = segment.replace(/^\./, "");
+                return normalized === pkgManager || normalized.startsWith(`${pkgManager}@`);
+              })
             ) {
               return pkgManager;
             }
@@ -323,6 +326,13 @@ describe("InitCommand", () => {
 
     it("detects pnpm from exact path segment", () => {
       const initCommand = createWithInvokerPath("/home/user/.local/share/pnpm/bin");
+      expect(initCommand.packageManager).toBe("pnpm");
+    });
+
+    it("detects pnpm from .pnpm virtual store directory (used by pnpm dlx)", () => {
+      const initCommand = createWithInvokerPath(
+        "/home/user/.local/share/pnpm/store/v3/.pnpm/lerna@999.9.9-e2e.0/node_modules/.bin/lerna"
+      );
       expect(initCommand.packageManager).toBe("pnpm");
     });
 

@@ -281,7 +281,12 @@ export class InitCommand {
     const pathSegments = invoker.path.split(path.sep);
     for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
       if (
-        pathSegments.some((segment: string) => segment === pkgManager || segment.startsWith(`${pkgManager}@`))
+        pathSegments.some((segment: string) => {
+          // Normalize leading dot so that virtual store dirs like ".pnpm" (used by pnpm dlx)
+          // and ".bun" (bun's install dir) are correctly matched.
+          const normalized = segment.replace(/^\./, "");
+          return normalized === pkgManager || normalized.startsWith(`${pkgManager}@`);
+        })
       ) {
         this.logger.verbose("", `Detected package manager ${pkgManager} from process`);
         detectedPackageManager = pkgManager;
