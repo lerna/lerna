@@ -47,7 +47,7 @@ runs:
         COREPACK_ENABLE_STRICT: "0"
 
     - name: Install Bun
-      uses: oven-sh/setup-bun@v2
+      uses: oven-sh/setup-bun@ecf28ddc73e819eb6fa29df6b34ef8921c743461 # v2
       with:
         bun-version: "1.1"
 
