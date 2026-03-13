@@ -32,7 +32,6 @@ import os from "node:os";
 import path, { basename, join, normalize } from "node:path";
 import npa from "npm-package-arg";
 import pMap from "p-map";
-import pPipe from "p-pipe";
 import semver, { ReleaseType } from "semver";
 import { glob } from "tinyglobby";
 import { createTempLicenses } from "./lib/create-temp-licenses";
@@ -900,23 +899,28 @@ class PublishCommand extends Command {
     }
 
     const opts = this.conf.snapshot;
-    const mapper = pPipe(
-      ...[
-        this.options.requireScripts && ((pkg: Package) => this.execScript(pkg, "prepublish")),
-        (pkg: Package) => this.copyAssets(pkg).then(() => pkg),
-        (pkg: Package) =>
-          pulseTillDone(packDirectory(pkg, pkg.location, opts)).then((packed) => {
-            tracker.verbose("packed", path.relative(this.project.rootPath, pkg.contents));
-            tracker.completeWork(1);
+    const packSteps = [
+      this.options.requireScripts && ((pkg: Package) => this.execScript(pkg, "prepublish")),
+      (pkg: Package) => this.copyAssets(pkg).then(() => pkg),
+      (pkg: Package) =>
+        pulseTillDone(packDirectory(pkg, pkg.location, opts)).then((packed) => {
+          tracker.verbose("packed", path.relative(this.project.rootPath, pkg.contents));
+          tracker.completeWork(1);
 
-            // store metadata for use in this.publishPacked()
-            pkg.packed = packed;
+          // store metadata for use in this.publishPacked()
+          pkg.packed = packed;
 
-            // manifest may be mutated by any previous lifecycle
-            return pkg.refresh();
-          }),
-      ].filter(Boolean)
-    );
+          // manifest may be mutated by any previous lifecycle
+          return pkg.refresh();
+        }),
+    ].filter(Boolean) as ((pkg: Package) => Promise<Package>)[];
+    const mapper = async (pkg: Package) => {
+      let result = pkg;
+      for (const step of packSteps) {
+        result = await step(result);
+      }
+      return result;
+    };
 
     if (this.toposort) {
       await this.topoMapPackages(mapper).catch((err) => {
@@ -984,63 +988,68 @@ class PublishCommand extends Command {
           : DEFAULT_QUEUE_THROTTLE_DELAY) * 1000
       );
     }
-    const mapper = pPipe(
-      ...[
-        (pkg: Package) => {
-          const preDistTag = this.getPreDistTag(pkg);
-          const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
-          const pkgOpts = Object.assign({}, opts, { tag });
+    const publishSteps = [
+      (pkg: Package) => {
+        const preDistTag = this.getPreDistTag(pkg);
+        const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
+        const pkgOpts = Object.assign({}, opts, { tag });
 
-          return pulseTillDone(
-            queue
-              ? queue.queue(() => npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.conf, this.otpCache))
-              : npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.conf, this.otpCache)
-          )
-            .then(() => {
-              this.publishedPackages.push(pkg);
+        return pulseTillDone(
+          queue
+            ? queue.queue(() => npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.conf, this.otpCache))
+            : npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.conf, this.otpCache)
+        )
+          .then(() => {
+            this.publishedPackages.push(pkg);
 
-              tracker.success("published", pkg.name, pkg.version);
+            tracker.success("published", pkg.name, pkg.version);
+            tracker.completeWork(1);
+
+            logPacked(pkg.packed);
+
+            return pkg;
+          })
+          .catch((err) => {
+            if (
+              err.code === "E409" ||
+              err.code === "EPUBLISHCONFLICT" ||
+              (err.code === "E403" &&
+                err.body?.error?.includes("You cannot publish over the previously published versions"))
+            ) {
+              tracker.warn("publish", `Package is already published: ${pkg.name}@${pkg.version}`);
               tracker.completeWork(1);
 
-              logPacked(pkg.packed);
-
               return pkg;
-            })
-            .catch((err) => {
-              if (
-                err.code === "E409" ||
-                err.code === "EPUBLISHCONFLICT" ||
-                (err.code === "E403" &&
-                  err.body?.error?.includes("You cannot publish over the previously published versions"))
-              ) {
-                tracker.warn("publish", `Package is already published: ${pkg.name}@${pkg.version}`);
-                tracker.completeWork(1);
+            }
 
-                return pkg;
-              }
+            this.logger.silly("", err);
+            this.logger.warn("notice", `Package failed to publish: ${pkg.name}`);
+            this.logger.error(err.code, (err.body && err.body.error) || err.message);
 
-              this.logger.silly("", err);
-              this.logger.warn("notice", `Package failed to publish: ${pkg.name}`);
-              this.logger.error(err.code, (err.body && err.body.error) || err.message);
+            // avoid dumping logs, this isn't a lerna problem
+            err.name = "ValidationError";
 
-              // avoid dumping logs, this isn't a lerna problem
-              err.name = "ValidationError";
+            // ensure process exits non-zero
+            if ("errno" in err && typeof err.errno === "number" && Number.isFinite(err.errno)) {
+              process.exitCode = err.errno;
+            } else {
+              this.logger.error("", `errno "${err.errno}" is not a valid exit code - exiting with code 1`);
+              process.exitCode = 1;
+            }
 
-              // ensure process exits non-zero
-              if ("errno" in err && typeof err.errno === "number" && Number.isFinite(err.errno)) {
-                process.exitCode = err.errno;
-              } else {
-                this.logger.error("", `errno "${err.errno}" is not a valid exit code - exiting with code 1`);
-                process.exitCode = 1;
-              }
+            throw err;
+          });
+      },
 
-              throw err;
-            });
-        },
-
-        this.options.requireScripts && ((pkg) => this.execScript(pkg, "postpublish")),
-      ].filter(Boolean)
-    );
+      this.options.requireScripts && ((pkg: Package) => this.execScript(pkg, "postpublish")),
+    ].filter(Boolean) as ((pkg: Package) => Promise<Package>)[];
+    const mapper = async (pkg: Package) => {
+      let result = pkg;
+      for (const step of publishSteps) {
+        result = await step(result);
+      }
+      return result;
+    };
 
     chain = chain.then(() => {
       if (this.toposort) {

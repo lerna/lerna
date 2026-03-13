@@ -31,9 +31,6 @@ import fs from "fs";
 import minimatch from "minimatch";
 import os from "os";
 import pMap from "p-map";
-import pPipe from "p-pipe";
-import pReduce from "p-reduce";
-import pWaterfall from "p-waterfall";
 import path from "path";
 import semver, { ReleaseType } from "semver";
 import { createRelease, createReleaseClient, ReleaseClientType } from "./lib/create-release";
@@ -371,7 +368,7 @@ class VersionCommand extends Command {
     return this.confirmVersions();
   }
 
-  execute() {
+  async execute() {
     const tasks: (() => Promise<unknown>)[] = [() => this.updatePackageVersions()];
 
     if (this.commitAndTag) {
@@ -404,15 +401,17 @@ class VersionCommand extends Command {
       this.logger.info("execute", "Skipping releases");
     }
 
-    return pWaterfall(tasks).then(() => {
-      if (!this.composed) {
-        this.logger.success("version", "finished");
-      }
-      return {
-        updates: this.updates,
-        updatesVersions: this.updatesVersions,
-      };
-    });
+    for (const task of tasks) {
+      await task();
+    }
+
+    if (!this.composed) {
+      this.logger.success("version", "finished");
+    }
+    return {
+      updates: this.updates,
+      updatesVersions: this.updatesVersions,
+    };
   }
 
   /**
@@ -487,11 +486,13 @@ class VersionCommand extends Command {
     );
   }
 
-  reduceVersions(getVersion: (node: ProjectGraphProjectNodeWithPackage) => string | Promise<string>) {
-    const iterator = (versionMap: Map<string, string>, node: ProjectGraphProjectNodeWithPackage) =>
-      Promise.resolve(getVersion(node)).then((version) => versionMap.set(node.name, version));
-
-    return pReduce(this.updates, iterator, new Map<string, string>());
+  async reduceVersions(getVersion: (node: ProjectGraphProjectNodeWithPackage) => string | Promise<string>) {
+    const versionMap = new Map<string, string>();
+    for (const node of this.updates) {
+      const version = await Promise.resolve(getVersion(node));
+      versionMap.set(node.name, version);
+    }
+    return versionMap;
   }
 
   getPrereleasePackageNames() {
@@ -733,7 +734,13 @@ class VersionCommand extends Command {
       );
     }
 
-    const mapUpdate = pPipe(...actions);
+    const mapUpdate = async (node: ProjectGraphProjectNodeWithPackage) => {
+      let result: any = node;
+      for (const action of actions) {
+        result = await action(result);
+      }
+      return result;
+    };
 
     await runProjectsTopologically(this.updates, this.projectGraph, mapUpdate, {
       concurrency: this.concurrency,

@@ -8,7 +8,6 @@ import dedent from "dedent";
 import fs from "fs-extra";
 import npa from "npm-package-arg";
 import os from "os";
-import pReduce from "p-reduce";
 import pacote from "pacote";
 import path from "path";
 import { slash } from "@lerna/core";
@@ -316,23 +315,15 @@ class CreateCommand extends Command {
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() =>
-      pReduce(
-        inputs,
-        (obj, input) => {
-          const spec = npa(input);
-
-          return Promise.resolve(spec)
-            .then(decideVersion)
-            .then((version) => {
-              obj[spec.name] = version;
-
-              return obj;
-            });
-        },
-        {}
-      )
-    );
+    chain = chain.then(async () => {
+      const dependencies: Record<string, string> = {};
+      for (const input of inputs) {
+        const spec = npa(input);
+        const version = await Promise.resolve(spec).then(decideVersion);
+        dependencies[spec.name] = version;
+      }
+      return dependencies;
+    });
 
     chain = chain.then((dependencies) => {
       this.conf.set("dependencies", dependencies);

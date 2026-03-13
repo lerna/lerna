@@ -9,7 +9,6 @@ import {
 import { ExecOptions } from "child_process";
 import dedent from "dedent";
 import fs from "fs-extra";
-import pMapSeries from "p-map-series";
 import path from "path";
 
 const childProcess = require("@lerna/child-process");
@@ -275,7 +274,11 @@ export class ImportCommand extends Command<ImportCommandOptions> {
 
     tracker.addWork(this.commits.length);
 
-    return pMapSeries(this.commits, mapper)
+    return (async () => {
+        for (const commit of this.commits) {
+          await mapper(commit);
+        }
+      })()
       .then(() => {
         tracker.finish();
 
