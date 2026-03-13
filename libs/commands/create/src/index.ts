@@ -71,7 +71,7 @@ class CreateCommand extends Command {
 
     this.pkgsDir = this._getPackagesDir(pkgLocation);
 
-    this.camelName = this.dirName.replace(/[-_]+([a-zA-Z])/g, (_, ch) => ch.toUpperCase());
+    this.camelName = this.dirName.replace(/[-_]+(.)?/g, (_, ch) => (ch ? ch.toUpperCase() : ""));
 
     // when transpiling, src => dist; otherwise everything in lib
     this.outDir = esModule ? "dist" : "lib";
