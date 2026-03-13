@@ -1,6 +1,5 @@
 import conventionalChangelogCore from "conventional-changelog-core";
 import fs from "fs-extra";
-import getStream from "get-stream";
 import log from "../npmlog";
 import { Package } from "../package";
 import { BLANK_LINE, BaseChangelogOptions, CHANGELOG_HEADER, ChangelogType, EOL } from "./constants";
@@ -65,7 +64,7 @@ export function updateChangelog(
     const changelogStream = conventionalChangelogCore(options, context, gitRawCommitsOpts);
 
     return Promise.all([
-      getStream(changelogStream).then(makeBumpOnlyFilter(pkg)),
+      streamToString(changelogStream).then(makeBumpOnlyFilter(pkg)),
       readExistingChangelog(pkg),
     ]).then(([newEntry, [changelogFileLoc, changelogContents]]) => {
       // Append any additional markdown to the new entry, if provided
@@ -92,4 +91,12 @@ export function updateChangelog(
       });
     });
   });
+}
+
+async function streamToString(stream: NodeJS.ReadableStream): Promise<string> {
+  const chunks: string[] = [];
+  for await (const chunk of stream) {
+    chunks.push(String(chunk));
+  }
+  return chunks.join("");
 }

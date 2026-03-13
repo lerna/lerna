@@ -60,7 +60,6 @@
     "envinfo": "7.13.0",
     "execa": "5.0.0",
     "fs-extra": "^11.2.0",
-    "get-stream": "6.0.0",
     "git-url-parse": "14.0.0",
     "glob-parent": "6.0.2",
     "has-unicode": "2.0.1",
