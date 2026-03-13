@@ -6,7 +6,6 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
-import isStream from "is-stream";
 import path from "path";
 
 const tempDir = fs.realpathSync(os.tmpdir());
@@ -33,7 +32,10 @@ const writeStream = async (filePath: any, fileContent: any) =>
 
 async function tempWrite(fileContent: any, filePath?: string) {
   const tempPath = tempfile(filePath);
-  const write = isStream(fileContent) ? writeStream : fs.promises.writeFile;
+  const write =
+    fileContent !== null && typeof fileContent === "object" && typeof fileContent.pipe === "function"
+      ? writeStream
+      : fs.promises.writeFile;
 
   await fs.promises.mkdir(path.dirname(tempPath), { recursive: true });
   await write(tempPath, fileContent);

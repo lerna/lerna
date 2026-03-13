@@ -8,10 +8,20 @@ import util from "node:util";
 import { TrackerGroup } from "./are-we-there-yet/tracker-group";
 import { Gauge } from "./gauge";
 
-const setBlocking = require("set-blocking");
 const consoleControl = require("console-control-strings");
 
-setBlocking(true);
+// Force stdout/stderr into blocking mode on TTYs. On POSIX, TTY writes are
+// already synchronous so this is effectively a no-op. On Windows, TTY writes
+// are async by default, and without this, final log lines could be lost if the
+// process exits before the write buffer drains. Kept out of an abundance of
+// caution — previously provided by the `set-blocking` package.
+[process.stdout, process.stderr].forEach((stream) => {
+  // _handle is an internal Node.js property not exposed in TypeScript types
+  const s = stream as typeof stream & { _handle?: { setBlocking?: (blocking: boolean) => void } };
+  if (s._handle && stream.isTTY && typeof s._handle.setBlocking === "function") {
+    s._handle.setBlocking(true);
+  }
+});
 
 export class Logger extends EventEmitter {
   private _stream: WriteStream | null;
