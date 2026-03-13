@@ -1,49 +1,53 @@
-// TODO: refactor based on TS feedback
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
-import { promptConfirmation, pulseTillDone, rimrafDir } from "@lerna/core";
-import { Command, getFilteredPackages } from "@lerna/legacy-core";
+import {
+  Arguments,
+  Command,
+  CommandConfigOptions,
+  filterProjects,
+  getPackage,
+  promptConfirmation,
+  pulseTillDone,
+  rimrafDir,
+} from "@lerna/core";
 import pMap from "p-map";
 import path from "path";
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+interface CleanCommandConfigOptions extends CommandConfigOptions {
+  yes?: boolean;
+}
+
+module.exports = function factory(argv: Arguments<CleanCommandConfigOptions>) {
   return new CleanCommand(argv);
 };
 
-class CleanCommand extends Command {
+class CleanCommand extends Command<CleanCommandConfigOptions> {
+  directoriesToDelete: string[] = [];
+
   get requiresGit() {
     return false;
   }
 
   override initialize() {
-    let chain = Promise.resolve();
+    const filteredProjects = filterProjects(this.projectGraph, this.execOpts, this.options);
+    this.directoriesToDelete = filteredProjects.map((p) => getPackage(p).nodeModulesLocation);
 
-    chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
-    chain = chain.then((filteredPackages) => {
-      this.directoriesToDelete = filteredPackages.map((pkg) => pkg.nodeModulesLocation);
-    });
+    if (this.options.yes) {
+      return true;
+    }
 
-    return chain.then(() => {
-      if (this.options.yes) {
-        return true;
-      }
+    this.logger.info("", "Removing the following directories:");
+    this.logger.info(
+      "clean",
+      this.directoriesToDelete.map((dir: string) => path.relative(this.project.rootPath, dir)).join("\n")
+    );
 
-      this.logger.info("", "Removing the following directories:");
-      this.logger.info(
-        "clean",
-        this.directoriesToDelete.map((dir) => path.relative(this.project.rootPath, dir)).join("\n")
-      );
-
-      return promptConfirmation("Proceed?");
-    });
+    return promptConfirmation("Proceed?");
   }
 
   override execute() {
     this.enableProgressBar();
 
     const tracker = this.logger.newItem("clean");
-    const mapper = (dirPath) => {
+    const mapper = (dirPath: string) => {
       tracker.info("clean", "removing", dirPath);
 
       return pulseTillDone(rimrafDir(dirPath)).then(() => {

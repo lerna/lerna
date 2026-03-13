@@ -1,5 +1,5 @@
 import { ExecOptions } from "child_process";
-import multimatch from "multimatch";
+import { multimatch } from "./multimatch";
 import util from "util";
 import { addDependencies } from "./add-dependencies";
 import { addDependents } from "./add-dependents";

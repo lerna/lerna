@@ -76,7 +76,6 @@
     "load-json-file": "6.2.0",
     "make-fetch-happen": "15.0.2",
     "minimatch": "3.1.4",
-    "multimatch": "5.0.0",
     "npm-package-arg": "13.0.1",
     "npm-packlist": "10.0.3",
     "npm-registry-fetch": "19.1.0",

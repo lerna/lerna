@@ -2,8 +2,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { npmConf, ValidationError } from "@lerna/core";
-import { Command } from "@lerna/legacy-core";
+import { execSync } from "@lerna/child-process";
+import { Arguments, Command, CommandConfigOptions, npmConf, ValidationError } from "@lerna/core";
 import dedent from "dedent";
 import fs from "fs-extra";
 import npa from "npm-package-arg";
@@ -14,7 +14,6 @@ import path from "path";
 import slash from "slash";
 import { URL } from "url";
 import { camelCase } from "yargs-parser";
-import { execSync } from "@lerna/child-process";
 
 const initPackageJson = require("init-package-json");
 
@@ -34,12 +33,19 @@ const DEFAULT_DESCRIPTION = [
   "BOOM",
 ].join(" / ");
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+module.exports = function factory(argv: Arguments<CommandConfigOptions>) {
   return new CreateCommand(argv);
 };
 
 class CreateCommand extends Command {
   initialize() {
+    // Build a lookup map from package name to project node
+    this._pkgByName = new Map(
+      Object.values(this.projectGraph.nodes)
+        .filter((n) => !!n.package)
+        .map((n) => [n.package.name, n])
+    );
+
     const {
       bin,
       description = DEFAULT_DESCRIPTION,
@@ -208,12 +214,28 @@ class CreateCommand extends Command {
   }
 
   collectExternalVersions() {
-    // collect all current externalDependencies
     const extVersions = new Map();
+    const localNames = new Set(
+      Object.values(this.projectGraph.nodes)
+        .filter((n) => n.package)
+        .map((n) => n.package.name)
+    );
 
-    for (const { externalDependencies } of this.packageGraph.values()) {
-      for (const [name, resolved] of externalDependencies) {
-        extVersions.set(name, resolved.fetchSpec);
+    for (const node of Object.values(this.projectGraph.nodes)) {
+      if (!node.package) continue;
+      for (const depField of [
+        "dependencies",
+        "devDependencies",
+        "optionalDependencies",
+        "peerDependencies",
+      ]) {
+        const deps = node.package.get(depField);
+        if (!deps) continue;
+        for (const [name, version] of Object.entries(deps)) {
+          if (!localNames.has(name)) {
+            extVersions.set(name, version);
+          }
+        }
       }
     }
 
@@ -223,9 +245,9 @@ class CreateCommand extends Command {
   hasLocalRelativeFileSpec() {
     // if any local dependencies are specified as `file:../dir`,
     // all new local dependencies should be created thusly
-    for (const { localDependencies } of this.packageGraph.values()) {
-      for (const spec of localDependencies.values()) {
-        if (spec.type === "directory") {
+    for (const deps of Object.values(this.projectGraph.localPackageDependencies || {})) {
+      for (const dep of deps) {
+        if (dep.targetResolvedNpaResult?.type === "directory") {
           return true;
         }
       }
@@ -234,8 +256,8 @@ class CreateCommand extends Command {
 
   resolveRelative(depNode) {
     // a relative file: specifier is _always_ posix
-    const relPath = path.relative(this.targetDir, depNode.location);
-    const spec = npa.resolve(depNode.name, relPath, this.targetDir);
+    const relPath = path.relative(this.targetDir, depNode.package.location);
+    const spec = npa.resolve(depNode.package.name, relPath, this.targetDir);
 
     return slash(spec.saveSpec);
   }
@@ -258,9 +280,9 @@ class CreateCommand extends Command {
     const pacoteOpts = this.conf.snapshot;
 
     const decideVersion = (spec) => {
-      if (this.packageGraph.has(spec.name)) {
+      if (this._pkgByName.has(spec.name)) {
         // sibling dependency
-        const depNode = this.packageGraph.get(spec.name);
+        const depNode = this._pkgByName.get(spec.name);
 
         if (localRelative) {
           // a local `file:../foo` specifier
@@ -268,7 +290,7 @@ class CreateCommand extends Command {
         }
 
         // yarn workspace or lerna packages config
-        return `${savePrefix}${depNode.version}`;
+        return `${savePrefix}${depNode.package.version}`;
       }
 
       if (

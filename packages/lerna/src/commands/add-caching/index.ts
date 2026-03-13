@@ -1,5 +1,4 @@
-import { log } from "@lerna/core";
-import { Command } from "@lerna/legacy-core";
+import { Arguments, Command, CommandConfigOptions, log } from "@lerna/core";
 import {
   joinPathFragments,
   NxJsonConfiguration,
@@ -11,7 +10,7 @@ import execa from "execa";
 import { appendFile } from "fs-extra";
 import inquirer from "inquirer";
 
-module.exports = function factory(argv: NodeJS.Process["argv"]) {
+module.exports = function factory(argv: Arguments<CommandConfigOptions>) {
   return new AddCachingCommand(argv);
 };
 
@@ -24,7 +23,7 @@ interface UserAnswers {
 class AddCachingCommand extends Command {
   uniqueScriptNames: string[] = [];
 
-  constructor(argv: NodeJS.Process["argv"]) {
+  constructor(argv: Arguments<CommandConfigOptions>) {
     super(argv, { skipValidations: true });
   }
 
@@ -38,7 +37,9 @@ class AddCachingCommand extends Command {
       process.exit(1);
     }
 
-    const packages = this.packageGraph?.rawPackageList || [];
+    const packages = Object.values(this.projectGraph.nodes)
+      .filter((p) => !!p.package)
+      .map((p) => p.package!);
     const uniqueScriptNames = new Set<string>();
     for (const pkg of packages) {
       for (const scriptName of Object.keys(pkg.scripts || {})) {
