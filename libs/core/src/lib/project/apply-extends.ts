@@ -1,5 +1,4 @@
 import path from "path";
-import resolveFrom from "resolve-from";
 import { ValidationError } from "../validation-error";
 import { shallowExtend } from "./shallow-extend";
 
@@ -10,7 +9,7 @@ export function applyExtends(config: { [x: string]: unknown; extends?: any }, cw
     let pathToDefault;
 
     try {
-      pathToDefault = resolveFrom(cwd, config.extends);
+      pathToDefault = require.resolve(config.extends, { paths: [cwd] });
     } catch (err) {
       throw new ValidationError("ERESOLVED", "Config .extends must be locally-resolvable", err);
     }

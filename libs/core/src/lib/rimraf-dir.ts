@@ -1,5 +1,5 @@
-import { existsSync } from "fs";
-import { rimraf } from "rimraf";
+import { existsSync } from "node:fs";
+import { rm } from "node:fs/promises";
 import log from "./npmlog";
 
 export async function rimrafDir(dirPath: string) {
@@ -10,9 +10,6 @@ export async function rimrafDir(dirPath: string) {
     return;
   }
 
-  const isSuccessful = await rimraf(dirPath);
-  if (!isSuccessful) {
-    throw new Error(`Failed to fully remove ${dirPath}`);
-  }
+  await rm(dirPath, { recursive: true, force: true });
   log.verbose("rimrafDir", "removed", dirPath);
 }
