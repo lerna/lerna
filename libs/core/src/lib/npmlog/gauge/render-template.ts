@@ -6,7 +6,7 @@
  */
 
 "use strict";
-var align = require("wide-align");
+var align = require("./wide-align");
 var validate = require("aproba");
 var wideTruncate = require("./wide-truncate");
 var error = require("./error");

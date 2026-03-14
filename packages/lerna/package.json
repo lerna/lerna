@@ -89,7 +89,6 @@
     "tinyglobby": "0.2.12",
     "validate-npm-package-license": "3.0.4",
     "validate-npm-package-name": "6.0.2",
-    "wide-align": "1.1.5",
     "write-file-atomic": "5.0.1",
     "yargs": "17.7.2"
   },
