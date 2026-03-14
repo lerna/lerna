@@ -1,4 +1,5 @@
 import { colorize } from "./colorize";
+export { colorize, type StyleFormat } from "./colorize";
 import execa from "execa";
 import os from "node:os";
 import strongLogTransformer from "./forked-strong-log-transformer";
@@ -128,7 +129,7 @@ export function getExitCode(
   }
 
   // we tried
-  return process.exitCode;
+  return typeof process.exitCode === "number" ? process.exitCode : undefined;
 }
 
 /**

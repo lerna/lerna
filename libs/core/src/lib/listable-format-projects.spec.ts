@@ -4,7 +4,7 @@ import { loggingOutput, tempDirSerializer, windowsPathSerializer } from "@lerna/
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { colorize } from "./colorize";
+import { colorize } from "@lerna/child-process";
 import { formatJSON, listableFormatProjects } from "./listable-format-projects";
 import { ListableOptions } from "./listable-options";
 import { Package, RawManifest } from "./package";

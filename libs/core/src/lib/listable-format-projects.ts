@@ -1,6 +1,6 @@
 import columnify from "columnify";
 import path from "path";
-import { colorize } from "./colorize";
+import { colorize } from "@lerna/child-process";
 import { ListableOptions } from "./listable-options";
 import { Package } from "./package";
 import {

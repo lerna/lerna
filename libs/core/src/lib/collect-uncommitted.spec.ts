@@ -3,7 +3,7 @@
 import { gitAdd, initFixtureFactory } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import path from "path";
-import { colorize } from "./colorize";
+import { colorize } from "@lerna/child-process";
 
 const initFixture = initFixtureFactory(__dirname);
 

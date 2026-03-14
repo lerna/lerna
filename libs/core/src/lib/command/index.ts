@@ -24,7 +24,7 @@ import { warnIfHanging } from "./warn-if-hanging";
  *
  * Can be removed when latest execa version is used!!!
  * */
-export type ExecOptions = Omit<NodeExecOptions, "cwd"> & { cwd?: string };
+export type ExecOptions = Omit<NodeExecOptions, "cwd" | "encoding"> & { cwd?: string; encoding?: string };
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
