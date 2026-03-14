@@ -353,6 +353,25 @@ describe("InitCommand", () => {
       expect(initCommand.packageManager).toBe("bun");
     });
 
+    it("detects bun from process.versions.bun even when require.main is unavailable", () => {
+      // In bun's CJS runtime, require.main may be null. process.versions.bun is the
+      // canonical way to detect bun execution and is checked before require.main.
+      const versions = process.versions as Record<string, string>;
+      const original = versions.bun;
+      versions.bun = "1.0.0";
+      try {
+        // Use the real detectInvokedPackageManager (no spy) to exercise the production guard.
+        const initCommand = new InitCommand(commandOptions);
+        expect(initCommand.packageManager).toBe("bun");
+      } finally {
+        if (original === undefined) {
+          delete versions.bun;
+        } else {
+          versions.bun = original;
+        }
+      }
+    });
+
     it("detects pnpm from exact path segment", () => {
       const initCommand = createWithInvokerPath("/home/user/.local/share/pnpm/bin/lerna");
       expect(initCommand.packageManager).toBe("pnpm");

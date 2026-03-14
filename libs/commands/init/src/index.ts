@@ -271,6 +271,14 @@ export class InitCommand {
    */
   private detectInvokedPackageManager(): PackageManager | null {
     let detectedPackageManager: PackageManager | null = null;
+
+    // Bun sets process.versions.bun when running in its own runtime (e.g. via bunx).
+    // Check this first because require.main may be null in bun's CJS runtime.
+    if ((process.versions as Record<string, string>).bun) {
+      this.logger.verbose("", "Detected package manager bun from process.versions.bun");
+      return "bun";
+    }
+
     // mainModule is deprecated since Node 14, fallback for older versions
     const invoker = require.main || process["mainModule"];
 

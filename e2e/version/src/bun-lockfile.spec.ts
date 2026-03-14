@@ -31,8 +31,7 @@ describe("lerna-version-bun-lockfile", () => {
     await fixture.lerna("create package-b --dependencies package-a -y");
 
     await fixture.install();
-    await fixture.exec("git add .");
-    await fixture.exec("git commit -m 'chore: add packages'");
+    await fixture.createInitialGitCommit();
     await fixture.exec("git push origin test-main");
 
     const lockfilePath = fixture.getWorkspacePath("bun.lockb");
@@ -62,8 +61,7 @@ describe("lerna-version-bun-lockfile", () => {
 
     await fixture.lerna("create package-c -y");
     await fixture.install();
-    await fixture.exec("git add .");
-    await fixture.exec("git commit -m 'chore: add package-c'");
+    await fixture.createInitialGitCommit();
     await fixture.exec("git push origin test-main");
 
     const lockfilePath = fixture.getWorkspacePath("bun.lockb");
