@@ -18,7 +18,6 @@
 import stream from "node:stream";
 import { StringDecoder } from "node:string_decoder";
 import util from "node:util";
-import through from "through";
 
 export default Logger;
 
@@ -100,43 +99,52 @@ function deLiner() {
 }
 
 function reLiner() {
-  return through(appendNewline);
-
-  function appendNewline(line) {
-    this.emit("data", line + "\n");
-  }
+  return new stream.Transform({
+    objectMode: true,
+    transform(chunk, _encoding, callback) {
+      this.push(chunk + "\n");
+      callback();
+    },
+  });
 }
 
 function objectifier() {
-  return through(objectify, null, { autoDestroy: false });
-
-  function objectify(line) {
-    this.emit("data", {
-      msg: line,
-      time: Date.now(),
-    });
-  }
+  return new stream.Transform({
+    objectMode: true,
+    autoDestroy: false,
+    transform(chunk, _encoding, callback) {
+      this.push({
+        msg: chunk,
+        time: Date.now(),
+      });
+      callback();
+    },
+  });
 }
 
 function staticTagger(tag) {
-  return through(tagger);
-
-  function tagger(logEvent) {
-    logEvent.tag = tag;
-    this.emit("data", logEvent);
-  }
+  return new stream.Transform({
+    objectMode: true,
+    transform(logEvent, _encoding, callback) {
+      logEvent.tag = tag;
+      this.push(logEvent);
+      callback();
+    },
+  });
 }
 
 function textFormatter(options) {
-  return through(textify);
-
-  function textify(logEvent) {
-    var line = util.format("%s%s", textifyTags(logEvent.tag), logEvent.msg.toString());
-    if (options.timeStamp) {
-      line = util.format("%s %s", new Date(logEvent.time).toISOString(), line);
-    }
-    this.emit("data", line.replace(/\n/g, "\\n"));
-  }
+  return new stream.Transform({
+    objectMode: true,
+    transform(logEvent, _encoding, callback) {
+      var line = util.format("%s%s", textifyTags(logEvent.tag), logEvent.msg.toString());
+      if (options.timeStamp) {
+        line = util.format("%s %s", new Date(logEvent.time).toISOString(), line);
+      }
+      this.push(line.replace(/\n/g, "\\n"));
+      callback();
+    },
+  });
 
   function textifyTags(tags) {
     var str = "";
@@ -152,53 +160,56 @@ function textFormatter(options) {
 }
 
 function jsonFormatter(options) {
-  return through(jsonify);
-
-  function jsonify(logEvent) {
-    if (options.timeStamp) {
-      logEvent.time = new Date(logEvent.time).toISOString();
-    } else {
-      delete logEvent.time;
-    }
-    logEvent.msg = logEvent.msg.toString();
-    this.emit("data", JSON.stringify(logEvent));
-  }
+  return new stream.Transform({
+    objectMode: true,
+    transform(logEvent, _encoding, callback) {
+      if (options.timeStamp) {
+        logEvent.time = new Date(logEvent.time).toISOString();
+      } else {
+        delete logEvent.time;
+      }
+      logEvent.msg = logEvent.msg.toString();
+      this.push(JSON.stringify(logEvent));
+      callback();
+    },
+  });
 }
 
-function lineMerger(host) {
+function lineMerger() {
   var previousLine = null;
   var flushTimer = null;
-  var stream = through(lineMergerWrite, lineMergerEnd);
-  var flush = _flush.bind(stream);
 
-  return stream;
-
-  function lineMergerWrite(line) {
-    if (/^\s+/.test(line.msg)) {
-      if (previousLine) {
-        previousLine.msg += "\n" + line.msg;
+  var t = new stream.Transform({
+    objectMode: true,
+    transform(line, _encoding, callback) {
+      if (/^\s+/.test(line.msg)) {
+        if (previousLine) {
+          previousLine.msg += "\n" + line.msg;
+        } else {
+          previousLine = line;
+        }
       } else {
+        flushPrevious.call(this);
         previousLine = line;
       }
-    } else {
-      flush();
-      previousLine = line;
-    }
-    // rolling timeout
-    clearTimeout(flushTimer);
-    flushTimer = setTimeout(flush.bind(this), 10);
-  }
+      // rolling timeout
+      clearTimeout(flushTimer);
+      flushTimer = setTimeout(flushPrevious.bind(this), 10);
+      callback();
+    },
+    flush(callback) {
+      flushPrevious.call(this);
+      callback();
+    },
+  });
 
-  function _flush() {
+  return t;
+
+  function flushPrevious() {
     if (previousLine) {
-      this.emit("data", previousLine);
+      this.push(previousLine);
       previousLine = null;
     }
-  }
-
-  function lineMergerEnd() {
-    flush.call(this);
-    this.emit("end");
   }
 }
 
