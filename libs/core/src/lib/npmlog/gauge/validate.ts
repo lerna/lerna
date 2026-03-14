@@ -1,5 +1,3 @@
-export {};
-
 /**
  * Inlined from deprecated package https://github.com/npm/aproba/blob/v2.0.0/index.js
  */
@@ -128,4 +126,4 @@ function newException(code: string, msg: string): ValidateError {
   return err;
 }
 
-module.exports = validate;
+export = validate;
