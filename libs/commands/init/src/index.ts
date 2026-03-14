@@ -274,7 +274,7 @@ export class InitCommand {
 
     // Bun sets process.versions.bun when running in its own runtime (e.g. via bunx).
     // Check this first because require.main may be null in bun's CJS runtime.
-    if ((process.versions as Record<string, string>).bun) {
+    if ((process.versions as Record<string, string>)["bun"]) {
       this.logger.verbose("", "Detected package manager bun from process.versions.bun");
       return "bun";
     }
