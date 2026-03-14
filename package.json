@@ -46,7 +46,6 @@
     "@types/envinfo": "^7.8.4",
     "@types/fs-extra": "^11.0.4",
     "@types/git-url-parse": "^9.0.3",
-    "@types/glob-parent": "^5.1.3",
     "@types/is-ci": "^3.0.4",
     "@types/jest": "30.0.0",
     "@types/js-yaml": "^4.0.9",

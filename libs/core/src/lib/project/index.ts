@@ -3,7 +3,7 @@ import { cosmiconfigSync, defaultLoaders } from "cosmiconfig";
 import type { CosmiconfigResult } from "cosmiconfig/dist/types";
 import dedent from "dedent";
 import fs from "fs";
-import globParent from "glob-parent";
+import { globParent } from "../glob-utils";
 import { globSync } from "tinyglobby";
 import { load } from "js-yaml";
 import loadJsonFile from "load-json-file";
