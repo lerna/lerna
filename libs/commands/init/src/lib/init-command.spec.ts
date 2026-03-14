@@ -286,17 +286,22 @@ describe("InitCommand", () => {
       mockedExistsSync.mockReset();
     });
 
-    function createWithInvokerPath(p: string): InstanceType<typeof InitCommand> {
-      // Spy on detectInvokedPackageManager to control the invoker path.
-      // The method reads require.main which is not easily mockable in Jest,
-      // so we intercept the prototype method to simulate different invoker paths.
+    // Spy on detectInvokedPackageManager to control the invoker path.
+    // The method reads require.main which is not easily mockable in Jest,
+    // so we intercept the prototype method to simulate different invoker paths.
+    // The mock mirrors the production implementation (filename ?? path fallback,
+    // /[\\/]/ split, leading-dot normalization).
+    function createWithInvoker(
+      filename: string | undefined,
+      modulePath: string | undefined
+    ): InstanceType<typeof InitCommand> {
       const spy = jest
         .spyOn(InitCommand.prototype as any, "detectInvokedPackageManager")
         .mockImplementation(function (this: any) {
-          // Use /[\\/]/ to split on both POSIX (/) and Windows (\) separators,
-          // and strip leading dots (e.g. ".pnpm" -> "pnpm") to match virtual
-          // store directories used by pnpm dlx and bun's install directory.
-          const pathSegments = p.split(/[\\/]/);
+          // Mirror the production code: prefer filename over path, handle undefined.
+          const invokerPath = (filename ?? modulePath) || "";
+          // Use /[\\/]/ to split on both POSIX (/) and Windows (\) separators.
+          const pathSegments = invokerPath.split(/[\\/]/);
           for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
             if (
               pathSegments.some((segment: string) => {
@@ -314,35 +319,59 @@ describe("InitCommand", () => {
       return initCommand;
     }
 
+    // Convenience wrapper for tests that supply a full file path (filename === path are
+    // both derived from it, matching Node.js where path === dirname(filename)).
+    function createWithInvokerPath(p: string): InstanceType<typeof InitCommand> {
+      const dir = p.replace(/[\\/][^\\/]*$/, "") || p;
+      return createWithInvoker(p, dir);
+    }
+
     it("does not false-positive match 'bun' in 'ubuntu' path", () => {
-      const initCommand = createWithInvokerPath("/usr/bin/ubuntu/node_modules");
+      const initCommand = createWithInvokerPath("/usr/bin/ubuntu/node_modules/lerna/dist/cli.js");
       expect(initCommand.packageManager).toBe("npm");
     });
 
     it("detects bun from exact path segment", () => {
-      const initCommand = createWithInvokerPath("/home/user/.local/share/bun/bin");
+      const initCommand = createWithInvokerPath("/home/user/.local/share/bun/bin/lerna");
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects bun from .bun install cache (GitHub Actions bunx path)", () => {
+      const initCommand = createWithInvokerPath(
+        "/home/runner/.bun/install/cache/lerna@999.9.9-e2e.0_abc123/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects bun when module.path is undefined but filename is set (bun CJS runtime)", () => {
+      // In bun's CJS runtime, require.main.path may be undefined while filename is always set.
+      // The production code uses `invoker.filename ?? invoker.path` to handle this.
+      const initCommand = createWithInvoker(
+        "/home/runner/.bun/install/cache/lerna@999.9.9-e2e.0/node_modules/lerna/dist/cli.js",
+        undefined
+      );
       expect(initCommand.packageManager).toBe("bun");
     });
 
     it("detects pnpm from exact path segment", () => {
-      const initCommand = createWithInvokerPath("/home/user/.local/share/pnpm/bin");
+      const initCommand = createWithInvokerPath("/home/user/.local/share/pnpm/bin/lerna");
       expect(initCommand.packageManager).toBe("pnpm");
     });
 
     it("detects pnpm from .pnpm virtual store directory (used by pnpm dlx)", () => {
       const initCommand = createWithInvokerPath(
-        "/home/user/.local/share/pnpm/store/v3/.pnpm/lerna@999.9.9-e2e.0/node_modules/.bin/lerna"
+        "/home/user/.local/share/pnpm/store/v3/.pnpm/lerna@999.9.9-e2e.0/node_modules/lerna/dist/cli.js"
       );
       expect(initCommand.packageManager).toBe("pnpm");
     });
 
     it("detects versioned package manager segment", () => {
-      const initCommand = createWithInvokerPath("/home/user/.cache/npm@10/bin");
+      const initCommand = createWithInvokerPath("/home/user/.cache/npm@10/bin/lerna");
       expect(initCommand.packageManager).toBe("npm");
     });
 
     it("falls back to npm when no path segment matches", () => {
-      const initCommand = createWithInvokerPath("/usr/local/bin");
+      const initCommand = createWithInvokerPath("/usr/local/bin/lerna");
       expect(initCommand.packageManager).toBe("npm");
     });
   });

@@ -278,7 +278,11 @@ export class InitCommand {
       this.logger.verbose("", "Could not detect package manager from process");
       return detectedPackageManager;
     }
-    const pathSegments = invoker.path.split(path.sep);
+    // Prefer filename (full path to the entry file) over path (directory) because bun's
+    // CJS runtime always sets module.filename but may leave module.path undefined.
+    // Use /[\\/]/ so the split works on both POSIX ("/") and Windows ("\") separators.
+    const invokerPath = (invoker.filename ?? invoker.path) || "";
+    const pathSegments = invokerPath.split(/[\\/]/);
     for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
       if (
         pathSegments.some((segment: string) => {
