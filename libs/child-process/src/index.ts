@@ -1,4 +1,4 @@
-import chalk from "chalk";
+import { colorize } from "./colorize";
 import execa from "execa";
 import os from "node:os";
 import strongLogTransformer from "./forked-strong-log-transformer";
@@ -14,7 +14,7 @@ export type LernaOptions = withPkg<execa.Options>;
 const children = new Set<execa.ExecaChildProcess<string>>();
 
 // when streaming processes are spawned, use this color for prefix
-const colorWheel = [chalk.cyan, chalk.magenta, chalk.blue, chalk.yellow, chalk.green, chalk.blueBright];
+const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "blueBright"] as const;
 const NUM_COLORS = colorWheel.length;
 
 // ever-increasing index ensures colors are always sequential
@@ -80,13 +80,12 @@ export function spawnStreaming(
   const stderrOpts: { tag?: string } = {}; // mergeMultiline causes escaped newlines :P
 
   if (prefix) {
-    const colorName = colorWheel[currentColor % NUM_COLORS];
-    const color = colorName;
+    const color = colorWheel[currentColor % NUM_COLORS];
 
     currentColor += 1;
 
-    stdoutOpts.tag = `${color.bold(prefix)}:`;
-    stderrOpts.tag = `${color(prefix)}:`;
+    stdoutOpts.tag = `${colorize(["bold", color], prefix)}:`;
+    stderrOpts.tag = `${colorize(color, prefix)}:`;
   }
 
   // Avoid "Possible EventEmitter memory leak detected" warning due to piped stdio

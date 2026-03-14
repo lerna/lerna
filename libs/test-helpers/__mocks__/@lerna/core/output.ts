@@ -1,11 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { multiLineTrimRight } from "../../../src/lib/multi-line-trim-right";
-import chalk from "chalk";
+const { colorize } = jest.requireActual("@lerna/core") as any;
+colorize.disable();
 
-// keep snapshots stable cross-platform
-chalk.level = 0;
+import { multiLineTrimRight } from "../../../src/lib/multi-line-trim-right";
 
 // @lerna/output is just a wrapper around console.log
 const mockOutput = jest.fn();

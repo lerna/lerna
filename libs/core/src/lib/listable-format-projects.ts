@@ -1,6 +1,6 @@
-import chalk from "chalk";
 import columnify from "columnify";
 import path from "path";
+import { colorize } from "./colorize";
 import { ListableOptions } from "./listable-options";
 import { Package } from "./package";
 import {
@@ -221,16 +221,16 @@ function formatColumns(
     };
 
     if (pkg.version) {
-      formatted.version = chalk.green(`v${pkg.version}`);
+      formatted.version = colorize("green", `v${pkg.version}`);
     } else {
-      formatted.version = chalk.yellow("MISSING");
+      formatted.version = colorize("yellow", "MISSING");
     }
 
     if (pkg.private) {
-      formatted.private = `(${chalk.red("PRIVATE")})`;
+      formatted.private = `(${colorize("red", "PRIVATE")})`;
     }
 
-    formatted.location = chalk.grey(path.relative(".", pkg.location));
+    formatted.location = colorize("grey", path.relative(".", pkg.location));
 
     return formatted;
   });

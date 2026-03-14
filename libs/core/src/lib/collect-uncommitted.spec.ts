@@ -1,9 +1,9 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { gitAdd, initFixtureFactory } from "@lerna/test-helpers";
-import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
+import { colorize } from "./colorize";
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -11,13 +11,20 @@ const initFixture = initFixtureFactory(__dirname);
 import { collectUncommitted, collectUncommittedSync } from "./collect-uncommitted";
 import { getPackages } from "./project";
 
-// primary assertion setup
-const GREEN_A = chalk.green("A");
-const GREEN_M = chalk.green("M");
-const GREEN_D = chalk.green("D");
-const RED_D = chalk.red("D");
-const RED_M = chalk.red("M");
-const RED_QQ = chalk.red("??");
+// Disable colorize so expected values are plain characters
+beforeAll(() => {
+  colorize.disable();
+});
+afterAll(() => {
+  colorize.enable();
+});
+
+const GREEN_A = "A";
+const GREEN_M = "M";
+const GREEN_D = "D";
+const RED_D = "D";
+const RED_M = "M";
+const RED_QQ = "??";
 
 const colorizedAry = [
   `${GREEN_D}  package.json`,

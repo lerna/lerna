@@ -1,5 +1,4 @@
-import chalk from "chalk";
-
+import { colorize } from "./colorize";
 import npmlog from "./npmlog";
 
 const childProcess = require("@lerna/child-process");
@@ -9,9 +8,9 @@ interface UncommittedConfig {
   log?: typeof npmlog;
 }
 
-const maybeColorize = (colorize: chalk.Chalk) => (s: unknown) => s !== " " ? colorize(s) : s;
-const cRed = maybeColorize(chalk.red);
-const cGreen = maybeColorize(chalk.green);
+const maybeColorize = (format: string) => (s: unknown) => s !== " " ? colorize(format, String(s)) : s;
+const cRed = maybeColorize("red");
+const cGreen = maybeColorize("green");
 
 const replaceStatus = (_: any, maybeGreen: unknown, maybeRed: unknown) =>
   `${cGreen(maybeGreen)}${cRed(maybeRed)}`;

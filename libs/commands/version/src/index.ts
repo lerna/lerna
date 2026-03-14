@@ -4,6 +4,7 @@ import {
   checkWorkingTree,
   collectProjects,
   collectProjectUpdates,
+  colorize,
   Command,
   CommandConfigOptions,
   createRunner,
@@ -24,7 +25,6 @@ import {
   updateChangelog,
   ValidationError,
 } from "@lerna/core";
-import chalk from "chalk";
 import dedent from "dedent";
 import execa from "execa";
 import fs from "fs";
@@ -626,7 +626,7 @@ class VersionCommand extends Command {
         const pkg = getPackage(node);
         let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(node.name)}`;
         if (pkg.private) {
-          line += ` (${chalk.red("private")})`;
+          line += ` (${colorize("red", "private")})`;
         }
         return line;
       });

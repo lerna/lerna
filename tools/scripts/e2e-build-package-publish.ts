@@ -2,9 +2,10 @@ import { execSync } from "child_process";
 import { remove } from "fs-extra";
 import { existsSync } from "fs";
 import { stripIndent } from "nx/src/utils/logger";
-import chalk from "chalk";
+// @ts-expect-error -- styleText is available in Node 20.12+ but @types/node may be outdated
+import { styleText } from "node:util";
 
-const LERNA_PREFIX = `${chalk.cyan(">")} ${chalk.inverse(chalk.bold(chalk.cyan(" LERNA ")))}`;
+const LERNA_PREFIX = `${styleText("cyan", ">")} ${styleText(["inverse", "bold", "cyan"], " LERNA ")}`;
 
 const MESSAGE = `
 Did you know that you can run the command with:

@@ -1,6 +1,7 @@
 export { addDependencies } from "./lib/add-dependencies";
 export { addDependents } from "./lib/add-dependents";
 export { checkWorkingTree, throwIfUncommitted } from "./lib/check-working-tree";
+export { colorize } from "./lib/colorize";
 export * from "./lib/cli";
 export {
   ProjectCollectorOptions,
