@@ -6,7 +6,7 @@
  */
 
 "use strict";
-var validate = require("aproba");
+var validate = require("./validate");
 var renderTemplate = require("./render-template.js");
 var wideTruncate = require("./wide-truncate");
 var stringWidth = require("string-width");

@@ -7,7 +7,7 @@
 
 "use strict";
 var align = require("./wide-align");
-var validate = require("aproba");
+var validate = require("./validate");
 var wideTruncate = require("./wide-truncate");
 var error = require("./error");
 var TemplateItem = require("./template-item");

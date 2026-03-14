@@ -8,7 +8,7 @@
 "use strict";
 var consoleControl = require("./console-control-strings");
 var renderTemplate = require("./render-template");
-var validate = require("aproba");
+var validate = require("./validate");
 
 var Plumbing = (module.exports = function (theme, template, width) {
   if (!width) {

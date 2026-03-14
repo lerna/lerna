@@ -44,7 +44,6 @@
     "@nx/devkit": ">=21.5.2 < 23.0.0",
     "@octokit/plugin-enterprise-rest": "6.0.1",
     "@octokit/rest": "20.1.2",
-    "aproba": "2.0.0",
     "ci-info": "4.3.1",
     "cmd-shim": "6.0.3",
     "columnify": "1.6.0",
