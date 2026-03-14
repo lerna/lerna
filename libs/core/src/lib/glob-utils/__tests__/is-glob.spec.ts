@@ -50,6 +50,12 @@ describe("isGlob", () => {
     expect(isGlob("*(foo)")).toBe(true);
   });
 
+  it("should return true for regex-like capture group patterns", () => {
+    expect(isGlob("(?:foo)")).toBe(true);
+    expect(isGlob("(?!foo)")).toBe(true);
+    expect(isGlob("(?=foo)")).toBe(true);
+  });
+
   it("should return false for escaped glob characters", () => {
     expect(isGlob("\\*")).toBe(false);
     expect(isGlob("\\?")).toBe(false);

@@ -17,16 +17,32 @@ describe("globParent", () => {
     expect(globParent("path/{a,b}")).toBe("path");
   });
 
-  it("should handle extglobs", () => {
+  it("should handle all extglob variants", () => {
     expect(globParent("path/!(a|b)")).toBe("path");
+    expect(globParent("path/?(a|b)")).toBe("path");
+    expect(globParent("path/+(a|b)")).toBe("path");
+    expect(globParent("path/*(a|b)")).toBe("path");
+    expect(globParent("path/@(a|b)")).toBe("path");
   });
 
   it("should handle nested globs", () => {
     expect(globParent("path/to/*/sub/**")).toBe("path/to");
+    expect(globParent("path/**/*")).toBe("path");
   });
 
   it("should return '.' for root-level globs", () => {
     expect(globParent("*.js")).toBe(".");
+    expect(globParent("**/*.js")).toBe(".");
+  });
+
+  it("should handle absolute paths", () => {
+    expect(globParent("/root/path/to/*.js")).toBe("/root/path/to");
+    expect(globParent("/*.js")).toBe("/");
+  });
+
+  it("should handle non-glob paths (last segment treated as filename by dirname)", () => {
+    expect(globParent("path/foo")).toBe("path");
+    expect(globParent("path/foo/bar.js")).toBe("path/foo");
   });
 
   it("should handle escaped characters by stripping the escaped glob segment", () => {
