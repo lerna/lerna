@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 "use strict";
 
 const mockAdd = jest.fn(() => Promise.resolve());
