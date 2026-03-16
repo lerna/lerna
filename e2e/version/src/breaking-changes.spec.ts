@@ -98,7 +98,6 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
         * old API has been removed
 
 
-
         # 1.1.0 ({YYYY}-{MM}-{DD})
 
 
