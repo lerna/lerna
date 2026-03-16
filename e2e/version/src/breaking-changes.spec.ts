@@ -90,7 +90,7 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
 
         ### Features
 
-        * add new API ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-breaking-changes/origin/commits/{FULL_COMMIT_SHA}))
+        * add new API {SHORT_COMMIT_SHA}
 
 
         ### BREAKING CHANGES
@@ -106,7 +106,7 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
 
         ### Features
 
-        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-breaking-changes/origin/commits/{FULL_COMMIT_SHA}))
+        * add package-a {SHORT_COMMIT_SHA}
 
       `);
     });
@@ -164,7 +164,7 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
 
         ### Features
 
-        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-breaking-changes/origin/commits/{FULL_COMMIT_SHA}))
+        * add package-a {SHORT_COMMIT_SHA}
 
       `);
     });
@@ -211,7 +211,7 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
         # [2.0.0](tmp/lerna-e2e/lerna-version-breaking-changes/origin/compare/package-a@1.1.0...package-a@2.0.0) ({YYYY}-{MM}-{DD})
 
 
-        * feat!: rewrite public API ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-breaking-changes/origin/commits/{FULL_COMMIT_SHA}))
+        * feat!: rewrite public API {SHORT_COMMIT_SHA}
 
 
         ### BREAKING CHANGES
@@ -227,7 +227,7 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
 
         ### Features
 
-        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-breaking-changes/origin/commits/{FULL_COMMIT_SHA}))
+        * add package-a {SHORT_COMMIT_SHA}
 
       `);
     });
