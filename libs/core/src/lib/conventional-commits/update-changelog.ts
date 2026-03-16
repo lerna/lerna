@@ -30,13 +30,17 @@ export async function updateChangelog(
   // Set the preset config
   generator.config(config);
 
+  // Read package.json to discover repository URL for commit links in changelog.
+  // This must be called for all changelog types — the new ConventionalChangelog API
+  // does not auto-discover repository context like the old conventional-changelog-core.
+  generator.readPackage(pkg.manifestLocation);
+
   if (type === "root") {
     generator.context({ version, currentTag: `${tagPrefix}${version}` } as any);
     generator.tags({ prefix: tagPrefix });
   } else {
     // "fixed" or "independent"
     generator.commits({ path: pkg.location });
-    generator.readPackage(pkg.manifestLocation);
 
     if (type === "independent") {
       generator.tags({ prefix: packagePrefix(pkg.name) });

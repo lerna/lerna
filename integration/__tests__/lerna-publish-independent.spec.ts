@@ -20,21 +20,21 @@ test("lerna publish updates independent versions", async () => {
   const { stdout } = await cliRunner(cwd, env)(...args);
   expect(stdout).toMatchInlineSnapshot(`
 
-    Changes:
-     - package-1: 1.0.0 => 2.0.0
-     - package-2: 2.0.0 => 3.0.0
-     - package-3: 3.0.0 => 4.0.0
-     - package-4: 4.0.0 => 5.0.0
-     - package-5: 5.0.0 => 6.0.0 (private)
-     - package-6: 0.1.0 => 1.0.0
+        Changes:
+         - package-1: 1.0.0 => 2.0.0
+         - package-2: 2.0.0 => 3.0.0
+         - package-3: 3.0.0 => 4.0.0
+         - package-4: 4.0.0 => 5.0.0
+         - package-5: 5.0.0 => 6.0.0 (private)
+         - package-6: 0.1.0 => 1.0.0
 
-    Successfully published:
-     - package-1@2.0.0
-     - package-2@3.0.0
-     - package-3@4.0.0
-     - package-4@5.0.0
-     - package-6@1.0.0
-  `);
+        Successfully published:
+         - package-1@2.0.0
+         - package-2@3.0.0
+         - package-3@4.0.0
+         - package-4@5.0.0
+         - package-6@1.0.0
+    `);
 
   const patch = await showCommit(cwd);
   expect(patch).toMatchInlineSnapshot(`
@@ -47,7 +47,7 @@ test("lerna publish updates independent versions", async () => {
      - package-5@6.0.0
      - package-6@1.0.0
 
-    HEAD -> main, tag: package-6@1.0.0, tag: package-5@6.0.0, tag: package-4@5.0.0, tag: package-3@4.0.0, tag: package-2@3.0.0, tag: package-1@2.0.0, origin/main
+    HEAD -> main, tag: package-6@1.0.0, tag: package-5@6.0.0, tag: package-4@5.0.0, tag: package-3@4.0.0, tag: package-2@3.0.0, tag: package-1@2.0.0, origin/main, origin/HEAD
 
     diff --git a/packages/package-1/package.json b/packages/package-1/package.json
     index SHA..SHA 100644
