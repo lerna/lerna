@@ -670,15 +670,12 @@ describe("lerna-version-conventional-commits", () => {
           All notable changes to this project will be documented in this file.
           See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-          ## [1.1.1](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/compare/package-a@1.1.0...package-a@1.1.1) ({YYYY}-{MM}-{DD})
+          ## [1.1.1](/compare/package-a@1.1.0...package-a@1.1.1) ({YYYY}-{MM}-{DD})
 
 
           ### Bug Fixes
 
           * update package-a {SHORT_COMMIT_SHA}
-
-
-
 
 
           # 1.1.0 ({YYYY}-{MM}-{DD})
