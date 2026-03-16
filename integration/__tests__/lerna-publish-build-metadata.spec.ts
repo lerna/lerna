@@ -38,7 +38,7 @@ test("lerna publish applies build metadata to fixed versions", async () => {
   expect(patch).toMatchInlineSnapshot(`
     v1.0.1+001
 
-    HEAD -> main, tag: v1.0.1+001, origin/main, origin/HEAD
+    HEAD -> main, tag: v1.0.1+001, origin/main
 
     diff --git a/lerna.json b/lerna.json
     index SHA..SHA 100644
@@ -115,7 +115,7 @@ test("lerna publish updates build metadata to fixed versions", async () => {
   expect(patch).toMatchInlineSnapshot(`
     v1.0.1+002
 
-    HEAD -> main, tag: v1.0.1+002, origin/main, origin/HEAD
+    HEAD -> main, tag: v1.0.1+002, origin/main
 
     diff --git a/lerna.json b/lerna.json
     index SHA..SHA 100644
@@ -172,7 +172,7 @@ test("lerna publish applies build metadata independent versions", async () => {
      - package-5@6.0.0+001
      - package-6@1.0.0+001
 
-    HEAD -> main, tag: package-6@1.0.0+001, tag: package-5@6.0.0+001, tag: package-4@5.0.0+001, tag: package-3@4.0.0+001, tag: package-2@3.0.0+001, tag: package-1@2.0.0+001, origin/main, origin/HEAD
+    HEAD -> main, tag: package-6@1.0.0+001, tag: package-5@6.0.0+001, tag: package-4@5.0.0+001, tag: package-3@4.0.0+001, tag: package-2@3.0.0+001, tag: package-1@2.0.0+001, origin/main
 
     diff --git a/packages/package-1/package.json b/packages/package-1/package.json
     index SHA..SHA 100644
@@ -251,7 +251,7 @@ test("lerna publish updates build metadata to independent versions", async () =>
      - package-1@1.0.1+002
      - package-2@2.0.1+002
 
-    HEAD -> main, tag: package-2@2.0.1+002, tag: package-1@1.0.1+002, origin/main, origin/HEAD
+    HEAD -> main, tag: package-2@2.0.1+002, tag: package-1@1.0.1+002, origin/main
 
     diff --git a/packages/package-1/package.json b/packages/package-1/package.json
     index SHA..SHA 100644

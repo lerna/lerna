@@ -38,7 +38,7 @@ test("lerna publish updates fixed versions", async () => {
   expect(patch).toMatchInlineSnapshot(`
     v1.0.1
 
-    HEAD -> main, tag: v1.0.1, origin/main, origin/HEAD
+    HEAD -> main, tag: v1.0.1, origin/main
 
     diff --git a/lerna.json b/lerna.json
     index SHA..SHA 100644
