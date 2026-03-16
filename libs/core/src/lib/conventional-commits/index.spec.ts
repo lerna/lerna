@@ -552,7 +552,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * A second commit for our CHANGELOG SHA
+        * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
       `);
 
       await gitAdd(cwd, pkg1.manifestLocation);
@@ -576,7 +576,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * A third commit for our CHANGELOG SHA
+        * A third commit for our CHANGELOG ([SHA](COMMIT_URL))
       `);
     });
 
@@ -820,7 +820,7 @@ describe("conventional-commits", () => {
 
         ### Bug Fixes
 
-        * A second commit for our CHANGELOG SHA
+        * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
 
         #### Some title
 
