@@ -47,7 +47,7 @@ test("lerna publish updates independent versions", async () => {
      - package-5@6.0.0
      - package-6@1.0.0
 
-    HEAD -> main, tag: package-6@1.0.0, tag: package-5@6.0.0, tag: package-4@5.0.0, tag: package-3@4.0.0, tag: package-2@3.0.0, tag: package-1@2.0.0, origin/main, origin/HEAD
+    HEAD -> main, tag: package-6@1.0.0, tag: package-5@6.0.0, tag: package-4@5.0.0, tag: package-3@4.0.0, tag: package-2@3.0.0, tag: package-1@2.0.0, origin/main
 
     diff --git a/packages/package-1/package.json b/packages/package-1/package.json
     index SHA..SHA 100644
