@@ -20,25 +20,25 @@ test("lerna publish updates fixed versions", async () => {
   const { stdout } = await cliRunner(cwd, env)(...args);
   expect(stdout).toMatchInlineSnapshot(`
 
-    Changes:
-     - package-1: 1.0.0 => 1.0.1
-     - package-2: 1.0.0 => 1.0.1
-     - package-3: 1.0.0 => 1.0.1
-     - package-4: 1.0.0 => 1.0.1
-     - package-5: 1.0.0 => 1.0.1 (private)
+        Changes:
+         - package-1: 1.0.0 => 1.0.1
+         - package-2: 1.0.0 => 1.0.1
+         - package-3: 1.0.0 => 1.0.1
+         - package-4: 1.0.0 => 1.0.1
+         - package-5: 1.0.0 => 1.0.1 (private)
 
-    Successfully published:
-     - package-1@1.0.1
-     - package-2@1.0.1
-     - package-3@1.0.1
-     - package-4@1.0.1
-  `);
+        Successfully published:
+         - package-1@1.0.1
+         - package-2@1.0.1
+         - package-3@1.0.1
+         - package-4@1.0.1
+    `);
 
   const patch = await showCommit(cwd);
   expect(patch).toMatchInlineSnapshot(`
     v1.0.1
 
-    HEAD -> main, tag: v1.0.1, origin/main
+    HEAD -> main, tag: v1.0.1, origin/main, origin/HEAD
 
     diff --git a/lerna.json b/lerna.json
     index SHA..SHA 100644

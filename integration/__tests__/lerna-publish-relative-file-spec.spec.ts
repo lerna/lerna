@@ -32,7 +32,7 @@ test("lerna publish replaces file: specifier with local version before npm publi
   expect(patch).toMatchInlineSnapshot(`
     v2.0.0
 
-    HEAD -> main, tag: v2.0.0, origin/main
+    HEAD -> main, tag: v2.0.0, origin/main, origin/HEAD
 
     diff --git a/lerna.json b/lerna.json
     index SHA..SHA 100644
