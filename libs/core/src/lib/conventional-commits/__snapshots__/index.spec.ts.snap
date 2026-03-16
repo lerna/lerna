@@ -26,7 +26,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* I should be placed in the CHANGELOG ([SHA](COMMIT_URL))
+* I should be placed in the CHANGELOG SHA
 
 `;
 
@@ -42,9 +42,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
-
-
-
 
 
 <a name="1.0.0"></a>
@@ -68,10 +65,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* A second commit for our CHANGELOG ([SHA](COMMIT_URL))
-
-
-
+* A second commit for our CHANGELOG SHA
 
 
 <a name="1.0.0"></a>

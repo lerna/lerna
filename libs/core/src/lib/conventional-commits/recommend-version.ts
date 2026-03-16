@@ -1,5 +1,3 @@
-// @ts-expect-error ESM package with exports field not resolved by moduleResolution: "node"
-import { Bumper, packagePrefix } from "conventional-recommended-bump";
 import semver from "semver";
 import log from "../npmlog";
 import { Package } from "../package";
@@ -22,7 +20,11 @@ export async function recommendVersion(
 ): Promise<string> {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
-  const config = await getChangelogConfig(changelogPreset, rootPath);
+  const [config, { Bumper, packagePrefix }] = await Promise.all([
+    getChangelogConfig(changelogPreset, rootPath),
+    // @ts-expect-error ESM package with exports field not resolved by moduleResolution: "node"
+    import("conventional-recommended-bump") as Promise<typeof import("conventional-recommended-bump")>,
+  ]);
 
   const bumper = new Bumper();
   bumper.config(config);
@@ -35,7 +37,9 @@ export async function recommendVersion(
     bumper.tag({ prefix: tagPrefix || "v" });
   }
 
-  const data = await bumper.bump();
+  // Pass whatBump explicitly — Bumper.config() only composes params,
+  // it does not extract whatBump from the config (only loadPreset() does that).
+  const data = await bumper.bump(config.whatBump);
 
   const shouldBumpPrerelease = (releaseType: string, version: string | semver.SemVer) => {
     if (!semver.prerelease(version)) {
@@ -59,8 +63,10 @@ export async function recommendVersion(
     const shouldBump = conventionalBumpPrerelease || shouldBumpPrerelease(releaseType, pkg.version);
     const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
     log.verbose(type, "increment %s by %s", pkg.version, prereleaseType);
-    // @ts-expect-error semver.inc can return null but applyBuildMetadata expects string
-    return applyBuildMetadata(semver.inc(pkg.version, prereleaseType, prereleaseId), buildMetadata);
+    return applyBuildMetadata(
+      semver.inc(pkg.version, prereleaseType as semver.ReleaseType, prereleaseId)!,
+      buildMetadata as string
+    );
   } else {
     if (semver.major(pkg.version) === 0) {
       if (releaseType === "major") {
@@ -70,7 +76,9 @@ export async function recommendVersion(
       }
     }
     log.verbose(type, "increment %s by %s", pkg.version, releaseType);
-    // @ts-expect-error semver.inc can return null but applyBuildMetadata expects string
-    return applyBuildMetadata(semver.inc(pkg.version, releaseType), buildMetadata);
+    return applyBuildMetadata(
+      semver.inc(pkg.version, releaseType as semver.ReleaseType)!,
+      buildMetadata as string
+    );
   }
 }
