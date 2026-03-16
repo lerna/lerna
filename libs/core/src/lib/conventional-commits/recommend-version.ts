@@ -1,4 +1,5 @@
-import conventionalRecommendedBump from "conventional-recommended-bump";
+// @ts-expect-error ESM package with exports field not resolved by moduleResolution: "node"
+import { Bumper, packagePrefix } from "conventional-recommended-bump";
 import semver from "semver";
 import log from "../npmlog";
 import { Package } from "../package";
@@ -6,7 +7,7 @@ import { applyBuildMetadata } from "./apply-build-metadata";
 import { BaseChangelogOptions, VersioningStrategy } from "./constants";
 import { getChangelogConfig } from "./get-changelog-config";
 
-export function recommendVersion(
+export async function recommendVersion(
   pkg: Package,
   type: VersioningStrategy,
   {
@@ -21,16 +22,20 @@ export function recommendVersion(
 ): Promise<string> {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
-  const options: { lernaPackage?: string; tagPrefix?: string; path?: string; config?: any } = {
-    path: pkg.location,
-  };
+  const config = await getChangelogConfig(changelogPreset, rootPath);
+
+  const bumper = new Bumper();
+  bumper.config(config);
+  bumper.commits({ path: pkg.location });
 
   if (type === "independent") {
-    options.lernaPackage = pkg.name;
+    bumper.tag({ prefix: packagePrefix(pkg.name) });
   } else {
     // only fixed mode can have a custom tag prefix
-    options.tagPrefix = tagPrefix;
+    bumper.tag({ prefix: tagPrefix || "v" });
   }
+
+  const data = await bumper.bump();
 
   const shouldBumpPrerelease = (releaseType: string, version: string | semver.SemVer) => {
     if (!semver.prerelease(version)) {
@@ -46,71 +51,26 @@ export function recommendVersion(
     }
   };
 
-  // Ensure potential ValidationError in getChangelogConfig() is propagated correctly
-  let chain = Promise.resolve();
+  // result might be undefined because some presets are not consistent with angular
+  // we still need to bump _something_ because lerna saw a change here
+  let releaseType = ("releaseType" in data ? data.releaseType : undefined) || "patch";
 
-  chain = chain.then(() => getChangelogConfig(changelogPreset, rootPath));
-  chain = chain.then((config) => {
-    // "new" preset API
-    options.config = config;
-
-    return new Promise((resolve, reject) => {
-      conventionalRecommendedBump(options, (err: any, data: any) => {
-        if (err) {
-          return reject(err);
-        }
-
-        // result might be undefined because some presets are not consistent with angular
-        // we still need to bump _something_ because lerna saw a change here
-        let releaseType = data.releaseType || "patch";
-
-        if (prereleaseId) {
-          const shouldBump = conventionalBumpPrerelease || shouldBumpPrerelease(releaseType, pkg.version);
-          const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
-          log.verbose(type, "increment %s by %s", pkg.version, prereleaseType);
-          // TODO: refactor to address type issues
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          resolve(applyBuildMetadata(semver.inc(pkg.version, prereleaseType, prereleaseId), buildMetadata));
-        } else {
-          if (semver.major(pkg.version) === 0) {
-            // According to semver, major version zero (0.y.z) is for initial
-            // development. Anything MAY change at any time. The public API
-            // SHOULD NOT be considered stable. The version 1.0.0 defines
-            // the (initial stable) public API.
-            //
-            // To allow monorepos to use major version zero meaningfully,
-            // the transition from 0.x to 1.x must be explicitly requested
-            // by the user. Breaking changes MUST NOT automatically bump
-            // the major version from 0.x to 1.x.
-            //
-            // The usual convention is to use semver-patch bumps for bugfix
-            // releases and semver-minor for everything else, including
-            // breaking changes. This matches the behavior of `^` operator
-            // as implemented by `npm`.
-            //
-            // In node-semver, it is however also documented that
-            // "Many authors treat a 0.x version as if the x were the major "breaking-change" indicator."
-            // and all other features or bug fixes as semver-patch bumps
-            // this can be enabled in lerna through `premajorVersionBump = "force-patch"`
-
-            if (releaseType === "major") {
-              releaseType = "minor";
-            } else if (premajorVersionBump === "force-patch") {
-              releaseType = "patch";
-            }
-          }
-          log.verbose(type, "increment %s by %s", pkg.version, releaseType);
-          // TODO: refactor to address type issues
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          resolve(applyBuildMetadata(semver.inc(pkg.version, releaseType), buildMetadata));
-        }
-      });
-    });
-  });
-
-  // TODO: refactor to address type issues
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return chain as any;
+  if (prereleaseId) {
+    const shouldBump = conventionalBumpPrerelease || shouldBumpPrerelease(releaseType, pkg.version);
+    const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
+    log.verbose(type, "increment %s by %s", pkg.version, prereleaseType);
+    // @ts-expect-error semver.inc can return null but applyBuildMetadata expects string
+    return applyBuildMetadata(semver.inc(pkg.version, prereleaseType, prereleaseId), buildMetadata);
+  } else {
+    if (semver.major(pkg.version) === 0) {
+      if (releaseType === "major") {
+        releaseType = "minor";
+      } else if (premajorVersionBump === "force-patch") {
+        releaseType = "patch";
+      }
+    }
+    log.verbose(type, "increment %s by %s", pkg.version, releaseType);
+    // @ts-expect-error semver.inc can return null but applyBuildMetadata expects string
+    return applyBuildMetadata(semver.inc(pkg.version, releaseType), buildMetadata);
+  }
 }

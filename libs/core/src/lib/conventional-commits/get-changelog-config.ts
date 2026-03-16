@@ -14,51 +14,48 @@ function isFunction(config: any) {
 }
 
 /**
- * Normalize the new conventional-changelog preset API (v8+) to the legacy
- * format expected by conventional-changelog-core@5 and conventional-recommended-bump@7.
+ * Normalize legacy conventional-changelog preset API to the modern format
+ * expected by conventional-changelog@7+ and conventional-recommended-bump@10+.
  *
- * New API shape:   { parser, writer, commits, whatBump }
  * Legacy API shape: { parserOpts, writerOpts, gitRawCommitsOpts, conventionalChangelog, recommendedBumpOpts }
+ * Modern API shape: { parser, writer, commits, whatBump }
  */
-function normalizeNewPresetConfig(config: any): any {
+function normalizePresetConfig(config: any): any {
+  // Already in modern format
   if (
     config &&
-    (config.parser || config.writer) &&
+    (config.parser || config.writer || config.whatBump) &&
     !config.parserOpts &&
-    !config.writerOpts &&
-    !config.conventionalChangelog
+    !config.writerOpts
   ) {
-    log.verbose("getChangelogConfig", "Normalizing new preset API to legacy format");
+    return config;
+  }
+
+  // Legacy format → modern format
+  if (config && (config.parserOpts || config.writerOpts || config.conventionalChangelog)) {
+    log.verbose("getChangelogConfig", "Normalizing legacy preset API to modern format");
 
     const normalized: any = { ...config };
 
-    if (config.parser) {
-      normalized.parserOpts = config.parser;
-    }
-    if (config.writer) {
-      normalized.writerOpts = config.writer;
-    }
-    if (config.commits) {
-      normalized.gitRawCommitsOpts = config.commits;
-    }
+    // Use conventionalChangelog sub-object if present (some presets wrap config there)
+    const cc = config.conventionalChangelog || config;
 
-    normalized.conventionalChangelog = {
-      parserOpts: normalized.parserOpts,
-      writerOpts: normalized.writerOpts,
-    };
-    if (normalized.gitRawCommitsOpts) {
-      normalized.conventionalChangelog.gitRawCommitsOpts = normalized.gitRawCommitsOpts;
+    if (cc.parserOpts && !normalized.parser) {
+      normalized.parser = cc.parserOpts;
     }
-
-    if (config.whatBump) {
-      normalized.recommendedBumpOpts = {
-        parserOpts: normalized.parserOpts,
-        whatBump: config.whatBump,
-      };
+    if (cc.writerOpts && !normalized.writer) {
+      normalized.writer = cc.writerOpts;
+    }
+    if (cc.gitRawCommitsOpts && !normalized.commits) {
+      normalized.commits = cc.gitRawCommitsOpts;
+    }
+    if (config.recommendedBumpOpts?.whatBump && !normalized.whatBump) {
+      normalized.whatBump = config.recommendedBumpOpts.whatBump;
     }
 
     return normalized;
   }
+
   return config;
 }
 
@@ -100,7 +97,7 @@ async function resolveConfigPromise(presetPackageName: string, presetConfig: obj
 
   config = await Promise.resolve(config);
 
-  return normalizeNewPresetConfig(config);
+  return normalizePresetConfig(config);
 }
 
 export async function getChangelogConfig(

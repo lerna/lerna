@@ -1,4 +1,5 @@
-import conventionalChangelogCore from "conventional-changelog-core";
+// @ts-expect-error ESM package with exports field not resolved by moduleResolution: "node"
+import { ConventionalChangelog, packagePrefix } from "conventional-changelog";
 import fs from "fs-extra";
 import log from "../npmlog";
 import { Package } from "../package";
@@ -21,47 +22,30 @@ export function updateChangelog(
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   return getChangelogConfig(changelogPreset, rootPath).then((config) => {
-    const options: any = {};
-    const context: any = {}; // pass as positional because cc-core's merge-config is wack
+    const generator = new ConventionalChangelog();
 
-    // cc-core mutates input :P
-    if (config.conventionalChangelog) {
-      // "new" preset API
-      options.config = Object.assign({}, config.conventionalChangelog);
-    } else {
-      // "old" preset API
-      options.config = Object.assign({}, config);
-    }
-
-    // NOTE: must pass as positional argument due to weird bug in merge-config
-    const gitRawCommitsOpts = Object.assign({}, options.config.gitRawCommitsOpts);
+    // Set the preset config
+    generator.config(config);
 
     if (type === "root") {
-      context.version = version;
-
-      // preserve tagPrefix because cc-core can't find the currentTag otherwise
-      context.currentTag = `${tagPrefix}${version}`;
-
-      // root changelogs are only enabled in fixed mode, and need the proper tag prefix
-      options.tagPrefix = tagPrefix;
+      generator.context({ version, currentTag: `${tagPrefix}${version}` } as any);
+      generator.tags({ prefix: tagPrefix });
     } else {
       // "fixed" or "independent"
-      gitRawCommitsOpts.path = pkg.location;
-      options.pkg = { path: pkg.manifestLocation };
+      generator.commits({ path: pkg.location });
+      generator.readPackage(pkg.manifestLocation);
 
       if (type === "independent") {
-        options.lernaPackage = pkg.name;
+        generator.tags({ prefix: packagePrefix(pkg.name) });
       } else {
         // only fixed mode can have a custom tag prefix
-        options.tagPrefix = tagPrefix;
-
-        // preserve tagPrefix because cc-core can't find the currentTag otherwise
-        context.currentTag = `${tagPrefix}${pkg.version}`;
+        generator.tags({ prefix: tagPrefix });
+        generator.context({ currentTag: `${tagPrefix}${pkg.version}` } as any);
       }
     }
 
     // generate the markdown for the upcoming release.
-    const changelogStream = conventionalChangelogCore(options, context, gitRawCommitsOpts);
+    const changelogStream = generator.writeStream();
 
     return Promise.all([
       streamToString(changelogStream).then(makeBumpOnlyFilter(pkg)),
