@@ -104,6 +104,13 @@ export async function npmPublish(
     result = await otplease((innerOpts) => publish(manifestContent, tarData, innerOpts), opts, otpCache);
   }
 
+  // ensure lifecycle script output is visible on the terminal,
+  // matching the behavior of prepublishOnly in pack-directory.ts
+  // TODO: refactor based on TS feedback
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  opts.stdio = "inherit";
+
   await runLifecycle(pkg, "publish", opts);
   await runLifecycle(pkg, "postpublish", opts);
 

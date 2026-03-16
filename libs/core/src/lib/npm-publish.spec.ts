@@ -214,9 +214,10 @@ describe("npm-publish", () => {
     }
   );
 
-  it("calls publish lifecycles", async () => {
+  it("calls publish lifecycles with stdio inherit", async () => {
     const options = expect.objectContaining({
       projectScope: "@scope",
+      stdio: "inherit",
     });
 
     await npmPublish(pkg, tarFilePath, {}, conf);
