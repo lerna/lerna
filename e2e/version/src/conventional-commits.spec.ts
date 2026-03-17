@@ -678,9 +678,6 @@ describe("lerna-version-conventional-commits", () => {
           * update package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
 
 
-
-
-
           # 1.1.0 ({YYYY}-{MM}-{DD})
 
 
