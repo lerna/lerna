@@ -240,6 +240,12 @@ describe("InitCommand", () => {
       expect(initCommand.packageManager).toBe("bun");
     });
 
+    it("detects bun from bunfig.toml", async () => {
+      mockedExistsSync.mockImplementation((p: any) => String(p) === "bunfig.toml");
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
     it("detects yarn from yarn.lock", async () => {
       mockedExistsSync.mockImplementation((p: any) => String(p) === "yarn.lock");
       const initCommand = new InitCommand(commandOptions);

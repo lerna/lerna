@@ -247,7 +247,7 @@ export class InitCommand {
 
   private detectPackageManager(): PackageManager | null {
     const packageManager =
-      existsSync("bun.lockb") || existsSync("bun.lock")
+      existsSync("bun.lockb") || existsSync("bun.lock") || existsSync("bunfig.toml")
         ? "bun"
         : existsSync("yarn.lock")
         ? "yarn"
