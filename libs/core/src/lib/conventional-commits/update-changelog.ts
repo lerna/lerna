@@ -9,16 +9,44 @@ import { readExistingChangelog } from "./read-existing-changelog";
 
 /**
  * Read the git remote origin URL for a given directory.
- * Returns the URL string or null if not available.
+ * Returns the URL string (with .git suffix stripped) or null if not available.
  */
 function getGitRemoteUrl(cwd: string): string | null {
   try {
-    return (
-      execFileSync("git", ["config", "--get", "remote.origin.url"], { cwd, encoding: "utf8" }).trim() || null
-    );
+    const url =
+      execFileSync("git", ["config", "--get", "remote.origin.url"], { cwd, encoding: "utf8" }).trim() || null;
+    return url ? url.replace(/\.git$/, "") : null;
   } catch {
     return null;
   }
+}
+
+/**
+ * Parse a git remote URL into owner and project components for changelog links.
+ *
+ * The new ConventionalChangelog API uses parseHostedGitUrl which only recognizes
+ * hosted providers (GitHub, GitLab, etc.) and returns null for local filesystem
+ * paths. The old conventional-changelog-core used @hutson/parse-repository-url
+ * which permissively parsed any path, extracting the last segment as project and
+ * everything before it as owner. This function replicates that behavior so commit
+ * links are generated for all valid git remote types including local bare repos.
+ */
+function parseRemoteUrl(remoteUrl: string): { owner: string; project: string } | null {
+  let pathname: string;
+  try {
+    const parsed = new URL(remoteUrl);
+    pathname = parsed.pathname;
+  } catch {
+    // Not a valid URL — treat the whole thing as a pathname (local filesystem path)
+    pathname = remoteUrl;
+  }
+
+  // Match: optional leading slash, then owner path segments, then /project
+  const match = pathname.match(/^\/?(.+)\/([^/]+)\/?$/);
+  if (match) {
+    return { owner: match[1], project: match[2] };
+  }
+  return null;
 }
 
 export async function updateChangelog(
@@ -45,19 +73,23 @@ export async function updateChangelog(
   // Set the preset config
   generator.config(config);
 
-  // Read package.json to discover repository URL for commit links in changelog.
-  // This must be called for all changelog types — the new ConventionalChangelog API
-  // does not auto-discover repository context like the old conventional-changelog-core.
-  generator.readPackage(pkg.manifestLocation);
-
-  // The new ConventionalChangelog class uses parseHostedGitUrl which rejects local
-  // filesystem paths (e.g. /tmp/lerna-e2e/.../origin). The old conventional-changelog-core
-  // passed these through directly as repoUrl. To preserve this behavior, we read the
-  // git remote URL and set it as repoUrl in the context as a fallback.
+  // Set a fallback repository context from the git remote URL. This handles local
+  // filesystem git remotes (bare repos on disk) which parseHostedGitUrl rejects.
+  // The .repository() call with an object bypasses parseHostedGitUrl. Calling this
+  // BEFORE readPackage() ensures that if readPackage() successfully parses a hosted
+  // URL, it overrides these values. If it can't (local path → null), spreading null
+  // is a no-op and our fallback values are preserved.
   const remoteUrl = getGitRemoteUrl(pkg.location);
   if (remoteUrl) {
-    generator.context({ repoUrl: remoteUrl } as any);
+    const parsed = parseRemoteUrl(remoteUrl);
+    if (parsed) {
+      generator.repository(parsed as any);
+    }
   }
+
+  // Read package.json to discover repository URL for commit links in changelog.
+  // For hosted git URLs, this overrides the fallback set above.
+  generator.readPackage(pkg.manifestLocation);
 
   if (type === "root") {
     generator.context({ version, currentTag: `${tagPrefix}${version}` } as any);
