@@ -14,6 +14,7 @@ const { InitCommand } = require("../index");
 describe("InitCommand", () => {
   const lernaVersion = "__TEST_VERSION__";
   const commandOptions = { lernaVersion };
+  const mockedExistsSync = fs.existsSync as jest.MockedFunction<typeof fs.existsSync>;
 
   let tree: Tree;
 
@@ -222,55 +223,53 @@ describe("InitCommand", () => {
   });
 
   describe("detectPackageManager", () => {
-    const mockedExistsSync = fs.existsSync as jest.MockedFunction<typeof fs.existsSync>;
-
     afterEach(() => {
       mockedExistsSync.mockReset();
     });
 
-    it("detects bun from bun.lockb", async () => {
+    it("detects bun from bun.lockb", () => {
       mockedExistsSync.mockImplementation((p: any) => String(p) === "bun.lockb");
       const initCommand = new InitCommand(commandOptions);
       expect(initCommand.packageManager).toBe("bun");
     });
 
-    it("detects bun from bun.lock", async () => {
+    it("detects bun from bun.lock", () => {
       mockedExistsSync.mockImplementation((p: any) => String(p) === "bun.lock");
       const initCommand = new InitCommand(commandOptions);
       expect(initCommand.packageManager).toBe("bun");
     });
 
-    it("detects bun from bunfig.toml", async () => {
+    it("detects bun from bunfig.toml", () => {
       mockedExistsSync.mockImplementation((p: any) => String(p) === "bunfig.toml");
       const initCommand = new InitCommand(commandOptions);
       expect(initCommand.packageManager).toBe("bun");
     });
 
-    it("detects yarn from yarn.lock", async () => {
+    it("detects yarn from yarn.lock", () => {
       mockedExistsSync.mockImplementation((p: any) => String(p) === "yarn.lock");
       const initCommand = new InitCommand(commandOptions);
       expect(initCommand.packageManager).toBe("yarn");
     });
 
-    it("detects pnpm from pnpm-lock.yaml", async () => {
+    it("detects pnpm from pnpm-lock.yaml", () => {
       mockedExistsSync.mockImplementation((p: any) => String(p) === "pnpm-lock.yaml");
       const initCommand = new InitCommand(commandOptions);
       expect(initCommand.packageManager).toBe("pnpm");
     });
 
-    it("detects npm from package-lock.json", async () => {
+    it("detects npm from package-lock.json", () => {
       mockedExistsSync.mockImplementation((p: any) => String(p) === "package-lock.json");
       const initCommand = new InitCommand(commandOptions);
       expect(initCommand.packageManager).toBe("npm");
     });
 
-    it("defaults to npm when no lockfile exists", async () => {
+    it("defaults to npm when no lockfile exists", () => {
       mockedExistsSync.mockReturnValue(false);
       const initCommand = new InitCommand(commandOptions);
       expect(initCommand.packageManager).toBe("npm");
     });
 
-    it("prioritizes bun over other lockfiles", async () => {
+    it("prioritizes bun over other lockfiles", () => {
       mockedExistsSync.mockImplementation(
         (p: any) =>
           String(p) === "bun.lockb" || String(p) === "yarn.lock" || String(p) === "package-lock.json"
@@ -281,10 +280,7 @@ describe("InitCommand", () => {
   });
 
   describe("detectInvokedPackageManager", () => {
-    const mockedExistsSync = fs.existsSync as jest.MockedFunction<typeof fs.existsSync>;
-
     beforeEach(() => {
-      // Ensure detectPackageManager returns null so constructor falls through to detectInvokedPackageManager
       mockedExistsSync.mockReturnValue(false);
     });
 
@@ -292,44 +288,21 @@ describe("InitCommand", () => {
       mockedExistsSync.mockReset();
     });
 
-    // Spy on detectInvokedPackageManager to control the invoker path.
-    // The method reads require.main which is not easily mockable in Jest,
-    // so we intercept the prototype method to simulate different invoker paths.
-    // The mock mirrors the production implementation (filename ?? path fallback,
-    // /[\\/]/ split, leading-dot normalization).
     function createWithInvoker(
       filename: string | undefined,
       modulePath: string | undefined
     ): InstanceType<typeof InitCommand> {
       const spy = jest
-        .spyOn(InitCommand.prototype as any, "detectInvokedPackageManager")
-        .mockImplementation(function (this: any) {
-          // Mirror the production code: prefer filename over path, handle undefined.
-          const invokerPath = (filename ?? modulePath) || "";
-          // Use /[\\/]/ to split on both POSIX (/) and Windows (\) separators.
-          const pathSegments = invokerPath.split(/[\\/]/);
-          for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
-            if (
-              pathSegments.some((segment: string) => {
-                const normalized = segment.replace(/^\./, "");
-                return normalized === pkgManager || normalized.startsWith(`${pkgManager}@`);
-              })
-            ) {
-              return pkgManager;
-            }
-          }
-          return null;
-        });
+        .spyOn(InitCommand.prototype, "getInvokerModule")
+        .mockReturnValue({ filename, path: modulePath });
       const initCommand = new InitCommand(commandOptions);
       spy.mockRestore();
       return initCommand;
     }
 
-    // Convenience wrapper for tests that supply a full file path (filename === path are
-    // both derived from it, matching Node.js where path === dirname(filename)).
-    function createWithInvokerPath(p: string): InstanceType<typeof InitCommand> {
-      const dir = p.replace(/[\\/][^\\/]*$/, "") || p;
-      return createWithInvoker(p, dir);
+    function createWithInvokerPath(filepath: string): InstanceType<typeof InitCommand> {
+      const dir = filepath.replace(/[\\/][^\\/]*$/, "") || filepath;
+      return createWithInvoker(filepath, dir);
     }
 
     it("does not false-positive match 'bun' in 'ubuntu' path", () => {
@@ -350,8 +323,6 @@ describe("InitCommand", () => {
     });
 
     it("detects bun when module.path is undefined but filename is set (bun CJS runtime)", () => {
-      // In bun's CJS runtime, require.main.path may be undefined while filename is always set.
-      // The production code uses `invoker.filename ?? invoker.path` to handle this.
       const initCommand = createWithInvoker(
         "/home/runner/.bun/install/cache/lerna@999.9.9-e2e.0/node_modules/lerna/dist/cli.js",
         undefined
@@ -360,13 +331,10 @@ describe("InitCommand", () => {
     });
 
     it("detects bun from process.versions.bun even when require.main is unavailable", () => {
-      // In bun's CJS runtime, require.main may be null. process.versions.bun is the
-      // canonical way to detect bun execution and is checked before require.main.
       const versions = process.versions as Record<string, string>;
       const original = versions.bun;
       versions.bun = "1.0.0";
       try {
-        // Use the real detectInvokedPackageManager (no spy) to exercise the production guard.
         const initCommand = new InitCommand(commandOptions);
         expect(initCommand.packageManager).toBe("bun");
       } finally {

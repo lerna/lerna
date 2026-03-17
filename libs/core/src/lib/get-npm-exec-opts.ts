@@ -8,6 +8,7 @@ export function getNpmExecOpts(pkg: { name: any; location: string }, registry?: 
 
   if (registry) {
     env.npm_config_registry = registry;
+    // Set unconditionally since this function doesn't know the active client; harmless for non-bun operations.
     env.BUN_CONFIG_REGISTRY = registry;
   }
 

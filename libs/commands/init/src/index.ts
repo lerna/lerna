@@ -17,7 +17,6 @@ import {
 } from "@nx/devkit";
 import { existsSync } from "fs";
 import { readFileSync } from "fs-extra";
-import path from "path";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
 
 const LARGE_BUFFER = 1024 * 1000000;
@@ -269,6 +268,10 @@ export class InitCommand {
    * - pnpx returns 'pnpm'
    * - yarn create returns 'yarn'
    */
+  protected getInvokerModule(): { filename?: string; path?: string } | null {
+    return require.main || process["mainModule"] || null;
+  }
+
   private detectInvokedPackageManager(): PackageManager | null {
     let detectedPackageManager: PackageManager | null = null;
 
@@ -279,8 +282,7 @@ export class InitCommand {
       return "bun";
     }
 
-    // mainModule is deprecated since Node 14, fallback for older versions
-    const invoker = require.main || process["mainModule"];
+    const invoker = this.getInvokerModule();
 
     if (!invoker) {
       this.logger.verbose("", "Could not detect package manager from process");

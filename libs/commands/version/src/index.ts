@@ -847,11 +847,16 @@ class VersionCommand extends Command {
       if (lockfilePath) {
         const lockfileName = path.basename(lockfilePath);
         this.logger.verbose("version", `Updating root ${lockfileName}`);
-        const bunArgs = ["install", "--lockfile-only", ...npmClientArgs];
-        if (!runScriptsOnLockfileUpdate) {
-          bunArgs.push("--ignore-scripts");
-        }
-        await execPackageManager("bun", bunArgs, this.execOpts);
+        await execPackageManager(
+          "bun",
+          [
+            "install",
+            "--lockfile-only",
+            !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
+            ...npmClientArgs,
+          ].filter(Boolean),
+          this.execOpts
+        );
         changedFiles.add(lockfilePath);
       }
     }

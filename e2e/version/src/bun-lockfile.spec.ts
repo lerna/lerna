@@ -1,5 +1,5 @@
 import { Fixture, normalizeCommitSHAs, normalizeEnvironment } from "@lerna/e2e-utils";
-import { existsSync, statSync } from "fs-extra";
+import { existsSync } from "fs-extra";
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
@@ -19,14 +19,14 @@ describe("lerna-version-bun-lockfile", () => {
       name: "lerna-version-bun-lockfile",
       packageManager: "bun",
       initializeGit: true,
-      lernaInit: { args: [] },
+      lernaInit: { args: [`--packages="packages/*"`] },
       installDependencies: true,
     });
   });
 
   afterEach(() => fixture.destroy());
 
-  it("should update bun.lockb when packages are versioned", async () => {
+  it("should update bun lockfile when packages are versioned", async () => {
     await fixture.lerna("create package-a -y");
     await fixture.lerna("create package-b --dependencies package-a -y");
 
@@ -34,24 +34,16 @@ describe("lerna-version-bun-lockfile", () => {
     await fixture.createInitialGitCommit();
     await fixture.exec("git push origin test-main");
 
-    const lockfilePath = fixture.getWorkspacePath("bun.lockb");
-    expect(existsSync(lockfilePath)).toBe(true);
-    const initialMtime = statSync(lockfilePath).mtimeMs;
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
     const output = await fixture.lerna("version 1.0.0 -y");
 
     expect(output.combinedOutput).toContain("lerna success version finished");
 
-    expect(existsSync(lockfilePath)).toBe(true);
-    const updatedMtime = statSync(lockfilePath).mtimeMs;
-    expect(updatedMtime).toBeGreaterThan(initialMtime);
+    const gitLogOutput = await fixture.exec("git log -1 --name-only --oneline");
+    expect(gitLogOutput.combinedOutput).toMatch(/bun\.lock(b)?/);
   });
 
   it("should respect --ignore-scripts flag during lockfile update", async () => {
     await fixture.overrideLernaConfig({
-      npmClient: "bun",
       command: {
         version: {
           ignoreScripts: true,
@@ -60,15 +52,22 @@ describe("lerna-version-bun-lockfile", () => {
     });
 
     await fixture.lerna("create package-c -y");
+
+    await fixture.addScriptsToPackage({
+      packagePath: "packages/package-c",
+      scripts: {
+        preinstall: "node -e \"require('fs').writeFileSync('preinstall-ran.txt', 'true')\"",
+      },
+    });
+
     await fixture.install();
     await fixture.createInitialGitCommit();
     await fixture.exec("git push origin test-main");
 
-    const lockfilePath = fixture.getWorkspacePath("bun.lockb");
-    expect(existsSync(lockfilePath)).toBe(true);
-
     const output = await fixture.lerna("version 2.0.0 -y");
     expect(output.combinedOutput).toContain("lerna success version finished");
-    expect(existsSync(lockfilePath)).toBe(true);
+
+    const sentinelPath = fixture.getWorkspacePath("packages/package-c/preinstall-ran.txt");
+    expect(existsSync(sentinelPath)).toBe(false);
   });
 });
