@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import fs from "fs-extra";
 import log from "../npmlog";
 import { Package } from "../package";
@@ -5,6 +6,20 @@ import { BLANK_LINE, BaseChangelogOptions, CHANGELOG_HEADER, ChangelogType, EOL 
 import { getChangelogConfig } from "./get-changelog-config";
 import { makeBumpOnlyFilter } from "./make-bump-only-filter";
 import { readExistingChangelog } from "./read-existing-changelog";
+
+/**
+ * Read the git remote origin URL for a given directory.
+ * Returns the URL string or null if not available.
+ */
+function getGitRemoteUrl(cwd: string): string | null {
+  try {
+    return (
+      execFileSync("git", ["config", "--get", "remote.origin.url"], { cwd, encoding: "utf8" }).trim() || null
+    );
+  } catch {
+    return null;
+  }
+}
 
 export async function updateChangelog(
   pkg: Package,
@@ -34,6 +49,15 @@ export async function updateChangelog(
   // This must be called for all changelog types — the new ConventionalChangelog API
   // does not auto-discover repository context like the old conventional-changelog-core.
   generator.readPackage(pkg.manifestLocation);
+
+  // The new ConventionalChangelog class uses parseHostedGitUrl which rejects local
+  // filesystem paths (e.g. /tmp/lerna-e2e/.../origin). The old conventional-changelog-core
+  // passed these through directly as repoUrl. To preserve this behavior, we read the
+  // git remote URL and set it as repoUrl in the context as a fallback.
+  const remoteUrl = getGitRemoteUrl(pkg.location);
+  if (remoteUrl) {
+    generator.context({ repoUrl: remoteUrl } as any);
+  }
 
   if (type === "root") {
     generator.context({ version, currentTag: `${tagPrefix}${version}` } as any);
