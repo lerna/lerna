@@ -1,0 +1,11 @@
+{
+  "name": "pkg-with-overrides",
+  "version": "1.0.0",
+  "files": [
+    "index.js"
+  ],
+  "overrides": {
+    "@graphql-tools/url-loader@6>extract-files": "10.0.0",
+    "some-package": "2.0.0"
+  }
+}

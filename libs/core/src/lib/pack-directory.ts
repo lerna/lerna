@@ -1,4 +1,5 @@
 import Arborist from "@npmcli/arborist";
+import fs from "fs-extra";
 import packlist from "npm-packlist";
 import path from "path";
 import { IntegrityMap } from "ssri";
@@ -69,11 +70,33 @@ export async function packDirectory(
   await runLifecycle(pkg, "prepack", opts);
   await pkg.refresh();
 
-  const arborist = new Arborist({
-    path: pkg.contents,
-  });
-  const tree = await arborist.loadActual();
-  const files = await packlist(tree);
+  // Temporarily strip overrides from package.json to prevent arborist from
+  // failing on npm override keys that use scoped dependency syntax (e.g.
+  // "@graphql-tools/url-loader@6>extract-files"). Overrides are only relevant
+  // for dependency resolution, not for determining which files to pack.
+  // See: https://github.com/lerna/lerna/issues/4050
+  const manifestPath = path.join(pkg.contents, "package.json");
+  const originalManifest = await fs.readFile(manifestPath, "utf8");
+  const manifestJson = JSON.parse(originalManifest);
+  const hadOverrides = "overrides" in manifestJson;
+
+  if (hadOverrides) {
+    const { overrides, ...rest } = manifestJson;
+    await fs.writeFile(manifestPath, JSON.stringify(rest, null, 2) + "\n");
+  }
+
+  let files: string[];
+  try {
+    const arborist = new Arborist({
+      path: pkg.contents,
+    });
+    const tree = await arborist.loadActual();
+    files = await packlist(tree);
+  } finally {
+    if (hadOverrides) {
+      await fs.writeFile(manifestPath, originalManifest);
+    }
+  }
 
   const stream = tar.create(
     {

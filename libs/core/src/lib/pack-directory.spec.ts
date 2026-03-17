@@ -1,6 +1,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { initFixtureFactory } from "@lerna/test-helpers";
+import fs from "fs-extra";
 import normalizePath from "normalize-path";
 import path from "path";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -288,5 +289,30 @@ describe("pack-directory", () => {
         "version": "2.0.0",
       }
     `);
+  });
+
+  it("handles package.json with npm overrides using scoped dependency syntax", async () => {
+    const cwd = await initFixture("pack-directory-overrides");
+    const conf = npmConf({ prefix: cwd }).snapshot;
+    const pkgs = await getPackages(cwd);
+
+    const pkg = pkgs[0]!;
+    const manifestPath = path.join(pkg.contents, "package.json");
+    const originalManifest = await fs.readFile(manifestPath, "utf8");
+
+    // Should not throw despite overrides containing "@graphql-tools/url-loader@6>extract-files"
+    const result = await packDirectory(pkg, pkg.location, conf);
+
+    expect(result.name).toBe("pkg-with-overrides");
+    expect(result.version).toBe("1.0.0");
+    expect(result.files.map((f: any) => f.path)).toContain("package.json");
+
+    // Verify the package.json was restored with its original content (including overrides)
+    const restoredManifest = await fs.readFile(manifestPath, "utf8");
+    expect(restoredManifest).toBe(originalManifest);
+    expect(JSON.parse(restoredManifest).overrides).toEqual({
+      "@graphql-tools/url-loader@6>extract-files": "10.0.0",
+      "some-package": "2.0.0",
+    });
   });
 });
