@@ -227,40 +227,17 @@ describe("InitCommand", () => {
       mockedExistsSync.mockReset();
     });
 
-    it("detects bun from bun.lockb", () => {
-      mockedExistsSync.mockImplementation((p: any) => String(p) === "bun.lockb");
+    it.each([
+      ["bun.lockb", "bun"],
+      ["bun.lock", "bun"],
+      ["bunfig.toml", "bun"],
+      ["yarn.lock", "yarn"],
+      ["pnpm-lock.yaml", "pnpm"],
+      ["package-lock.json", "npm"],
+    ])("detects %s as %s", (file, expected) => {
+      mockedExistsSync.mockImplementation((p: any) => String(p) === file);
       const initCommand = new InitCommand(commandOptions);
-      expect(initCommand.packageManager).toBe("bun");
-    });
-
-    it("detects bun from bun.lock", () => {
-      mockedExistsSync.mockImplementation((p: any) => String(p) === "bun.lock");
-      const initCommand = new InitCommand(commandOptions);
-      expect(initCommand.packageManager).toBe("bun");
-    });
-
-    it("detects bun from bunfig.toml", () => {
-      mockedExistsSync.mockImplementation((p: any) => String(p) === "bunfig.toml");
-      const initCommand = new InitCommand(commandOptions);
-      expect(initCommand.packageManager).toBe("bun");
-    });
-
-    it("detects yarn from yarn.lock", () => {
-      mockedExistsSync.mockImplementation((p: any) => String(p) === "yarn.lock");
-      const initCommand = new InitCommand(commandOptions);
-      expect(initCommand.packageManager).toBe("yarn");
-    });
-
-    it("detects pnpm from pnpm-lock.yaml", () => {
-      mockedExistsSync.mockImplementation((p: any) => String(p) === "pnpm-lock.yaml");
-      const initCommand = new InitCommand(commandOptions);
-      expect(initCommand.packageManager).toBe("pnpm");
-    });
-
-    it("detects npm from package-lock.json", () => {
-      mockedExistsSync.mockImplementation((p: any) => String(p) === "package-lock.json");
-      const initCommand = new InitCommand(commandOptions);
-      expect(initCommand.packageManager).toBe("npm");
+      expect(initCommand.packageManager).toBe(expected);
     });
 
     it("defaults to npm when no lockfile exists", () => {

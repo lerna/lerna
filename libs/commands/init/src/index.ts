@@ -288,16 +288,13 @@ export class InitCommand {
       this.logger.verbose("", "Could not detect package manager from process");
       return detectedPackageManager;
     }
-    // Prefer filename (full path to the entry file) over path (directory) because bun's
-    // CJS runtime always sets module.filename but may leave module.path undefined.
-    // Use /[\\/]/ so the split works on both POSIX ("/") and Windows ("\") separators.
+    // Prefer filename over path; bun CJS may leave path undefined. Split on both / and \.
     const invokerPath = (invoker.filename ?? invoker.path) || "";
     const pathSegments = invokerPath.split(/[\\/]/);
     for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
       if (
         pathSegments.some((segment: string) => {
-          // Normalize leading dot so that virtual store dirs like ".pnpm" (used by pnpm dlx)
-          // and ".bun" (bun's install dir) are correctly matched.
+          // Strip leading dot to match ".pnpm" and ".bun" directory segments.
           const normalized = segment.replace(/^\./, "");
           return normalized === pkgManager || normalized.startsWith(`${pkgManager}@`);
         })

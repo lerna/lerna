@@ -782,21 +782,30 @@ class VersionCommand extends Command {
       await this.runRootLifecycle("version");
     }
 
-    if (this.options.npmClient === "pnpm") {
-      this.logger.verbose("version", "Updating root pnpm-lock.yaml");
-      await execPackageManager(
-        "pnpm",
-        [
-          "install",
-          "--lockfile-only",
-          !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
-          ...npmClientArgs,
-        ].filter(Boolean),
-        this.execOpts
-      );
+    if (this.options.npmClient === "pnpm" || this.options.npmClient === "bun") {
+      const client = this.options.npmClient;
+      const lockfileCandidates: Record<string, string[]> = {
+        pnpm: ["pnpm-lock.yaml"],
+        bun: ["bun.lockb", "bun.lock"],
+      };
+      const candidates = lockfileCandidates[client].map((f) => path.join(this.project.rootPath, f));
+      const lockfilePath =
+        client === "pnpm" ? candidates[0] : candidates.find((p) => fs.existsSync(p));
 
-      const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
-      changedFiles.add(lockfilePath);
+      if (lockfilePath) {
+        this.logger.verbose("version", `Updating root ${path.basename(lockfilePath)}`);
+        await execPackageManager(
+          client,
+          [
+            "install",
+            "--lockfile-only",
+            !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
+            ...npmClientArgs,
+          ].filter(Boolean),
+          this.execOpts
+        );
+        changedFiles.add(lockfilePath);
+      }
     }
 
     if (this.options.npmClient === "yarn") {
@@ -827,31 +836,6 @@ class VersionCommand extends Command {
           [
             "install",
             "--package-lock-only",
-            !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
-            ...npmClientArgs,
-          ].filter(Boolean),
-          this.execOpts
-        );
-        changedFiles.add(lockfilePath);
-      }
-    }
-
-    if (this.options.npmClient === "bun") {
-      // Check for both bun.lockb (legacy binary format) and bun.lock (new text format)
-      const lockfilePaths = [
-        path.join(this.project.rootPath, "bun.lockb"),
-        path.join(this.project.rootPath, "bun.lock"),
-      ];
-      const lockfilePath = lockfilePaths.find((p) => fs.existsSync(p));
-
-      if (lockfilePath) {
-        const lockfileName = path.basename(lockfilePath);
-        this.logger.verbose("version", `Updating root ${lockfileName}`);
-        await execPackageManager(
-          "bun",
-          [
-            "install",
-            "--lockfile-only",
             !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
             ...npmClientArgs,
           ].filter(Boolean),
