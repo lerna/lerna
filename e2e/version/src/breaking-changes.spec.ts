@@ -98,9 +98,6 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
         * old API has been removed
 
 
-
-
-
         # 1.1.0 ({YYYY}-{MM}-{DD})
 
 
@@ -154,9 +151,6 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
         ## [1.1.1](tmp/lerna-e2e/lerna-version-breaking-changes/origin/compare/package-a@1.1.0...package-a@1.1.1) ({YYYY}-{MM}-{DD})
 
         **Note:** Version bump only for package package-a
-
-
-
 
 
         # 1.1.0 ({YYYY}-{MM}-{DD})
@@ -217,9 +211,6 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
         ### BREAKING CHANGES
 
         * complete rewrite of public API
-
-
-
 
 
         # 1.1.0 ({YYYY}-{MM}-{DD})
