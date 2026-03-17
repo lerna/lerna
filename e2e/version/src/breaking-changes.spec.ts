@@ -153,6 +153,9 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
         **Note:** Version bump only for package package-a
 
 
+
+
+
         # 1.1.0 ({YYYY}-{MM}-{DD})
 
 
