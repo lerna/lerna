@@ -20,19 +20,19 @@ test("lerna publish applies build metadata to fixed versions", async () => {
   const { stdout } = await cliRunner(cwd, env)(...args);
   expect(stdout).toMatchInlineSnapshot(`
 
-            Changes:
-             - package-1: 1.0.0 => 1.0.1+001
-             - package-2: 1.0.0 => 1.0.1+001
-             - package-3: 1.0.0 => 1.0.1+001
-             - package-4: 1.0.0 => 1.0.1+001
-             - package-5: 1.0.0 => 1.0.1+001 (private)
+    Changes:
+     - package-1: 1.0.0 => 1.0.1+001
+     - package-2: 1.0.0 => 1.0.1+001
+     - package-3: 1.0.0 => 1.0.1+001
+     - package-4: 1.0.0 => 1.0.1+001
+     - package-5: 1.0.0 => 1.0.1+001 (private)
 
-            Successfully published:
-             - package-1@1.0.1+001
-             - package-2@1.0.1+001
-             - package-3@1.0.1+001
-             - package-4@1.0.1+001
-      `);
+    Successfully published:
+     - package-1@1.0.1+001
+     - package-2@1.0.1+001
+     - package-3@1.0.1+001
+     - package-4@1.0.1+001
+  `);
 
   const patch = await showCommit(cwd);
   expect(patch).toMatchInlineSnapshot(`
@@ -104,12 +104,12 @@ test("lerna publish updates build metadata to fixed versions", async () => {
   const { stdout } = await cliRunner(cwd, env)(...args);
   expect(stdout).toMatchInlineSnapshot(`
 
-            Changes:
-             - package-1: 1.0.0+001 => 1.0.1+002
+    Changes:
+     - package-1: 1.0.0+001 => 1.0.1+002
 
-            Successfully published:
-             - package-1@1.0.1+002
-      `);
+    Successfully published:
+     - package-1@1.0.1+002
+  `);
 
   const patch = await showCommit(cwd);
   expect(patch).toMatchInlineSnapshot(`
@@ -145,21 +145,21 @@ test("lerna publish applies build metadata independent versions", async () => {
   const { stdout } = await cliRunner(cwd, env)(...args);
   expect(stdout).toMatchInlineSnapshot(`
 
-            Changes:
-             - package-1: 1.0.0 => 2.0.0+001
-             - package-2: 2.0.0 => 3.0.0+001
-             - package-3: 3.0.0 => 4.0.0+001
-             - package-4: 4.0.0 => 5.0.0+001
-             - package-5: 5.0.0 => 6.0.0+001 (private)
-             - package-6: 0.1.0 => 1.0.0+001
+    Changes:
+     - package-1: 1.0.0 => 2.0.0+001
+     - package-2: 2.0.0 => 3.0.0+001
+     - package-3: 3.0.0 => 4.0.0+001
+     - package-4: 4.0.0 => 5.0.0+001
+     - package-5: 5.0.0 => 6.0.0+001 (private)
+     - package-6: 0.1.0 => 1.0.0+001
 
-            Successfully published:
-             - package-1@2.0.0+001
-             - package-2@3.0.0+001
-             - package-3@4.0.0+001
-             - package-4@5.0.0+001
-             - package-6@1.0.0+001
-      `);
+    Successfully published:
+     - package-1@2.0.0+001
+     - package-2@3.0.0+001
+     - package-3@4.0.0+001
+     - package-4@5.0.0+001
+     - package-6@1.0.0+001
+  `);
 
   const patch = await showCommit(cwd);
   expect(patch).toMatchInlineSnapshot(`
@@ -235,14 +235,14 @@ test("lerna publish updates build metadata to independent versions", async () =>
   const { stdout } = await cliRunner(cwd, env)(...args);
   expect(stdout).toMatchInlineSnapshot(`
 
-            Changes:
-             - package-1: 1.0.0+001 => 1.0.1+002
-             - package-2: 2.0.0+001 => 2.0.1+002
+    Changes:
+     - package-1: 1.0.0+001 => 1.0.1+002
+     - package-2: 2.0.0+001 => 2.0.1+002
 
-            Successfully published:
-             - package-1@1.0.1+002
-             - package-2@2.0.1+002
-      `);
+    Successfully published:
+     - package-1@1.0.1+002
+     - package-2@2.0.1+002
+  `);
 
   const patch = await showCommit(cwd);
   expect(patch).toMatchInlineSnapshot(`
