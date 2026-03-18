@@ -33,12 +33,19 @@ function getGitRemoteUrl(cwd: string): string | null {
  */
 function parseRemoteUrl(remoteUrl: string): { owner: string; project: string } | null {
   let pathname: string;
-  try {
-    const parsed = new URL(remoteUrl);
-    pathname = parsed.pathname;
-  } catch {
-    // Not a valid URL — treat the whole thing as a pathname (local filesystem path)
-    pathname = remoteUrl;
+
+  // Handle scp-style SSH URLs (git@host:owner/repo) by converting to a standard URL
+  const scpMatch = remoteUrl.match(/^[\w-]+@([^:]+):(.+)$/);
+  if (scpMatch) {
+    pathname = "/" + scpMatch[2];
+  } else {
+    try {
+      const parsed = new URL(remoteUrl);
+      pathname = parsed.pathname;
+    } catch {
+      // Not a valid URL — treat the whole thing as a pathname (local filesystem path)
+      pathname = remoteUrl;
+    }
   }
 
   // Match: optional leading slash, then owner path segments, then /project

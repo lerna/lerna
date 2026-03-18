@@ -32,25 +32,34 @@ function normalizePresetConfig(config: any): any {
   }
 
   // Legacy format → modern format
-  if (config && (config.parserOpts || config.writerOpts || config.conventionalChangelog)) {
+  if (
+    config &&
+    (config.parserOpts ||
+      config.writerOpts ||
+      config.conventionalChangelog ||
+      config.recommendedBumpOpts ||
+      config.gitRawCommitsOpts)
+  ) {
     log.verbose("getChangelogConfig", "Normalizing legacy preset API to modern format");
 
     const normalized: any = { ...config };
 
-    // Use conventionalChangelog sub-object if present (some presets wrap config there)
+    // Use conventionalChangelog sub-object if present (some presets wrap config there),
+    // but also check top-level properties as fallback since some presets place
+    // gitRawCommitsOpts at the top level alongside conventionalChangelog.
     const cc = config.conventionalChangelog || config;
 
-    if (cc.parserOpts && !normalized.parser) {
-      normalized.parser = cc.parserOpts;
+    if (!normalized.parser) {
+      normalized.parser = cc.parserOpts || config.parserOpts;
     }
-    if (cc.writerOpts && !normalized.writer) {
-      normalized.writer = cc.writerOpts;
+    if (!normalized.writer) {
+      normalized.writer = cc.writerOpts || config.writerOpts;
     }
-    if (cc.gitRawCommitsOpts && !normalized.commits) {
-      normalized.commits = cc.gitRawCommitsOpts;
+    if (!normalized.commits) {
+      normalized.commits = cc.gitRawCommitsOpts || config.gitRawCommitsOpts;
     }
-    if (config.recommendedBumpOpts?.whatBump && !normalized.whatBump) {
-      normalized.whatBump = config.recommendedBumpOpts.whatBump;
+    if (!normalized.whatBump) {
+      normalized.whatBump = config.recommendedBumpOpts?.whatBump || config.whatBump;
     }
 
     return normalized;
