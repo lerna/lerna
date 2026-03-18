@@ -30,10 +30,9 @@ export async function recommendVersion(
   // For legacy presets, recommendedBumpOpts.parserOpts are bump-specific overrides
   // (e.g. different noteKeywords or headerPattern) that historically only applied to
   // version bump calculation, not changelog rendering. Apply them here only.
-  const bumpConfig =
-    config.recommendedBumpOpts?.parserOpts
-      ? { ...config, parser: { ...config.parser, ...config.recommendedBumpOpts.parserOpts } }
-      : config;
+  const bumpConfig = config.recommendedBumpOpts?.parserOpts
+    ? { ...config, parser: { ...config.parser, ...config.recommendedBumpOpts.parserOpts } }
+    : config;
   bumper.config(bumpConfig);
   bumper.commits({ path: pkg.location });
 
