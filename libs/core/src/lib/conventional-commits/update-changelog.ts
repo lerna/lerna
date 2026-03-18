@@ -75,7 +75,7 @@ export async function updateChangelog(
     import("conventional-changelog") as Promise<typeof import("conventional-changelog")>,
   ]);
 
-  const generator = new ConventionalChangelog();
+  const generator = new ConventionalChangelog(pkg.location);
 
   // Set the preset config
   generator.config(config);
