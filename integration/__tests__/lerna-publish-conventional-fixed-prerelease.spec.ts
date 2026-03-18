@@ -160,9 +160,6 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
       * **package-2:** And another thing ([SHA](COMMIT_URL))
 
 
-
-
-
       ## [2.0.1](/compare/v2.0.1-alpha.0...v2.0.1) (YYYY-MM-DD)
 
       **Note:** Version bump only for package normal
@@ -179,18 +176,12 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
       * **package-4:** And another thing ([SHA](COMMIT_URL))
 
 
-
-
-
       # [2.0.0](/compare/v2.0.0-alpha.1...v2.0.0) (YYYY-MM-DD)
 
 
       ### Features
 
       * **package-1:** Add baz ([SHA](COMMIT_URL))
-
-
-
 
 
       # [2.0.0-alpha.1](/compare/v2.0.0-alpha.0...v2.0.0-alpha.1) (YYYY-MM-DD)
@@ -204,9 +195,6 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
       ### Features
 
       * **package-2:** Add baz ([SHA](COMMIT_URL))
-
-
-
 
 
       # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
@@ -246,18 +234,12 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
       * **package-1:** Add baz ([SHA](COMMIT_URL))
 
 
-
-
-
       # [2.0.0-alpha.1](/compare/v2.0.0-alpha.0...v2.0.0-alpha.1) (YYYY-MM-DD)
 
 
       ### Bug Fixes
 
       * **package-1:** Fix foo ([SHA](COMMIT_URL))
-
-
-
 
 
       # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
@@ -286,9 +268,6 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
       * **package-2:** And another thing ([SHA](COMMIT_URL))
 
 
-
-
-
       # [2.0.0](/compare/v2.0.0-alpha.1...v2.0.0) (YYYY-MM-DD)
 
       **Note:** Version bump only for package package-2
@@ -303,9 +282,6 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
       ### Features
 
       * **package-2:** Add baz ([SHA](COMMIT_URL))
-
-
-
 
 
       # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
@@ -387,9 +363,6 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
       ### Bug Fixes
 
       * **package-4:** And another thing ([SHA](COMMIT_URL))
-
-
-
 
 
       # [2.0.0](/compare/v2.0.0-alpha.1...v2.0.0) (YYYY-MM-DD)

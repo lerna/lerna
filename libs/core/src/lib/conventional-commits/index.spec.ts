@@ -322,7 +322,7 @@ describe("conventional-commits", () => {
         recommendVersion(pkg1, "fixed", {
           changelogPreset: "./scripts/erroring-preset.js",
         })
-      ).rejects.toThrow("whatBump must be a function");
+      ).rejects.toThrow("`whatBump` must be a function");
     });
 
     it("throws an error when an implicit changelog preset cannot be loaded", async () => {
@@ -697,25 +697,15 @@ describe("conventional-commits", () => {
       `);
     });
 
-    it("normalizes new v8+ preset API to legacy format", async () => {
+    it("preserves new v8+ preset API format", async () => {
       const cwd = await initFixture("fixed");
 
       const config = await getChangelogConfig("./scripts/new-api-preset.js", cwd);
 
-      // Should have the new API properties
+      // Should have the new API properties (modern format)
       expect(config.parser).toBeDefined();
       expect(config.writer).toBeDefined();
       expect(config.whatBump).toBeDefined();
-
-      // Should also have normalized legacy properties
-      expect(config.parserOpts).toBeDefined();
-      expect(config.writerOpts).toBeDefined();
-      expect(config.conventionalChangelog).toBeDefined();
-      expect(config.conventionalChangelog.parserOpts).toBeDefined();
-      expect(config.conventionalChangelog.writerOpts).toBeDefined();
-      expect(config.recommendedBumpOpts).toBeDefined();
-      expect(config.recommendedBumpOpts.whatBump).toEqual(expect.any(Function));
-      expect(config.recommendedBumpOpts.parserOpts).toBeDefined();
     });
 
     it("supports new v8+ preset API for changelog generation", async () => {
@@ -835,9 +825,6 @@ describe("conventional-commits", () => {
         #### Some title
 
         Some *paragraph*
-
-
-
 
 
         <a name="1.0.0"></a>

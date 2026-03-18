@@ -81,9 +81,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **package-2:** And another thing ([SHA](COMMIT_URL))
 
 
-
-
-
 # 2.0.0 (YYYY-MM-DD)
 
 
@@ -145,9 +142,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * **package-2:** And another thing ([SHA](COMMIT_URL))
-
-
-
 
 
 # 2.0.0 (YYYY-MM-DD)

@@ -113,9 +113,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **package-2:** And another thing ([SHA](COMMIT_URL))
 
 
-
-
-
 # 2.1.0 (YYYY-MM-DD)
 
 

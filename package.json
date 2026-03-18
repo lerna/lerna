@@ -29,6 +29,7 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org",
   "devDependencies": {
+    "conventional-recommended-bump": "11.2.0",
     "@nx/esbuild": "22.0.3",
     "@nx/eslint": "22.0.3",
     "@nx/eslint-plugin": "22.0.3",
@@ -40,7 +41,6 @@
     "@swc/core": "1.13.3",
     "@types/cmd-shim": "^5.0.2",
     "@types/columnify": "^1.5.4",
-    "@types/conventional-recommended-bump": "^6.1.0",
     "@types/dedent": "^0.7.2",
     "@types/envinfo": "^7.8.4",
     "@types/fs-extra": "^11.0.4",
