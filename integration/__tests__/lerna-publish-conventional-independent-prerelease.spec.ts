@@ -190,6 +190,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **package-1:** Add baz ([SHA](COMMIT_URL))
 
+
 ## [1.1.2-alpha.0](/compare/package-1@1.1.1...package-1@1.1.2-alpha.0) (YYYY-MM-DD)
 
 
@@ -197,12 +198,14 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **package-1:** Unfix foo ([SHA](COMMIT_URL))
 
+
 ## [1.1.1](/compare/package-1@1.1.0...package-1@1.1.1) (YYYY-MM-DD)
 
 
 ### Bug Fixes
 
 * **package-1:** Fix foo ([SHA](COMMIT_URL))
+
 
 # [1.1.0](/compare/package-1@1.0.0...package-1@1.1.0) (YYYY-MM-DD)
 
@@ -252,6 +255,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * **package-2:** Add baz ([SHA](COMMIT_URL))
+
 
 ## [2.0.1-alpha.0](/compare/package-2@2.0.0...package-2@2.0.1-alpha.0) (YYYY-MM-DD)
 
