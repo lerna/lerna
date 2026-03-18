@@ -789,8 +789,7 @@ class VersionCommand extends Command {
         bun: ["bun.lockb", "bun.lock"],
       };
       const candidates = lockfileCandidates[client].map((f) => path.join(this.project.rootPath, f));
-      const lockfilePath =
-        client === "pnpm" ? candidates[0] : candidates.find((p) => fs.existsSync(p));
+      const lockfilePath = client === "pnpm" ? candidates[0] : candidates.find((p) => fs.existsSync(p));
 
       if (lockfilePath) {
         this.logger.verbose("version", `Updating root ${path.basename(lockfilePath)}`);
