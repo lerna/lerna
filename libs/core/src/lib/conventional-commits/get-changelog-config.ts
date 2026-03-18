@@ -26,7 +26,8 @@ function normalizePresetConfig(config: any): any {
     config &&
     (config.parser || config.writer || config.whatBump) &&
     !config.parserOpts &&
-    !config.writerOpts
+    !config.writerOpts &&
+    !config.conventionalChangelog
   ) {
     return config;
   }
