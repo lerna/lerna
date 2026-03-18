@@ -27,14 +27,21 @@ export async function recommendVersion(
   ]);
 
   const bumper = new Bumper();
-  bumper.config(config);
+  // For legacy presets, recommendedBumpOpts.parserOpts are bump-specific overrides
+  // (e.g. different noteKeywords or headerPattern) that historically only applied to
+  // version bump calculation, not changelog rendering. Apply them here only.
+  const bumpConfig =
+    config.recommendedBumpOpts?.parserOpts
+      ? { ...config, parser: { ...config.parser, ...config.recommendedBumpOpts.parserOpts } }
+      : config;
+  bumper.config(bumpConfig);
   bumper.commits({ path: pkg.location });
 
   if (type === "independent") {
     bumper.tag({ prefix: packagePrefix(pkg.name) });
   } else {
     // only fixed mode can have a custom tag prefix
-    bumper.tag({ prefix: tagPrefix || "v" });
+    bumper.tag({ prefix: tagPrefix ?? "v" });
   }
 
   // Pass whatBump explicitly — Bumper.config() only composes params,
