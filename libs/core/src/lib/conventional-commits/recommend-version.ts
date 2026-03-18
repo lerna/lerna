@@ -26,7 +26,7 @@ export async function recommendVersion(
     import("conventional-recommended-bump") as Promise<typeof import("conventional-recommended-bump")>,
   ]);
 
-  const bumper = new Bumper();
+  const bumper = new Bumper(pkg.location);
   // For legacy presets, recommendedBumpOpts.parserOpts are bump-specific overrides
   // (e.g. different noteKeywords or headerPattern) that historically only applied to
   // version bump calculation, not changelog rendering. Apply them here only.
