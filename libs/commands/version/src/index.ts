@@ -797,9 +797,7 @@ class VersionCommand extends Command {
           client,
           [
             "install",
-            // pnpm supports --lockfile-only to update the lockfile without a full install;
-            // bun does not have this flag — bun install updates the lockfile by default.
-            ...(client === "pnpm" ? ["--lockfile-only"] : []),
+            "--lockfile-only",
             !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
             ...npmClientArgs,
           ].filter(Boolean),
