@@ -61,6 +61,7 @@ describe("lerna-version-bun-lockfile", () => {
     });
 
     await fixture.install();
+    await fixture.exec("rm -f packages/package-c/preinstall-ran.txt");
     await fixture.createInitialGitCommit();
     await fixture.exec("git push origin test-main");
 

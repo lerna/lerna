@@ -782,28 +782,58 @@ class VersionCommand extends Command {
       await this.runRootLifecycle("version");
     }
 
-    if (this.options.npmClient === "pnpm" || this.options.npmClient === "bun") {
-      const client = this.options.npmClient;
-      const lockfileCandidates: Record<string, string[]> = {
-        pnpm: ["pnpm-lock.yaml"],
-        bun: ["bun.lockb", "bun.lock"],
-      };
-      const candidates = lockfileCandidates[client].map((f) => path.join(this.project.rootPath, f));
-      const lockfilePath = client === "pnpm" ? candidates[0] : candidates.find((p) => fs.existsSync(p));
+    if (this.options.npmClient === "pnpm") {
+      this.logger.verbose("version", "Updating root pnpm-lock.yaml");
+      await execPackageManager(
+        "pnpm",
+        [
+          "install",
+          "--lockfile-only",
+          !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
+          ...npmClientArgs,
+        ].filter(Boolean),
+        this.execOpts
+      );
+
+      const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
+      changedFiles.add(lockfilePath);
+    }
+
+    if (this.options.npmClient === "bun") {
+      const lockfileCandidates = ["bun.lockb", "bun.lock"];
+      const candidates = lockfileCandidates.map((f) => path.join(this.project.rootPath, f));
+      const lockfilePath = candidates.find((p) => fs.existsSync(p));
 
       if (lockfilePath) {
         this.logger.verbose("version", `Updating root ${path.basename(lockfilePath)}`);
-        await execPackageManager(
-          client,
-          [
-            "install",
-            "--lockfile-only",
-            !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
-            ...npmClientArgs,
-          ].filter(Boolean),
-          this.execOpts
-        );
-        changedFiles.add(lockfilePath);
+
+        // Bun caches workspace package versions from the existing lockfile and does not
+        // re-read them from package.json. Remove the stale lockfile so the regenerated
+        // one picks up the bumped versions.
+        const staleContent = fs.readFileSync(lockfilePath);
+        fs.unlinkSync(lockfilePath);
+
+        try {
+          await execPackageManager(
+            "bun",
+            [
+              "install",
+              "--lockfile-only",
+              !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
+              ...npmClientArgs,
+            ].filter(Boolean),
+            this.execOpts
+          );
+        } catch (err) {
+          // Restore the original lockfile so the user doesn't lose it on failure.
+          fs.writeFileSync(lockfilePath, staleContent);
+          throw err;
+        }
+
+        const updatedPath = candidates.find((p) => fs.existsSync(p));
+        if (updatedPath) {
+          changedFiles.add(updatedPath);
+        }
       }
     }
 
