@@ -246,7 +246,7 @@ export class InitCommand {
 
   private detectPackageManager(): PackageManager | null {
     const packageManager =
-      existsSync("bun.lockb") || existsSync("bun.lock") || existsSync("bunfig.toml")
+      existsSync("bun.lockb") || existsSync("bun.lock")
         ? "bun"
         : existsSync("yarn.lock")
         ? "yarn"
@@ -261,17 +261,18 @@ export class InitCommand {
     return packageManager;
   }
 
+  protected getInvokerModule(): { filename?: string; path?: string } | null {
+    return require.main || process["mainModule"] || null;
+  }
+
   /**
    * Detects which package manager was used to invoke lerna init command
    * based on the main Module process that invokes the command
    * - npx returns 'npm'
    * - pnpx returns 'pnpm'
    * - yarn create returns 'yarn'
+   * - bunx returns 'bun'
    */
-  protected getInvokerModule(): { filename?: string; path?: string } | null {
-    return require.main || process["mainModule"] || null;
-  }
-
   private detectInvokedPackageManager(): PackageManager | null {
     let detectedPackageManager: PackageManager | null = null;
 

@@ -230,7 +230,6 @@ describe("InitCommand", () => {
     it.each([
       ["bun.lockb", "bun"],
       ["bun.lock", "bun"],
-      ["bunfig.toml", "bun"],
       ["yarn.lock", "yarn"],
       ["pnpm-lock.yaml", "pnpm"],
       ["package-lock.json", "npm"],
