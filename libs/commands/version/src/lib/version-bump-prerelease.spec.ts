@@ -117,6 +117,26 @@ describe("version bump prerelease", () => {
     expect(message).toBe("v1.0.1-rc.0");
   });
 
+  test("version prerelease interpolates configured message placeholders", async () => {
+    const testDir = await initFixture("republish-prereleased");
+    const lernaConfigPath = path.join(testDir, "lerna.json");
+    const lernaConfig = await fs.readJson(lernaConfigPath);
+
+    await fs.writeJson(lernaConfigPath, {
+      ...lernaConfig,
+      command: {
+        version: {
+          message: "chore(release): version %s",
+        },
+      },
+    });
+    await setupChanges(testDir);
+    await lernaVersion(testDir)("prerelease", "--preid", "rc");
+
+    const message = await getCommitMessage(testDir);
+    expect(message).toBe("chore(release): version v1.0.1-rc.0");
+  });
+
   test("version prerelease with immediate graduation", async () => {
     const testDir = await initFixture("republish-prereleased");
 
