@@ -25,7 +25,7 @@ const config = {
     locales: ["en"],
   },
 
-  plugins: [],
+  plugins: ['docusaurus-plugin-copy-page-button'],
 
   presets: [
     [
