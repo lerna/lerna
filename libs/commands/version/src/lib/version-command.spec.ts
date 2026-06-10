@@ -661,16 +661,13 @@ Changes:
       await expect(command).rejects.toThrow("Please merge remote changes");
     });
 
-    it("logs a warning and exits early during CI publish", async () => {
+    it("throws an error during CI publish", async () => {
       isBehindUpstream.mockReturnValueOnce(true);
 
       const testDir = await initFixture("normal");
+      const command = lernaVersion(testDir)("--ci");
 
-      await lernaVersion(testDir)("--ci");
-
-      const [warning] = loggingOutput("warn");
-      expect(warning).toMatch("behind remote upstream");
-      expect(warning).toMatch("exiting");
+      await expect(command).rejects.toThrow("Please merge remote changes");
     });
   });
 
