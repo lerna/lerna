@@ -68,7 +68,7 @@
     "@types/uuid": "^10.0.0",
     "@types/write-file-atomic": "^4.0.3",
     "env-cmd": "^10.1.0",
-    "esbuild": "0.25.8",
+    "esbuild": "0.28.1",
     "eslint": "^9.32.0",
     "jest": "30.0.5",
     "jest-diff": "30.0.5",
