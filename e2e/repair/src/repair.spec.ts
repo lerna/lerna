@@ -57,9 +57,9 @@ describe("lerna-repair", () => {
       - nx: 22-0-0-consolidate-release-tag-config (Consolidates releaseTag* options into nested releaseTag object structure)
       - nx: 22-1-0-update-nx-wrapper (Updates the nx wrapper.)
       - nx: 22-6-1-add-claude-worktrees-to-git-ignore (Adds .claude/worktrees to .gitignore)
-      - nx: 22-6-0-enable-analytics-prompt (Prompts to enable usage analytics)
       - nx: 22-6-0-add-claude-settings-local-to-git-ignore (Adds .claude/settings.local.json to .gitignore)
       - nx: 22-7-0-add-polygraph-to-git-ignore (Adds .nx/polygraph to .gitignore)
+      - nx: 22-7-0-add-self-healing-to-gitignore (Adds .nx/self-healing to .gitignore)
       ---------------------------------------------------------
 
       Running migration lerna: remove-unnecessary-use-nx
@@ -251,13 +251,6 @@ describe("lerna-repair", () => {
       No changes were made
 
       ---------------------------------------------------------
-      Running migration nx: 22-6-0-enable-analytics-prompt
-      Ran 22-6-0-enable-analytics-prompt from nx
-        Prompts to enable usage analytics
-
-      No changes were made
-
-      ---------------------------------------------------------
       Running migration nx: 22-6-0-add-claude-settings-local-to-git-ignore
       Ran 22-6-0-add-claude-settings-local-to-git-ignore from nx
         Adds .claude/settings.local.json to .gitignore
@@ -268,6 +261,13 @@ describe("lerna-repair", () => {
       Running migration nx: 22-7-0-add-polygraph-to-git-ignore
       Ran 22-7-0-add-polygraph-to-git-ignore from nx
         Adds .nx/polygraph to .gitignore
+
+      No changes were made
+
+      ---------------------------------------------------------
+      Running migration nx: 22-7-0-add-self-healing-to-gitignore
+      Ran 22-7-0-add-self-healing-to-gitignore from nx
+        Adds .nx/self-healing to .gitignore
 
       No changes were made
 
