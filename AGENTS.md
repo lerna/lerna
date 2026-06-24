@@ -10,9 +10,9 @@ Lerna has no GUI or long-running server; the "application" is the `lerna` CLI. C
 
 ### Node version (important, non-obvious)
 
-This repo pins Node `22.19.0` via Volta (`package.json`). The VM's default `node` (`/exec-daemon/node`) is an **older 22.x patch (22.14.0)** whose `util.styleText()` emits ANSI color even for non-TTY / `NO_COLOR` output. That breaks the `--stream` / `--parallel` snapshot assertions in `lerna run` / `lerna exec`, so **4 integration tests fail on the default node** even though `build`, `lint`, and unit tests pass.
+Match the Node version pinned in `package.json` (`volta.node`) — that is the single source of truth, also used by CI. The VM's default `node` (`/exec-daemon/node`) is a slightly older 22.x patch that does not match it, and the mismatch is not cosmetic: that older patch's `util.styleText()` emits ANSI color even for non-TTY / `NO_COLOR` output, which breaks the `--stream` / `--parallel` snapshot assertions in `lerna run` / `lerna exec`. The result is a handful of failing integration tests even though `build`, `lint`, and unit tests pass on either version.
 
-Setup already installed `22.19.0` via nvm and appended a `PATH` prepend to `~/.bashrc`, so new shells resolve `node -v` → `22.19.0` automatically and integration tests pass. If a future shell ever reports `22.14.0`, run `nvm use 22.19.0` (or `export PATH="$HOME/.nvm/versions/node/v22.19.0/bin:$PATH"`) before running integration/e2e tests. Do **not** add the node install to the update script; it is captured in the VM snapshot.
+Setup installed the pinned version via nvm and prepended it to `PATH` in `~/.bashrc`, so new shells should already resolve `node -v` to the pinned version. If a shell ever reports a different version, install/select the pinned one before running integration/e2e tests, e.g. `nvm install "$(node -p "require('./package.json').volta.node")" && nvm use "$(node -p "require('./package.json').volta.node")"`. Do **not** add the node install to the update script; it is captured in the VM snapshot.
 
 ### Other non-obvious gotchas discovered during setup
 
