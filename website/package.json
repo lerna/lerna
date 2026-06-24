@@ -21,6 +21,7 @@
     "@mdx-js/react": "3.1.1",
     "clsx": "2.1.1",
     "copy-to-clipboard": "3.3.3",
+    "docusaurus-plugin-copy-page-button": "^0.8.1",
     "prism-react-renderer": "2.4.1",
     "react": "19.2.4",
     "react-dom": "19.2.4"
