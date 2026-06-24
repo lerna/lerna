@@ -263,22 +263,13 @@ class VersionCommand extends Command {
       ) {
         const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${this.currentBranch}`;
 
-        if (!this.options.ci) {
-          // interrupt interactive execution
-          throw new ValidationError(
-            "EBEHIND",
-            dedent`
-              ${message}
-              Please merge remote changes into '${this.currentBranch}' with 'git pull'
-            `
-          );
-        }
-
-        // CI execution should not error, but warn & exit
-        this.logger.warn("EBEHIND", `${message}, exiting`);
-
-        // still exits zero, aka "ok"
-        return false;
+        throw new ValidationError(
+          "EBEHIND",
+          dedent`
+            ${message}
+            Please merge remote changes into '${this.currentBranch}' with 'git pull'
+          `
+        );
       }
     } else {
       this.logger.notice(
