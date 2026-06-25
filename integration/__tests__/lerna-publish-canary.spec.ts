@@ -31,14 +31,14 @@ test("lerna publish --canary uses default prerelease id", async () => {
   expect(stdout).toMatchInlineSnapshot(`
 
 Found 3 packages to publish:
- - package-1 => 1.0.1-alpha.0+SHA
- - package-2 => 1.0.1-alpha.0+SHA
- - package-3 => 1.0.1-alpha.0+SHA
+ - package-1 => 1.0.1-alpha.0.SHA
+ - package-2 => 1.0.1-alpha.0.SHA
+ - package-3 => 1.0.1-alpha.0.SHA
 
 Successfully published:
- - package-1@1.0.1-alpha.0+SHA
- - package-2@1.0.1-alpha.0+SHA
- - package-3@1.0.1-alpha.0+SHA
+ - package-1@1.0.1-alpha.0.SHA
+ - package-2@1.0.1-alpha.0.SHA
+ - package-3@1.0.1-alpha.0.SHA
 `);
 });
 
@@ -53,14 +53,14 @@ test("lerna publish --canary --no-git-reset leaves the working tree dirty", asyn
   expect(stdout).toMatchInlineSnapshot(`
 
 Found 3 packages to publish:
- - package-1 => 1.0.1-alpha.0+SHA
- - package-2 => 1.0.1-alpha.0+SHA
- - package-3 => 1.0.1-alpha.0+SHA
+ - package-1 => 1.0.1-alpha.0.SHA
+ - package-2 => 1.0.1-alpha.0.SHA
+ - package-3 => 1.0.1-alpha.0.SHA
 
 Successfully published:
- - package-1@1.0.1-alpha.0+SHA
- - package-2@1.0.1-alpha.0+SHA
- - package-3@1.0.1-alpha.0+SHA
+ - package-1@1.0.1-alpha.0.SHA
+ - package-2@1.0.1-alpha.0.SHA
+ - package-3@1.0.1-alpha.0.SHA
 `);
 
   const result = gitStatus();
