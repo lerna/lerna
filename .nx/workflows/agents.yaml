@@ -1,0 +1,79 @@
+launch-templates:
+  linux-lerna:
+    resource-class: "docker_linux_amd64/medium"
+    image: "ubuntu22.04-node24.14-v1"
+    env:
+      COREPACK_ENABLE_AUTO_PIN: "0"
+      COREPACK_ENABLE_STRICT: "0"
+    init-steps:
+      - name: Checkout
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml"
+
+      - name: Install Node From Volta
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-node/main.yaml"
+
+      - name: Install Package Manager Fixtures
+        script: |
+          corepack enable
+          corepack install -g pnpm@8
+          yarn set version classic
+
+      - name: Print Tool Versions
+        script: |
+          node --version
+          npm --version
+          yarn --version
+          pnpm --version
+
+      - name: Install Node Modules
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-node-modules/main.yaml"
+        inputs:
+          npm_legacy_install: "false"
+
+      - name: Configure Git Metadata
+        script: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+
+  linux-node20-lerna:
+    resource-class: "docker_linux_amd64/medium"
+    image: "ubuntu22.04-node24.14-v1"
+    env:
+      COREPACK_ENABLE_AUTO_PIN: "0"
+      COREPACK_ENABLE_STRICT: "0"
+    init-steps:
+      - name: Checkout
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml"
+
+      - name: Install Node 20
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-node/main.yaml"
+        inputs:
+          node_version: "20"
+
+      - name: Install Package Manager Fixtures
+        script: |
+          corepack enable
+          corepack install -g pnpm@8
+          yarn set version classic
+
+      - name: Print Tool Versions
+        script: |
+          node --version
+          npm --version
+          yarn --version
+          pnpm --version
+
+      - name: Install Node Modules
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-node-modules/main.yaml"
+        inputs:
+          npm_legacy_install: "false"
+
+      - name: Remove Volta Pin
+        script: |
+          jq 'del(.volta)' package.json > package.json.tmp
+          mv package.json.tmp package.json
+
+      - name: Configure Git Metadata
+        script: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"

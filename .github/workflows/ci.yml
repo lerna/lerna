@@ -26,6 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NX_CI_EXECUTION_ENV: "linux"
+      PUBLISHED_VERSION: 999.9.9-e2e.0
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
@@ -34,7 +35,12 @@ jobs:
       - uses: nrwl/nx-set-shas@826660b82addbef3abff5fa871492ebad618c9e1 # v4
 
       - name: Start Nx Cloud CI Run - Linux
-        run: npx nx-cloud start-ci-run --stop-agents-after="run-e2e-tests-ci"
+        run: >
+          npx nx-cloud start-ci-run
+          --distribute-on="8 linux-lerna"
+          --stop-agents-after="build,lint,test,integration,run-e2e-tests-ci"
+          --require-explicit-completion
+          --with-env-vars="CI,GITHUB_ACTIONS,PUBLISHED_VERSION"
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
@@ -49,84 +55,15 @@ jobs:
           cmd5: npx nx run integration:integration --ci --maxWorkers=2
 
       # e2e tests for everything except the primary task runner (atomized per spec file)
-      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many -t run-e2e-tests-ci --parallel=1
+      - run: npx nx run-many -t run-e2e-tests-ci --parallel=1
 
       - name: Run Nx Cloud Self-Healing CI
         if: ${{ always() }}
         run: npx nx-cloud fix-ci
 
-      - name: Stop all running agents
-        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+      - name: Complete Nx Cloud CI Run
         if: ${{ always() }}
-        run: npx nx-cloud stop-all-agents
-
-  agents:
-    name: Nx Cloud - Agent ${{ matrix.agent }}
-    runs-on: ubuntu-latest
-    env:
-      NX_CI_EXECUTION_ENV: "linux"
-    strategy:
-      matrix:
-        agent: [1, 2, 3, 4, 5, 6, 7, 8]
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-
-      - name: Configure git metadata
-        run: |
-          git config --global user.email test@example.com
-          git config --global user.name "Tester McPerson"
-
-      # - name: Generate and configure GPG for signing commits and tags in E2E tests
-      #   run: |
-      #     # Generate a GPG key for test@example.com and store the output from stderr
-      #     GPG_OUTPUT=$(echo "Key-Type: default
-      #     Key-Length: 2048
-      #     Subkey-Type: default
-      #     Subkey-Length: 2048
-      #     Name-Real: Tester McPerson
-      #     Name-Email: test@example.com
-      #     Expire-Date: 0
-      #     %no-protection" | gpg --pinentry-mode loopback --batch --generate-key 2>&1)
-
-      #     # Find and extract the revocation file path from sdterr
-      #     REVOCATION_FILE=$(echo "$GPG_OUTPUT" | grep '.rev' | tr '\n' ' ' | awk -F "'" '{print $4}')
-
-      #     # Get the GPG key ID and the full fingerprint
-      #     export GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | cut -d'/' -f2)
-      #     export GPG_FULL_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep "$GPG_KEY_ID" | grep -v "sec" | awk '{print $1}' | cut -d'/' -f2)
-
-      #     # Export fingerprint and the path to the revocation file to GITHUB_ENV
-      #     # This allows the last step in this job to revoke and delete the key
-      #     echo "GPG_FULL_KEY_ID=$GPG_FULL_KEY_ID" >> $GITHUB_ENV
-      #     echo "REVOCATION_FILE=$REVOCATION_FILE" >> $GITHUB_ENV
-
-      #     # Setup git signing for commits and tags
-      #     git config commit.gpgsign true
-      #     git config tag.gpgsign true
-      #     git config --global user.signingkey $GPG_KEY_ID
-
-      - name: Install primary node version (see volta config in package.json) and dependencies
-        uses: ./.github/actions/install-node-and-dependencies
-
-      - name: Start Nx Agent ${{ matrix.agent }}
-        run: npx nx-cloud start-agent
-        env:
-          NX_AGENT_NAME: ${{ matrix.agent }}
-
-      - name: Run Nx Cloud Self-Healing CI
-        if: ${{ always() }}
-        run: npx nx-cloud fix-ci
-
-      # - name: Revoke and delete GPG key
-      #   # It's important that we always run this step, otherwise the key will remain active if any of the steps above fail
-      #   if: ${{ always() }}
-      #   run: |
-      #     # As instructed in the text of revocation file, there is a colon that needs to be removed manually
-      #     sed -i "s/:-----BEGIN PGP PUBLIC KEY BLOCK-----/-----BEGIN PGP PUBLIC KEY BLOCK-----/" $REVOCATION_FILE
-
-      #     # Revoke the key and delete it
-      #     gpg --yes --import $REVOCATION_FILE
-      #     gpg --batch --yes --delete-secret-and-public-key $GPG_FULL_KEY_ID
+        run: npx nx-cloud complete-ci-run
 
   windows-main:
     name: Nx Cloud - Windows Main Job
@@ -141,7 +78,7 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Start Nx Cloud CI Run - Windows
-        run: npx nx-cloud start-ci-run --stop-agents-after="test"
+        run: npx nx-cloud start-ci-run --distribute-on=manual --stop-agents-after="test,integration"
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
