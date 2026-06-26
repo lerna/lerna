@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NX_CI_EXECUTION_ENV: linux-node-${{ matrix.node }}
+      PUBLISHED_VERSION: 999.9.9-e2e.0
     strategy:
       # Do not kill all versions of node just because one version failed
       fail-fast: false
@@ -50,6 +51,14 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           fetch-depth: 0
+
+      - name: Start Nx Cloud CI Run - node-${{ matrix.node }}
+        run: >
+          npx nx-cloud start-ci-run
+          --distribute-on="4 linux-node${{ matrix.node }}-lerna"
+          --stop-agents-after="build,test,integration,e2e"
+          --require-explicit-completion
+          --with-env-vars="CI,GITHUB_ACTIONS,PUBLISHED_VERSION"
 
       - name: Install node v${{ matrix.node }} and dependencies
         uses: ./.github/actions/install-node-and-dependencies
@@ -119,7 +128,7 @@ jobs:
           cmd3: npx nx run integration:integration --ci --maxWorkers=2
 
       # e2e tests for everything except the primary task runner
-      - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
+      - run: npx nx run-many --t e2e --parallel=1
 
       - name: Run e2e tests for task-runner
         run: |
@@ -135,86 +144,9 @@ jobs:
           NO_COLOR: "1"
           FORCE_COLOR: "0"
 
-      - name: Stop all running agents
-        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+      - name: Complete Nx Cloud CI Run
         if: ${{ always() }}
-        run: npx nx-cloud stop-all-agents
-
-      # - name: Revoke and delete GPG key
-      #   # It's important that we always run this step, otherwise the key will remain active if any of the steps above fail
-      #   if: ${{ always() }}
-      #   run: |
-      #     # As instructed in the text of revocation file, there is a colon that needs to be removed manually
-      #     sed -i "s/:-----BEGIN PGP PUBLIC KEY BLOCK-----/-----BEGIN PGP PUBLIC KEY BLOCK-----/" $REVOCATION_FILE
-
-      #     # Revoke the key and delete it
-      #     gpg --yes --import $REVOCATION_FILE
-      #     gpg --batch --yes --delete-secret-and-public-key $GPG_FULL_KEY_ID
-
-  agents:
-    name: Nx Cloud - Agent - node-${{ matrix.node }}-agent-${{ matrix.agent }}
-    needs: set-node-versions
-    runs-on: ubuntu-latest
-    env:
-      NX_CI_EXECUTION_ENV: linux-node-${{ matrix.node }}
-    strategy:
-      # Do not kill all versions of node just because one version failed
-      fail-fast: false
-      matrix:
-        node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
-        # Create 4 agents per node version
-        agent: [1, 2, 3, 4]
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-
-      - name: Configure git metadata
-        run: |
-          git config --global user.email test@example.com
-          git config --global user.name "Tester McPerson"
-
-      # - name: Generate and configure GPG for signing commits and tags in E2E tests
-      #   run: |
-      #     # Generate a GPG key for test@example.com and store the output from stderr
-      #     GPG_OUTPUT=$(echo "Key-Type: default
-      #     Key-Length: 2048
-      #     Subkey-Type: default
-      #     Subkey-Length: 2048
-      #     Name-Real: Tester McPerson
-      #     Name-Email: test@example.com
-      #     Expire-Date: 0
-      #     %no-protection" | gpg --pinentry-mode loopback --batch --generate-key 2>&1)
-
-      #     # Find and extract the revocation file path from sdterr
-      #     REVOCATION_FILE=$(echo "$GPG_OUTPUT" | grep '.rev' | tr '\n' ' ' | awk -F "'" '{print $4}')
-
-      #     # Get the GPG key ID and the full fingerprint
-      #     export GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | cut -d'/' -f2)
-      #     export GPG_FULL_KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep "$GPG_KEY_ID" | grep -v "sec" | awk '{print $1}' | cut -d'/' -f2)
-
-      #     # Export fingerprint and the path to the revocation file to GITHUB_ENV
-      #     # This allows the last step in this job to revoke and delete the key
-      #     echo "GPG_FULL_KEY_ID=$GPG_FULL_KEY_ID" >> $GITHUB_ENV
-      #     echo "REVOCATION_FILE=$REVOCATION_FILE" >> $GITHUB_ENV
-
-      #     # Setup git signing for commits and tags
-      #     git config commit.gpgsign true
-      #     git config tag.gpgsign true
-      #     git config --global user.signingkey $GPG_KEY_ID
-
-      - name: Install node v${{ matrix.node }} and dependencies
-        uses: ./.github/actions/install-node-and-dependencies
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: Remove the volta key from package.json to ensure the explicitly installed version is respected
-        run: |
-          jq 'del(.volta)' package.json > package.json.tmp
-          mv package.json.tmp package.json
-
-      - name: Start Nx Agent node-${{ matrix.node }}-agent-${{ matrix.agent }}
-        run: npx nx-cloud start-agent
-        env:
-          NX_AGENT_NAME: node-${{ matrix.node }}-agent-${{ matrix.agent }}
+        run: npx nx-cloud complete-ci-run
 
       # - name: Revoke and delete GPG key
       #   # It's important that we always run this step, otherwise the key will remain active if any of the steps above fail
