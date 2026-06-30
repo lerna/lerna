@@ -245,17 +245,24 @@ export class InitCommand {
   }
 
   private detectPackageManager(): PackageManager | null {
-    const packageManager = existsSync("yarn.lock")
-      ? "yarn"
-      : existsSync("pnpm-lock.yaml")
-      ? "pnpm"
-      : existsSync("package-lock.json")
-      ? "npm"
-      : null;
+    const packageManager =
+      existsSync("bun.lockb") || existsSync("bun.lock")
+        ? "bun"
+        : existsSync("yarn.lock")
+        ? "yarn"
+        : existsSync("pnpm-lock.yaml")
+        ? "pnpm"
+        : existsSync("package-lock.json")
+        ? "npm"
+        : null;
     if (packageManager) {
       this.logger.verbose("", `Detected lock file for ${packageManager}`);
     }
     return packageManager;
+  }
+
+  protected getInvokerModule(): { filename?: string; path?: string } | null {
+    return require.main || process["mainModule"] || null;
   }
 
   /**
@@ -264,18 +271,35 @@ export class InitCommand {
    * - npx returns 'npm'
    * - pnpx returns 'pnpm'
    * - yarn create returns 'yarn'
+   * - bunx returns 'bun'
    */
   private detectInvokedPackageManager(): PackageManager | null {
     let detectedPackageManager: PackageManager | null = null;
-    // mainModule is deprecated since Node 14, fallback for older versions
-    const invoker = require.main || process["mainModule"];
+
+    // Bun sets process.versions.bun when running in its own runtime (e.g. via bunx).
+    // Check this first because require.main may be null in bun's CJS runtime.
+    if ((process.versions as Record<string, string>)["bun"]) {
+      this.logger.verbose("", "Detected package manager bun from process.versions.bun");
+      return "bun";
+    }
+
+    const invoker = this.getInvokerModule();
 
     if (!invoker) {
       this.logger.verbose("", "Could not detect package manager from process");
       return detectedPackageManager;
     }
-    for (const pkgManager of ["pnpm", "yarn", "npm"] as const) {
-      if (invoker.path.includes(pkgManager)) {
+    // Prefer filename over path; bun CJS may leave path undefined. Split on both / and \.
+    const invokerPath = (invoker.filename ?? invoker.path) || "";
+    const pathSegments = invokerPath.split(/[\\/]/);
+    for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
+      if (
+        pathSegments.some((segment: string) => {
+          // Strip leading dot to match ".pnpm" and ".bun" directory segments.
+          const normalized = segment.replace(/^\./, "");
+          return normalized === pkgManager || normalized.startsWith(`${pkgManager}@`);
+        })
+      ) {
         this.logger.verbose("", `Detected package manager ${pkgManager} from process`);
         detectedPackageManager = pkgManager;
         break;
