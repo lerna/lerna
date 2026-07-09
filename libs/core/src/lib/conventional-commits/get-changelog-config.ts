@@ -70,7 +70,7 @@ async function resolveConfigPromise(presetPackageName: string, presetConfig: obj
   try {
     config = require(presetPackageName);
   } catch (requireError: any) {
-    if (requireError.code === "ERR_REQUIRE_ESM") {
+    if (requireError.code === "ERR_REQUIRE_ESM" || requireError.code === "ERR_PACKAGE_PATH_NOT_EXPORTED") {
       log.verbose("getChangelogConfig", "Preset is ESM, using dynamic import for %j", presetPackageName);
       const imported = await import(presetPackageName);
       config = imported.default || imported;
