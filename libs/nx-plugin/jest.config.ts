@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: "packages-nx-plugin",
   preset: "../../jest.preset.js",
   transform: {

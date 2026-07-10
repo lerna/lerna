@@ -24,7 +24,7 @@
   ],
   "main": "./dist/index.js",
   "engines": {
-    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+    "node": "^22.12.0 || ^24.0.0 || ^26.0.0"
   },
   "publishConfig": {
     "tag": "next"
@@ -41,7 +41,7 @@
     "@npmcli/arborist": "9.1.6",
     "@npmcli/package-json": "7.0.2",
     "@npmcli/run-script": "10.0.3",
-    "@nx/devkit": ">=21.5.2 < 23.0.0",
+    "@nx/devkit": ">=23.0.0 < 24.0.0",
     "@octokit/plugin-enterprise-rest": "6.0.1",
     "@octokit/rest": "20.1.2",
     "ci-info": "4.3.1",
@@ -70,7 +70,7 @@
     "npm-package-arg": "13.0.1",
     "npm-packlist": "10.0.3",
     "npm-registry-fetch": "19.1.0",
-    "nx": ">=21.5.3 < 23.0.0",
+    "nx": ">=23.0.0 < 24.0.0",
     "p-map": "4.0.0",
     "p-queue": "6.6.2",
     "pacote": "21.0.1",

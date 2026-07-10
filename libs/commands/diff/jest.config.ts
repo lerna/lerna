@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: "commands-diff",
   preset: "../../../jest.preset.js",
   coverageDirectory: "../../../coverage/libs/commands/diff",

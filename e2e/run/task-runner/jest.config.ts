@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: "e2e-run-task-runner",
   preset: "../../../jest.preset.js",
   transform: {
