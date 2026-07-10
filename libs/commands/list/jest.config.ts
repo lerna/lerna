@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: "commands-list",
   preset: "../../../jest.preset.js",
   coverageDirectory: "../../../coverage/libs/commands/list",

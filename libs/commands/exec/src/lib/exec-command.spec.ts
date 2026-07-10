@@ -94,8 +94,8 @@ describe("ExecCommand", () => {
 
       expect(childProcess.spawn).toHaveBeenCalledTimes(2);
       expect(childProcess.spawn).toHaveBeenLastCalledWith(
-        "boom",
-        ["--shaka", "--lakka"],
+        "boom --shaka --lakka",
+        [],
         expect.objectContaining({
           reject: false,
         })
@@ -132,7 +132,7 @@ describe("ExecCommand", () => {
       await lernaExec(testDir)("ls", "--", "-la");
 
       expect(childProcess.spawn).toHaveBeenCalledTimes(2);
-      expect(childProcess.spawn).toHaveBeenLastCalledWith("ls", ["-la"], expect.any(Object));
+      expect(childProcess.spawn).toHaveBeenLastCalledWith("ls -la", [], expect.any(Object));
     });
 
     it("runs a command for a given scope", async () => {
