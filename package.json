@@ -29,6 +29,7 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org",
   "devDependencies": {
+    "@nx/devkit": "23.0.1",
     "@nx/esbuild": "23.0.1",
     "@nx/eslint": "23.0.1",
     "@nx/eslint-plugin": "23.0.1",

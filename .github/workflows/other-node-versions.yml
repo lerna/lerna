@@ -132,7 +132,6 @@ jobs:
           NX_CLOUD_ACCESS_TOKEN: ""
           NX_CLOUD_DISTRIBUTED_EXECUTION: false
           # Disable colored output so captured stdout matches local (non-TTY) snapshots
-          NO_COLOR: "1"
           FORCE_COLOR: "0"
 
       - name: Stop all running agents

@@ -207,7 +207,6 @@ jobs:
       NX_CI_EXECUTION_ENV: "linux"
       NX_CLOUD_DISTRIBUTED_EXECUTION: false
       # Disable colored output so captured stdout matches local (non-TTY) snapshots
-      NO_COLOR: "1"
       FORCE_COLOR: "0"
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
