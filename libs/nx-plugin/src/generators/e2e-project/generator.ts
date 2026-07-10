@@ -6,8 +6,8 @@ import {
   updateJson,
   updateProjectConfiguration,
 } from "@nx/devkit";
-import { addPropertyToJestConfig } from "@nx/jest/src/utils/config/update-config";
-import { libraryGenerator } from "@nx/js/src/generators/library/library";
+import { addPropertyToJestConfig } from "@nx/jest";
+import { libraryGenerator } from "@nx/js";
 import { E2eProjectGeneratorSchema } from "./schema";
 
 interface NormalizedSchema extends E2eProjectGeneratorSchema {

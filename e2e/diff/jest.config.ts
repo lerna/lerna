@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: "e2e-diff",
   preset: "../../jest.preset.js",
   transform: {

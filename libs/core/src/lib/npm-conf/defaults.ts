@@ -73,7 +73,17 @@ Object.defineProperty(exports, "defaults", {
       "cache-min": 10,
       cert: null,
       cidr: null,
-      color: process.env["NO_COLOR"] == null,
+      // color: true/false depending on NO_COLOR and FORCE_COLOR (NO_COLOR disables color, except NO_COLOR="false" means color enabled; FORCE_COLOR has priority if set)
+      color:
+        typeof process.env["FORCE_COLOR"] !== "undefined"
+          ? !!process.env["FORCE_COLOR"] && process.env["FORCE_COLOR"] !== "0"
+          : typeof process.env["NO_COLOR"] !== "undefined"
+          ? ["", "0"].includes(process.env["NO_COLOR"])
+            ? true
+            : process.env["NO_COLOR"] === "false"
+            ? true
+            : false
+          : true,
       depth: Infinity,
       description: true,
       dev: false,

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: "lerna",
   preset: "../../jest.preset.js",
   transform: {

@@ -44,7 +44,9 @@ describe("lerna-publish-pnpm", () => {
 
       const output = await fixture.lerna("publish from-git -y");
       const unpublishOutput = await fixture.exec(
-        `npm unpublish --force test-1@${version} --registry=http://localhost:4873`
+        `npm unpublish --force test-1@${version} --registry=http://localhost:4873`,
+        // Avoid npm reading the pnpm-only settings in the workspace .npmrc.
+        { cwd: fixture.getWorkspacePath("..") }
       );
 
       const replaceVersion = (str: string) => str.replaceAll(version, "XX.XX.XX");

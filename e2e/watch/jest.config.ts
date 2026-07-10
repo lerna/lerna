@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: "e2e-watch",
   preset: "../../jest.preset.js",
   transform: {
