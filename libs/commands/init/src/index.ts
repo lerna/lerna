@@ -291,13 +291,23 @@ export class InitCommand {
     }
     // Prefer filename over path; bun CJS may leave path undefined. Split on both / and \.
     const invokerPath = (invoker.filename ?? invoker.path) || "";
+    if (!invokerPath) {
+      this.logger.verbose("", "Could not detect package manager from process");
+      return detectedPackageManager;
+    }
     const pathSegments = invokerPath.split(/[\\/]/);
     for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
       if (
         pathSegments.some((segment: string) => {
           // Strip leading dot to match ".pnpm" and ".bun" directory segments.
           const normalized = segment.replace(/^\./, "");
-          return normalized === pkgManager || normalized.startsWith(`${pkgManager}@`);
+          if (normalized === pkgManager || normalized.startsWith(`${pkgManager}@`)) {
+            return true;
+          }
+          // bunx installs one-off packages into <tmp>/bunx-<uid>-<pkg>@<version> and runs
+          // node-shebang bins under node (so process.versions.bun is unset); the bunx
+          // segment is the only bun signal on that path.
+          return pkgManager === "bun" && /^bunx(-|@|$)/.test(normalized);
         })
       ) {
         this.logger.verbose("", `Detected package manager ${pkgManager} from process`);

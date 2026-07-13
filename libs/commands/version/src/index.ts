@@ -44,6 +44,7 @@ import { isBehindUpstream } from "./lib/is-behind-upstream";
 import { isBreakingChange } from "./lib/is-breaking-change";
 import { makePromptVersion } from "./lib/prompt-version";
 import { remoteBranchExists } from "./lib/remote-branch-exists";
+import { updateBunLockfile } from "./lib/update-bun-lockfile";
 import { updateLockfileVersion } from "./lib/update-lockfile-version";
 
 const childProcess = require("@lerna/child-process");
@@ -800,62 +801,14 @@ class VersionCommand extends Command {
     }
 
     if (this.options.npmClient === "bun") {
-      const lockfileCandidates = ["bun.lockb", "bun.lock"];
-      const candidates = lockfileCandidates.map((f) => path.join(this.project.rootPath, f));
-      const staleLockfiles = new Map(
-        candidates
-          .filter((candidate) => fs.existsSync(candidate))
-          .map((candidate) => [candidate, fs.readFileSync(candidate)])
-      );
-
-      if (staleLockfiles.size > 0) {
-        const staleLockfileNames = Array.from(staleLockfiles.keys(), (lockfilePath) =>
-          path.basename(lockfilePath)
-        );
-        this.logger.verbose("version", `Updating root ${staleLockfileNames.join(", ")}`);
-
-        // Bun caches workspace package versions from the existing lockfile and does not
-        // re-read them from package.json. Remove all stale lockfile formats so the
-        // regenerated lockfile picks up the bumped versions.
-        for (const lockfilePath of staleLockfiles.keys()) {
-          fs.unlinkSync(lockfilePath);
-        }
-
-        try {
-          await execPackageManager(
-            "bun",
-            [
-              "install",
-              "--lockfile-only",
-              !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
-              ...npmClientArgs,
-            ].filter(Boolean),
-            this.execOpts
-          );
-        } catch (err) {
-          // Remove any partially generated lockfiles and restore the complete original
-          // set so the user doesn't lose or unexpectedly migrate a lockfile on failure.
-          for (const candidate of candidates) {
-            if (fs.existsSync(candidate)) {
-              fs.unlinkSync(candidate);
-            }
-          }
-          for (const [lockfilePath, staleContent] of staleLockfiles) {
-            fs.writeFileSync(lockfilePath, staleContent);
-          }
-          throw err;
-        }
-
-        // Stage removals as well as every regenerated lockfile so format migrations are
-        // captured when granular pathspecs are enabled.
-        for (const lockfilePath of staleLockfiles.keys()) {
-          changedFiles.add(lockfilePath);
-        }
-        for (const candidate of candidates) {
-          if (fs.existsSync(candidate)) {
-            changedFiles.add(candidate);
-          }
-        }
+      const bunLockfiles = await updateBunLockfile({
+        rootPath: this.project.rootPath,
+        npmClientArgs,
+        runScriptsOnLockfileUpdate,
+        execOpts: this.execOpts,
+      });
+      for (const lockfilePath of bunLockfiles) {
+        changedFiles.add(lockfilePath);
       }
     }
 

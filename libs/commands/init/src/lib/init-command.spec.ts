@@ -306,6 +306,39 @@ describe("InitCommand", () => {
       expect(initCommand.packageManager).toBe("bun");
     });
 
+    it("detects bun from bunx temp install directory (bunx runs node-shebang bins under node)", () => {
+      const initCommand = createWithInvokerPath(
+        "/tmp/bunx-1001-lerna@999.9.9-e2e.0/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects bun from bunx temp install directory on macOS", () => {
+      const initCommand = createWithInvokerPath(
+        "/private/tmp/bunx-501-lerna@latest/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects yarn from global yarn directory", () => {
+      const initCommand = createWithInvokerPath(
+        "/home/user/.config/yarn/global/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("yarn");
+    });
+
+    it("detects yarn from .yarn directory segment", () => {
+      const initCommand = createWithInvokerPath(
+        "/home/user/project/.yarn/unplugged/lerna-npm-999.9.9/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("yarn");
+    });
+
+    it("falls back to npm when the invoker module has no filename or path", () => {
+      const initCommand = createWithInvoker(undefined, undefined);
+      expect(initCommand.packageManager).toBe("npm");
+    });
+
     it("detects bun from process.versions.bun even when require.main is unavailable", () => {
       const versions = process.versions as Record<string, string>;
       const original = versions.bun;

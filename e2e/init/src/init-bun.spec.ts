@@ -47,6 +47,9 @@ describe("lerna-init-bun", () => {
       const result = await fixture.lernaInit();
 
       expect(result.combinedOutput).toContain("lerna success Initialized Lerna files");
+
+      const lernaJson = JSON.parse(await fixture.readWorkspaceFile("lerna.json"));
+      expect(lernaJson.npmClient).toBe("bun");
     });
   });
 

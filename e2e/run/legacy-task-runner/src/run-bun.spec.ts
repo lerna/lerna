@@ -58,14 +58,14 @@ describe("lerna-run-bun", () => {
   afterAll(() => fixture.destroy());
 
   it("should run script on all child packages using bun run", async () => {
-    const output = await fixture.lerna("run print-name -- --silent");
+    const output = await fixture.lerna("run print-name");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
       test-package-X
       test-package-X
       test-package-X
       lerna notice cli v999.9.9-e2e.0
-      lerna info Executing command in 3 packages: "bun run print-name --silent"
+      lerna info Executing command in 3 packages: "bun run print-name"
       lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
       lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
       lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
@@ -79,14 +79,17 @@ describe("lerna-run-bun", () => {
 
   describe.each(["--stream", "--parallel"])("%s", (flag) => {
     it("should run script on all child packages with package name prefixes", async () => {
-      const output = await fixture.lerna(`run print-name ${flag} -- --silent`);
+      const output = await fixture.lerna(`run print-name ${flag}`);
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
         package-X: test-package-X
         package-X: test-package-X
         package-X: test-package-X
         lerna notice cli v999.9.9-e2e.0
-        lerna info Executing command in 3 packages: "bun run print-name --silent"
+        lerna info Executing command in 3 packages: "bun run print-name"
+        package-X: $ echo test-package-X
+        package-X: $ echo test-package-X
+        package-X: $ echo test-package-X
         lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
         lerna success - package-X
         lerna success - package-X
@@ -99,14 +102,17 @@ describe("lerna-run-bun", () => {
   describe("--no-prefix", () => {
     describe.each(["--stream", "--parallel"])("%s", (flag) => {
       it("should run script on all child packages and suppress package name prefixes", async () => {
-        const output = await fixture.lerna(`run print-name --no-prefix ${flag} -- --silent`);
+        const output = await fixture.lerna(`run print-name --no-prefix ${flag}`);
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
           test-package-X
           test-package-X
           test-package-X
           lerna notice cli v999.9.9-e2e.0
-          lerna info Executing command in 3 packages: "bun run print-name --silent"
+          lerna info Executing command in 3 packages: "bun run print-name"
+          $ echo test-package-X
+          $ echo test-package-X
+          $ echo test-package-X
           lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
           lerna success - package-X
           lerna success - package-X
@@ -126,7 +132,7 @@ describe("lerna-run-bun", () => {
         },
       });
 
-      const output = await fixture.lerna("run print-env --scope=package-1 -- --silent");
+      const output = await fixture.lerna("run print-env --scope=package-1");
 
       expect(output.combinedOutput).toContain("package-");
       expect(output.combinedOutput).toContain("lerna success run Ran npm script 'print-env' in 1 package");

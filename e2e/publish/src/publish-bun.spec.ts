@@ -92,7 +92,7 @@ describe("lerna-publish-bun", () => {
       `);
     });
 
-    it("should update bun.lockb during publish workflow", async () => {
+    it("should update the bun lockfile during publish workflow", async () => {
       await fixture.lerna("create package-a -y");
       await fixture.lerna("create package-b --dependencies package-a -y");
       await fixture.createInitialGitCommit();
@@ -104,7 +104,7 @@ describe("lerna-publish-bun", () => {
       expect(versionOutput.combinedOutput).toContain("lerna success version finished");
 
       const gitLogOutput = await fixture.exec("git log -1 --name-only --oneline");
-      expect(gitLogOutput.combinedOutput).toContain("bun.lockb");
+      expect(gitLogOutput.combinedOutput).toMatch(/bun\.lock(b)?/);
 
       const publishOutput = await fixture.lerna("publish from-git -y");
       expect(publishOutput.combinedOutput).toContain("lerna success published 2 packages");

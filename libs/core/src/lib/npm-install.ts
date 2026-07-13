@@ -14,7 +14,7 @@ export function npmInstall(
   { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe", subCommand = "install" }: any
 ) {
   // build command, arguments, and options
-  const opts = getNpmExecOpts(pkg, registry);
+  const opts = getNpmExecOpts(pkg, registry, npmClient);
   const args = [subCommand];
   let cmd = npmClient || "npm";
 

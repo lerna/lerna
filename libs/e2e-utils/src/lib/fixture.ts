@@ -144,12 +144,13 @@ export class Fixture {
         `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false" > .npmrc`
       );
     } else if (this.packageManager === "bun") {
-      // .npmrc covers npm operations that bun may trigger internally (e.g. inside lerna init).
+      // .npmrc covers the npm operations lerna itself runs inside the fixture
+      // (e.g. `npm install` performed by lerna init).
       await this.exec(`echo "registry=${REGISTRY}" > .npmrc`);
-      // bunfig.toml is bun's native config file and is read by ALL bun operations,
-      // including `bunx` / `bun x` when downloading packages on-the-fly.  This is
-      // critical for the "in a new repo" init test where bunx must download the
-      // lerna package from Verdaccio before any bun install has cached it.
+      // bunfig.toml is bun's native config file, read by all bun operations in the
+      // fixture directory. Commands run outside the fixture directory (e.g. bunx
+      // downloading the lerna package) rely on BUN_CONFIG_REGISTRY instead, which is
+      // passed explicitly where needed.
       await this.exec(`printf '[install]\\nregistry = "${REGISTRY}"\\n' > bunfig.toml`);
     }
   }

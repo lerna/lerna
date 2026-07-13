@@ -250,6 +250,52 @@ describe("npm-install", () => {
       });
     });
 
+    it("sets BUN_CONFIG_REGISTRY when using a custom registry with bun", async () => {
+      const pkg = new Package(
+        {
+          name: "test-npm-install",
+        } as any,
+        path.normalize("/test/npm-install-bun-registry"),
+        path.normalize("/test")
+      );
+
+      await npmInstall(pkg, {
+        npmClient: "bun",
+        registry: "https://custom-registry/npm-install-bun",
+      });
+
+      expect(childProcess.exec).toHaveBeenLastCalledWith("bun", ["install"], {
+        cwd: pkg.location,
+        env: expect.objectContaining({
+          npm_config_registry: "https://custom-registry/npm-install-bun",
+          BUN_CONFIG_REGISTRY: "https://custom-registry/npm-install-bun",
+        }),
+        pkg,
+        stdio: "pipe",
+      });
+    });
+
+    it("does not leak BUN_CONFIG_REGISTRY into non-bun clients", async () => {
+      const pkg = new Package(
+        {
+          name: "test-npm-install",
+        } as any,
+        path.normalize("/test/npm-install-no-bun-registry"),
+        path.normalize("/test")
+      );
+
+      await npmInstall(pkg, {
+        npmClient: "npm",
+        registry: "https://custom-registry/npm-install",
+      });
+
+      const [, , opts] = (childProcess.exec as jest.Mock).mock.calls.at(-1);
+      expect(opts.env.npm_config_registry).toBe("https://custom-registry/npm-install");
+      // Lifecycle scripts spawned by npm/yarn/pnpm may themselves invoke bun; lerna must
+      // not silently redirect their registry when the user never opted into bun.
+      expect(opts.env.BUN_CONFIG_REGISTRY).toBeUndefined();
+    });
+
     it("supports npm install --global-style", async () => {
       const pkg = new Package(
         {
