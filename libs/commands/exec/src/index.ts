@@ -39,7 +39,7 @@ export class ExecCommand extends Command<ExecCommandConfigOptions> {
   filteredProjects: ProjectGraphProjectNodeWithPackage[] = [];
   count?: number;
   packagePlural?: string;
-  joinedCommand?: string;
+  joinedCommand = "";
 
   override get requiresGit() {
     return false;
@@ -140,6 +140,13 @@ export class ExecCommand extends Command<ExecCommandConfigOptions> {
       : (pkg: Package) => this.runCommandInPackageCapturing(pkg);
   }
 
+  private getShellCommand(): [string, string[]] {
+    // Node.js 24 deprecates passing separate arguments when shell is enabled because
+    // they are concatenated without escaping. Preserve the existing shell semantics
+    // explicitly by passing the already-joined command as a single string.
+    return [this.joinedCommand, []];
+  }
+
   private runCommandInPackagesTopological() {
     let profiler: Profiler | undefined;
     let runner: (pkg: Package) => Promise<unknown>;
@@ -187,10 +194,12 @@ export class ExecCommand extends Command<ExecCommandConfigOptions> {
   }
 
   runCommandInPackageStreaming(pkg: Package) {
-    return childProcess.spawnStreaming(this.command, this.args, this.getOpts(pkg), this.prefix && pkg.name);
+    const [command, args] = this.getShellCommand();
+    return childProcess.spawnStreaming(command, args, this.getOpts(pkg), this.prefix && pkg.name);
   }
 
   runCommandInPackageCapturing(pkg: Package) {
-    return childProcess.spawn(this.command, this.args, this.getOpts(pkg));
+    const [command, args] = this.getShellCommand();
+    return childProcess.spawn(command, args, this.getOpts(pkg));
   }
 }

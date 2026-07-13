@@ -506,14 +506,12 @@ export class Fixture {
       });
     }
     return new Promise((resolve, reject) => {
-      const [cmd, ...args] = command.split(" ");
-
       let stdout = "";
       let stderr = "";
       let combinedOutput = "";
       let error: Error | null = null;
 
-      const childProcess = spawn(cmd, args, {
+      const childProcess = spawn(command, {
         shell: true,
         cwd: opts.cwd || this.fixtureRootPath,
         env: {

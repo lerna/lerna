@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: "e2e-publish",
   preset: "../../jest.preset.js",
   transform: {

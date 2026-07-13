@@ -1,3 +1,5 @@
+import { stripVTControlCharacters } from "node:util";
+
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const E2E_ROOT = process.env.E2E_ROOT!;
 
@@ -46,7 +48,7 @@ export function normalizeEnvironment(str: string): string {
  * strip the specifics of individual package names and execution timings.
  */
 export function normalizeCommandOutput(str: string): string {
-  const lines = str
+  const lines = stripVTControlCharacters(str)
     .replaceAll(/package-\d/g, "package-X")
     .replaceAll(/\d\.(\d{1,2})s/g, "X.Xs")
     .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json");
