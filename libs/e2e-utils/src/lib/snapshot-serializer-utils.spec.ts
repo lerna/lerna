@@ -23,4 +23,19 @@ describe("normalizeCommandOutput", () => {
 
     expect(normalizeCommandOutput(output)).toBe("Lerna (powered by Nx)   Successfully ran target");
   });
+
+  it("removes the non-deterministic Nx performance report", () => {
+    const output = `task output
+
+Run duration:      250ms
+Cache:             0/1 hit (0%)
+Critical path:     247ms (1 task)
+Recoverable time:  <1ms
+
+Recommendations:
+- Drastically reduce your run duration by sharing a cache across your team and CI
+- package-X:log-env-var    247ms`;
+
+    expect(normalizeCommandOutput(output)).toBe("task output");
+  });
 });

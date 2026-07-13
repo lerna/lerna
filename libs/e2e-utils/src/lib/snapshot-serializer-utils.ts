@@ -53,6 +53,10 @@ export function normalizeEnvironment(str: string): string {
  */
 export function normalizeCommandOutput(str: string): string {
   const lines = stripVTControlCharacters(str)
+    .replace(
+      /\n+[^\S\r\n]*Run duration:[^\n]*\n[^\S\r\n]*Cache:[^\n]*\n[^\S\r\n]*Critical path:[^\n]*\n[^\S\r\n]*Recoverable time:[^\n]*(?:\n[\s\S]*)?$/,
+      ""
+    )
     .replaceAll(/package-\d/g, "package-X")
     .replaceAll(/\d\.(\d{1,2})s/g, "X.Xs")
     .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json");
