@@ -10,9 +10,15 @@
 
 import Logger from "./forked-strong-log-transformer";
 
+// vitest does not support jest's done-callback signature; adapt the ported
+// callback-style tests by wrapping them in a promise.
+function testDone(name: string, fn: (done: () => void) => void) {
+  test(name, () => new Promise<void>((resolve) => fn(resolve)));
+}
+
 describe("strong-log-transformer", () => {
   describe("test-ansi-color-tags.js", () => {
-    test("tag object with ansi escape codes", (done) => {
+    testDone("tag object with ansi escape codes", (done) => {
       const slt = Logger({
         tag: {
           blue: "\u001b[1m\u001b[34mblue\u001b[39m\u001b[22m",
@@ -49,7 +55,7 @@ describe("strong-log-transformer", () => {
   });
 
   describe("test-bad-utf8.js", () => {
-    test("log line containing bad utf8", (done) => {
+    testDone("log line containing bad utf8", (done) => {
       const slt = Logger();
       const input = Buffer.from([0x48, 0x69, 0x20, 0x80, 0x0a]); // "Hi\n"
       const expected = "Hi \ufffd\n"; // replacement character
@@ -71,7 +77,7 @@ describe("strong-log-transformer", () => {
       slt.end();
     });
 
-    test("chunked bad utf8", (done) => {
+    testDone("chunked bad utf8", (done) => {
       const slt = Logger();
       // Split the bad UTF8 sequence across chunks
       const input1 = Buffer.from([0x48, 0x69, 0x20]); // "Hi "
@@ -98,7 +104,7 @@ describe("strong-log-transformer", () => {
   });
 
   describe("test-basic functionality", () => {
-    test("basic text transformation", (done) => {
+    testDone("basic text transformation", (done) => {
       const slt = Logger();
       const input = "hello world\n";
       const expected = "hello world\n";
@@ -116,7 +122,7 @@ describe("strong-log-transformer", () => {
       slt.end();
     });
 
-    test("json format", (done) => {
+    testDone("json format", (done) => {
       const slt = Logger({ format: "json" });
       const input = "hello world\n";
       let received = "";
@@ -135,7 +141,7 @@ describe("strong-log-transformer", () => {
       slt.end();
     });
 
-    test("json format with timestamp", (done) => {
+    testDone("json format with timestamp", (done) => {
       const slt = Logger({ format: "json", timeStamp: true });
       const input = "hello world\n";
       let received = "";
@@ -157,7 +163,7 @@ describe("strong-log-transformer", () => {
   });
 
   describe("test-stringTag functionality", () => {
-    test("string tag", (done) => {
+    testDone("string tag", (done) => {
       const slt = Logger({ tag: "worker:1" });
       const input = "hello world\n";
       const expected = "worker:1 hello world\n";
@@ -177,7 +183,7 @@ describe("strong-log-transformer", () => {
   });
 
   describe("test-text-tag-object functionality", () => {
-    test("object tag", (done) => {
+    testDone("object tag", (done) => {
       const slt = Logger({ tag: { worker: "1", pid: "12345" } });
       const input = "hello world\n";
       const expected = "worker:1 pid:12345 hello world\n";
@@ -197,7 +203,7 @@ describe("strong-log-transformer", () => {
   });
 
   describe("test-text-timestamp functionality", () => {
-    test("text format with timestamp", (done) => {
+    testDone("text format with timestamp", (done) => {
       const slt = Logger({ timeStamp: true });
       const input = "hello world\n";
       let received = "";
@@ -216,7 +222,7 @@ describe("strong-log-transformer", () => {
       slt.end();
     });
 
-    test("text format with timestamp and tag", (done) => {
+    testDone("text format with timestamp and tag", (done) => {
       const slt = Logger({ timeStamp: true, tag: "worker:1" });
       const input = "hello world\n";
       let received = "";
@@ -237,7 +243,7 @@ describe("strong-log-transformer", () => {
   });
 
   describe("test-lineMerge functionality", () => {
-    test("merge multiline logs", (done) => {
+    testDone("merge multiline logs", (done) => {
       const slt = Logger({ mergeMultiline: true });
       const input =
         "Error: something bad happened\n    at Object.<anonymous> (/path/to/file.js:1:1)\n    at Module._compile (module.js:456:26)\nnext line\n";
@@ -260,7 +266,7 @@ describe("strong-log-transformer", () => {
       slt.end();
     });
 
-    test("merge multiline with timeout", (done) => {
+    testDone("merge multiline with timeout", (done) => {
       const slt = Logger({ mergeMultiline: true });
       let received = "";
       let dataCount = 0;
@@ -285,7 +291,7 @@ describe("strong-log-transformer", () => {
   });
 
   describe("newline handling", () => {
-    test("handles different line endings", (done) => {
+    testDone("handles different line endings", (done) => {
       const slt = Logger();
       const inputs = ["line1\n", "line2\r\n", "line3\r", "line4\v", "line5\f"];
       let received = "";
@@ -309,7 +315,7 @@ describe("strong-log-transformer", () => {
       slt.end();
     });
 
-    test("swallows empty lines", (done) => {
+    testDone("swallows empty lines", (done) => {
       const slt = Logger();
       const input = "line1\n\n\nline2\n";
       let received = "";
@@ -331,7 +337,7 @@ describe("strong-log-transformer", () => {
   });
 
   describe("edge cases", () => {
-    test("handles newlines in log messages correctly", (done) => {
+    testDone("handles newlines in log messages correctly", (done) => {
       const slt = Logger();
       const input = "line with\nnewline in it\n";
       let received = "";
@@ -352,7 +358,7 @@ describe("strong-log-transformer", () => {
       slt.end();
     });
 
-    test("handles incomplete lines at end of stream", (done) => {
+    testDone("handles incomplete lines at end of stream", (done) => {
       const slt = Logger();
       const input = "incomplete line without newline";
       let received = "";
@@ -369,7 +375,7 @@ describe("strong-log-transformer", () => {
       slt.end();
     });
 
-    test("handles multiple chunks forming single line", (done) => {
+    testDone("handles multiple chunks forming single line", (done) => {
       const slt = Logger();
       let received = "";
 
@@ -386,7 +392,7 @@ describe("strong-log-transformer", () => {
       slt.end();
     });
 
-    test("handles tag with special characters", (done) => {
+    testDone("handles tag with special characters", (done) => {
       const slt = Logger({ tag: "worker[1]" });
       const input = "test message\n";
       let received = "";

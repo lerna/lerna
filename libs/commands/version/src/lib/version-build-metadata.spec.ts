@@ -2,27 +2,31 @@ import { promptSelectOne as _promptSelectOne, promptTextInput as _promptTextInpu
 import { commandRunner, initFixtureFactory, showCommit } from "@lerna/test-helpers";
 import path from "path";
 import { makePromptVersion } from "./prompt-version";
+import versionCommand from "../command";
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
 
-const promptTextInput = jest.mocked(_promptTextInput);
+const promptTextInput = vi.mocked(_promptTextInput);
 
 // The mocked version isn't the same as the real one
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const promptSelectOne = _promptSelectOne as any;
 
-jest.mock("./git-push");
-jest.mock("./is-anything-committed", () => ({
-  isAnythingCommitted: jest.fn().mockReturnValue(true),
+vi.mock("./git-push");
+vi.mock("./is-anything-committed", async () => ({
+  isAnythingCommitted: vi.fn().mockReturnValue(true),
 }));
-jest.mock("./is-behind-upstream", () => ({
-  isBehindUpstream: jest.fn().mockReturnValue(false),
+vi.mock("./is-behind-upstream", async () => ({
+  isBehindUpstream: vi.fn().mockReturnValue(false),
 }));
-jest.mock("./remote-branch-exists", () => ({
-  remoteBranchExists: jest.fn().mockResolvedValue(true),
+vi.mock("./remote-branch-exists", async () => ({
+  remoteBranchExists: vi.fn().mockResolvedValue(true),
 }));
 
-const resolvePrereleaseId = jest.fn(() => "alpha");
+const resolvePrereleaseId = vi.fn(() => "alpha");
 const versionPrompt = (buildMetadata) => makePromptVersion(resolvePrereleaseId, buildMetadata);
 
 // helpers
@@ -30,7 +34,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../publish/__
 
 // file under test
 
-const lernaVersion = commandRunner(require("../command"));
+const lernaVersion = commandRunner(versionCommand);
 
 describe("--build-metadata without prompt", () => {
   it("accepts build metadata for explicit version", async () => {
@@ -68,7 +72,7 @@ describe("--build-metadata without prompt", () => {
     await expect(
       lernaVersion(testDir)("--repo-version", "1.0.2", "--build-metadata", "21AF26D3--117B344092BD")
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"--repo-version was replaced by positional [bump]. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from."`
+      `[Error: --repo-version was replaced by positional [bump]. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from.]`
     );
   });
 
@@ -77,7 +81,7 @@ describe("--build-metadata without prompt", () => {
     await expect(
       lernaVersion(testDir)("--cd-version", "premajor", "--build-metadata", "exp.sha.5114f85")
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"--cd-version was replaced by positional [bump]. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from."`
+      `[Error: --cd-version was replaced by positional [bump]. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from.]`
     );
   });
 

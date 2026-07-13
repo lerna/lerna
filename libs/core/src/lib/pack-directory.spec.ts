@@ -3,18 +3,15 @@
 import { initFixtureFactory } from "@lerna/test-helpers";
 import normalizePath from "normalize-path";
 import path from "path";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { printObjectProperties } from "pretty-format/build/collections";
 import { packDirectory } from "./pack-directory";
 import { getPackages } from "./project";
 
-require("@lerna/test-helpers/src/lib/silence-logging");
+import "@lerna/test-helpers/src/lib/silence-logging";
 
 // actually _run_ the lifecycles, gorrammit
-jest.unmock("./run-lifecycle");
+vi.unmock("./run-lifecycle");
 
-const npmConf = require("./npm-conf");
+import { npmConf } from "./npm-conf";
 
 const initFixture = initFixtureFactory(__dirname);
 

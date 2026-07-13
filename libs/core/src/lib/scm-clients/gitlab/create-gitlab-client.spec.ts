@@ -1,7 +1,7 @@
 import { createGitLabClient } from "./create-gitlab-client";
 import { GitLabClient } from "./gitlab-client";
 
-jest.mock("./gitlab-client");
+vi.mock("./gitlab-client");
 
 describe("createGitLabClient", () => {
   const oldEnv = Object.assign({}, process.env);

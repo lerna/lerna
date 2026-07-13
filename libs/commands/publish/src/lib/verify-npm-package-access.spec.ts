@@ -2,7 +2,7 @@ import { getPackages } from "@lerna/core";
 import { initFixtureFactory, loggingOutput } from "@lerna/test-helpers";
 import access from "libnpmaccess";
 
-jest.mock("libnpmaccess");
+vi.mock("libnpmaccess");
 
 const initFixture = initFixtureFactory(__dirname);
 
@@ -25,7 +25,7 @@ describe("verifyNpmPackageAccess", () => {
   });
 
   beforeEach(() => {
-    console.error = jest.fn();
+    console.error = vi.fn();
   });
 
   afterEach(() => {

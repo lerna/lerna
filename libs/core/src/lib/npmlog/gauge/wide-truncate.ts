@@ -6,10 +6,10 @@
  */
 
 "use strict";
-var stringWidth = require("string-width");
-var util = require("node:util");
+import stringWidth from "string-width";
+import util from "node:util";
 
-module.exports = wideTruncate;
+export default wideTruncate;
 
 function wideTruncate(str, target) {
   if (stringWidth(str) === 0) {

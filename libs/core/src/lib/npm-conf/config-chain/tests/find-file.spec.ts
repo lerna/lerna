@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const cc = require("../index");
+import * as cc from "../index";
 
 const objx = {
   rand: Math.random(),

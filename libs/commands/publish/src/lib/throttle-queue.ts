@@ -26,7 +26,7 @@ export class TailHeadQueue implements Queue {
    * @param size The number of items that may run concurrently
    * @param period The time between the end of the execution of an item and the start of the execution of the next one (ms)
    */
-  constructor(size, period) {
+  constructor(size: any, period: any) {
     this.queue_list = [];
     this.queue_size = Math.floor(size);
     this.queue_period = period;
@@ -54,7 +54,7 @@ export class TailHeadQueue implements Queue {
   }
 
   async queue<T>(f: () => Promise<T>): Promise<T> {
-    let p: Promise<T>;
+    let p!: Promise<T>;
     if (this.allowance > 0) {
       this.allowance -= 1;
       // Check if the queue should delay the promise's execution

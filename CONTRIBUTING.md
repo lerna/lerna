@@ -148,14 +148,14 @@ To run the e2e tests for a particular project, such as `e2e/info`, which tests t
 npx nx e2e e2e-info
 ```
 
-You can forward arguments onto the underlying `jest` process like so:
+You can forward arguments onto the underlying `vitest` process like so:
 
 ```sh
-# This will cause jest to only match against tests which have `qqqq` in their `describe()` or `it()` description (thanks to -t), and update the snapshots (thanks to -u)
+# This will cause vitest to only match against tests which have `qqqq` in their `describe()` or `it()` description (thanks to -t), and update the snapshots (thanks to -u)
 npx nx e2e e2e-info -t qqqq -u
 ```
 
-> NOTE: The building, versioning and publishing of the packages will be the same regardless of the jest flags passed
+> NOTE: The building, versioning and publishing of the packages will be the same regardless of the vitest flags passed
 
 #### Testing the task-runner (`e2e-run-task-runner`)
 
@@ -181,7 +181,7 @@ This bash script takes the name of a subdirectory within `e2e/run/task-runner/sr
 e2e/run/task-runner/src/run-tests.sh env-files
 ```
 
-If you pass `--update-snapshots` to the shell script it will run jest with the `-u` option to update any existing snapshots.
+If you pass `--update-snapshots` to the shell script it will run vitest with the `-u` option to update any existing snapshots.
 
 E.g.
 

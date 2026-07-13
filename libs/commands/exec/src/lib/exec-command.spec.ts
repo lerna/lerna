@@ -8,33 +8,40 @@ const initFixture = initFixtureFactory(__dirname);
 
 // mocked modules
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
+
+vi.mock("@lerna/child-process", async () => ({
+  ...(await vi.importActual<typeof import("@lerna/child-process")>("@lerna/child-process")),
+  // TODO: it's very suspicious that mockResolvedValue() doesn't work here
+  spawn: vi.fn(() => Promise.resolve({ exitCode: 0 })),
+  spawnStreaming: vi.fn(() => Promise.resolve({ exitCode: 0 })),
+}));
 
 // file under test
 
-const lernaExec = commandRunner(require("../command"));
+import command from "../command";
+
+const lernaExec = commandRunner(command);
 
 // assertion helpers
 const calledInPackages = () =>
-  childProcess.spawn.mock.calls.map(([, , opts]: [string, string, { cwd: string }]) =>
-    path.basename(opts.cwd)
-  );
+  vi
+    .mocked(childProcess.spawn)
+    .mock.calls.map(([, , opts]: [string, string, { cwd: string }]) => path.basename(opts.cwd));
 
 const execInPackagesStreaming = (testDir: string) =>
-  childProcess.spawnStreaming.mock.calls.reduce(
-    (arr: string[], [command, params, opts, prefix]: [string, string[], { cwd: string }, string]) => {
-      const dir = normalizeRelativeDir(testDir, opts.cwd);
-      arr.push([dir, command, `(prefix: ${prefix})`].concat(params).join(" "));
-      return arr;
-    },
-    []
-  );
+  vi
+    .mocked(childProcess.spawnStreaming)
+    .mock.calls.reduce(
+      (arr: string[], [command, params, opts, prefix]: [string, string[], { cwd: string }, string]) => {
+        const dir = normalizeRelativeDir(testDir, opts.cwd);
+        arr.push([dir, command, `(prefix: ${prefix})`].concat(params).join(" "));
+        return arr;
+      },
+      []
+    );
 
 describe("ExecCommand", () => {
-  // TODO: it's very suspicious that mockResolvedValue() doesn't work here
-  childProcess.spawn = jest.fn(() => Promise.resolve({ exitCode: 0 }));
-  childProcess.spawnStreaming = jest.fn(() => Promise.resolve({ exitCode: 0 }));
-
   afterEach(() => {
     process.exitCode = undefined;
   });
@@ -54,7 +61,7 @@ describe("ExecCommand", () => {
     });
 
     it("rejects with execution error", async () => {
-      childProcess.spawn.mockImplementationOnce((cmd: string, args: string[]) => {
+      vi.mocked(childProcess.spawn).mockImplementationOnce((cmd: string, args: string[]) => {
         const boom = new Error("execution error") as any;
 
         boom.failed = true;
@@ -76,16 +83,18 @@ describe("ExecCommand", () => {
     });
 
     it("should ignore execution errors with --no-bail", async () => {
-      childProcess.spawn.mockImplementationOnce((cmd: string, args: string[], { pkg }: { pkg: Package }) => {
-        const boom = new Error(pkg.name) as any;
+      vi.mocked(childProcess.spawn).mockImplementationOnce(
+        (cmd: string, args: string[], { pkg }: { pkg: Package }) => {
+          const boom = new Error(pkg.name) as any;
 
-        boom.failed = true;
-        boom.exitCode = 456;
-        boom.cmd = [cmd].concat(args).join(" ");
+          boom.failed = true;
+          boom.exitCode = 456;
+          boom.cmd = [cmd].concat(args).join(" ");
 
-        // --no-bail passes { reject: false } to execa, so throwing is inappropriate
-        return Promise.resolve(boom);
-      });
+          // --no-bail passes { reject: false } to execa, so throwing is inappropriate
+          return Promise.resolve(boom);
+        }
+      );
 
       await lernaExec(testDir)("boom", "--no-bail", "--", "--shaka", "--lakka");
 

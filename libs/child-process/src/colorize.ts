@@ -7,7 +7,7 @@ let enabled = true;
 /**
  * Apply terminal color/style formatting to text.
  * Wraps util.styleText with a programmatic kill switch for tests,
- * since jest-worker sets FORCE_COLOR=1 which overrides NO_COLOR.
+ * since test runner workers set FORCE_COLOR=1 which overrides NO_COLOR.
  */
 export function colorize(format: StyleFormat, text: string): string {
   if (!enabled) {

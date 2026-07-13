@@ -1,6 +1,7 @@
-jest.mock("../describe-ref");
-jest.mock("./has-tags");
-jest.mock("./make-diff-predicate");
+import type { Mock } from "vitest";
+vi.mock("../describe-ref");
+vi.mock("./has-tags");
+vi.mock("./make-diff-predicate");
 
 // mocked modules
 import { describeRefSync } from "../describe-ref";
@@ -17,7 +18,7 @@ import {
 import { collectProjectUpdates } from "./collect-project-updates";
 
 // default mock implementations
-(describeRefSync as jest.Mock).mockReturnValue({
+(describeRefSync as Mock).mockReturnValue({
   lastTagName: "v1.0.0",
   lastVersion: "1.0.0",
   refCount: "1",
@@ -25,15 +26,15 @@ import { collectProjectUpdates } from "./collect-project-updates";
   isDirty: false,
 });
 
-(hasTags as jest.Mock).mockReturnValue(true);
+(hasTags as Mock).mockReturnValue(true);
 
 const changedPackages = new Set();
-const hasDiff = jest
+const hasDiff = vi
   .fn()
   .mockName("hasDiff")
   .mockImplementation((node) => changedPackages.has(node.name));
 
-(makeDiffPredicate as jest.Mock).mockImplementation(() => hasDiff);
+(makeDiffPredicate as Mock).mockImplementation(() => hasDiff);
 
 // matcher constants
 const ALL_NODES = Object.freeze([
@@ -144,7 +145,7 @@ describe("collectProjectUpdates", () => {
   it("skips change detection when current revision is already released", () => {
     changedPackages.add("package-dag-1");
 
-    (describeRefSync as jest.Mock).mockReturnValueOnce({
+    (describeRefSync as Mock).mockReturnValueOnce({
       refCount: "0",
     });
 
@@ -158,7 +159,7 @@ describe("collectProjectUpdates", () => {
   });
 
   it("returns all nodes when no tag is found", () => {
-    (hasTags as jest.Mock).mockReturnValueOnce(false);
+    (hasTags as Mock).mockReturnValueOnce(false);
 
     const graph = buildGraph();
     const nodes = Object.values(graph.nodes);
@@ -401,7 +402,7 @@ describe("collectProjectUpdates", () => {
   it("does not exit early on tagged release when --since <ref> is passed", () => {
     changedPackages.add("package-dag-1");
 
-    (describeRefSync as jest.Mock).mockReturnValueOnce({
+    (describeRefSync as Mock).mockReturnValueOnce({
       refCount: "0",
     });
 

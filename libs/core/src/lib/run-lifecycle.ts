@@ -3,10 +3,11 @@ import log from "./npmlog";
 import { Package } from "./package";
 
 // @npmcli/run-script does not have any types
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import runScript from "@npmcli/run-script";
 
-const runScript = require("@npmcli/run-script");
-
-const npmConf = require("./npm-conf");
+import { npmConf } from "./npm-conf";
 
 const queue = new PQueue({ concurrency: 1 });
 
@@ -176,7 +177,7 @@ export function runLifecycle(pkg: Package, stage: string, options: LifecycleConf
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export function createRunner(commandOptions) {
-  const cfg = npmConf(commandOptions).snapshot;
+  const cfg = npmConf(commandOptions)["snapshot"];
 
   return (pkg: Package, stage: string) => runLifecycle(pkg, stage, cfg);
 }

@@ -2,11 +2,11 @@ import { checkWorkingTree } from "./check-working-tree";
 import { collectUncommitted as _collectUncommitted } from "./collect-uncommitted";
 import { describeRef as _describeRef } from "./describe-ref";
 
-jest.mock("./describe-ref");
-jest.mock("./collect-uncommitted");
+vi.mock("./describe-ref");
+vi.mock("./collect-uncommitted");
 
-const describeRef = jest.mocked(_describeRef);
-const collectUncommitted = jest.mocked(_collectUncommitted);
+const describeRef = vi.mocked(_describeRef);
+const collectUncommitted = vi.mocked(_collectUncommitted);
 
 describe("check-working-tree", () => {
   it("resolves on a clean tree with no release tags", async () => {

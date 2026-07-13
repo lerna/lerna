@@ -1,7 +1,7 @@
 import { log } from "@lerna/core";
 import { ExecOptions } from "child_process";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 export function gitTag(
   tag: string,
@@ -27,5 +27,5 @@ export function gitTag(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   log.verbose(cmd, interpolatedArgs);
-  return childProcess.exec(cmd, interpolatedArgs, opts);
+  return childProcess.exec(cmd, interpolatedArgs, opts as any);
 }

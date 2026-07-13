@@ -1,20 +1,21 @@
+import type { MockedFunction } from "vitest";
 import { Tree, readJson, writeJson } from "@nx/devkit";
 import { createTree } from "@nx/devkit/testing";
 import * as fs from "fs";
 
-jest.mock("fs", () => ({
-  ...jest.requireActual("fs"),
-  existsSync: jest.fn().mockReturnValue(false),
+vi.mock("fs", async () => ({
+  ...(await vi.importActual("fs")),
+  existsSync: vi.fn().mockReturnValue(false),
 }));
 
-require("@lerna/test-helpers/src/lib/silence-logging");
+import "@lerna/test-helpers/src/lib/silence-logging";
 
-const { InitCommand } = require("../index");
+import { InitCommand } from "../index";
 
 describe("InitCommand", () => {
   const lernaVersion = "__TEST_VERSION__";
   const commandOptions = { lernaVersion };
-  const mockedExistsSync = fs.existsSync as jest.MockedFunction<typeof fs.existsSync>;
+  const mockedExistsSync = fs.existsSync as MockedFunction<typeof fs.existsSync>;
 
   let tree: Tree;
 
@@ -268,7 +269,7 @@ describe("InitCommand", () => {
       filename: string | undefined,
       modulePath: string | undefined
     ): InstanceType<typeof InitCommand> {
-      const spy = jest
+      const spy = vi
         .spyOn(InitCommand.prototype, "getInvokerModule")
         .mockReturnValue({ filename, path: modulePath });
       const initCommand = new InitCommand(commandOptions);

@@ -1,7 +1,6 @@
-jest.mock("load-json-file");
-jest.mock("./write-package");
+vi.mock("load-json-file");
+vi.mock("./write-package");
 
-import os from "os";
 import path from "path";
 import loadJsonFile from "load-json-file";
 import { writePackage as writePackage } from "./write-package";
@@ -34,8 +33,9 @@ describe("Package", () => {
         type: "directory",
         name: "get-resolved",
         where: path.normalize("/root"),
-        // windows is so fucking ridiculous
-        fetchSpec: path.resolve(os.homedir(), pkg.location),
+        // path.resolve() gives the drive-qualified absolute location on windows
+        // (npa resolves against the cwd drive, so the expectation must too)
+        fetchSpec: path.resolve(pkg.location),
       });
     });
   });

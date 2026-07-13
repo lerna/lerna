@@ -1,6 +1,6 @@
 import log from "./npmlog";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 interface DescribeRefOptions {
   // Defaults to `process.cwd()`
@@ -56,7 +56,7 @@ export function describeRef(
   options: DescribeRefOptions = {},
   includeMergedTags?: boolean
 ): Promise<DescribeRefFallbackResult | DescribeRefDetailedResult> {
-  const promise = childProcess.exec("git", getArgs(options, includeMergedTags), options);
+  const promise = childProcess.exec("git", getArgs(options, includeMergedTags), options as any);
 
   return promise.then(({ stdout }: { stdout: string }) => {
     // TODO: refactor based on TS feedback
@@ -75,7 +75,7 @@ export function describeRefSync(
   options: DescribeRefOptions = {},
   includeMergedTags?: boolean
 ): DescribeRefFallbackResult | DescribeRefDetailedResult {
-  const stdout = childProcess.execSync("git", getArgs(options, includeMergedTags), options);
+  const stdout = childProcess.execSync("git", getArgs(options, includeMergedTags), options as any);
   // TODO: refactor based on TS feedback
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

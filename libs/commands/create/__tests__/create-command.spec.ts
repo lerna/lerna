@@ -4,16 +4,17 @@ import fs from "fs-extra";
 import _pacote from "pacote";
 import path from "path";
 import { slash } from "@lerna/core";
+import command from "../src/command";
 
-jest.mock("pacote");
+vi.mock("pacote");
 
-const pacote = jest.mocked(_pacote);
+const pacote = vi.mocked(_pacote);
 
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 
-const lernaCreate = commandRunner(require("../src/command"));
+const lernaCreate = commandRunner(command);
 
 // stabilize commit SHA
 expect.addSnapshotSerializer(gitSHASerializer);

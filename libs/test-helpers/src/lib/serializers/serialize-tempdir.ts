@@ -1,7 +1,7 @@
 import path from "path";
-import { Config } from "pretty-format";
+import type { Config } from "@vitest/pretty-format";
 
-const normalizePath = require("normalize-path");
+import normalizePath from "normalize-path";
 
 // Match temp directories created by mkdtempSync with "lerna-test-" prefix (6 random chars)
 const TEMP_DIR_REGEXP = /([^\s"]*[\\/]lerna-test-[A-Za-z0-9]{6})([^\s"]*)/g;

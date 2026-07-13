@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "../../build/e2e-out",
     "module": "commonjs",
-    "types": ["jest", "node"]
+    "types": ["node"]
   },
   "include": ["**/*.ts"]
 }

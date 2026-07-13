@@ -4,7 +4,13 @@ import fs from "fs";
 import http from "http";
 import ini from "ini";
 
-const CC = require("../index").ConfigChain;
+// vitest does not support jest's done-callback signature; adapt callback-style
+// tests by wrapping them in a promise.
+function testDone(name: string, fn: (done: () => void) => void) {
+  test(name, () => new Promise<void>((resolve) => fn(resolve)));
+}
+
+import { ConfigChain as CC } from "../index";
 
 const env = { foo_blaz: "blzaa", foo_env: "myenv" };
 const jsonObj = { blaz: "json", json: true };
@@ -42,7 +48,7 @@ http
   })
   .listen(1337);
 
-test("basic class test", (done) => {
+testDone("basic class test", (done) => {
   const cc = new CC();
   const expectlist = [
     { blaz: "json", json: true },

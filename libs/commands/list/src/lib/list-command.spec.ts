@@ -6,13 +6,22 @@ import {
   windowsPathSerializer,
 } from "@lerna/test-helpers";
 
+import command from "../command";
+
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 
-const lernaLs = commandRunner(require("../command"));
+const lernaLs = commandRunner(command);
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
+
+// ListCommand#execute() calls process.stdout.end(() => process.exit(0)); vitest (unlike jest)
+// intercepts process.exit and treats it as an error, so prevent the stream from ending here.
+vi.spyOn(process.stdout, "end").mockImplementation((() => process.stdout) as any);
 
 // The mock modifies the exported symbols and therefore types
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

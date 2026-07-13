@@ -6,9 +6,9 @@
  */
 
 "use strict";
-var stringWidth = require("string-width");
+import stringWidth from "string-width";
 
-module.exports = TemplateItem;
+export default TemplateItem;
 
 function isPercent(num) {
   if (typeof num !== "string") {

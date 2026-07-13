@@ -6,30 +6,36 @@ import {
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
-jest.mock("@lerna/core", () => {
-  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
+// NOTE: this mock registration is immediately superseded by the one below (matching the
+// original jest spec, where the second jest.mock for the same module wins).
+vi.mock("@lerna/core", async () => {
+  const actual = (await vi.importActual("@lerna/core")) as any;
   return {
-    ...mockCore,
-    gitCheckout: jest.requireActual("@lerna/core").gitCheckout,
+    ...actual,
+    ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+    gitCheckout: actual.gitCheckout,
   };
 });
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
 
 // lerna publish mocks
-jest.mock("./get-packages-without-license", () => {
+vi.mock("./get-packages-without-license", async () => {
   return {
-    getPackagesWithoutLicense: jest.fn().mockResolvedValue([]),
+    getPackagesWithoutLicense: vi.fn().mockResolvedValue([]),
   };
 });
-jest.mock("./verify-npm-package-access");
-jest.mock("./get-npm-username");
-jest.mock("./get-two-factor-auth-required");
+vi.mock("./verify-npm-package-access");
+vi.mock("./get-npm-username");
+vi.mock("./get-two-factor-auth-required");
 
 // lerna version mocks
 setupLernaVersionMocks();
 
-const npmDistTag = jest.mocked(_npmDistTag);
+const npmDistTag = vi.mocked(_npmDistTag);
 
 // The mock differs from the real thing
 const npmPublish = _npmPublish as any;
@@ -40,7 +46,9 @@ const initFixture = initFixtureFactory(__dirname);
 
 // test command
 
-const lernaPublish = commandRunner(require("../command"));
+import command from "../command";
+
+const lernaPublish = commandRunner(command);
 
 describe("publish tagging", () => {
   test("publish --dist-tag next", async () => {

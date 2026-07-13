@@ -64,7 +64,13 @@ export function showCommit(cwd: string, ...args: any[]) {
       ...args,
     ],
     { cwd }
-  ).then((result) => gitSHASerializer.serialize(result.stdout));
+  ).then((result) =>
+    gitSHASerializer.serialize(
+      // git >= 2.47 sets origin/HEAD on fetch, older versions (e.g. on CI) do
+      // not - strip the decoration so snapshots are stable across git versions
+      result.stdout.replace(/, origin\/HEAD/g, "").replace(/origin\/HEAD -> /g, "")
+    )
+  );
 }
 
 export function commitChangeToPackage(cwd: string, packageName: string, commitMsg: any, data: any) {

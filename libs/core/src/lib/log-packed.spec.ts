@@ -4,7 +4,7 @@ import { loggingOutput } from "@lerna/test-helpers";
 import { logPacked } from "./log-packed";
 
 // windows sucks
-jest.mock("./npmlog/gauge/has-unicode", () => ({ hasUnicode: () => false }));
+vi.mock("./npmlog/gauge/has-unicode", async () => ({ hasUnicode: () => false }));
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({

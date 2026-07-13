@@ -2,7 +2,7 @@
 // @ts-nocheck
 import ini from "ini";
 
-const cc = require("../index");
+import * as cc from "../index";
 
 test("Testing parse equivalence", () => {
   const _json = JSON.stringify({ hello: true });

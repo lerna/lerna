@@ -1,7 +1,7 @@
 import path from "path";
-import { Config } from "pretty-format";
+import type { Config } from "@vitest/pretty-format";
 
-const normalizePath = require("normalize-path");
+import normalizePath from "normalize-path";
 
 const WHACK_WACK = /(\\)([\S]*)/g;
 

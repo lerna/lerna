@@ -2,11 +2,11 @@
 
 export {};
 
-jest.mock("@lerna/child-process");
+vi.mock("@lerna/child-process");
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
-const { gitTag } = require("./git-tag");
+import { gitTag } from "./git-tag";
 
 describe("gitTag", () => {
   childProcess.exec.mockResolvedValue();

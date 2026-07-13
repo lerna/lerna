@@ -111,7 +111,7 @@ describe("collectUncommitted()", () => {
 
   it("accepts options.log", async () => {
     // re-uses previous cwd
-    const log = { silly: jest.fn() };
+    const log = { silly: vi.fn() };
 
     const result = await collectUncommitted({ log } as any);
 
@@ -140,7 +140,7 @@ describe("collectUncommittedSync()", () => {
 
   it("accepts options.log", async () => {
     // re-uses previous cwd
-    const log = { silly: jest.fn() };
+    const log = { silly: vi.fn() };
 
     const result = collectUncommittedSync({ log } as any);
 

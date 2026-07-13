@@ -1,8 +1,10 @@
 export {};
 
-const baseTheme = require("../base-theme");
-jest.mock("../spin", () => (theme: any, spun: any) => [theme, spun]);
-jest.mock("../progress-bar", () => (theme: any, width: any, completed: any) => [theme, width, completed]);
+import * as baseTheme from "../base-theme";
+vi.mock("../spin", async () => ({ default: (theme: any, spun: any) => [theme, spun] }));
+vi.mock("../progress-bar", async () => ({
+  default: (theme: any, width: any, completed: any) => [theme, width, completed],
+}));
 
 describe("activityIndicator", () => {
   it("no spun", () => {

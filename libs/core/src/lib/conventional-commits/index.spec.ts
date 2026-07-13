@@ -23,7 +23,7 @@ expect.addSnapshotSerializer(changelogSerializer);
 
 describe("conventional-commits", () => {
   beforeEach(() => {
-    jest.setTimeout(60000);
+    vi.setConfig({ testTimeout: 60000 });
   });
 
   describe("recommendVersion()", () => {

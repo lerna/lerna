@@ -4,18 +4,18 @@ import { gitPush } from "./git-push";
 
 const cloneFixture = cloneFixtureFactory(__dirname);
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 async function listRemoteTags(cwd) {
   return execa("git", ["ls-remote", "--tags", "--refs", "--quiet"], { cwd }).then((result) => result.stdout);
 }
 
 beforeEach(() => {
-  jest.spyOn(childProcess, "exec");
+  vi.spyOn(childProcess, "exec");
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
   delete process.env.GIT_REDIRECT_STDERR;
 });
 

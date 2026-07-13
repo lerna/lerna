@@ -8,13 +8,6 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
-    },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/e2e-utils"],
-      "options": {
-        "jestConfig": "libs/e2e-utils/jest.config.ts"
-      }
     }
   }
 }

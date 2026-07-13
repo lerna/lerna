@@ -4,12 +4,15 @@ import path from "path";
 import { Conf } from "./conf";
 import { toNerfDart } from "./nerf-dart";
 
-const { defaults } = require("./defaults");
+// "defaults" is exposed at runtime via a lazy Object.defineProperty getter in ./defaults,
+// which the type system cannot see, so access it through a namespace import cast.
+import * as defaultsModule from "./defaults";
 
-module.exports = npmConf;
-module.exports.Conf = Conf;
-module.exports.defaults = Object.assign({}, defaults);
-module.exports.toNerfDart = toNerfDart;
+const { defaults } = defaultsModule as any;
+
+const defaultsCopy = Object.assign({}, defaults);
+
+export { npmConf, Conf, toNerfDart, defaultsCopy as defaults };
 
 // https://github.com/npm/npm/blob/latest/lib/config/core.js#L101-L200
 function npmConf(opts?: any) {

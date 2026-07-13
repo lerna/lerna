@@ -1,6 +1,6 @@
 import { mapToRegistry } from "./map-to-registry";
 
-const npmConf = require("./npm-conf");
+import { npmConf } from "./npm-conf";
 
 // override value provided by @lerna/test-helpers/src/lib/npm/set-npm-userconfig, ensuring blank slate
 process.env.npm_config_userconfig = __dirname;

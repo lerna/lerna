@@ -1,6 +1,6 @@
 export {};
 
-const TemplateItem = require("../template-item");
+import TemplateItem from "../template-item";
 
 const width = 200;
 const defaults: any = {

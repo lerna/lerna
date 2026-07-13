@@ -5,14 +5,16 @@ import { oidc as _oidc } from "./oidc";
 import { otplease as _otplease } from "./otplease";
 import { runLifecycle as _runLifecycle } from "./run-lifecycle";
 
-jest.mock("./run-lifecycle");
-jest.mock("./otplease");
-jest.mock("./oidc");
-jest.mock("@npmcli/package-json");
-jest.mock("libnpmpublish");
-jest.mock("fs-extra");
+vi.mock("./run-lifecycle");
+vi.mock("./otplease");
+vi.mock("./oidc");
+vi.mock("@npmcli/package-json", () => ({ default: { prepare: vi.fn() } }));
+vi.mock("libnpmpublish");
+vi.mock("fs-extra");
 
-const { prepare: readJSON } = require("@npmcli/package-json");
+import PackageJson from "@npmcli/package-json";
+
+const readJSON = vi.mocked(PackageJson.prepare);
 
 // helpers
 import path from "path";
@@ -22,11 +24,11 @@ import { Package } from "./package";
 import { Conf } from "./npm-conf/conf";
 import { npmPublish } from "./npm-publish";
 
-const fs = jest.mocked(_fs);
-const publish = jest.mocked(_publish);
-const runLifecycle = jest.mocked(_runLifecycle);
-const otplease = jest.mocked(_otplease);
-const oidc = jest.mocked(_oidc);
+const fs = vi.mocked(_fs);
+const publish = vi.mocked(_publish);
+const runLifecycle = vi.mocked(_runLifecycle);
+const otplease = vi.mocked(_otplease);
+const oidc = vi.mocked(_oidc);
 
 describe("npm-publish", () => {
   const mockTarData = Buffer.from("MOCK") as never;

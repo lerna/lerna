@@ -1,17 +1,18 @@
+import type { Mock } from "vitest";
 import path from "path";
 import _fs from "fs-extra";
 import { writePackage as _writePackage } from "./write-package";
 import { Package } from "./package";
 import { npmInstall, npmInstallDependencies } from "./npm-install";
 
-jest.mock("fs-extra");
-jest.mock("./write-package");
-jest.mock("@lerna/child-process");
+vi.mock("fs-extra");
+vi.mock("./write-package");
+vi.mock("@lerna/child-process");
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
-const fs = jest.mocked(_fs);
-const writePackage = jest.mocked(_writePackage);
+const fs = vi.mocked(_fs);
+const writePackage = vi.mocked(_writePackage);
 
 describe("npm-install", () => {
   childProcess.exec.mockResolvedValue();
@@ -289,7 +290,7 @@ describe("npm-install", () => {
         registry: "https://custom-registry/npm-install",
       });
 
-      const [, , opts] = (childProcess.exec as jest.Mock).mock.calls.at(-1);
+      const [, , opts] = (childProcess.exec as Mock).mock.calls.at(-1);
       expect(opts.env.npm_config_registry).toBe("https://custom-registry/npm-install");
       // Lifecycle scripts spawned by npm/yarn/pnpm may themselves invoke bun; lerna must
       // not silently redirect their registry when the user never opted into bun.

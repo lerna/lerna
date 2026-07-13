@@ -4,24 +4,30 @@ import {
   recommendVersion as _recommendVersion,
 } from "@lerna/core";
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
+import versionCommand from "../command";
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
-
-jest.mock("./git-add");
-jest.mock("./git-commit");
-jest.mock("./git-push");
-jest.mock("./is-anything-committed", () => ({
-  isAnythingCommitted: jest.fn().mockReturnValue(true),
-}));
-jest.mock("./is-behind-upstream", () => ({
-  isBehindUpstream: jest.fn().mockReturnValue(false),
-}));
-jest.mock("./remote-branch-exists", () => ({
-  remoteBranchExists: jest.fn().mockResolvedValue(true),
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
 }));
 
-jest.mock("execa", () => {
-  const execa = jest.requireActual("execa");
+vi.mock("./git-add");
+vi.mock("./git-commit");
+vi.mock("./git-push");
+vi.mock("./is-anything-committed", async () => ({
+  isAnythingCommitted: vi.fn().mockReturnValue(true),
+}));
+vi.mock("./is-behind-upstream", async () => ({
+  isBehindUpstream: vi.fn().mockReturnValue(false),
+}));
+vi.mock("./remote-branch-exists", async () => ({
+  remoteBranchExists: vi.fn().mockResolvedValue(true),
+}));
+
+vi.mock("execa", async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const actual = (await vi.importActual("execa")) as any;
+  const execa = actual.default;
 
   const mockExeca = (...args) => {
     // assume there are changes if git diff is called
@@ -38,7 +44,7 @@ jest.mock("execa", () => {
     return execa(...args);
   };
 
-  return Object.assign(mockExeca, execa);
+  return { ...actual, default: Object.assign(mockExeca, execa) };
 });
 
 // The mocked version isn't the same as the real one
@@ -53,7 +59,7 @@ const initFixture = initFixtureFactory(__dirname);
 
 // test command
 
-const lernaVersion = commandRunner(require("../command"));
+const lernaVersion = commandRunner(versionCommand);
 
 describe.each([
   ["github", createGitHubClient],
@@ -173,7 +179,7 @@ describe("legacy option --github-release", () => {
     await expect(
       lernaVersion(testDir)("--github-release", "--conventional-commits")
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `"--github-release was replaced by --create-release=github. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from."`
+      `[Error: --github-release was replaced by --create-release=github. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from.]`
     );
   });
 });

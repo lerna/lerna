@@ -1,3 +1,4 @@
+import type { MockedFunction } from "vitest";
 import {
   collectProjectUpdates as _collectUpdates,
   getOneTimePassword as _getOneTimePassword,
@@ -13,29 +14,32 @@ import fs from "fs-extra";
 import path from "path";
 import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
 
 // lerna publish mocks
-jest.mock("./get-packages-without-license", () => ({
-  getPackagesWithoutLicense: jest.fn().mockResolvedValue([]),
+vi.mock("./get-packages-without-license", async () => ({
+  getPackagesWithoutLicense: vi.fn().mockResolvedValue([]),
 }));
-jest.mock("./verify-npm-package-access", () => ({
-  verifyNpmPackageAccess: jest.fn(() => Promise.resolve()),
+vi.mock("./verify-npm-package-access", async () => ({
+  verifyNpmPackageAccess: vi.fn(() => Promise.resolve()),
 }));
-jest.mock("./get-npm-username", () => ({
-  getNpmUsername: jest.fn(() => Promise.resolve("lerna-test")),
+vi.mock("./get-npm-username", async () => ({
+  getNpmUsername: vi.fn(() => Promise.resolve("lerna-test")),
 }));
-jest.mock("./get-two-factor-auth-required");
-jest.mock("./get-projects-with-unpublished-packages", () => ({
-  getProjectsWithUnpublishedPackages: jest.fn(() => Promise.resolve([])),
+vi.mock("./get-two-factor-auth-required");
+vi.mock("./get-projects-with-unpublished-packages", async () => ({
+  getProjectsWithUnpublishedPackages: vi.fn(() => Promise.resolve([])),
 }));
 
 // lerna version mocks
 setupLernaVersionMocks();
 
-const promptConfirmation = jest.mocked(_promptConfirmation);
-const getOneTimePassword = jest.mocked(_getOneTimePassword);
-const npmDistTag = jest.mocked(_npmDistTag);
+const promptConfirmation = vi.mocked(_promptConfirmation);
+const getOneTimePassword = vi.mocked(_getOneTimePassword);
+const npmDistTag = vi.mocked(_npmDistTag);
 
 // The mock differs from the real thing
 const npmPublish = _npmPublish as any;
@@ -50,13 +54,15 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 
-const lernaPublish = commandRunner(require("../command"));
+import command from "../command";
 
-const getNpmUsername = _getNpmUsername as jest.MockedFunction<typeof _getNpmUsername>;
-const getTwoFactorAuthRequired = _getTwoFactorAuthRequired as jest.MockedFunction<
+const lernaPublish = commandRunner(command);
+
+const getNpmUsername = _getNpmUsername as MockedFunction<typeof _getNpmUsername>;
+const getTwoFactorAuthRequired = _getTwoFactorAuthRequired as MockedFunction<
   typeof _getTwoFactorAuthRequired
 >;
-const gitCheckout = _gitCheckout as jest.MockedFunction<typeof _gitCheckout>;
+const gitCheckout = _gitCheckout as MockedFunction<typeof _gitCheckout>;
 gitCheckout.mockImplementation(() => Promise.resolve());
 
 describe("PublishCommand", () => {
@@ -368,7 +374,7 @@ Map {
   describe("--summary-file", () => {
     it("skips creating the summary file", async () => {
       const cwd = await initFixture("normal");
-      const fsSpy = jest.spyOn(fs, "writeFileSync");
+      const fsSpy = vi.spyOn(fs, "writeFileSync");
       await lernaPublish(cwd);
 
       expect(fsSpy).not.toHaveBeenCalled();
@@ -376,7 +382,7 @@ Map {
 
     it("creates the summary file within the provided directory", async () => {
       const cwd = await initFixture("normal");
-      const fsSpy = jest.spyOn(fsmain, "writeFileSync");
+      const fsSpy = vi.spyOn(fsmain, "writeFileSync");
       await lernaPublish(cwd)("--summary-file", "./outputs");
 
       const expectedJsonResponse = [
@@ -394,7 +400,7 @@ Map {
 
     it("creates the summary file at the root when no custom directory is provided", async () => {
       const cwd = await initFixture("normal");
-      const fsSpy = jest.spyOn(fsmain, "writeFileSync");
+      const fsSpy = vi.spyOn(fsmain, "writeFileSync");
       await lernaPublish(cwd)("--summary-file");
 
       const expectedJsonResponse = [
@@ -413,7 +419,7 @@ Map {
 
     it("creates the summary file in the provided file path", async () => {
       const cwd = await initFixture("normal");
-      const fsSpy = jest.spyOn(fsmain, "writeFileSync");
+      const fsSpy = vi.spyOn(fsmain, "writeFileSync");
       await lernaPublish(cwd)("--summary-file", "./outputs/lerna-publish-summary.json");
 
       const expectedJsonResponse = [

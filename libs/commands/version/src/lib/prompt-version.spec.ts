@@ -6,15 +6,18 @@ import {
 import semver from "semver";
 import { makePromptVersion } from "./prompt-version";
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
 
-const promptTextInput = jest.mocked(_promptTextInput);
+const promptTextInput = vi.mocked(_promptTextInput);
 
 // The mocked version isn't the same as the real one
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const promptSelectOne = _promptSelectOne as any;
 
-const resolvePrereleaseId = jest.fn(() => "alpha");
+const resolvePrereleaseId = vi.fn(() => "alpha");
 const versionPrompt = makePromptVersion(resolvePrereleaseId, "");
 
 describe("select", () => {

@@ -2,13 +2,13 @@ import { getPackages, ProjectGraphProjectNodeWithPackage } from "@lerna/core";
 import { initFixtureFactory } from "@lerna/test-helpers";
 import _pacote from "pacote";
 
-jest.mock("pacote");
+vi.mock("pacote");
 
 const initFixture = initFixtureFactory(__dirname);
 
 import { getProjectsWithUnpublishedPackages } from "./get-projects-with-unpublished-packages";
 
-const pacote = jest.mocked(_pacote);
+const pacote = vi.mocked(_pacote);
 
 pacote.packument.mockImplementation(async (pkg) => {
   if (pkg === "package-1") {

@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
+import { afterEach, vi } from "vitest";
+
 const releases = new Map();
 
 // keep test data isolated
@@ -10,12 +12,14 @@ afterEach(() => {
 
 const client = {
   repos: {
-    createRelease: jest.fn((opts) => {
+    createRelease: vi.fn((opts) => {
       releases.set(opts.name, opts);
       return Promise.resolve();
     }),
   },
 };
 
-module.exports.createGitLabClient = jest.fn(() => client);
-module.exports.createGitLabClient.releases = releases;
+export const createGitLabClient = Object.assign(
+  vi.fn(() => client),
+  { releases }
+);

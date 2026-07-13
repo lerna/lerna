@@ -8,7 +8,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-module.exports = ProtoList;
+export default ProtoList;
 
 function setProto(obj, proto) {
   if (typeof Object.setPrototypeOf === "function") return Object.setPrototypeOf(obj, proto);
