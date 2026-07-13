@@ -322,7 +322,7 @@ describe("conventional-commits", () => {
         recommendVersion(pkg1, "fixed", {
           changelogPreset: "./scripts/erroring-preset.js",
         })
-      ).rejects.toThrow("whatBump must be a function");
+      ).rejects.toThrow("`whatBump` must be a function");
     });
 
     it("throws an error when an implicit changelog preset cannot be loaded", async () => {
@@ -541,14 +541,12 @@ describe("conventional-commits", () => {
       expect(leafChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
         ## [1.0.1](/compare/dragons-are-awesome1.0.0...dragons-are-awesome1.0.1) (YYYY-MM-DD)
 
-
         ### Bug Fixes
 
         * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
       `);
       expect(rootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
         ## [1.0.1](/compare/dragons-are-awesome1.0.0...dragons-are-awesome1.0.1) (YYYY-MM-DD)
-
 
         ### Bug Fixes
 
@@ -572,7 +570,6 @@ describe("conventional-commits", () => {
       // second commit should not show up again
       expect(lastRootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
         ## [1.0.2](/compare/dragons-are-awesome1.0.1...dragons-are-awesome1.0.2) (YYYY-MM-DD)
-
 
         ### Bug Fixes
 
@@ -697,25 +694,15 @@ describe("conventional-commits", () => {
       `);
     });
 
-    it("normalizes new v8+ preset API to legacy format", async () => {
+    it("preserves new v8+ preset API format", async () => {
       const cwd = await initFixture("fixed");
 
       const config = await getChangelogConfig("./scripts/new-api-preset.js", cwd);
 
-      // Should have the new API properties
+      // Should have the new API properties (modern format)
       expect(config.parser).toBeDefined();
       expect(config.writer).toBeDefined();
       expect(config.whatBump).toBeDefined();
-
-      // Should also have normalized legacy properties
-      expect(config.parserOpts).toBeDefined();
-      expect(config.writerOpts).toBeDefined();
-      expect(config.conventionalChangelog).toBeDefined();
-      expect(config.conventionalChangelog.parserOpts).toBeDefined();
-      expect(config.conventionalChangelog.writerOpts).toBeDefined();
-      expect(config.recommendedBumpOpts).toBeDefined();
-      expect(config.recommendedBumpOpts.whatBump).toEqual(expect.any(Function));
-      expect(config.recommendedBumpOpts.parserOpts).toBeDefined();
     });
 
     it("supports new v8+ preset API for changelog generation", async () => {
@@ -776,16 +763,14 @@ describe("conventional-commits", () => {
       ]);
 
       expect(changelogOne.newEntry.trimRight()).toMatchInlineSnapshot(`
-        ## [1.0.1](/compare/package-1@1.0.0...package-1@1.0.1) (YYYY-MM-DD)
-
+        ## [1.0.1](/compare/package-1%401.0.0...package-1%401.0.1) (YYYY-MM-DD)
 
         ### Bug Fixes
 
         * **stuff:** changed ([SHA](COMMIT_URL))
       `);
       expect(changelogTwo.newEntry.trimRight()).toMatchInlineSnapshot(`
-        # [1.1.0](/compare/package-2@1.0.0...package-2@1.1.0) (YYYY-MM-DD)
-
+        # [1.1.0](/compare/package-2%401.0.0...package-2%401.1.0) (YYYY-MM-DD)
 
         ### Features
 
@@ -827,7 +812,6 @@ describe("conventional-commits", () => {
 
         ## [1.0.1](/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
 
-
         ### Bug Fixes
 
         * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
@@ -837,9 +821,6 @@ describe("conventional-commits", () => {
         Some *paragraph*
 
 
-
-
-
         <a name="1.0.0"></a>
 
         # 1.0.0 (YYYY-MM-DD)
@@ -847,7 +828,6 @@ describe("conventional-commits", () => {
         ### Features
 
         * I should be placed in the CHANGELOG
-
       `);
     });
   });

@@ -1,3 +1,4 @@
+import Handlebars from "handlebars";
 import npa from "npm-package-arg";
 import { promisify } from "node:util";
 import log from "../npmlog";
@@ -13,52 +14,115 @@ function isFunction(config: any) {
   );
 }
 
+function normalizeLegacyWriterOptions(writer: any): any {
+  if (!writer || typeof writer !== "object") {
+    return writer;
+  }
+
+  const normalized = { ...writer };
+  const legacyMainTemplate =
+    typeof writer.mainTemplate === "string" ? Handlebars.compile(writer.mainTemplate) : undefined;
+  const legacyHeaderPartial =
+    typeof writer.headerPartial === "string" ? Handlebars.compile(writer.headerPartial) : undefined;
+  const legacyCommitPartial =
+    typeof writer.commitPartial === "string" ? Handlebars.compile(writer.commitPartial) : undefined;
+  const legacyFooterPartial =
+    typeof writer.footerPartial === "string" ? Handlebars.compile(writer.footerPartial) : undefined;
+
+  if (legacyMainTemplate) {
+    normalized.template = (context: any) =>
+      legacyMainTemplate(context, {
+        data: { root: context },
+        partials: {
+          header:
+            legacyHeaderPartial ||
+            ((partialContext: any) => (writer.headerPartial || context.headerPartial)(partialContext)),
+          commit:
+            legacyCommitPartial ||
+            ((commit: any, options: any) =>
+              (writer.commitPartial || context.commitPartial)(options.data.root, commit)),
+          footer:
+            legacyFooterPartial ||
+            ((partialContext: any) => (writer.footerPartial || context.footerPartial)(partialContext)),
+        },
+      });
+    delete normalized.mainTemplate;
+    delete normalized.headerPartial;
+    delete normalized.commitPartial;
+    delete normalized.footerPartial;
+  } else {
+    if (legacyHeaderPartial) {
+      normalized.headerPartial = (context: any) => legacyHeaderPartial(context);
+    }
+    if (legacyCommitPartial) {
+      normalized.commitPartial = (context: any, commit: any) =>
+        legacyCommitPartial(commit, { data: { root: context } });
+    }
+    if (legacyFooterPartial) {
+      normalized.footerPartial = (context: any) => legacyFooterPartial(context);
+    }
+  }
+
+  return normalized;
+}
+
 /**
- * Normalize the new conventional-changelog preset API (v8+) to the legacy
- * format expected by conventional-changelog-core@5 and conventional-recommended-bump@7.
+ * Normalize legacy conventional-changelog preset API to the modern format
+ * expected by conventional-changelog@7+ and conventional-recommended-bump@10+.
  *
- * New API shape:   { parser, writer, commits, whatBump }
  * Legacy API shape: { parserOpts, writerOpts, gitRawCommitsOpts, conventionalChangelog, recommendedBumpOpts }
+ * Modern API shape: { parser, writer, commits, whatBump }
  */
-function normalizeNewPresetConfig(config: any): any {
+function normalizePresetConfig(config: any): any {
+  // Already in modern format
   if (
     config &&
-    (config.parser || config.writer) &&
+    (config.parser || config.writer || config.whatBump) &&
     !config.parserOpts &&
     !config.writerOpts &&
     !config.conventionalChangelog
   ) {
-    log.verbose("getChangelogConfig", "Normalizing new preset API to legacy format");
+    return {
+      ...config,
+      writer: normalizeLegacyWriterOptions(config.writer),
+    };
+  }
+
+  // Legacy format → modern format
+  if (
+    config &&
+    (config.parserOpts ||
+      config.writerOpts ||
+      config.conventionalChangelog ||
+      config.recommendedBumpOpts ||
+      config.gitRawCommitsOpts)
+  ) {
+    log.verbose("getChangelogConfig", "Normalizing legacy preset API to modern format");
 
     const normalized: any = { ...config };
 
-    if (config.parser) {
-      normalized.parserOpts = config.parser;
-    }
-    if (config.writer) {
-      normalized.writerOpts = config.writer;
-    }
-    if (config.commits) {
-      normalized.gitRawCommitsOpts = config.commits;
-    }
+    // Use conventionalChangelog sub-object if present (some presets wrap config there),
+    // but also check top-level properties as fallback since some presets place
+    // gitRawCommitsOpts at the top level alongside conventionalChangelog.
+    const cc = config.conventionalChangelog || config;
 
-    normalized.conventionalChangelog = {
-      parserOpts: normalized.parserOpts,
-      writerOpts: normalized.writerOpts,
-    };
-    if (normalized.gitRawCommitsOpts) {
-      normalized.conventionalChangelog.gitRawCommitsOpts = normalized.gitRawCommitsOpts;
+    if (!normalized.parser) {
+      normalized.parser = cc.parserOpts || config.parserOpts;
     }
-
-    if (config.whatBump) {
-      normalized.recommendedBumpOpts = {
-        parserOpts: normalized.parserOpts,
-        whatBump: config.whatBump,
-      };
+    if (!normalized.writer) {
+      normalized.writer = cc.writerOpts || config.writerOpts;
+    }
+    normalized.writer = normalizeLegacyWriterOptions(normalized.writer);
+    if (!normalized.commits) {
+      normalized.commits = cc.gitRawCommitsOpts || config.gitRawCommitsOpts;
+    }
+    if (!normalized.whatBump) {
+      normalized.whatBump = config.recommendedBumpOpts?.whatBump || config.whatBump;
     }
 
     return normalized;
   }
+
   return config;
 }
 
@@ -100,7 +164,7 @@ async function resolveConfigPromise(presetPackageName: string, presetConfig: obj
 
   config = await Promise.resolve(config);
 
-  return normalizeNewPresetConfig(config);
+  return normalizePresetConfig(config);
 }
 
 export async function getChangelogConfig(

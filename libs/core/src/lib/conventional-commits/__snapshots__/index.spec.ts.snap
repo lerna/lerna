@@ -8,7 +8,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # 1.1.0 (YYYY-MM-DD)
 
-
 ### Features
 
 * I should be placed in the CHANGELOG ([SHA](COMMIT_URL))
@@ -22,7 +21,6 @@ All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 # 1.1.0 (YYYY-MM-DD)
-
 
 ### Features
 
@@ -38,13 +36,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.0.1](/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
 
-
 ### Bug Fixes
 
 * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
-
-
-
 
 
 <a name="1.0.0"></a>
@@ -65,13 +59,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.0.1](/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
 
-
 ### Bug Fixes
 
 * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
-
-
-
 
 
 <a name="1.0.0"></a>
