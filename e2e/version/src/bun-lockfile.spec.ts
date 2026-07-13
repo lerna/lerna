@@ -1,5 +1,5 @@
 import { Fixture, normalizeCommitSHAs, normalizeEnvironment } from "@lerna/e2e-utils";
-import { existsSync } from "fs-extra";
+import { existsSync, outputFile } from "fs-extra";
 
 expect.addSnapshotSerializer({
   serialize(str: string) {
@@ -70,5 +70,33 @@ describe("lerna-version-bun-lockfile", () => {
 
     const sentinelPath = fixture.getWorkspacePath("packages/package-c/preinstall-ran.txt");
     expect(existsSync(sentinelPath)).toBe(false);
+  });
+
+  it("should replace and stage all existing bun lockfile formats", async () => {
+    await fixture.lerna("create package-a -y");
+    await fixture.install();
+
+    const textLockfilePath = fixture.getWorkspacePath("bun.lock");
+    const generatedLockfileName = existsSync(textLockfilePath) ? "bun.lock" : "bun.lockb";
+    const additionalLockfileName = generatedLockfileName === "bun.lock" ? "bun.lockb" : "bun.lock";
+    const generatedLockfilePath = fixture.getWorkspacePath(generatedLockfileName);
+    const additionalLockfilePath = fixture.getWorkspacePath(additionalLockfileName);
+    await outputFile(additionalLockfilePath, "stale additional lockfile");
+
+    expect(existsSync(generatedLockfilePath)).toBe(true);
+    expect(existsSync(additionalLockfilePath)).toBe(true);
+
+    await fixture.createInitialGitCommit();
+    await fixture.exec("git push origin test-main");
+
+    const output = await fixture.lerna("version 1.0.0 -y");
+    expect(output.combinedOutput).toContain("lerna success version finished");
+
+    expect(existsSync(generatedLockfilePath)).toBe(true);
+    expect(existsSync(additionalLockfilePath)).toBe(false);
+
+    const committedFiles = await fixture.exec("git show --name-status --format=");
+    expect(committedFiles.combinedOutput).toContain(`M\t${generatedLockfileName}`);
+    expect(committedFiles.combinedOutput).toContain(`D\t${additionalLockfileName}`);
   });
 });

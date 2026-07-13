@@ -802,16 +802,24 @@ class VersionCommand extends Command {
     if (this.options.npmClient === "bun") {
       const lockfileCandidates = ["bun.lockb", "bun.lock"];
       const candidates = lockfileCandidates.map((f) => path.join(this.project.rootPath, f));
-      const lockfilePath = candidates.find((p) => fs.existsSync(p));
+      const staleLockfiles = new Map(
+        candidates
+          .filter((candidate) => fs.existsSync(candidate))
+          .map((candidate) => [candidate, fs.readFileSync(candidate)])
+      );
 
-      if (lockfilePath) {
-        this.logger.verbose("version", `Updating root ${path.basename(lockfilePath)}`);
+      if (staleLockfiles.size > 0) {
+        const staleLockfileNames = Array.from(staleLockfiles.keys(), (lockfilePath) =>
+          path.basename(lockfilePath)
+        );
+        this.logger.verbose("version", `Updating root ${staleLockfileNames.join(", ")}`);
 
         // Bun caches workspace package versions from the existing lockfile and does not
-        // re-read them from package.json. Remove the stale lockfile so the regenerated
-        // one picks up the bumped versions.
-        const staleContent = fs.readFileSync(lockfilePath);
-        fs.unlinkSync(lockfilePath);
+        // re-read them from package.json. Remove all stale lockfile formats so the
+        // regenerated lockfile picks up the bumped versions.
+        for (const lockfilePath of staleLockfiles.keys()) {
+          fs.unlinkSync(lockfilePath);
+        }
 
         try {
           await execPackageManager(
@@ -825,14 +833,28 @@ class VersionCommand extends Command {
             this.execOpts
           );
         } catch (err) {
-          // Restore the original lockfile so the user doesn't lose it on failure.
-          fs.writeFileSync(lockfilePath, staleContent);
+          // Remove any partially generated lockfiles and restore the complete original
+          // set so the user doesn't lose or unexpectedly migrate a lockfile on failure.
+          for (const candidate of candidates) {
+            if (fs.existsSync(candidate)) {
+              fs.unlinkSync(candidate);
+            }
+          }
+          for (const [lockfilePath, staleContent] of staleLockfiles) {
+            fs.writeFileSync(lockfilePath, staleContent);
+          }
           throw err;
         }
 
-        const updatedPath = candidates.find((p) => fs.existsSync(p));
-        if (updatedPath) {
-          changedFiles.add(updatedPath);
+        // Stage removals as well as every regenerated lockfile so format migrations are
+        // captured when granular pathspecs are enabled.
+        for (const lockfilePath of staleLockfiles.keys()) {
+          changedFiles.add(lockfilePath);
+        }
+        for (const candidate of candidates) {
+          if (fs.existsSync(candidate)) {
+            changedFiles.add(candidate);
+          }
         }
       }
     }
