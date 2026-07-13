@@ -72,6 +72,27 @@ describe("npm-run-script", () => {
         windowsHide: false,
       });
     });
+
+    it("supports bun as npmClient", async () => {
+      const script = "foo";
+      const config = {
+        args: ["--bar", "baz"],
+        pkg: {
+          location: "/test/npm/run/script",
+        },
+        npmClient: "bun",
+      };
+
+      await npmRunScript(script, config);
+
+      expect(childProcess.exec).toHaveBeenLastCalledWith("bun", ["run", script, "--bar", "baz"], {
+        cwd: config.pkg.location,
+        env: {},
+        pkg: config.pkg,
+        reject: true,
+        windowsHide: false,
+      });
+    });
   });
 
   describe("npmRunScriptStreaming()", () => {
@@ -132,6 +153,36 @@ describe("npm-run-script", () => {
           windowsHide: false,
         },
         undefined
+      );
+    });
+
+    it("supports bun as npmClient", async () => {
+      const script = "foo";
+      const config = {
+        args: ["--bar", "baz"],
+        pkg: {
+          name: "qux",
+          location: "/test/npm/run/script/stream",
+        },
+        prefix: true,
+        npmClient: "bun",
+      };
+
+      await npmRunScriptStreaming(script, config);
+
+      expect(childProcess.spawnStreaming).toHaveBeenLastCalledWith(
+        "bun",
+        ["run", script, "--bar", "baz"],
+        {
+          cwd: config.pkg.location,
+          env: {
+            LERNA_PACKAGE_NAME: "qux",
+          },
+          pkg: config.pkg,
+          reject: true,
+          windowsHide: false,
+        },
+        config.pkg.name
       );
     });
   });

@@ -46,12 +46,20 @@ runs:
         COREPACK_ENABLE_AUTO_PIN: "0"
         COREPACK_ENABLE_STRICT: "0"
 
-    - name: Print installed node, npm, yarn and pnpm versions
+    - name: Install Bun
+      uses: oven-sh/setup-bun@e3914758a49697077f7bcd190d36582a61667aad # v2 (Node.js 24 runtime)
+      with:
+        # Latest 1.x so e2e exercises the text-based bun.lock format that has been bun's
+        # default since 1.2 (the legacy binary bun.lockb handling is covered by unit tests)
+        bun-version: "1.x"
+
+    - name: Print installed node, npm, yarn, pnpm and bun versions
       run: |
         node --version
         npm --version
         yarn --version
         pnpm --version
+        bun --version
       shell: bash
       env:
         COREPACK_ENABLE_AUTO_PIN: "0"

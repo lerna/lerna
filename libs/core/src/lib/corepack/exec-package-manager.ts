@@ -8,7 +8,9 @@ function createCommandAndArgs(npmClient: string, args: string[]) {
   let command = npmClient;
   const commandArgs = [...args];
 
-  if (isCorepackEnabled()) {
+  // Corepack does not support bun, so bypass the corepack wrapper for bun
+  // even when corepack is enabled; fall through to invoking bun directly.
+  if (isCorepackEnabled() && npmClient !== "bun") {
     commandArgs.unshift(command);
     command = "corepack";
   }

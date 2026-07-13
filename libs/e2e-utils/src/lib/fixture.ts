@@ -9,7 +9,7 @@ interface RunCommandOptions {
   silent?: boolean;
 }
 
-type PackageManager = "npm" | "yarn" | "pnpm";
+type PackageManager = "npm" | "yarn" | "pnpm" | "bun";
 
 interface FixtureCreateOptions {
   name: string;
@@ -115,6 +115,12 @@ export class Fixture {
   }
 
   private static inferPackageManagerFromExistingFixture(fixtureRootPath: string): PackageManager {
+    if (
+      existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "bun.lockb")) ||
+      existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "bun.lock"))
+    ) {
+      return "bun";
+    }
     if (existsSync(joinPathFragments(fixtureRootPath, "lerna-workspace", "pnpm-workspace.yaml"))) {
       return "pnpm";
     }
@@ -137,6 +143,15 @@ export class Fixture {
       await this.exec(
         `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false" > .npmrc`
       );
+    } else if (this.packageManager === "bun") {
+      // .npmrc covers the npm operations lerna itself runs inside the fixture
+      // (e.g. `npm install` performed by lerna init).
+      await this.exec(`echo "registry=${REGISTRY}" > .npmrc`);
+      // bunfig.toml is bun's native config file, read by all bun operations in the
+      // fixture directory. Commands run outside the fixture directory (e.g. bunx
+      // downloading the lerna package) rely on BUN_CONFIG_REGISTRY instead, which is
+      // passed explicitly where needed.
+      await this.exec(`printf '[install]\\nregistry = "${REGISTRY}"\\n' > bunfig.toml`);
     }
   }
 
@@ -218,6 +233,11 @@ export class Fixture {
       case "pnpm":
         execCommandResult = this.exec(`pnpm dlx lerna@${getPublishedVersion()} init ${args || ""}`);
         break;
+      case "bun":
+        execCommandResult = this.exec(`bunx lerna@${getPublishedVersion()} init ${args || ""}`, {
+          env: { ...process.env, BUN_CONFIG_REGISTRY: REGISTRY },
+        });
+        break;
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
@@ -245,6 +265,10 @@ export class Fixture {
         return this.exec(`yarn --registry=${REGISTRY} install${args ? ` ${args}` : ""}`);
       case "pnpm":
         return this.exec(`pnpm install${args ? ` ${args}` : ""}`);
+      case "bun":
+        return this.exec(`bun install${args ? ` ${args}` : ""}`, {
+          env: { ...process.env, BUN_CONFIG_REGISTRY: REGISTRY },
+        });
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }
@@ -266,6 +290,12 @@ export class Fixture {
         return this.exec(`npx ${offlineFlag}--no lerna ${args}`, { silenceError: opts.silenceError });
       case "pnpm":
         return this.exec(`pnpm exec lerna ${args}`, { silenceError: opts.silenceError });
+      case "bun":
+        // bunx doesn't support --offline
+        return this.exec(`bunx lerna ${args}`, {
+          silenceError: opts.silenceError,
+          env: { ...process.env, BUN_CONFIG_REGISTRY: REGISTRY },
+        });
       default:
         throw new Error(`Unsupported package manager: ${this.packageManager}`);
     }

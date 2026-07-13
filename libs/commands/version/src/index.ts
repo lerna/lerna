@@ -44,6 +44,7 @@ import { isBehindUpstream } from "./lib/is-behind-upstream";
 import { isBreakingChange } from "./lib/is-breaking-change";
 import { makePromptVersion } from "./lib/prompt-version";
 import { remoteBranchExists } from "./lib/remote-branch-exists";
+import { updateBunLockfile } from "./lib/update-bun-lockfile";
 import { updateLockfileVersion } from "./lib/update-lockfile-version";
 
 const childProcess = require("@lerna/child-process");
@@ -797,6 +798,18 @@ class VersionCommand extends Command {
 
       const lockfilePath = path.join(this.project.rootPath, "pnpm-lock.yaml");
       changedFiles.add(lockfilePath);
+    }
+
+    if (this.options.npmClient === "bun") {
+      const bunLockfiles = await updateBunLockfile({
+        rootPath: this.project.rootPath,
+        npmClientArgs,
+        runScriptsOnLockfileUpdate,
+        execOpts: this.execOpts,
+      });
+      for (const lockfilePath of bunLockfiles) {
+        changedFiles.add(lockfilePath);
+      }
     }
 
     if (this.options.npmClient === "yarn") {
