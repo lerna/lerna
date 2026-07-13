@@ -283,6 +283,14 @@ export class InitCommand {
       return "bun";
     }
 
+    const userAgent = process.env.npm_config_user_agent?.toLowerCase();
+    for (const pkgManager of ["pnpm", "yarn"] as const) {
+      if (userAgent?.startsWith(`${pkgManager}/`)) {
+        this.logger.verbose("", `Detected package manager ${pkgManager} from npm_config_user_agent`);
+        return pkgManager;
+      }
+    }
+
     const invoker = this.getInvokerModule();
 
     if (!invoker) {

@@ -29,6 +29,10 @@ export function normalizeEnvironment(str: string): string {
     .replaceAll(/\/private/g, "")
     .replaceAll(E2E_ROOT, "/tmp/lerna-e2e")
     .replaceAll(/lerna info ci enabled\n/g, "")
+    .replaceAll(
+      /^WARN[^\S\r\n]+The "workspaces" field in package\.json is not supported by pnpm\. Create a "pnpm-workspace\.yaml" file instead\.\n/gm,
+      ""
+    )
     // Replace fixture namespacing
     .replaceAll(/-npm-\d+/g, "");
 
