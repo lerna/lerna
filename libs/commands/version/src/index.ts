@@ -49,7 +49,7 @@ import { updateLockfileVersion } from "./lib/update-lockfile-version";
 
 import * as childProcess from "@lerna/child-process";
 
-function factory(
+export function factory(
   argv: Arguments<VersionCommandConfigOptions>,
   preInitializedProjectData?: PreInitializedProjectData
 ) {
@@ -96,7 +96,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   premajorVersionBump?: "default" | "force-patch";
 }
 
-class VersionCommand extends Command {
+export class VersionCommand extends Command {
   declare options: VersionCommandConfigOptions;
 
   commitAndTag?: boolean;
@@ -959,4 +959,7 @@ class VersionCommand extends Command {
 // The public shape of this module is a callable factory with the command class
 // attached (module.exports = factory; module.exports.VersionCommand = VersionCommand),
 // preserved for consumers of the lerna/commands/version deep import.
-export = Object.assign(factory, { VersionCommand });
+const commonJsExport = Object.assign(factory, { VersionCommand });
+
+export default commonJsExport;
+export { commonJsExport as "module.exports" };

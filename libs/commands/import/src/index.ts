@@ -9,9 +9,12 @@ import {
 import { ExecOptions } from "child_process";
 import dedent from "dedent";
 import fs from "fs-extra";
+import { createRequire } from "node:module";
 import path from "path";
 
 import * as childProcess from "@lerna/child-process";
+
+const require = createRequire(import.meta.url);
 
 export function factory(argv: Arguments<ImportCommandOptions>) {
   return new ImportCommand(argv);

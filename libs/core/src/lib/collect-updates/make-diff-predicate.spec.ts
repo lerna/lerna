@@ -101,4 +101,4 @@ describe("makeDiffPredicate", () => {
 });
 
 const nodeWithPackage = (pkg: { location: string }): ProjectGraphProjectNodeWithPackage =>
-  ({ name: basename(pkg.location), package: pkg as Package } as ProjectGraphProjectNodeWithPackage);
+  ({ name: basename(pkg.location), package: pkg as Package }) as ProjectGraphProjectNodeWithPackage;

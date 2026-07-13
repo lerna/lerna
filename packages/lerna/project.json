@@ -23,25 +23,23 @@
         "tsConfig": "packages/lerna/tsconfig.lib.json",
         "assets": [
           {
-            "input": "packages/lerna/src",
-            "glob": "cli.js",
-            "output": "."
-          },
-          {
             "input": "libs/commands/create/src/lib",
-            "glob": "lerna-module-data.js",
+            "glob": "lerna-module-data.cjs",
             "output": "lib"
           },
           {
             "input": "libs/commands/create/src/lib",
-            "glob": "lerna-module-data.js",
+            "glob": "lerna-module-data.cjs",
             "output": "commands/create/lib"
           }
         ],
         "thirdParty": false,
         "platform": "node",
-        "format": ["cjs"],
+        "format": ["esm"],
         "additionalEntryPoints": [
+          "packages/lerna/src/cli.ts",
+          "packages/lerna/src/commands/add-caching/command.ts",
+          "packages/lerna/src/commands/add-caching/index.ts",
           "packages/lerna/src/commands/changed/command.ts",
           "packages/lerna/src/commands/changed/index.ts",
           "packages/lerna/src/commands/clean/command.ts",
@@ -76,6 +74,8 @@
           "packages/lerna/src/commands/publish/lib/git-checkout.ts",
           "packages/lerna/src/commands/publish/lib/remove-temp-licenses.ts",
           "packages/lerna/src/commands/publish/lib/verify-npm-package-access.ts",
+          "packages/lerna/src/commands/repair/command.ts",
+          "packages/lerna/src/commands/repair/index.ts",
           "packages/lerna/src/commands/run/command.ts",
           "packages/lerna/src/commands/run/index.ts",
           "packages/lerna/src/commands/version/command.ts",
@@ -92,6 +92,8 @@
           "packages/lerna/src/commands/version/lib/prompt-version.ts",
           "packages/lerna/src/commands/version/lib/remote-branch-exists.ts",
           "packages/lerna/src/commands/version/lib/update-lockfile-version.ts",
+          "packages/lerna/src/commands/watch/command.ts",
+          "packages/lerna/src/commands/watch/index.ts",
           "packages/lerna/src/migrations/add-schema-config/add-schema-config.ts",
           "packages/lerna/src/migrations/remove-invalid-init-config/remove-invalid-init-config.ts",
           "packages/lerna/src/migrations/remove-invalid-lerna-config/remove-invalid-lerna-config.ts",
@@ -102,11 +104,9 @@
         ],
         "esbuildOptions": {
           "external": ["*package.json", "nx/*", "@nx/*"],
+          "splitting": true,
           "outExtension": {
             ".js": ".js"
-          },
-          "logOverride": {
-            "commonjs-variable-in-esm": "silent"
           }
         }
       }

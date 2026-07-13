@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/publish/lib/get-whoami");
+export * from "@lerna/commands/publish/lib/get-whoami";

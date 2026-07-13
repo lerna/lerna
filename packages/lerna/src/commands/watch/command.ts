@@ -27,9 +27,10 @@ const command: CommandModule = {
 
     return filterOptions(yargs);
   },
-  handler(argv) {
-    return require(".")(argv);
+  async handler(argv) {
+    return (await import(".")).factory(argv);
   },
 };
 
-export = command;
+export default command;
+export { command as "module.exports" };

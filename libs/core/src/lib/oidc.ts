@@ -40,18 +40,14 @@ export async function oidc({ packageName, registry, opts, config }: OidcOptions)
    */
 
   try {
-    if (
-      !(
-        /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L152 */
-        (
-          ciInfo.GITHUB_ACTIONS ||
-          /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L161C13-L161C22 */
-          ciInfo.GITLAB ||
-          /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L78 */
-          ciInfo.CIRCLE
-        )
-      )
-    ) {
+    if (!(
+      /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L152 */
+      ciInfo.GITHUB_ACTIONS ||
+      /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L161C13-L161C22 */
+      ciInfo.GITLAB ||
+      /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L78 */
+      ciInfo.CIRCLE
+    )) {
       return undefined;
     }
 

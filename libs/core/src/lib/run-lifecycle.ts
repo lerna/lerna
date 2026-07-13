@@ -1,4 +1,4 @@
-import PQueue from "p-queue";
+import PQueueImport from "p-queue";
 import log from "./npmlog";
 import { Package } from "./package";
 
@@ -9,6 +9,8 @@ import runScript from "@npmcli/run-script";
 
 import { npmConf } from "./npm-conf";
 
+const PQueue =
+  (PQueueImport as typeof PQueueImport & { default?: typeof PQueueImport }).default ?? PQueueImport;
 const queue = new PQueue({ concurrency: 1 });
 
 interface LifecycleConfig {

@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/version/lib/git-commit");
+export * from "@lerna/commands/version/lib/git-commit";

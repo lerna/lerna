@@ -1,4 +1,5 @@
-const versionIndex = require("@lerna/commands/version");
+import versionIndex from "@lerna/commands/version";
 
-module.exports = versionIndex;
-module.exports.VersionCommand = versionIndex.VersionCommand;
+export { factory, VersionCommand } from "@lerna/commands/version";
+export default versionIndex;
+export { versionIndex as "module.exports" };

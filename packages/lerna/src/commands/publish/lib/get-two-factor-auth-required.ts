@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/publish/lib/get-two-factor-auth-required");
+export * from "@lerna/commands/publish/lib/get-two-factor-auth-required";

@@ -25,9 +25,10 @@ import {
   ValidationError,
 } from "@lerna/core";
 import { workspaceRoot } from "@nx/devkit";
-import { copy } from "fs-extra";
+import fsExtra from "fs-extra";
 import crypto from "node:crypto";
 import fs, { existsSync } from "node:fs";
+import { createRequire } from "node:module";
 import os from "node:os";
 import path, { basename, join, normalize } from "node:path";
 import npa from "npm-package-arg";
@@ -50,7 +51,9 @@ import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
 
 import versionCommand from "@lerna/commands/version";
 
-function factory(argv: Arguments<PublishCommandConfigOptions>) {
+const require = createRequire(import.meta.url);
+
+export function factory(argv: Arguments<PublishCommandConfigOptions>) {
   return new PublishCommand(argv);
 }
 
@@ -89,7 +92,7 @@ interface PublishCommandConfigOptions extends CommandConfigOptions {
   throttleDelay?: number;
 }
 
-class PublishCommand extends Command {
+export class PublishCommand extends Command {
   declare options: PublishCommandConfigOptions;
 
   savePrefix?: string;
@@ -1215,7 +1218,7 @@ class PublishCommand extends Command {
           file.from.replace(`${_workspaceRoot}/`, ""),
           file.to.replace(`${_workspaceRoot}/`, "")
         );
-        await copy(file.from, file.to);
+        await fsExtra.copy(file.from, file.to);
       } else {
         this.logger.warn(
           "EPUBLISHASSET",
@@ -1252,4 +1255,7 @@ class PublishCommand extends Command {
 // The public shape of this module is a callable factory with the command class
 // attached (module.exports = factory; module.exports.PublishCommand = PublishCommand),
 // preserved for consumers of the lerna/commands/publish deep import.
-export = Object.assign(factory, { PublishCommand });
+const commonJsExport = Object.assign(factory, { PublishCommand });
+
+export default commonJsExport;
+export { commonJsExport as "module.exports" };

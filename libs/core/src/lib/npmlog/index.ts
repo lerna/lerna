@@ -113,7 +113,7 @@ export class Logger extends EventEmitter {
   }
 
   useColor(): boolean {
-    return this.colorEnabled != null ? this.colorEnabled : this._stream?.isTTY ?? false;
+    return this.colorEnabled != null ? this.colorEnabled : (this._stream?.isTTY ?? false);
   }
 
   enableColor(): void {

@@ -1,4 +1,5 @@
-const createIndex = require("@lerna/commands/create");
+import createIndex from "@lerna/commands/create";
 
-module.exports = createIndex;
-module.exports.CreateCommand = createIndex.CreateCommand;
+export { CreateCommand, factory } from "@lerna/commands/create";
+export default createIndex;
+export { createIndex as "module.exports" };

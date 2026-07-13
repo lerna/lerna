@@ -13,8 +13,8 @@ vi.mock("@nx/devkit", async () => ({
   workspaceRoot: "root",
 }));
 
-vi.spyOn(fsExtra, "readJson").mockImplementation(
-  (path): Promise<RawManifest | null> => Promise.resolve(getManifestForPath(path as string))
+vi.spyOn(fsExtra, "readJson").mockImplementation((path): Promise<RawManifest | null> =>
+  Promise.resolve(getManifestForPath(path as string))
 );
 
 expect.addSnapshotSerializer(windowsPathSerializer);

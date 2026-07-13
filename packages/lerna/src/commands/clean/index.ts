@@ -1,4 +1,5 @@
-const cleanIndex = require("@lerna/commands/clean");
+import cleanIndex from "@lerna/commands/clean";
 
-module.exports = cleanIndex;
-module.exports.CleanCommand = cleanIndex.CleanCommand;
+export { CleanCommand, factory } from "@lerna/commands/clean";
+export default cleanIndex;
+export { cleanIndex as "module.exports" };

@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/publish/lib/fetch-config");
+export * from "@lerna/commands/publish/lib/fetch-config";

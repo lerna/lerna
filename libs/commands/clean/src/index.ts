@@ -15,11 +15,11 @@ interface CleanCommandConfigOptions extends CommandConfigOptions {
   yes?: boolean;
 }
 
-function factory(argv: Arguments<CleanCommandConfigOptions>) {
+export function factory(argv: Arguments<CleanCommandConfigOptions>) {
   return new CleanCommand(argv);
 }
 
-class CleanCommand extends Command<CleanCommandConfigOptions> {
+export class CleanCommand extends Command<CleanCommandConfigOptions> {
   directoriesToDelete: string[] = [];
 
   override get requiresGit() {
@@ -67,4 +67,7 @@ class CleanCommand extends Command<CleanCommandConfigOptions> {
 // The public shape of this module is a callable factory with the command class
 // attached (module.exports = factory; module.exports.CleanCommand = CleanCommand),
 // preserved for consumers of the lerna/commands/clean deep import.
-export = Object.assign(factory, { CleanCommand });
+const commonJsExport = Object.assign(factory, { CleanCommand });
+
+export default commonJsExport;
+export { commonJsExport as "module.exports" };

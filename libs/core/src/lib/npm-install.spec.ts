@@ -196,9 +196,7 @@ describe("npm-install", () => {
           // removed caret, local-dependency
         },
         bundledDependencies: [/* removed local-dependency */ "others"],
-        bundleDependencies: [
-          /* removed  */
-        ],
+        bundleDependencies: [/* removed  */],
       });
       expect(childProcess.exec).toHaveBeenLastCalledWith("npm", ["install"], {
         cwd: pkg.location,

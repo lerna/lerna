@@ -21,6 +21,20 @@ permissions:
   contents: read
 
 jobs:
+  esm-compat-node-floor:
+    name: ESM compatibility - Node 22.13.0
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - name: Install minimum supported Node version and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+        with:
+          node-version: 22.13.0
+
+      - name: Test the published package entrypoints
+        run: npx nx test lerna --skip-nx-cache
+
   main:
     name: Nx Cloud - Main Job
     runs-on: ubuntu-latest

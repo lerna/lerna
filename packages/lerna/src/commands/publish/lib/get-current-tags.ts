@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/publish/lib/get-current-tags");
+export * from "@lerna/commands/publish/lib/get-current-tags";

@@ -1,11 +1,14 @@
 import { log } from "@lerna/core";
 import { readJsonFile, workspaceRoot } from "@nx/devkit";
 import fs from "fs";
+import { createRequire } from "node:module";
 import path from "path";
 import { slash } from "@lerna/core";
 
 import * as childProcess from "@lerna/child-process";
 import type { LernaOptions } from "@lerna/child-process";
+
+const require = createRequire(import.meta.url);
 
 let resolvedPrettier: any;
 function resolvePrettier() {

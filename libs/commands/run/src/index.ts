@@ -17,13 +17,16 @@ import {
   Arguments,
 } from "@lerna/core";
 import { TargetDependencyConfig } from "@nx/devkit";
-import { existsSync } from "fs-extra";
+import fs from "fs-extra";
 
 import { runMany } from "nx/src/command-line/run-many/run-many";
 import { runOne } from "nx/src/command-line/run/run-one";
 import pMap from "p-map";
+import { createRequire } from "node:module";
 import path from "path";
 import { performance } from "perf_hooks";
+
+const require = createRequire(import.meta.url);
 
 export function factory(argv: Arguments<RunCommandConfigOptions>) {
   return new RunCommand(argv);
@@ -307,7 +310,7 @@ export class RunCommand extends Command<RunCommandConfigOptions> {
   }
 
   private async prepNxOptions() {
-    const nxJsonExists = existsSync(path.join(this.project.rootPath, "nx.json"));
+    const nxJsonExists = fs.existsSync(path.join(this.project.rootPath, "nx.json"));
 
     const { readNxJson } = require("nx/src/config/configuration");
     const nxJson = readNxJson();

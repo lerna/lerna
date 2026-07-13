@@ -82,13 +82,13 @@ describe("e2e-project generator", () => {
     `);
 
     expect(appTree.read("e2e/test/vitest.config.ts").toString()).toMatchInlineSnapshot(`
-      "import { defineConfig } from \\"vitest/config\\";
-      import { defineLernaE2eVitestConfig } from \\"../../vitest.shared\\";
+      "import { defineConfig } from 'vitest/config';
+      import { defineLernaE2eVitestConfig } from '../../vitest.shared';
 
       export default defineConfig(
         defineLernaE2eVitestConfig({
-          projectRoot: \\"e2e/test\\",
-        })
+          projectRoot: 'e2e/test',
+        }),
       );
       "
     `);

@@ -4,11 +4,7 @@ import path from "path";
 import { Conf } from "./conf";
 import { toNerfDart } from "./nerf-dart";
 
-// "defaults" is exposed at runtime via a lazy Object.defineProperty getter in ./defaults,
-// which the type system cannot see, so access it through a namespace import cast.
-import * as defaultsModule from "./defaults";
-
-const { defaults } = defaultsModule as any;
+import { defaults } from "./defaults";
 
 const defaultsCopy = Object.assign({}, defaults);
 

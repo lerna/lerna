@@ -1,4 +1,5 @@
-const publishIndex = require("@lerna/commands/publish");
+import publishIndex from "@lerna/commands/publish";
 
-module.exports = publishIndex;
-module.exports.PublishCommand = publishIndex.PublishCommand;
+export { factory, PublishCommand } from "@lerna/commands/publish";
+export default publishIndex;
+export { publishIndex as "module.exports" };

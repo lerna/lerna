@@ -101,4 +101,5 @@ const command: CommandModule<object, RunCommandConfigOptions> = {
   },
 };
 
-export = command;
+export default command;
+export { command as "module.exports" };
