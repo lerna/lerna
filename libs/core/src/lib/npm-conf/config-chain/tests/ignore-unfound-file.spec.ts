@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-const cc = require("../index");
+import cc from "../index";
 
 test("does not throw", () => {
   expect(() => {

@@ -56,8 +56,5 @@ export { timer } from "./lib/timer";
 export { toposortProjects } from "./lib/toposort-projects";
 export { ValidationError } from "./lib/validation-error";
 export { default as log, Logger } from "./lib/npmlog";
-export { npmConf, npmDistTag };
-
-const npmConf = require("./lib/npm-conf");
-
-const npmDistTag = require("./lib/npm-dist-tag");
+export { npmConf } from "./lib/npm-conf";
+export * as npmDistTag from "./lib/npm-dist-tag";

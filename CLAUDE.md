@@ -99,7 +99,7 @@ When creating or modifying Lerna commands:
 
 ### Testing Conventions
 
-- **Jest**: Primary testing framework with Nx test runner
+- **Vitest**: Primary testing framework with Nx test runner (config shared via vitest.shared.ts at the workspace root)
 - **Unit tests**: Test individual functions and command logic
 - **Integration tests**: Test command interactions and workflows
 - **E2E tests**: Test full command execution in realistic monorepo scenarios
@@ -133,7 +133,7 @@ For any changes that only update tests, use `test` or `chore` as the commit/PR t
 - **npm**: Version 10.8.0 as the package manager
 - **Nx**: Task runner and monorepo management
 - **TypeScript**: Strict configuration for type safety
-- **Jest**: Testing framework with Nx integration
+- **Vitest**: Testing framework with Nx integration
 
 ## Common Commands
 

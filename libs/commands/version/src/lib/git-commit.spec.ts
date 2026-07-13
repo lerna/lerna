@@ -2,18 +2,18 @@ import { tempWrite as _tempWrite } from "@lerna/core";
 import { EOL } from "os";
 import { gitCommit } from "./git-commit";
 
-jest.mock("@lerna/child-process");
+vi.mock("@lerna/child-process");
 
-jest.mock("@lerna/core", () => ({
+vi.mock("@lerna/core", async () => ({
   tempWrite: {
-    sync: jest.fn(),
+    sync: vi.fn(),
   },
-  log: jest.requireActual("@lerna/core").log,
+  log: (await vi.importActual("@lerna/core")).log,
 }));
 
-const tempWrite = jest.mocked(_tempWrite);
+const tempWrite = vi.mocked(_tempWrite);
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 describe("git commit", () => {
   childProcess.exec.mockResolvedValue();

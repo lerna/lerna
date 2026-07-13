@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`--build-metadata with prompt accepts build metadata 1`] = `
+exports[`--build-metadata with prompt > accepts build metadata 1`] = `
 "v1.1.0+20130313144700
 
 HEAD -> main, tag: v1.1.0+20130313144700
@@ -61,7 +61,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"1.1.0+20130313144700\\","
 `;
 
-exports[`--build-metadata with prompt accepts build metadata across independent versions 1`] = `
+exports[`--build-metadata with prompt > accepts build metadata across independent versions 1`] = `
 "Publish
 
  - package-1@1.0.1+21AF26D3--117B344092BD
@@ -126,7 +126,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"0.2.0+21AF26D3--117B344092BD\\","
 `;
 
-exports[`--build-metadata with prompt updates build metadata 1`] = `
+exports[`--build-metadata with prompt > updates build metadata 1`] = `
 "v1.1.0+20130313144700
 
 HEAD -> main, tag: v1.1.0+20130313144700
@@ -151,7 +151,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"1.1.0+20130313144700\\""
 `;
 
-exports[`--build-metadata with prompt updates build metadata across independent versions 1`] = `
+exports[`--build-metadata with prompt > updates build metadata across independent versions 1`] = `
 "Publish
 
  - package-1@1.0.1+exp.sha.SHA
@@ -175,7 +175,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"2.1.0+exp.sha.SHA\\""
 `;
 
-exports[`--build-metadata without prompt accepts build metadata across independent versions with semver keyword 1`] = `
+exports[`--build-metadata without prompt > accepts build metadata across independent versions with semver keyword 1`] = `
 "Publish
 
  - package-1@1.1.0+001
@@ -240,7 +240,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"0.2.0+001\\","
 `;
 
-exports[`--build-metadata without prompt accepts build metadata for explicit version 1`] = `
+exports[`--build-metadata without prompt > accepts build metadata for explicit version 1`] = `
 "v1.0.1+20130313144700
 
 HEAD -> main, tag: v1.0.1+20130313144700
@@ -301,7 +301,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"1.0.1+20130313144700\\","
 `;
 
-exports[`--build-metadata without prompt accepts build metadata with default prerelease id 1`] = `
+exports[`--build-metadata without prompt > accepts build metadata with default prerelease id 1`] = `
 "v1.0.1-alpha.0+20130313144700
 
 HEAD -> main, tag: v1.0.1-alpha.0+20130313144700
@@ -362,7 +362,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"1.0.1-alpha.0+20130313144700\\","
 `;
 
-exports[`--build-metadata without prompt accepts build metadata with semver keyword 1`] = `
+exports[`--build-metadata without prompt > accepts build metadata with semver keyword 1`] = `
 "v1.1.0+001
 
 HEAD -> main, tag: v1.1.0+001
@@ -423,7 +423,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"1.1.0+001\\","
 `;
 
-exports[`--build-metadata without prompt updates build metadata across independent versions with semver keyword 1`] = `
+exports[`--build-metadata without prompt > updates build metadata across independent versions with semver keyword 1`] = `
 "Publish
 
  - package-1@1.1.0+exp.sha.SHA
@@ -447,7 +447,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"2.1.0+exp.sha.SHA\\""
 `;
 
-exports[`--build-metadata without prompt updates build metadata for explicit version 1`] = `
+exports[`--build-metadata without prompt > updates build metadata for explicit version 1`] = `
 "v1.0.1+20130313144700
 
 HEAD -> main, tag: v1.0.1+20130313144700

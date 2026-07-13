@@ -1,4 +1,4 @@
-import { prepare } from "@npmcli/package-json";
+import PackageJson from "@npmcli/package-json";
 import fs from "fs-extra";
 import { publish } from "libnpmpublish";
 import npa from "npm-package-arg";
@@ -70,7 +70,7 @@ export async function npmPublish(
 
     const [tarData, npmCliPackageJson] = await Promise.all([
       fs.readFile(tarFilePath),
-      await prepare(path.dirname(manifestLocation)),
+      await PackageJson.prepare(path.dirname(manifestLocation)),
     ]);
 
     const manifestContent = npmCliPackageJson.content;

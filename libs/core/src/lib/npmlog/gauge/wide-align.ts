@@ -6,7 +6,7 @@
  */
 
 "use strict";
-var stringWidth = require("string-width");
+import stringWidth from "string-width";
 
 function alignLeft(str: string, width: number): string {
   var trimmed = str.trimEnd();
@@ -46,6 +46,6 @@ function alignCenter(str: string, width: number): string {
   return trimmed;
 }
 
-exports.left = alignLeft;
-exports.right = alignRight;
-exports.center = alignCenter;
+export const left = alignLeft;
+export const right = alignRight;
+export const center = alignCenter;

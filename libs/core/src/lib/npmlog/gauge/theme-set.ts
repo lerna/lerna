@@ -6,14 +6,15 @@
  */
 
 "use strict";
+import baseTheme from "./base-theme";
 
-module.exports = function () {
+export default function () {
   return ThemeSetProto.newThemeSet();
-};
+}
 
 var ThemeSetProto = {};
 
-ThemeSetProto.baseTheme = require("./base-theme.js");
+ThemeSetProto.baseTheme = baseTheme;
 
 ThemeSetProto.newTheme = function (parent, theme) {
   if (!theme) {

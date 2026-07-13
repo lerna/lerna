@@ -1,6 +1,6 @@
 export {};
 
-const align = require("../wide-align");
+import * as align from "../wide-align";
 
 describe("wide-align", () => {
   describe("align.left", () => {

@@ -1,11 +1,12 @@
+import type { MockedFunction } from "vitest";
 import { loggingOutput } from "@lerna/test-helpers";
 
-jest.mock("./get-profile-data");
+vi.mock("./get-profile-data");
 
 import { getProfileData as _getProfileData, ProfileData } from "./get-profile-data";
 import { getTwoFactorAuthRequired } from "./get-two-factor-auth-required";
 
-const getProfileData = _getProfileData as jest.MockedFunction<typeof _getProfileData>;
+const getProfileData = _getProfileData as MockedFunction<typeof _getProfileData>;
 
 getProfileData.mockImplementation(() => Promise.resolve({ tfa: {} } as ProfileData));
 
@@ -13,7 +14,7 @@ describe("getTwoFactorAuthRequired", () => {
   const origConsoleError = console.error;
 
   beforeEach(() => {
-    console.error = jest.fn();
+    console.error = vi.fn();
   });
 
   afterEach(() => {

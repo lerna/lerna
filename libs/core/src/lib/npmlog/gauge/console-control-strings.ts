@@ -118,7 +118,7 @@ function colorNameToCode(name: string): number {
   throw new Error("Unknown color or style name: " + name);
 }
 
-export function color(...args: string[]): string {
+export function color(...args: (string | string[])[]): string {
   const colorWith = args.length === 1 && Array.isArray(args[0]) ? args[0] : args;
   return prefix + colorWith.map(colorNameToCode).join(";") + "m";
 }

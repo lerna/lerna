@@ -20,7 +20,7 @@ export function verifyNpmPackageAccess(
 
   return pulseTillDone(access.getPackages(username, opts)).then(success, failure);
 
-  function success(result) {
+  function success(result: any) {
     const userPackages = Object.keys(result || {});
     if (userPackages.length === 0) {
       opts.log.warn(
@@ -40,7 +40,7 @@ export function verifyNpmPackageAccess(
     }
   }
 
-  function failure(err) {
+  function failure(err: any) {
     // pass if registry does not support the package endpoint
     if (err.code === "E500" || err.code === "E404") {
       // most likely a private registry (npm Enterprise, verdaccio, etc)

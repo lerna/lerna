@@ -31,7 +31,7 @@ const types: TypeMap = {
   F: { label: "function", check: (_: any) => typeof _ === "function" },
   O: {
     label: "object",
-    check: (_: any) => typeof _ === "object" && _ != null && !types.A.check(_) && !types.E.check(_),
+    check: (_: any) => typeof _ === "object" && _ != null && !types["A"].check(_) && !types["E"].check(_),
   },
   B: { label: "boolean", check: (_: any) => typeof _ === "boolean" },
   E: { label: "error", check: (_: any) => _ instanceof Error },
@@ -47,8 +47,8 @@ function validate(rawSchemas: string, args: any[] | IArguments): void {
   if (arguments.length !== 2) throw wrongNumberOfArgs(["SA"], arguments.length);
   if (!rawSchemas) throw missingRequiredArg(0);
   if (!args) throw missingRequiredArg(1);
-  if (!types.S.check(rawSchemas)) throw invalidType(0, ["string"], rawSchemas);
-  if (!types.A.check(args)) throw invalidType(1, ["array"], args);
+  if (!types["S"].check(rawSchemas)) throw invalidType(0, ["string"], rawSchemas);
+  if (!types["A"].check(args)) throw invalidType(1, ["array"], args);
   const schemas = rawSchemas.split("|");
   const arity: { [key: number]: string[] } = {};
 
@@ -126,4 +126,4 @@ function newException(code: string, msg: string): ValidateError {
   return err;
 }
 
-export = validate;
+export default validate;

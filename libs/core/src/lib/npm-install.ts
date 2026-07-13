@@ -5,9 +5,7 @@ import { writePackage } from "./write-package";
 import { getNpmExecOpts } from "./get-npm-exec-opts";
 import log from "./npmlog";
 
-const childProcess = require("@lerna/child-process");
-
-module.exports.npmInstallDependencies = npmInstallDependencies;
+import * as childProcess from "@lerna/child-process";
 
 export function npmInstall(
   pkg: any,

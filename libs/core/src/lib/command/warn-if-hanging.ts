@@ -1,6 +1,6 @@
 import log from "../npmlog";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 export function warnIfHanging() {
   const childProcessCount = childProcess.getChildProcessCount();

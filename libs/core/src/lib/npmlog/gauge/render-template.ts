@@ -6,11 +6,11 @@
  */
 
 "use strict";
-var align = require("./wide-align");
-var validate = require("./validate");
-var wideTruncate = require("./wide-truncate");
-var error = require("./error");
-var TemplateItem = require("./template-item");
+import * as align from "./wide-align";
+import validate from "./validate";
+import wideTruncate from "./wide-truncate";
+import * as error from "./error";
+import TemplateItem from "./template-item";
 
 function renderValueWithValues(values) {
   return function (item) {
@@ -18,11 +18,13 @@ function renderValueWithValues(values) {
   };
 }
 
-var renderTemplate = (module.exports = function (width, template, values) {
+var renderTemplate = function (width, template, values) {
   var items = prepareItems(width, template, values);
   var rendered = items.map(renderValueWithValues(values)).join("");
   return align.left(wideTruncate(rendered, width), width);
-});
+};
+
+export default renderTemplate;
 
 function preType(item) {
   var cappedTypeName = item.type[0].toUpperCase() + item.type.slice(1);

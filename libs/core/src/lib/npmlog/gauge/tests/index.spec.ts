@@ -2,9 +2,16 @@
 
 import { Gauge } from "../index";
 
-const stream = require("readable-stream");
-const util = require("util");
-const EventEmitter = require("events").EventEmitter;
+import * as stream from "readable-stream";
+import * as util from "util";
+
+// vitest does not support jest's done-callback signature; adapt callback-style
+// tests by wrapping them in a promise.
+function testDone(name: string, fn: (done: () => void) => void) {
+  test(name, () => new Promise<void>((resolve) => fn(resolve)));
+}
+
+import { EventEmitter } from "events";
 
 function Sink(this: any) {
   stream.Writable.call(this, arguments);
@@ -78,7 +85,7 @@ describe("construct", () => {
 });
 
 describe("show & pulse: fixedframerate", () => {
-  it("should show and pulse with fixed framerate", (done) => {
+  testDone("should show and pulse with fixed framerate", (done) => {
     const testtimeout = setTimeout(() => {
       done();
     }, 1000);
@@ -117,7 +124,7 @@ describe("show & pulse: fixedframerate", () => {
 });
 
 describe("window resizing", () => {
-  it("should handle window resizing", (done) => {
+  testDone("should handle window resizing", (done) => {
     const testtimeout = setTimeout(() => {
       done();
     }, 1000);
@@ -172,7 +179,7 @@ function collectResults(
 }
 
 describe("hideCursor:true", () => {
-  it("should hide cursor when enabled", (done) => {
+  testDone("should hide cursor when enabled", (done) => {
     // @ts-expect-error ...
     const output = new Sink();
     output.isTTY = true;
@@ -202,7 +209,7 @@ describe("hideCursor:true", () => {
 });
 
 describe("hideCursor:false", () => {
-  it("should not hide cursor when disabled", (done) => {
+  testDone("should not hide cursor when disabled", (done) => {
     // @ts-expect-error ...
     const output = new Sink();
     output.isTTY = true;

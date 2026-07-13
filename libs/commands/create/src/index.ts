@@ -13,11 +13,11 @@ import path from "path";
 import { slash } from "@lerna/core";
 import { URL } from "url";
 
-const initPackageJson = require("init-package-json");
+import initPackageJson from "init-package-json";
 
-const { builtinNpmrc } = require("./lib/builtin-npmrc");
+import { builtinNpmrc } from "./lib/builtin-npmrc";
 
-const { catFile } = require("./lib/cat-file");
+import { catFile } from "./lib/cat-file";
 
 const LERNA_MODULE_DATA = require.resolve(path.join(__dirname, "./lib/lerna-module-data.js"));
 const DEFAULT_DESCRIPTION = [
@@ -31,9 +31,9 @@ const DEFAULT_DESCRIPTION = [
   "BOOM",
 ].join(" / ");
 
-module.exports = function factory(argv: Arguments<CommandConfigOptions>) {
+function factory(argv: Arguments<CommandConfigOptions>) {
   return new CreateCommand(argv);
-};
+}
 
 class CreateCommand extends Command {
   initialize() {
@@ -562,4 +562,7 @@ class CreateCommand extends Command {
   }
 }
 
-module.exports.CreateCommand = CreateCommand;
+// The public shape of this module is a callable factory with the command class
+// attached (module.exports = factory; module.exports.CreateCommand = CreateCommand),
+// preserved for consumers of the lerna/commands/create deep import.
+export = Object.assign(factory, { CreateCommand });

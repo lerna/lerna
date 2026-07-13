@@ -5,7 +5,7 @@ import _loadJsonFile from "load-json-file";
 import path from "path";
 import { updateLockfileVersion } from "./update-lockfile-version";
 
-jest.mock("load-json-file", () => require("@lerna/test-helpers/__mocks__/load-json-file"));
+vi.mock("load-json-file", () => import("@lerna/test-helpers/__mocks__/load-json-file"));
 
 // The mocked version isn't the same as the real one
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,9 +55,10 @@ describe("update lockfile version", () => {
     expect(Array.from(loadJsonFile.registry.keys())).toStrictEqual(["/packages/package-1"]);
     const updatedLockfile = fs.readJSONSync(returnedLockfilePath as string);
     expect(updatedLockfile).toHaveProperty("version", "2.0.0");
-    expect(updatedLockfile).toHaveProperty(["packages", "", "dependencies", "package-2"], "^2.0.0");
-    expect(updatedLockfile).toHaveProperty(["packages", "", "dependencies", "tiny-tarball"], "^1.0.0");
-    expect(updatedLockfile).toHaveProperty(["packages", "", "devDependencies", "package-3"], "3.0.0");
+    // note: vitest's toHaveProperty cannot address an empty-string path segment, so anchor at packages[""]
+    expect(updatedLockfile.packages[""]).toHaveProperty(["dependencies", "package-2"], "^2.0.0");
+    expect(updatedLockfile.packages[""]).toHaveProperty(["dependencies", "tiny-tarball"], "^1.0.0");
+    expect(updatedLockfile.packages[""]).toHaveProperty(["devDependencies", "package-3"], "3.0.0");
   });
 
   test("updateLockfileVersion with lockfile v2 - local dependency should not be added if not already listed", async () => {
@@ -75,11 +76,12 @@ describe("update lockfile version", () => {
 
     expect(updatedLockfile).toHaveProperty("version", "2.0.0");
 
-    expect(updatedLockfile).toHaveProperty(["packages", "", "dependencies", "yargs"], "^6.6.0");
-    expect(updatedLockfile).not.toHaveProperty(["packages", "", "dependencies", "package-1"]);
+    // note: vitest's toHaveProperty cannot address an empty-string path segment, so anchor at packages[""]
+    expect(updatedLockfile.packages[""]).toHaveProperty(["dependencies", "yargs"], "^6.6.0");
+    expect(updatedLockfile.packages[""]).not.toHaveProperty(["dependencies", "package-1"]);
 
-    expect(updatedLockfile).toHaveProperty(["packages", "", "devDependencies", "typescript"], "^4.0.0");
-    expect(updatedLockfile).not.toHaveProperty(["packages", "", "devDependencies", "package-3"]);
+    expect(updatedLockfile.packages[""]).toHaveProperty(["devDependencies", "typescript"], "^4.0.0");
+    expect(updatedLockfile.packages[""]).not.toHaveProperty(["devDependencies", "package-3"]);
   });
 
   test("updateLockfileVersion with outdated lockfile v2 - should not fail", async () => {

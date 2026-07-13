@@ -15,14 +15,14 @@ interface CleanCommandConfigOptions extends CommandConfigOptions {
   yes?: boolean;
 }
 
-module.exports = function factory(argv: Arguments<CleanCommandConfigOptions>) {
+function factory(argv: Arguments<CleanCommandConfigOptions>) {
   return new CleanCommand(argv);
-};
+}
 
 class CleanCommand extends Command<CleanCommandConfigOptions> {
   directoriesToDelete: string[] = [];
 
-  get requiresGit() {
+  override get requiresGit() {
     return false;
   }
 
@@ -46,7 +46,7 @@ class CleanCommand extends Command<CleanCommandConfigOptions> {
   override execute() {
     this.enableProgressBar();
 
-    const tracker = this.logger.newItem("clean");
+    const tracker = this.logger["newItem"]("clean");
     const mapper = (dirPath: string) => {
       tracker.info("clean", "removing", dirPath);
 
@@ -64,4 +64,7 @@ class CleanCommand extends Command<CleanCommandConfigOptions> {
   }
 }
 
-module.exports.CleanCommand = CleanCommand;
+// The public shape of this module is a callable factory with the command class
+// attached (module.exports = factory; module.exports.CleanCommand = CleanCommand),
+// preserved for consumers of the lerna/commands/clean deep import.
+export = Object.assign(factory, { CleanCommand });

@@ -1,7 +1,7 @@
 import { getNpmExecOpts } from "./get-npm-exec-opts";
 import log from "./npmlog";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 export function npmRunScript(script: string, { args, npmClient, pkg, reject = true }: any) {
   log.silly("npmRunScript", script, args, pkg.name);

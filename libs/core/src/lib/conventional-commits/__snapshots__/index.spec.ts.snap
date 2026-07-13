@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`conventional-commits updateChangelog() creates files if they do not exist: leaf 1`] = `
+exports[`conventional-commits > updateChangelog() > creates files if they do not exist > leaf 1`] = `
 # Change Log
 
 All notable changes to this project will be documented in this file.
@@ -15,7 +15,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 `;
 
-exports[`conventional-commits updateChangelog() creates files if they do not exist: root 1`] = `
+exports[`conventional-commits > updateChangelog() > creates files if they do not exist > root 1`] = `
 # Change Log
 
 All notable changes to this project will be documented in this file.
@@ -30,7 +30,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 `;
 
-exports[`conventional-commits updateChangelog() updates fixed changelogs: leaf 1`] = `
+exports[`conventional-commits > updateChangelog() > updates fixed changelogs > leaf 1`] = `
 # Change Log
 
 All notable changes to this project will be documented in this file.
@@ -57,7 +57,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 `;
 
-exports[`conventional-commits updateChangelog() updates fixed changelogs: root 1`] = `
+exports[`conventional-commits > updateChangelog() > updates fixed changelogs > root 1`] = `
 # Change Log
 
 All notable changes to this project will be documented in this file.

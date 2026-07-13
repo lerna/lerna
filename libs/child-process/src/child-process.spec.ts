@@ -1,13 +1,10 @@
-"use strict";
-
 import * as childProcess from ".";
+import { setExitCode } from "./set-exit-code";
 
-jest.mock("./set-exit-code", () => {
-  const setExitCode = jest.fn();
+vi.mock("./set-exit-code", () => {
+  const setExitCode = vi.fn();
   return { setExitCode };
 });
-
-const { setExitCode } = require("./set-exit-code");
 
 describe("childProcess", () => {
   describe(".execSync()", () => {

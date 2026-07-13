@@ -1,10 +1,10 @@
-jest.mock("ci-info", () => ({
+vi.mock("ci-info", async () => ({
   __esModule: true,
   default: { GITHUB_ACTIONS: false, GITLAB: false, CIRCLE: false },
 }));
-jest.mock("npm-registry-fetch", () => ({
+vi.mock("npm-registry-fetch", async () => ({
   __esModule: true,
-  default: { json: jest.fn() },
+  default: { json: vi.fn() },
 }));
 
 // mocked modules
@@ -15,7 +15,7 @@ import npmFetch from "npm-registry-fetch";
 import { oidc } from "./oidc";
 
 const ci = ciInfo as unknown as { GITHUB_ACTIONS: boolean; GITLAB: boolean; CIRCLE: boolean };
-const registryFetchJson = jest.mocked(npmFetch.json);
+const registryFetchJson = vi.mocked(npmFetch.json);
 
 describe("oidc", () => {
   const registry = "https://registry.npmjs.org/";
@@ -41,7 +41,7 @@ describe("oidc", () => {
     registryFetchJson.mockResolvedValue({ token: "exchanged-token" });
 
     const opts: any = {};
-    const config: any = { set: jest.fn() };
+    const config: any = { set: vi.fn() };
 
     await oidc({ packageName: "@scope/pkg", registry, opts, config });
 
@@ -59,7 +59,7 @@ describe("oidc", () => {
     process.env["NPM_ID_TOKEN"] = "id-token";
 
     const opts: any = {};
-    const config: any = { set: jest.fn() };
+    const config: any = { set: vi.fn() };
 
     await oidc({ packageName: "@scope/pkg", registry, opts, config });
 

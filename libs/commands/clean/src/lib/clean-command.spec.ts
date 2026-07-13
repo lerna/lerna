@@ -7,12 +7,17 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 
-const lernaClean = commandRunner(require("../command"));
+import command from "../command";
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+const lernaClean = commandRunner(command);
 
-const promptConfirmation = jest.mocked(_promptConfirmation);
-const rimrafDir = jest.mocked(_rimrafDir);
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
+
+const promptConfirmation = vi.mocked(_promptConfirmation);
+const rimrafDir = vi.mocked(_rimrafDir);
 
 // assertion helpers
 const removedDirectories = (testDir) =>

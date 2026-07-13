@@ -117,7 +117,7 @@ describe("core-cli", () => {
 
   it("logs generic command errors with fallback exit code", async () => {
     const cli = prepare(cwd);
-    const spy = jest.spyOn(cli, "exit");
+    const spy = vi.spyOn(cli, "exit");
 
     cli.command("handler", "a generic error", {}, async () => {
       const err = new Error("yikes");
@@ -138,7 +138,7 @@ describe("core-cli", () => {
 
   it("preserves explicit exit codes", async () => {
     const cli = prepare(cwd);
-    const spy = jest.spyOn(cli, "exit");
+    const spy = vi.spyOn(cli, "exit");
 
     cli.command("explicit", "exit code", {}, async () => {
       const err = new Error("fancy fancy") as any;

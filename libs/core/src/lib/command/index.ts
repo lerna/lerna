@@ -1,3 +1,4 @@
+import { isCI } from "ci-info";
 import { ProjectFileMap } from "@nx/devkit";
 import { ExecOptions as NodeExecOptions } from "child_process";
 import dedent from "dedent";
@@ -237,7 +238,7 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   }
 
   configureEnvironment() {
-    const ci = require("ci-info").isCI;
+    const ci = isCI;
     let loglevel;
     let progress;
 

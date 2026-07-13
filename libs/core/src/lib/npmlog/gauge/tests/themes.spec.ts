@@ -1,6 +1,6 @@
 export {};
 
-const themes = require("../themes");
+import themes from "../themes";
 
 describe("selector", () => {
   it("should return correct theme based on conditions", () => {

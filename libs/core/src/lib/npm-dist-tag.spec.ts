@@ -1,18 +1,18 @@
 import _fetch from "npm-registry-fetch";
 import * as npmDistTag from "./npm-dist-tag";
 
-jest.mock("npm-registry-fetch");
-jest.mock("@lerna/core", () => ({
-  ...jest.requireActual("@lerna/core"),
+vi.mock("npm-registry-fetch");
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
   otplease: (cb: (arg0: any) => any, opts: any) => Promise.resolve(cb(opts)),
 }));
 
-const fetch = jest.mocked(_fetch);
+const fetch = vi.mocked(_fetch);
 
 const stubLog = {
-  verbose: jest.fn(),
-  info: jest.fn(),
-  warn: jest.fn(),
+  verbose: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn(),
 };
 const baseOptions = Object.freeze({
   log: stubLog,

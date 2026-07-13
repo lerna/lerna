@@ -12,14 +12,18 @@ import {
 } from "@lerna/test-helpers";
 import fs from "fs";
 import path from "path";
+import versionCommand from "../command";
 
-jest.mock("@lerna/core", () => {
-  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
+vi.mock("@lerna/core", async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const realCore = (await vi.importActual("@lerna/core")) as any;
+  const mockCore = await import("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
+    ...realCore,
     ...mockCore,
     // we're actually testing integration with git
-    collectProjectUpdates: jest.requireActual("@lerna/core").collectProjectUpdates,
-    gitCheckout: jest.requireActual("@lerna/core").gitCheckout,
+    collectProjectUpdates: realCore.collectProjectUpdates,
+    gitCheckout: realCore.gitCheckout,
   };
 });
 
@@ -31,7 +35,7 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 
-const lernaVersion = commandRunner(require("../command"));
+const lernaVersion = commandRunner(versionCommand);
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({

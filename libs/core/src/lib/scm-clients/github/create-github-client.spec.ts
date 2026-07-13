@@ -1,10 +1,10 @@
 import { Octokit } from "@octokit/rest";
 import { createGitHubClient, parseGitRepo } from "./create-github-client";
 
-jest.mock("@octokit/rest");
-jest.mock("@lerna/child-process");
+vi.mock("@octokit/rest");
+vi.mock("@lerna/child-process");
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 childProcess.execSync.mockReturnValue("5.6.0");
 

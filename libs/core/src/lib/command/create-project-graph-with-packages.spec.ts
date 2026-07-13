@@ -6,18 +6,16 @@ import { RawManifest } from "../package";
 import { createProjectGraph, projectNode } from "../test-helpers/create-project-graph";
 import { createProjectGraphWithPackages, resolvePackage } from "./create-project-graph-with-packages";
 
-const fsExtra = require("fs-extra");
+import fsExtra from "fs-extra";
 
-jest.mock("@nx/devkit", () => ({
-  ...jest.requireActual("@nx/devkit"),
+vi.mock("@nx/devkit", async () => ({
+  ...(await vi.importActual("@nx/devkit")),
   workspaceRoot: "root",
 }));
 
-jest
-  .spyOn(fsExtra, "readJson")
-  .mockImplementation(
-    (path): Promise<RawManifest | null> => Promise.resolve(getManifestForPath(path as string))
-  );
+vi.spyOn(fsExtra, "readJson").mockImplementation(
+  (path): Promise<RawManifest | null> => Promise.resolve(getManifestForPath(path as string))
+);
 
 expect.addSnapshotSerializer(windowsPathSerializer);
 expect.addSnapshotSerializer({

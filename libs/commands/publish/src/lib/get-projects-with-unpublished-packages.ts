@@ -22,6 +22,7 @@ export async function getProjectsWithUnpublishedPackages(
         if (packument.versions === undefined || packument.versions[pkg.version] === undefined) {
           return node;
         }
+        return undefined;
       },
       () => {
         log.warn("", "Unable to determine published version, assuming %j unpublished.", pkg.name);
@@ -32,5 +33,5 @@ export async function getProjectsWithUnpublishedPackages(
 
   const results = await pMap(projectNodes, mapper, { concurrency: 4 });
 
-  return results.filter(Boolean);
+  return results.filter(Boolean) as ProjectGraphProjectNodeWithPackage[];
 }

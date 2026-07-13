@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`VersionCommand --exact updates existing exact versions 1`] = `
+exports[`VersionCommand > --exact > updates existing exact versions 1`] = `
 "v1.0.1
 
 HEAD -> main, tag: v1.0.1
@@ -62,7 +62,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"1.0.1\\""
 `;
 
-exports[`VersionCommand --exact updates matching local dependencies of published packages with exact versions 1`] = `
+exports[`VersionCommand > --exact > updates matching local dependencies of published packages with exact versions 1`] = `
 "v1.0.1
 
 HEAD -> main, tag: v1.0.1
@@ -123,7 +123,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"1.0.1\\","
 `;
 
-exports[`VersionCommand --no-git-tag-version versions changed packages without git commit or push: gitHead 1`] = `
+exports[`VersionCommand > --no-git-tag-version > versions changed packages without git commit or push > gitHead 1`] = `
 Object {
   "name": "package-1",
   "repository": Object {
@@ -133,7 +133,7 @@ Object {
 }
 `;
 
-exports[`VersionCommand --no-push versions changed packages without git push 1`] = `
+exports[`VersionCommand > --no-push > versions changed packages without git push 1`] = `
 "v1.0.1
 
 HEAD -> main, tag: v1.0.1
@@ -194,7 +194,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"1.0.1\\","
 `;
 
-exports[`VersionCommand independent mode versions changed packages: commit 1`] = `
+exports[`VersionCommand > independent mode > versions changed packages > commit 1`] = `
 "Publish
 
  - package-1@1.0.1
@@ -259,7 +259,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"0.2.0\\","
 `;
 
-exports[`VersionCommand independent mode versions changed packages: console output 1`] = `
+exports[`VersionCommand > independent mode > versions changed packages > console output 1`] = `
 "
 Changes:
  - package-1: 1.0.0 => 1.0.1
@@ -271,7 +271,7 @@ Changes:
 "
 `;
 
-exports[`VersionCommand independent mode versions changed packages: gitHead 1`] = `
+exports[`VersionCommand > independent mode > versions changed packages > gitHead 1`] = `
 Object {
   "name": "package-1",
   "repository": Object {
@@ -281,7 +281,7 @@ Object {
 }
 `;
 
-exports[`VersionCommand normal mode bumps all packages when major version selected 1`] = `
+exports[`VersionCommand > normal mode > bumps all packages when major version selected 1`] = `
 "v2.0.0
 
 HEAD -> main, tag: v2.0.0
@@ -342,7 +342,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"2.0.0\\","
 `;
 
-exports[`VersionCommand normal mode only bumps changed packages when non-major version selected 1`] = `
+exports[`VersionCommand > normal mode > only bumps changed packages when non-major version selected 1`] = `
 "v1.1.0
 
 HEAD -> main, tag: v1.1.0
@@ -363,7 +363,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"1.1.0\\","
 `;
 
-exports[`VersionCommand normal mode versions changed packages: commit 1`] = `
+exports[`VersionCommand > normal mode > versions changed packages > commit 1`] = `
 "v1.0.1
 
 HEAD -> main, tag: v1.0.1
@@ -424,7 +424,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"1.0.1\\","
 `;
 
-exports[`VersionCommand normal mode versions changed packages: console output 1`] = `
+exports[`VersionCommand > normal mode > versions changed packages > console output 1`] = `
 "
 Changes:
  - package-1: 1.0.0 => 1.0.1
@@ -435,7 +435,7 @@ Changes:
 "
 `;
 
-exports[`VersionCommand normal mode versions changed packages: gitHead 1`] = `
+exports[`VersionCommand > normal mode > versions changed packages > gitHead 1`] = `
 Object {
   "name": "package-1",
   "repository": Object {
@@ -445,7 +445,7 @@ Object {
 }
 `;
 
-exports[`VersionCommand normal mode versions changed packages: prompt 1`] = `
+exports[`VersionCommand > normal mode > versions changed packages > prompt 1`] = `
 Array [
   Array [
     "Select a new version (currently 1.0.0)",
@@ -489,7 +489,7 @@ Array [
 ]
 `;
 
-exports[`VersionCommand versions all transitive dependents after change 1`] = `
+exports[`VersionCommand > versions all transitive dependents after change 1`] = `
 "v2.0.0
 
 HEAD -> main, tag: v2.0.0

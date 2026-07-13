@@ -15,9 +15,11 @@ import {
   readJson,
   writeJson,
 } from "@nx/devkit";
+import * as childProcess from "@lerna/child-process";
 import { existsSync } from "fs";
 import { readFileSync } from "fs-extra";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
+import { diff } from "./lib/diff";
 
 const LARGE_BUFFER = 1024 * 1000000;
 
@@ -30,8 +32,6 @@ interface InitCommandOptions extends CommandConfigOptions {
   dryRun?: boolean;
   skipInstall?: boolean;
 }
-
-const childProcess = require("@lerna/child-process");
 
 const PACKAGE_GLOB = "packages/*";
 
@@ -67,7 +67,6 @@ export class InitCommand {
     const isDryRun = this.args.dryRun;
 
     const { default: chalk } = await import("chalk");
-    const { diff } = await import("jest-diff");
 
     function printDiff(before: string, after: string) {
       console.error(
@@ -77,6 +76,7 @@ export class InitCommand {
           expand: false,
           aColor: chalk.red,
           bColor: chalk.green,
+          commonColor: chalk.dim,
           patchColor: () => "",
         })
       );

@@ -1,17 +1,18 @@
+import type { MockedFunction } from "vitest";
 import { execPackageManager as _execPackageManager } from "@lerna/core";
 import fs from "fs";
 import os from "os";
 import path from "path";
 import { updateBunLockfile } from "./update-bun-lockfile";
 
-jest.mock("@lerna/core", () => ({
-  ...jest.requireActual("@lerna/core"),
-  execPackageManager: jest.fn(),
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  execPackageManager: vi.fn(),
 }));
 
-require("@lerna/test-helpers/src/lib/silence-logging");
+import "@lerna/test-helpers/src/lib/silence-logging";
 
-const execPackageManager = _execPackageManager as jest.MockedFunction<typeof _execPackageManager>;
+const execPackageManager = _execPackageManager as MockedFunction<typeof _execPackageManager>;
 
 // Deliberately not valid utf8 so any accidental string round-trip corrupts it.
 const binaryLockfileContent = Buffer.from([0x62, 0x75, 0x6e, 0x00, 0xff, 0xfe, 0x01, 0x80]);
@@ -125,7 +126,7 @@ describe("updateBunLockfile", () => {
     execPackageManager.mockRejectedValue(installError);
 
     const realRenameSync = fs.renameSync;
-    const renameSpy = jest.spyOn(fs, "renameSync").mockImplementation((oldPath, newPath) => {
+    const renameSpy = vi.spyOn(fs, "renameSync").mockImplementation((oldPath, newPath) => {
       if (String(newPath).endsWith("bun.lockb")) {
         throw new Error("EPERM: operation not permitted");
       }

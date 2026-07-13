@@ -4,23 +4,24 @@ import fs from "fs-extra";
 import path from "path";
 import { setupLernaVersionMocks } from "../../__fixtures__/lerna-version-mocks";
 
-jest.mock("@lerna/core", () => {
-  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
+vi.mock("@lerna/core", async () => {
+  const actual = (await vi.importActual("@lerna/core")) as any;
   return {
-    ...mockCore,
-    gitCheckout: jest.requireActual("@lerna/core").gitCheckout,
+    ...actual,
+    ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+    gitCheckout: actual.gitCheckout,
   };
 });
 
 // lerna publish mocks
-jest.mock("./verify-npm-package-access");
-jest.mock("./get-npm-username");
-jest.mock("./get-two-factor-auth-required");
-jest.mock("./create-temp-licenses", () => ({
-  createTempLicenses: jest.fn(() => Promise.resolve()),
+vi.mock("./verify-npm-package-access");
+vi.mock("./get-npm-username");
+vi.mock("./get-two-factor-auth-required");
+vi.mock("./create-temp-licenses", async () => ({
+  createTempLicenses: vi.fn(() => Promise.resolve()),
 }));
-jest.mock("./remove-temp-licenses", () => ({
-  removeTempLicenses: jest.fn(() => Promise.resolve()),
+vi.mock("./remove-temp-licenses", async () => ({
+  removeTempLicenses: vi.fn(() => Promise.resolve()),
 }));
 
 // lerna version mocks
@@ -29,15 +30,17 @@ setupLernaVersionMocks();
 // The mock differs from the real thing
 const packDirectory = _packDirectory as any;
 
-const { createTempLicenses } = require("./create-temp-licenses");
+import { createTempLicenses } from "./create-temp-licenses";
 
-const { removeTempLicenses } = require("./remove-temp-licenses");
+import { removeTempLicenses } from "./remove-temp-licenses";
 
 const initFixture = initFixtureFactory(__dirname);
 
 // test command
 
-const lernaPublish = commandRunner(require("../command"));
+import command from "../command";
+
+const lernaPublish = commandRunner(command);
 
 describe("licenses", () => {
   it("makes a temporary copy of the root license text if package has none", async () => {

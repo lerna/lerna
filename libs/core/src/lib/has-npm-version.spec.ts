@@ -1,8 +1,8 @@
 import { hasNpmVersion } from "./has-npm-version";
 
-jest.mock("@lerna/child-process");
+vi.mock("@lerna/child-process");
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 childProcess.execSync.mockReturnValue("5.6.0");
 

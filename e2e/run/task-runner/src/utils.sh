@@ -29,12 +29,17 @@ function runAssertions {
   # Switch back to the original directory
   cd - >/dev/null
 
+  # Resolve the project root to an absolute path: DIR may be relative (e.g. when
+  # CI invokes run-tests.sh by relative path) and vitest resolves a relative
+  # --config against --root, which would double up the path
+  PROJECT_ROOT=$(cd $DIR/../.. && pwd)
+
   # If UPDATE_SNAPSHOTS is set, update the snapshots, else run the assertions
   if [ "$UPDATE_SNAPSHOTS" = "true" ]; then
     echo "⌛️ Updating Snapshots for $SUITE...\n"
-    FIXTURE_ROOT_PATH=$FIXTURE_ROOT_PATH E2E_ROOT=$E2E_ROOT npx jest --config $DIR/../../jest.config.ts $DIR/assertions.spec.ts -u
+    FIXTURE_ROOT_PATH=$FIXTURE_ROOT_PATH E2E_ROOT=$E2E_ROOT npx vitest run --root $PROJECT_ROOT --config $PROJECT_ROOT/vitest.config.ts $PROJECT_ROOT/src/$SUITE/assertions.spec.ts -u
   else
     echo "⌛️ Running Assertions for $SUITE...\n"
-    FIXTURE_ROOT_PATH=$FIXTURE_ROOT_PATH E2E_ROOT=$E2E_ROOT npx jest --config $DIR/../../jest.config.ts $DIR/assertions.spec.ts
+    FIXTURE_ROOT_PATH=$FIXTURE_ROOT_PATH E2E_ROOT=$E2E_ROOT npx vitest run --root $PROJECT_ROOT --config $PROJECT_ROOT/vitest.config.ts $PROJECT_ROOT/src/$SUITE/assertions.spec.ts
   fi
 }

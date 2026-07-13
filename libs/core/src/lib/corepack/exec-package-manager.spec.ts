@@ -1,9 +1,9 @@
 import { execPackageManager, execPackageManagerSync } from "./exec-package-manager";
 
-jest.mock("@lerna/child-process");
+vi.mock("@lerna/child-process");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 describe("execPackageManager", () => {
   const originalCorepackRoot = process.env["COREPACK_ROOT"];
@@ -15,7 +15,7 @@ describe("execPackageManager", () => {
     } else {
       process.env["COREPACK_ROOT"] = originalCorepackRoot;
     }
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("when corepack is not enabled", () => {

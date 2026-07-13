@@ -1,8 +1,8 @@
 import { npmRunScript, npmRunScriptStreaming } from "./npm-run-script";
 
-jest.mock("@lerna/child-process");
+vi.mock("@lerna/child-process");
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 describe("npm-run-script", () => {
   childProcess.exec.mockResolvedValue();

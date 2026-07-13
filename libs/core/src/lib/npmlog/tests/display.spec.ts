@@ -4,7 +4,7 @@ describe("log level display", () => {
   let actual = "";
 
   beforeEach(() => {
-    const writeSpy = jest.spyOn(log, "write");
+    const writeSpy = vi.spyOn(log, "write");
     writeSpy.mockImplementation((msg: any) => {
       actual += msg;
     });
@@ -12,7 +12,7 @@ describe("log level display", () => {
 
   afterEach(() => {
     actual = "";
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("should set new log level display to empty string", () => {

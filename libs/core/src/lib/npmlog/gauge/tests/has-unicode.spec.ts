@@ -1,13 +1,14 @@
+import type { MockInstance } from "vitest";
 import os from "os";
 import { hasUnicode } from "../has-unicode";
 
 describe("hasUnicode", () => {
   const originalEnv = process.env;
-  let osTypeSpy: jest.SpyInstance;
+  let osTypeSpy: MockInstance;
 
   beforeEach(() => {
     process.env = { ...originalEnv };
-    osTypeSpy = jest.spyOn(os, "type");
+    osTypeSpy = vi.spyOn(os, "type");
   });
 
   afterEach(() => {

@@ -24,5 +24,5 @@ export function createTempLicenses(srcLicensePath: string, packagesToBeLicensed:
     pkg.licensePath = path.join(pkg.contents, licenseFileName);
   });
 
-  return pMap(packagesToBeLicensed, (pkg) => fs.copy(srcLicensePath, pkg.licensePath, options));
+  return pMap(packagesToBeLicensed, (pkg) => fs.copy(srcLicensePath, pkg.licensePath!, options));
 }

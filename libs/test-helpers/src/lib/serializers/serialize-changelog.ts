@@ -1,7 +1,8 @@
-const normalizeNewline = require("normalize-newline");
+import normalizeNewline from "normalize-newline";
+import type { SnapshotSerializer } from "vitest";
 import { gitSHASerializer } from "./serialize-git-sha";
 
-export const changelogSerializer: jest.SnapshotSerializerPlugin = {
+export const changelogSerializer: SnapshotSerializer = {
   serialize: (str: string) => {
     return gitSHASerializer
       .serialize(normalizeNewline(str))

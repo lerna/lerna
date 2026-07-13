@@ -10,5 +10,3 @@ if (!process.env.E2E_ROOT) {
   }
   process.env.E2E_ROOT = e2eRoot;
 }
-
-jest.retryTimes(process.env.LERNA_E2E_DEBUG === "true" ? 0 : 3);

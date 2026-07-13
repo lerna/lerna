@@ -1,14 +1,16 @@
 export {};
 
-const Plumbing = require("../plumbing");
-jest.mock("../render-template", () => (width: string, template: any, values: { x: any }) => {
-  if (values.x) {
-    // eslint-disable-next-line no-self-assign
-    values.x = values.x;
-  } // pull in from parent object for stringify
-  return "w:" + width + ", t:" + JSON.stringify(template) + ", v:" + JSON.stringify(values);
-});
-jest.mock("../console-control-strings", () => ({
+import Plumbing from "../plumbing";
+vi.mock("../render-template", async () => ({
+  default: (width: string, template: any, values: { x: any }) => {
+    if (values.x) {
+      // eslint-disable-next-line no-self-assign
+      values.x = values.x;
+    } // pull in from parent object for stringify
+    return "w:" + width + ", t:" + JSON.stringify(template) + ", v:" + JSON.stringify(values);
+  },
+}));
+vi.mock("../console-control-strings", async () => ({
   eraseLine: () => "ERASE",
   gotoSOL: () => "CR",
   color: (to: string) => "COLOR:" + to,

@@ -6,16 +6,16 @@
  */
 
 "use strict";
-var util = require("util");
+import util from "util";
 
-var User = (exports.User = function User(msg) {
+export const User = function User(msg) {
   var err = new Error(msg);
   Error.captureStackTrace(err, User);
   err.code = "EGAUGE";
   return err;
-});
+};
 
-exports.MissingTemplateValue = function MissingTemplateValue(item, values) {
+export const MissingTemplateValue = function MissingTemplateValue(item, values) {
   var err = new User(util.format('Missing template value "%s"', item.type));
   Error.captureStackTrace(err, MissingTemplateValue);
   err.template = item;
@@ -23,7 +23,7 @@ exports.MissingTemplateValue = function MissingTemplateValue(item, values) {
   return err;
 };
 
-exports.Internal = function Internal(msg) {
+export const Internal = function Internal(msg) {
   var err = new Error(msg);
   Error.captureStackTrace(err, Internal);
   err.code = "EGAUGEINTERNAL";

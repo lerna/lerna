@@ -1,9 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
+import { afterEach, vi } from "vitest";
+
 const registry = new Set();
 
-const mockPackDirectory = jest.fn((pkg) => {
+const mockPackDirectory = vi.fn((pkg) => {
   registry.add(pkg.name);
 
   return Promise.resolve({
@@ -17,5 +19,4 @@ afterEach(() => {
   registry.clear();
 });
 
-module.exports.packDirectory = mockPackDirectory;
-module.exports.packDirectory.registry = registry;
+export const packDirectory = Object.assign(mockPackDirectory, { registry });

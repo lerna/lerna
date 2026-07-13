@@ -1,12 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-const fs = jest.requireActual("fs-extra");
-const path = require("path");
-const semver = require("semver");
+import path from "path";
+import semver from "semver";
+import { vi } from "vitest";
 
-const mockRecommendVersion = jest.fn().mockName("recommendVersion");
-const mockUpdateChangelog = jest.fn().mockName("updateChangelog");
+const fs = await vi.importActual("fs-extra");
+
+const mockRecommendVersion = vi.fn().mockName("recommendVersion");
+const mockUpdateChangelog = vi.fn().mockName("updateChangelog");
 
 mockRecommendVersion.mockImplementation((node) => semver.inc(node.version, "patch"));
 
@@ -20,5 +22,5 @@ mockUpdateChangelog.mockImplementation((pkg) => {
   }));
 });
 
-exports.recommendVersion = mockRecommendVersion;
-exports.updateChangelog = mockUpdateChangelog;
+export const recommendVersion = mockRecommendVersion;
+export const updateChangelog = mockUpdateChangelog;

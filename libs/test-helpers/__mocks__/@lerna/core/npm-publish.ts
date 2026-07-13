@@ -1,10 +1,12 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
+import { afterEach, vi } from "vitest";
+
 const registry = new Map();
 
 // by default, act like a spy that populates registry
-const mockNpmPublish = jest.fn((pkg, tarData, opts) => {
+const mockNpmPublish = vi.fn((pkg, tarData, opts) => {
   registry.set(pkg.name, opts.tag);
 
   return Promise.resolve();
@@ -20,6 +22,4 @@ afterEach(() => {
   registry.clear();
 });
 
-module.exports.npmPublish = mockNpmPublish;
-module.exports.npmPublish.order = order;
-module.exports.npmPublish.registry = registry;
+export const npmPublish = Object.assign(mockNpmPublish, { order, registry });

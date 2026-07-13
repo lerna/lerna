@@ -1,11 +1,11 @@
 import { loggingOutput } from "@lerna/test-helpers";
 import _fetch from "npm-registry-fetch";
 
-jest.mock("npm-registry-fetch");
+vi.mock("npm-registry-fetch");
 
 import { getNpmUsername } from "./get-npm-username";
 
-const fetch = jest.mocked(_fetch);
+const fetch = vi.mocked(_fetch);
 
 fetch.json.mockImplementation(() => Promise.resolve({ username: "lerna-test" }));
 
@@ -13,7 +13,7 @@ describe("getNpmUsername", () => {
   const origConsoleError = console.error;
 
   beforeEach(() => {
-    console.error = jest.fn();
+    console.error = vi.fn();
   });
 
   afterEach(() => {
