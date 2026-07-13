@@ -11,16 +11,21 @@ import execa from "execa";
 import fs from "fs-extra";
 import path from "path";
 
-const promptConfirmation = jest.mocked(_promptConfirmation);
+const promptConfirmation = vi.mocked(_promptConfirmation);
 
 const initFixture = initFixtureFactory(__dirname);
 const initNamedFixture = initNamedFixtureFactory(__dirname);
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
 
 // file under test
 
-const lernaImport = commandRunner(require("../command"));
+import command from "../command";
+
+const lernaImport = commandRunner(command);
 
 // assertion helpers
 const lastCommitInDir = (cwd: string) =>

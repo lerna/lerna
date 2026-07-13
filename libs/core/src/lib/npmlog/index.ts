@@ -7,8 +7,7 @@ import { WriteStream } from "node:tty";
 import util from "node:util";
 import { TrackerGroup } from "./are-we-there-yet/tracker-group";
 import { Gauge } from "./gauge";
-
-const consoleControl = require("./gauge/console-control-strings");
+import * as consoleControl from "./gauge/console-control-strings";
 
 // Force stdout/stderr into blocking mode on TTYs. On POSIX, TTY writes are
 // already synchronous so this is effectively a no-op. On Windows, TTY writes

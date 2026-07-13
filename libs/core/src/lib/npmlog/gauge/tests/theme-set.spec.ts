@@ -1,6 +1,6 @@
 export {};
 
-const ThemeSet = require("../theme-set");
+import ThemeSet from "../theme-set";
 
 const themes = new ThemeSet();
 themes.addTheme("fallback", { id: 0 });

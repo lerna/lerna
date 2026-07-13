@@ -1,9 +1,9 @@
 import _fetch from "make-fetch-happen";
 import { GitLabClient } from "./gitlab-client";
 
-jest.mock("make-fetch-happen");
+vi.mock("make-fetch-happen");
 
-const fetch = jest.mocked(_fetch);
+const fetch = vi.mocked(_fetch);
 
 describe("GitLabClient", () => {
   describe("constructor", () => {

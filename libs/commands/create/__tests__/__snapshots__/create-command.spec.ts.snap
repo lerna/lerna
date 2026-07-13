@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`CreateCommand creates a stub cli 1`] = `
+exports[`CreateCommand > creates a stub cli 1`] = `
 diff --git a/packages/my-cli/README.md b/packages/my-cli/README.md
 new file mode 100644
 index SHA..SHA
@@ -146,7 +146,7 @@ index SHA..SHA
 +}
 `;
 
-exports[`CreateCommand creates a stub cli with transpiled output 1`] = `
+exports[`CreateCommand > creates a stub cli with transpiled output 1`] = `
 diff --git a/packages/my-es-cli/README.md b/packages/my-es-cli/README.md
 new file mode 100644
 index SHA..SHA
@@ -284,7 +284,7 @@ index SHA..SHA
 +}
 `;
 
-exports[`CreateCommand creates a stub package 1`] = `
+exports[`CreateCommand > creates a stub package 1`] = `
 diff --git a/packages/my-pkg/README.md b/packages/my-pkg/README.md
 new file mode 100644
 index SHA..SHA
@@ -363,7 +363,7 @@ index SHA..SHA
 +}
 `;
 
-exports[`CreateCommand creates a stub package with transpiled output 1`] = `
+exports[`CreateCommand > creates a stub package with transpiled output 1`] = `
 diff --git a/packages/my-pkg/README.md b/packages/my-pkg/README.md
 new file mode 100644
 index SHA..SHA

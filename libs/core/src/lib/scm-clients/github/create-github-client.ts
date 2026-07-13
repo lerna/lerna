@@ -3,7 +3,7 @@ import parseGitUrl from "git-url-parse";
 import log from "../../npmlog";
 import { ValidationError } from "../../validation-error";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 export function createGitHubClient(): Octokit {
   // TODO: refactor based on TS feedback

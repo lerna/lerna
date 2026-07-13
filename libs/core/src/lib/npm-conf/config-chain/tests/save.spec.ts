@@ -4,7 +4,13 @@ import ini from "ini";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const CC = require("../index").ConfigChain;
+// vitest does not support jest's done-callback signature; adapt callback-style
+// tests by wrapping them in a promise.
+function testDone(name: string, fn: (done: () => void) => void) {
+  test(name, () => new Promise<void>((resolve) => fn(resolve)));
+}
+
+import { ConfigChain as CC } from "../index";
 
 const tmpDir = fs.mkdtempSync(join(fs.realpathSync(tmpdir()), "lerna-test-"));
 const f1 = join(tmpDir, "f1.ini");
@@ -16,7 +22,7 @@ const f2data = { oof: { rab: "zab" }, oolb: "suaj" };
 fs.writeFileSync(f1, ini.stringify(f1data), "utf8");
 fs.writeFileSync(f2, JSON.stringify(f2data), "utf8");
 
-test("saving and loading ini files", (done) => {
+testDone("saving and loading ini files", (done) => {
   new CC()
     .add({ grelb: "blerg" }, "opt")
     .addFile(f1, "ini", "inifile")

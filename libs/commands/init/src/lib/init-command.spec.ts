@@ -1,13 +1,21 @@
+import type { MockedFunction } from "vitest";
 import { Tree, readJson, writeJson } from "@nx/devkit";
 import { createTree } from "@nx/devkit/testing";
+import * as fs from "fs";
 
-require("@lerna/test-helpers/src/lib/silence-logging");
+vi.mock("fs", async () => ({
+  ...(await vi.importActual("fs")),
+  existsSync: vi.fn().mockReturnValue(false),
+}));
 
-const { InitCommand } = require("../index");
+import "@lerna/test-helpers/src/lib/silence-logging";
+
+import { InitCommand } from "../index";
 
 describe("InitCommand", () => {
   const lernaVersion = "__TEST_VERSION__";
   const commandOptions = { lernaVersion };
+  const mockedExistsSync = fs.existsSync as MockedFunction<typeof fs.existsSync>;
 
   let tree: Tree;
 
@@ -212,6 +220,162 @@ describe("InitCommand", () => {
           ],
         }
       `);
+    });
+  });
+
+  describe("detectPackageManager", () => {
+    afterEach(() => {
+      mockedExistsSync.mockReset();
+    });
+
+    it.each([
+      ["bun.lockb", "bun"],
+      ["bun.lock", "bun"],
+      ["yarn.lock", "yarn"],
+      ["pnpm-lock.yaml", "pnpm"],
+      ["package-lock.json", "npm"],
+    ])("detects %s as %s", (file, expected) => {
+      mockedExistsSync.mockImplementation((p: any) => String(p) === file);
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe(expected);
+    });
+
+    it("defaults to npm when no lockfile exists", () => {
+      mockedExistsSync.mockReturnValue(false);
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe("npm");
+    });
+
+    it("prioritizes bun over other lockfiles", () => {
+      mockedExistsSync.mockImplementation(
+        (p: any) =>
+          String(p) === "bun.lockb" || String(p) === "yarn.lock" || String(p) === "package-lock.json"
+      );
+      const initCommand = new InitCommand(commandOptions);
+      expect(initCommand.packageManager).toBe("bun");
+    });
+  });
+
+  describe("detectInvokedPackageManager", () => {
+    beforeEach(() => {
+      mockedExistsSync.mockReturnValue(false);
+    });
+
+    afterEach(() => {
+      mockedExistsSync.mockReset();
+    });
+
+    function createWithInvoker(
+      filename: string | undefined,
+      modulePath: string | undefined
+    ): InstanceType<typeof InitCommand> {
+      const spy = vi
+        .spyOn(InitCommand.prototype, "getInvokerModule")
+        .mockReturnValue({ filename, path: modulePath });
+      const initCommand = new InitCommand(commandOptions);
+      spy.mockRestore();
+      return initCommand;
+    }
+
+    function createWithInvokerPath(filepath: string): InstanceType<typeof InitCommand> {
+      const dir = filepath.replace(/[\\/][^\\/]*$/, "") || filepath;
+      return createWithInvoker(filepath, dir);
+    }
+
+    it("does not false-positive match 'bun' in 'ubuntu' path", () => {
+      const initCommand = createWithInvokerPath("/usr/bin/ubuntu/node_modules/lerna/dist/cli.js");
+      expect(initCommand.packageManager).toBe("npm");
+    });
+
+    it("detects bun from exact path segment", () => {
+      const initCommand = createWithInvokerPath("/home/user/.local/share/bun/bin/lerna");
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects bun from .bun install cache (GitHub Actions bunx path)", () => {
+      const initCommand = createWithInvokerPath(
+        "/home/runner/.bun/install/cache/lerna@999.9.9-e2e.0_abc123/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects bun when module.path is undefined but filename is set (bun CJS runtime)", () => {
+      const initCommand = createWithInvoker(
+        "/home/runner/.bun/install/cache/lerna@999.9.9-e2e.0/node_modules/lerna/dist/cli.js",
+        undefined
+      );
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects bun from bunx temp install directory (bunx runs node-shebang bins under node)", () => {
+      const initCommand = createWithInvokerPath(
+        "/tmp/bunx-1001-lerna@999.9.9-e2e.0/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects bun from bunx temp install directory on macOS", () => {
+      const initCommand = createWithInvokerPath(
+        "/private/tmp/bunx-501-lerna@latest/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("bun");
+    });
+
+    it("detects yarn from global yarn directory", () => {
+      const initCommand = createWithInvokerPath(
+        "/home/user/.config/yarn/global/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("yarn");
+    });
+
+    it("detects yarn from .yarn directory segment", () => {
+      const initCommand = createWithInvokerPath(
+        "/home/user/project/.yarn/unplugged/lerna-npm-999.9.9/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("yarn");
+    });
+
+    it("falls back to npm when the invoker module has no filename or path", () => {
+      const initCommand = createWithInvoker(undefined, undefined);
+      expect(initCommand.packageManager).toBe("npm");
+    });
+
+    it("detects bun from process.versions.bun even when require.main is unavailable", () => {
+      const versions = process.versions as Record<string, string>;
+      const original = versions.bun;
+      versions.bun = "1.0.0";
+      try {
+        const initCommand = new InitCommand(commandOptions);
+        expect(initCommand.packageManager).toBe("bun");
+      } finally {
+        if (original === undefined) {
+          delete versions.bun;
+        } else {
+          versions.bun = original;
+        }
+      }
+    });
+
+    it("detects pnpm from exact path segment", () => {
+      const initCommand = createWithInvokerPath("/home/user/.local/share/pnpm/bin/lerna");
+      expect(initCommand.packageManager).toBe("pnpm");
+    });
+
+    it("detects pnpm from .pnpm virtual store directory (used by pnpm dlx)", () => {
+      const initCommand = createWithInvokerPath(
+        "/home/user/.local/share/pnpm/store/v3/.pnpm/lerna@999.9.9-e2e.0/node_modules/lerna/dist/cli.js"
+      );
+      expect(initCommand.packageManager).toBe("pnpm");
+    });
+
+    it("detects versioned package manager segment", () => {
+      const initCommand = createWithInvokerPath("/home/user/.cache/npm@10/bin/lerna");
+      expect(initCommand.packageManager).toBe("npm");
+    });
+
+    it("falls back to npm when no path segment matches", () => {
+      const initCommand = createWithInvokerPath("/usr/local/bin/lerna");
+      expect(initCommand.packageManager).toBe("npm");
     });
   });
 });

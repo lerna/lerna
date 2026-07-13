@@ -2,7 +2,7 @@ import { log, tempWrite } from "@lerna/core";
 import { ExecOptions } from "child_process";
 import { EOL } from "os";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 export interface GitCommitOptions {
   amend?: boolean;
@@ -52,5 +52,5 @@ export function gitCommit(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   log.verbose("git", args);
-  return childProcess.exec("git", args, opts);
+  return childProcess.exec("git", args, opts as any);
 }

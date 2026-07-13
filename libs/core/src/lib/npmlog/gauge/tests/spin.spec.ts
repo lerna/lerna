@@ -1,6 +1,6 @@
 export {};
 
-const spin = require("../spin");
+import spin from "../spin";
 
 describe("spin", () => {
   it("should return the correct spinner character", () => {

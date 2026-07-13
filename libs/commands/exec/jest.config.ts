@@ -1,6 +1,0 @@
-module.exports = {
-  displayName: "commands-exec",
-  preset: "../../../jest.preset.js",
-  coverageDirectory: "../../../coverage/libs/commands/exec",
-  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
-};

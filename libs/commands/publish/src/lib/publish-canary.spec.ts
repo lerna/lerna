@@ -16,32 +16,33 @@ import {
 import fs from "fs-extra";
 import path from "path";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 // local modules _must_ be explicitly mocked
-jest.mock("./get-packages-without-license", () => {
+vi.mock("./get-packages-without-license", async () => {
   return {
-    getPackagesWithoutLicense: jest.fn().mockResolvedValue([]),
+    getPackagesWithoutLicense: vi.fn().mockResolvedValue([]),
   };
 });
-jest.mock("./verify-npm-package-access");
-jest.mock("./get-npm-username");
-jest.mock("./get-two-factor-auth-required");
+vi.mock("./verify-npm-package-access");
+vi.mock("./get-npm-username");
+vi.mock("./get-two-factor-auth-required");
 
 const initFixture = initFixtureFactory(__dirname);
 
-jest.mock("@lerna/core", () => {
-  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
+vi.mock("@lerna/core", async () => {
+  const actual = (await vi.importActual("@lerna/core")) as any;
   return {
-    ...mockCore,
+    ...actual,
+    ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
     // we're actually testing integration with git
-    collectProjectUpdates: jest.requireActual("@lerna/core").collectProjectUpdates,
-    gitCheckout: jest.requireActual("@lerna/core").gitCheckout,
+    collectProjectUpdates: actual.collectProjectUpdates,
+    gitCheckout: actual.gitCheckout,
   };
 });
 
-const promptConfirmation = jest.mocked(_promptConfirmation);
-const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
+const promptConfirmation = vi.mocked(_promptConfirmation);
+const throwIfUncommitted = vi.mocked(_throwIfUncommitted);
 
 // The mock differs from the real thing
 const npmPublish = _npmPublish as any;
@@ -49,7 +50,9 @@ const writePackage = _writePackage as any;
 
 // file under test
 
-const lernaPublish = commandRunner(require("../command"));
+import command from "../command";
+
+const lernaPublish = commandRunner(command);
 
 // stabilize commit SHA
 expect.addSnapshotSerializer(gitSHASerializer);
@@ -397,7 +400,7 @@ Object {
   });
 
   test("publish --canary --include-merged-tags calls git describe correctly", async () => {
-    const spy = jest.spyOn(childProcess, "exec");
+    const spy = vi.spyOn(childProcess, "exec");
     const cwd = await initTaggedFixture("normal");
 
     await lernaPublish(cwd)("--canary", "--include-merged-tags");

@@ -6,12 +6,12 @@
  */
 
 "use strict";
-var validate = require("./validate");
-var renderTemplate = require("./render-template.js");
-var wideTruncate = require("./wide-truncate");
-var stringWidth = require("string-width");
+import validate from "./validate";
+import renderTemplate from "./render-template";
+import wideTruncate from "./wide-truncate";
+import stringWidth from "string-width";
 
-module.exports = function (theme, width, completed) {
+export default function (theme, width, completed) {
   validate("ONN", [theme, width, completed]);
   if (completed < 0) {
     completed = 0;
@@ -29,7 +29,7 @@ module.exports = function (theme, width, completed) {
     { type: "remaining", value: repeat(theme.remaining, rest), length: rest },
   ];
   return renderTemplate(width, template, theme);
-};
+}
 
 // lodash's way of repeating
 function repeat(string, width) {

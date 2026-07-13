@@ -1,7 +1,7 @@
 import path from "path";
 import { envReplace } from "./env-replace";
 
-const { types } = require("./types");
+import { types } from "./types";
 
 // https://github.com/npm/npm/blob/latest/lib/config/core.js#L362-L407
 export function parseField(input: any, key: string | number) {
@@ -9,7 +9,7 @@ export function parseField(input: any, key: string | number) {
     return input;
   }
 
-  const typeList: any[] = [].concat(types[key]);
+  const typeList: any[] = [].concat((types as any)[key]);
   const isPath = typeList.indexOf(path) !== -1;
   const isBool = typeList.indexOf(Boolean) !== -1;
   const isString = typeList.indexOf(String) !== -1;

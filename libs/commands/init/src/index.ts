@@ -15,9 +15,11 @@ import {
   readJson,
   writeJson,
 } from "@nx/devkit";
+import * as childProcess from "@lerna/child-process";
 import { existsSync } from "fs";
 import { readFileSync } from "fs-extra";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
+import { diff } from "./lib/diff";
 
 const LARGE_BUFFER = 1024 * 1000000;
 
@@ -30,8 +32,6 @@ interface InitCommandOptions extends CommandConfigOptions {
   dryRun?: boolean;
   skipInstall?: boolean;
 }
-
-const childProcess = require("@lerna/child-process");
 
 const PACKAGE_GLOB = "packages/*";
 
@@ -67,7 +67,6 @@ export class InitCommand {
     const isDryRun = this.args.dryRun;
 
     const { default: chalk } = await import("chalk");
-    const { diff } = await import("jest-diff");
 
     function printDiff(before: string, after: string) {
       console.error(
@@ -77,6 +76,7 @@ export class InitCommand {
           expand: false,
           aColor: chalk.red,
           bColor: chalk.green,
+          commonColor: chalk.dim,
           patchColor: () => "",
         })
       );
@@ -245,17 +245,24 @@ export class InitCommand {
   }
 
   private detectPackageManager(): PackageManager | null {
-    const packageManager = existsSync("yarn.lock")
-      ? "yarn"
-      : existsSync("pnpm-lock.yaml")
-      ? "pnpm"
-      : existsSync("package-lock.json")
-      ? "npm"
-      : null;
+    const packageManager =
+      existsSync("bun.lockb") || existsSync("bun.lock")
+        ? "bun"
+        : existsSync("yarn.lock")
+        ? "yarn"
+        : existsSync("pnpm-lock.yaml")
+        ? "pnpm"
+        : existsSync("package-lock.json")
+        ? "npm"
+        : null;
     if (packageManager) {
       this.logger.verbose("", `Detected lock file for ${packageManager}`);
     }
     return packageManager;
+  }
+
+  protected getInvokerModule(): { filename?: string; path?: string } | null {
+    return require.main || process["mainModule"] || null;
   }
 
   /**
@@ -264,18 +271,45 @@ export class InitCommand {
    * - npx returns 'npm'
    * - pnpx returns 'pnpm'
    * - yarn create returns 'yarn'
+   * - bunx returns 'bun'
    */
   private detectInvokedPackageManager(): PackageManager | null {
     let detectedPackageManager: PackageManager | null = null;
-    // mainModule is deprecated since Node 14, fallback for older versions
-    const invoker = require.main || process["mainModule"];
+
+    // Bun sets process.versions.bun when running in its own runtime (e.g. via bunx).
+    // Check this first because require.main may be null in bun's CJS runtime.
+    if ((process.versions as Record<string, string>)["bun"]) {
+      this.logger.verbose("", "Detected package manager bun from process.versions.bun");
+      return "bun";
+    }
+
+    const invoker = this.getInvokerModule();
 
     if (!invoker) {
       this.logger.verbose("", "Could not detect package manager from process");
       return detectedPackageManager;
     }
-    for (const pkgManager of ["pnpm", "yarn", "npm"] as const) {
-      if (invoker.path.includes(pkgManager)) {
+    // Prefer filename over path; bun CJS may leave path undefined. Split on both / and \.
+    const invokerPath = (invoker.filename ?? invoker.path) || "";
+    if (!invokerPath) {
+      this.logger.verbose("", "Could not detect package manager from process");
+      return detectedPackageManager;
+    }
+    const pathSegments = invokerPath.split(/[\\/]/);
+    for (const pkgManager of ["bun", "pnpm", "yarn", "npm"] as const) {
+      if (
+        pathSegments.some((segment: string) => {
+          // Strip leading dot to match ".pnpm" and ".bun" directory segments.
+          const normalized = segment.replace(/^\./, "");
+          if (normalized === pkgManager || normalized.startsWith(`${pkgManager}@`)) {
+            return true;
+          }
+          // bunx installs one-off packages into <tmp>/bunx-<uid>-<pkg>@<version> and runs
+          // node-shebang bins under node (so process.versions.bun is unset); the bunx
+          // segment is the only bun signal on that path.
+          return pkgManager === "bun" && /^bunx(-|@|$)/.test(normalized);
+        })
+      ) {
         this.logger.verbose("", `Detected package manager ${pkgManager} from process`);
         detectedPackageManager = pkgManager;
         break;

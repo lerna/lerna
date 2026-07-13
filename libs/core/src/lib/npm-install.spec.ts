@@ -1,17 +1,18 @@
+import type { Mock } from "vitest";
 import path from "path";
 import _fs from "fs-extra";
 import { writePackage as _writePackage } from "./write-package";
 import { Package } from "./package";
 import { npmInstall, npmInstallDependencies } from "./npm-install";
 
-jest.mock("fs-extra");
-jest.mock("./write-package");
-jest.mock("@lerna/child-process");
+vi.mock("fs-extra");
+vi.mock("./write-package");
+vi.mock("@lerna/child-process");
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
-const fs = jest.mocked(_fs);
-const writePackage = jest.mocked(_writePackage);
+const fs = vi.mocked(_fs);
+const writePackage = vi.mocked(_writePackage);
 
 describe("npm-install", () => {
   childProcess.exec.mockResolvedValue();
@@ -55,6 +56,32 @@ describe("npm-install", () => {
           stdio: "pipe",
         }
       );
+    });
+
+    it("installs with bun without yarn-specific flags", async () => {
+      const pkg = new Package(
+        {
+          name: "test-npm-install",
+        } as any,
+        path.normalize("/test/npm-install-bun"),
+        path.normalize("/test")
+      );
+
+      await npmInstall(pkg, {
+        npmClient: "bun",
+        mutex: "file:foo",
+      });
+
+      expect(childProcess.exec).toHaveBeenLastCalledWith("bun", ["install"], {
+        cwd: pkg.location,
+        env: {
+          LERNA_PACKAGE_NAME: "test-npm-install",
+          LERNA_EXEC_PATH: pkg.location,
+          LERNA_ROOT_PATH: pkg.rootPath,
+        },
+        pkg,
+        stdio: "pipe",
+      });
     });
 
     it("allows override of opts.stdio", async () => {
@@ -222,6 +249,52 @@ describe("npm-install", () => {
         pkg,
         stdio: "pipe",
       });
+    });
+
+    it("sets BUN_CONFIG_REGISTRY when using a custom registry with bun", async () => {
+      const pkg = new Package(
+        {
+          name: "test-npm-install",
+        } as any,
+        path.normalize("/test/npm-install-bun-registry"),
+        path.normalize("/test")
+      );
+
+      await npmInstall(pkg, {
+        npmClient: "bun",
+        registry: "https://custom-registry/npm-install-bun",
+      });
+
+      expect(childProcess.exec).toHaveBeenLastCalledWith("bun", ["install"], {
+        cwd: pkg.location,
+        env: expect.objectContaining({
+          npm_config_registry: "https://custom-registry/npm-install-bun",
+          BUN_CONFIG_REGISTRY: "https://custom-registry/npm-install-bun",
+        }),
+        pkg,
+        stdio: "pipe",
+      });
+    });
+
+    it("does not leak BUN_CONFIG_REGISTRY into non-bun clients", async () => {
+      const pkg = new Package(
+        {
+          name: "test-npm-install",
+        } as any,
+        path.normalize("/test/npm-install-no-bun-registry"),
+        path.normalize("/test")
+      );
+
+      await npmInstall(pkg, {
+        npmClient: "npm",
+        registry: "https://custom-registry/npm-install",
+      });
+
+      const [, , opts] = (childProcess.exec as Mock).mock.calls.at(-1);
+      expect(opts.env.npm_config_registry).toBe("https://custom-registry/npm-install");
+      // Lifecycle scripts spawned by npm/yarn/pnpm may themselves invoke bun; lerna must
+      // not silently redirect their registry when the user never opted into bun.
+      expect(opts.env.BUN_CONFIG_REGISTRY).toBeUndefined();
     });
 
     it("supports npm install --global-style", async () => {

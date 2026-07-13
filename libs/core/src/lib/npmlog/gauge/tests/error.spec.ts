@@ -1,6 +1,6 @@
 export {};
 
-const error = require("../error");
+import * as error from "../error";
 
 describe("User", () => {
   it("isa Error", () => {

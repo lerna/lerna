@@ -5,6 +5,12 @@ import stream from "node:stream";
 
 import log, { Logger } from "../";
 
+// vitest does not support jest's done-callback signature; adapt callback-style
+// tests by wrapping them in a promise.
+function testDone(name: string, fn: (done: () => void) => void) {
+  test(name, () => new Promise<void>((resolve) => fn(resolve)));
+}
+
 const result: any[] = [];
 const logEvents: any[] = [];
 const logInfoEvents: any[] = [];
@@ -281,7 +287,7 @@ const logEventsExpect = [
   { id: 29, level: "noise", prefix: "error", message: "erroring", messageRaw: ["erroring"] },
 ];
 
-const Stream = require("stream").Stream;
+import { Stream } from "stream";
 const s = new Stream();
 s.write = function (m: any) {
   result.push(m);
@@ -386,10 +392,10 @@ describe("Basic Tests", () => {
       expect(log.gauge._theme).toHaveProperty("hasUnicode", false);
     });
 
-    test("themes", () => {
+    test("themes", async () => {
       const _themes = log.gauge._themes;
 
-      const themes = require("../gauge/themes");
+      const { default: themes } = await import("../gauge/themes");
       const newThemes = themes.newThemeSet();
       log.setGaugeThemeset(newThemes);
       expect(log.gauge._themes).toEqual(newThemes);
@@ -426,7 +432,7 @@ describe("Basic Tests", () => {
   });
 
   describe("log.log", () => {
-    test("emits error on bad loglevel", (done) => {
+    testDone("emits error on bad loglevel", (done) => {
       log.once("error", (err: { message: any }) => {
         expect(err.message).toMatch(/Undefined log level: "asdf"/);
         done();
@@ -434,10 +440,13 @@ describe("Basic Tests", () => {
       log.log("asdf", "bad loglevel");
     });
 
-    test("resolves stack traces to a plain string", (done) => {
+    testDone("resolves stack traces to a plain string", (done) => {
       log.once("log", (m: { message: any }) => {
         expect(m.message).toMatch("Error: with a stack trace");
-        expect(m.message).toMatch("_runTest");
+        // the stack trace itself is folded into the message; assert on a stable
+        // frame (the file the error was thrown from) rather than a runner
+        // internal like jest's _runTest
+        expect(m.message).toMatch("basic.spec.ts");
         done();
       });
       const err = new Error("with a stack trace");

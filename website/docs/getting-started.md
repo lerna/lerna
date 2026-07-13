@@ -41,6 +41,7 @@ Instead, we strongly recommend configuring your package manager of choice to use
 - `npm` (https://docs.npmjs.com/cli/using-npm/workspaces)
 - `yarn` (https://yarnpkg.com/features/workspaces)
 - `pnpm` (https://pnpm.io/workspaces)
+- `bun` (https://bun.sh/docs/install/workspaces)
 
 :::
 

@@ -11,7 +11,7 @@ import dedent from "dedent";
 import fs from "fs-extra";
 import path from "path";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 export function factory(argv: Arguments<ImportCommandOptions>) {
   return new ImportCommand(argv);
@@ -165,7 +165,7 @@ export class ImportCommand extends Command<ImportCommandOptions> {
   }
 
   externalExecSync(cmd: string, args: string[]): string {
-    return childProcess.execSync(cmd, args, this.externalExecOpts);
+    return childProcess.execSync(cmd, args, this.externalExecOpts as any);
   }
 
   createPatchForCommit(sha: string) {
@@ -251,7 +251,7 @@ export class ImportCommand extends Command<ImportCommandOptions> {
       // due to merge history.
       const proc = childProcess.exec("git", procArgs, this.execOpts);
 
-      proc.stdin.end(patch);
+      (proc as any).stdin.end(patch);
 
       return pulseTillDone(proc)
         .then(() => {

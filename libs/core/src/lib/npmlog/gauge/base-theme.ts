@@ -6,20 +6,24 @@
  */
 
 "use strict";
-var spin = require("./spin.js");
-var progressBar = require("./progress-bar.js");
+import spin from "./spin";
+import progressBar from "./progress-bar";
 
-module.exports = {
-  activityIndicator: function (values, theme) {
-    if (values.spun == null) {
-      return;
-    }
-    return spin(theme, values.spun);
-  },
-  progressbar: function (values, theme, width) {
-    if (values.completed == null) {
-      return;
-    }
-    return progressBar(theme, width, values.completed);
-  },
+export const activityIndicator = function (values, theme) {
+  if (values.spun == null) {
+    return;
+  }
+  return spin(theme, values.spun);
+};
+
+export const progressbar = function (values, theme, width) {
+  if (values.completed == null) {
+    return;
+  }
+  return progressBar(theme, width, values.completed);
+};
+
+export default {
+  activityIndicator,
+  progressbar,
 };

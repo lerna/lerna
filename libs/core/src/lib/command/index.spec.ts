@@ -1,22 +1,30 @@
-// NOTE: This file can't use ESM without breaking the spyOn() os.cpus() call right now.
-// TODO: refactor the command index.ts to resolve this
-
 import log from "../npmlog";
 import { createProjectGraph } from "../test-helpers/create-project-graph";
 
-const fs = require("fs-extra");
-const path = require("path");
-const nodeFs = require("node:fs");
+import fs from "fs-extra";
+import path from "path";
+import * as nodeFs from "node:fs";
 
 // partially mocked
-const childProcess = require("@lerna/child-process");
-const os = require("os");
+import * as childProcess from "@lerna/child-process";
+import os from "os";
 
-// normalize concurrency across different environments (localhost, CI, etc)
-jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
+// normalize concurrency across different environments (localhost, CI, etc).
+// The mock must be hoisted because ./index computes DEFAULT_CONCURRENCY from
+// os.cpus() at module load.
+vi.mock("os", async () => {
+  const actual = (await vi.importActual("os")) as typeof import("os");
+  const cpus = () => new Array(42) as ReturnType<typeof actual.cpus>;
+  return { ...actual, cpus, default: { ...actual, cpus } };
+});
 
-jest.mock("@nx/devkit", () => ({
-  ...jest.requireActual("@nx/devkit"),
+vi.mock("@lerna/child-process", async () => ({
+  ...(await vi.importActual("@lerna/child-process")),
+  getChildProcessCount: vi.fn(() => 0),
+}));
+
+vi.mock("@nx/devkit", async () => ({
+  ...(await vi.importActual("@nx/devkit")),
   createProjectGraphAsync: () =>
     Promise.resolve(
       createProjectGraph({
@@ -29,11 +37,11 @@ jest.mock("@nx/devkit", () => ({
 // helpers
 
 // nx-ignore-next-line
-const { loggingOutput, updateLernaConfig, initFixtureFactory } = require("@lerna/test-helpers");
+import { loggingOutput, updateLernaConfig, initFixtureFactory } from "@lerna/test-helpers";
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
-const { Command } = require("./index");
+import { Command } from "./index";
 
 describe("command", () => {
   let testDir: string;
@@ -49,8 +57,6 @@ describe("command", () => {
       process.chdir(testDir);
     }
   });
-
-  childProcess.getChildProcessCount = jest.fn(() => 0);
 
   // swallow errors when passed in argv
   const onRejected = () => {};
@@ -159,7 +165,7 @@ describe("command", () => {
     });
 
     it("waits to resolve when 1 child process active", async () => {
-      childProcess.getChildProcessCount.mockReturnValueOnce(1);
+      vi.mocked(childProcess.getChildProcessCount).mockReturnValueOnce(1);
 
       await testFactory();
 
@@ -168,7 +174,7 @@ describe("command", () => {
     });
 
     it("waits to resolve when 2 child processes active", async () => {
-      childProcess.getChildProcessCount.mockReturnValueOnce(2);
+      vi.mocked(childProcess.getChildProcessCount).mockReturnValueOnce(2);
 
       await testFactory();
 
@@ -181,7 +187,7 @@ describe("command", () => {
     const originalConsoleError = console.error;
 
     beforeEach(() => {
-      console.error = jest.fn();
+      console.error = vi.fn();
     });
     afterEach(() => {
       console.error = originalConsoleError;

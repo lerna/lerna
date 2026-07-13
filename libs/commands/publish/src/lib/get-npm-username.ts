@@ -28,7 +28,7 @@ export function getNpmUsername(options: Partial<FetchConfig> = {}): Promise<stri
     })
     .then(success, failure);
 
-  function success(result) {
+  function success(result: any) {
     opts.log.silly("get npm username", "received %j", result);
 
     if (!result.username) {
@@ -42,7 +42,7 @@ export function getNpmUsername(options: Partial<FetchConfig> = {}): Promise<stri
   }
 
   // catch request errors, not auth expired errors
-  function failure(err) {
+  function failure(err: any) {
     // Log the error cleanly to stderr
     opts.log.pause();
     console.error(err.message);

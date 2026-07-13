@@ -1,6 +1,6 @@
 export {};
 
-const wideTruncate = require("../wide-truncate");
+import wideTruncate from "../wide-truncate";
 
 describe("wideTruncate", () => {
   it("should handle various truncation cases correctly", () => {

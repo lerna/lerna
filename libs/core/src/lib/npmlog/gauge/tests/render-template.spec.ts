@@ -1,6 +1,6 @@
 export {};
 
-const renderTemplate = require("../render-template");
+import renderTemplate from "../render-template";
 
 describe("renderTemplate", () => {
   it("should handle various template and value combinations correctly", () => {

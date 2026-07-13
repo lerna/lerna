@@ -1,3 +1,4 @@
+import { createRequire } from "module";
 import path from "path";
 import { ValidationError } from "../validation-error";
 import { shallowExtend } from "./shallow-extend";
@@ -20,7 +21,7 @@ export function applyExtends(config: { [x: string]: unknown; extends?: any }, cw
 
     seen.add(pathToDefault);
 
-    defaultConfig = require(pathToDefault);
+    defaultConfig = createRequire(__filename)(pathToDefault);
     delete config.extends;
 
     defaultConfig = applyExtends(defaultConfig, path.dirname(pathToDefault), seen);

@@ -1,8 +1,8 @@
-jest.mock("@lerna/child-process");
+vi.mock("@lerna/child-process");
 
 // mocked modules
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 import { basename } from "path";
 import { Package } from "../package";

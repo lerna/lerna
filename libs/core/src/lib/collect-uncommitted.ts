@@ -1,7 +1,7 @@
 import { colorize, type StyleFormat } from "@lerna/child-process";
 import npmlog from "./npmlog";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 interface UncommittedConfig {
   cwd: string;

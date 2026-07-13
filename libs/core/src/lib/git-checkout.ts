@@ -1,7 +1,7 @@
 import { ExecOptions } from "child_process";
 import log from "./npmlog";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 /**
  * Reset files modified by publish steps.
@@ -15,5 +15,9 @@ export function gitCheckout(
 
   log.silly("gitCheckout", files as string);
 
-  return childProcess.exec("git", ["checkout", "--"].concat(files), execOpts);
+  return childProcess.exec(
+    "git",
+    ["checkout", "--"].concat(files),
+    execOpts as any
+  ) as unknown as Promise<void>;
 }

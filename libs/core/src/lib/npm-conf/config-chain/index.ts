@@ -9,15 +9,15 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var ProtoList = require("./proto-list"),
-  path = require("path"),
-  fs = require("fs"),
-  ini = require("ini"),
-  EE = require("events").EventEmitter,
-  url = require("url"),
-  http = require("http");
+import ProtoList from "./proto-list";
+import path from "path";
+import fs from "fs";
+import ini from "ini";
+import { EventEmitter as EE } from "events";
+import url from "url";
+import http from "http";
 
-var exports = (module.exports = function () {
+var cc = function () {
   var args = [].slice.call(arguments),
     conf = new ConfigChain();
 
@@ -27,11 +27,13 @@ var exports = (module.exports = function () {
   }
 
   return conf;
-});
+};
+
+export default cc;
 
 //recursively find a file...
 
-var find = (exports.find = function () {
+export var find = (cc.find = function () {
   var rel = path.join.apply(null, [].slice.call(arguments));
 
   function find(start, rel) {
@@ -48,7 +50,7 @@ var find = (exports.find = function () {
   return find(__dirname, rel);
 });
 
-var parse = (exports.parse = function (content, file, type) {
+export var parse = (cc.parse = function (content, file, type) {
   content = "" + content;
   // if we don't know what it is, try json and fall back to ini
   // if we know what it is, then it must be that.
@@ -73,7 +75,7 @@ var parse = (exports.parse = function (content, file, type) {
   }
 });
 
-var json = (exports.json = function () {
+export var json = (cc.json = function () {
   var args = [].slice.call(arguments).filter(function (arg) {
     return arg != null;
   });
@@ -87,7 +89,7 @@ var json = (exports.json = function () {
   return parse(content, file, "json");
 });
 
-var env = (exports.env = function (prefix, env) {
+export var env = (cc.env = function (prefix, env) {
   env = env || process.env;
   var obj = {};
   var l = prefix.length;
@@ -98,7 +100,9 @@ var env = (exports.env = function (prefix, env) {
   return obj;
 });
 
-exports.ConfigChain = ConfigChain;
+cc.ConfigChain = ConfigChain;
+// exported via an `any`-typed alias below to mirror the untyped CJS module this
+// file was inlined from (consumers treat it as untyped)
 function ConfigChain() {
   EE.apply(this);
   ProtoList.apply(this, arguments);
@@ -227,7 +231,7 @@ ConfigChain.prototype.addFile = function (file, type, name) {
 
 ConfigChain.prototype.addEnv = function (prefix, env, name) {
   name = name || "env";
-  var data = exports.env(prefix, env);
+  var data = cc.env(prefix, env);
   this.sources[name] = { data: data, source: env, prefix: prefix };
   return this.add(data, name);
 };
@@ -307,7 +311,7 @@ ConfigChain.prototype.add = function (data, marker) {
   return this;
 };
 
-ConfigChain.prototype.parse = exports.parse;
+ConfigChain.prototype.parse = cc.parse;
 
 ConfigChain.prototype._await = function () {
   this._awaiting++;
@@ -317,3 +321,6 @@ ConfigChain.prototype._resolve = function () {
   this._awaiting--;
   if (this._awaiting === 0) this.emit("load", this);
 };
+
+const _ConfigChain: any = ConfigChain;
+export { _ConfigChain as ConfigChain };

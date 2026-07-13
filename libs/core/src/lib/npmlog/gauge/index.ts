@@ -3,15 +3,13 @@
  */
 
 import onExit from "signal-exit";
-
-const { hasUnicode } = require("./has-unicode");
-
-const Plumbing = require("./plumbing");
-const hasColor = require("./has-color");
-const defaultThemes = require("./themes");
-const setInterval = require("./set-interval");
-const process = require("./process");
-const setImmediate = require("./set-immediate");
+import { hasUnicode } from "./has-unicode";
+import Plumbing from "./plumbing";
+import hasColor from "./has-color";
+import defaultThemes from "./themes";
+import setInterval from "./set-interval";
+import process from "./process";
+import setImmediate from "./set-immediate";
 
 function callWith(obj: any, method: () => any) {
   return function () {

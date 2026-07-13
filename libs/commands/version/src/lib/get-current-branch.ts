@@ -1,7 +1,7 @@
 import { log } from "@lerna/core";
 import { ExecOptions } from "child_process";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 export function getCurrentBranch(opts: ExecOptions) {
   // TODO: refactor to address type issues
@@ -9,7 +9,7 @@ export function getCurrentBranch(opts: ExecOptions) {
   // @ts-ignore
   log.silly("getCurrentBranch");
 
-  const branch = childProcess.execSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], opts);
+  const branch = childProcess.execSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], opts as any);
   log.verbose("currentBranch", branch);
 
   return branch;

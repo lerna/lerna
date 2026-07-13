@@ -4,17 +4,22 @@ import _envinfo from "envinfo";
 
 const initFixture = initFixtureFactory(__dirname);
 
-jest.mock("envinfo");
+vi.mock("envinfo");
 
-const envinfo = jest.mocked(_envinfo);
+const envinfo = vi.mocked(_envinfo);
 
 envinfo.run.mockResolvedValue("MOCK_ENVINFO");
 
 // file under test
 
-const lernaInfo = commandRunner(require("../command"));
+import command from "../command";
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+const lernaInfo = commandRunner(command);
+
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
 
 // The mock modifies the exported symbols and therefore types
 const output = _output as any;

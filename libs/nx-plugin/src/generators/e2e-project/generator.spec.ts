@@ -44,17 +44,6 @@ describe("e2e-project generator", () => {
           "lint": Object {
             "executor": "@nx/eslint:lint",
           },
-          "run-e2e-tests": Object {
-            "executor": "@nx/jest:jest",
-            "options": Object {
-              "jestConfig": "e2e/test/jest.config.ts",
-              "passWithNoTests": true,
-              "runInBand": true,
-            },
-            "outputs": Array [
-              "{workspaceRoot}/coverage/e2e/test",
-            ],
-          },
           "run-e2e-tests-process": Object {
             "executor": "nx:run-commands",
             "options": Object {
@@ -75,17 +64,15 @@ describe("e2e-project generator", () => {
       Object {
         "compilerOptions": Object {
           "module": "commonjs",
-          "moduleResolution": "node10",
           "outDir": "../../dist/out-tsc",
           "types": Array [
-            "jest",
+            "vitest/globals",
             "node",
           ],
         },
         "extends": "./tsconfig.json",
         "include": Array [
-          "jest.config.ts",
-          "jest.config.cts",
+          "vitest.config.ts",
           "src/**/*.test.ts",
           "src/**/*.spec.ts",
           "src/**/*.d.ts",
@@ -94,22 +81,23 @@ describe("e2e-project generator", () => {
       }
     `);
 
-    expect(appTree.read("e2e/test/jest.config.cts").toString()).toMatchInlineSnapshot(`
-      "module.exports = {
-        displayName: 'e2e-test',
-        preset: '../../jest.preset.js',
-        testEnvironment: 'node',
-        transform: {
-          '^.+\\\\\\\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }]
-        },
-        moduleFileExtensions: ['ts', 'js', 'html'],
-        coverageDirectory: '../../coverage/e2e/test',\\"maxWorkers\\": 1,\\"testTimeout\\": 60000,\\"setupFiles\\": [\\"<rootDir>/src/test-setup.ts\\"]
-      };
+    expect(appTree.read("e2e/test/vitest.config.ts").toString()).toMatchInlineSnapshot(`
+      "import { defineConfig } from \\"vitest/config\\";
+      import { defineLernaE2eVitestConfig } from \\"../../vitest.shared\\";
+
+      export default defineConfig(
+        defineLernaE2eVitestConfig({
+          projectRoot: \\"e2e/test\\",
+        })
+      );
       "
     `);
 
+    expect(appTree.exists("e2e/test/jest.config.cts")).toBe(false);
+    expect(appTree.exists("e2e/test/jest.config.ts")).toBe(false);
+
     expect(appTree.read("e2e/test/src/test-setup.ts").toString()).toMatchInlineSnapshot(`
-      "jest.retryTimes(3);
+      "// Runs before each test e2e test file (configured via the shared e2e vitest config)
       "
     `);
   });

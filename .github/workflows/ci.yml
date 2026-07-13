@@ -45,8 +45,8 @@ jobs:
           cmd1: npx nx-cloud record -- npx nx format:check
           cmd2: npx nx run-many -t build --parallel=3
           cmd3: npx nx run-many -t lint --parallel=3
-          cmd4: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
-          cmd5: npx nx run integration:integration --ci --maxWorkers=2
+          cmd4: npx nx run-many -t test --parallel=3 --maxWorkers=2
+          cmd5: npx nx run integration:integration --maxWorkers=2
 
       # e2e tests for everything except the primary task runner (atomized per spec file)
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many -t run-e2e-tests-ci --parallel=1
@@ -151,12 +151,13 @@ jobs:
         # From old maintainer regarding integration tests: "import is NOT TESTED in windows because pain and suffering"
         run: |
           pids=()
-          npx nx run integration:integration --ci --maxWorkers=2 &
+          npx nx run integration:integration --maxWorkers=2 &
           pids+=($!)
 
-          # Ignored specs currently failing on windows
-          # TODO: investigate why
-          npx nx run-many -t test --parallel=3 --ci --maxWorkers=2 --testTimeout=60000 --testPathIgnorePatterns=save.spec.ts --testPathIgnorePatterns=find-file.spec.ts --testPathIgnorePatterns=chain-class.spec.ts &
+          # Specs currently failing on windows are skipped via a platform check
+          # in libs/core/vitest.config.ts (--exclude cannot be used here because
+          # nx interprets it as project exclusion instead of forwarding it)
+          npx nx run-many -t test --parallel=3 --maxWorkers=2 --testTimeout=60000 &
 
           pids+=($!)
 

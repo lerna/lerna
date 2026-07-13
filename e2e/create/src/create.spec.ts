@@ -1269,7 +1269,7 @@ describe("lerna-create", () => {
 
   // TODO: Investigate why this test started failing
   // Example failure: https://cloud.nx.app/runs/4RSTjvMb4J/task/e2e-create%3Ae2e
-  xdescribe("created test script", () => {
+  describe.skip("created test script", () => {
     it("should run and succeed", async () => {
       await fixture.lerna("create test-script -y");
       const result = await fixture.lerna("run test --scope=test-script");

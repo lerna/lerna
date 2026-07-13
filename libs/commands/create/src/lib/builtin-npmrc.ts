@@ -1,9 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 
-module.exports.builtinNpmrc = builtinNpmrc;
-
-function builtinNpmrc() {
+export function builtinNpmrc() {
   let resolvedPath = "";
 
   try {

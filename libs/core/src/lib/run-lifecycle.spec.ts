@@ -4,13 +4,15 @@ import { loggingOutput } from "@lerna/test-helpers";
 import { Package } from "./package";
 import { createRunner, runLifecycle } from "./run-lifecycle";
 
-require("@lerna/test-helpers/src/lib/silence-logging");
+import "@lerna/test-helpers/src/lib/silence-logging";
 
-jest.mock("@npmcli/run-script", () => jest.fn(() => Promise.resolve({ stdout: "" })));
+vi.mock("@npmcli/run-script", () => ({ default: vi.fn(() => Promise.resolve({ stdout: "" })) }));
 
-const runScript = require("@npmcli/run-script");
+import _runScript from "@npmcli/run-script";
 
-const npmConf = require("./npm-conf");
+const runScript = vi.mocked(_runScript);
+
+import { npmConf } from "./npm-conf";
 
 describe("runLifecycle()", () => {
   it("skips packages without scripts", async () => {

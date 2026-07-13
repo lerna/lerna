@@ -84,8 +84,9 @@ const command: CommandModule = {
 
     return yargs;
   },
-  handler(argv) {
-    return require(".")(argv);
+  async handler(argv) {
+    const cmd: any = await import(".");
+    return (cmd.default ?? cmd)(argv);
   },
 };
 

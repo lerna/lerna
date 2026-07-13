@@ -12,7 +12,7 @@ import {
 } from "@lerna/core";
 import pMap from "p-map";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 export function factory(argv: Arguments<ExecCommandConfigOptions>) {
   return new ExecCommand(argv);
@@ -195,7 +195,7 @@ export class ExecCommand extends Command<ExecCommandConfigOptions> {
 
   runCommandInPackageStreaming(pkg: Package) {
     const [command, args] = this.getShellCommand();
-    return childProcess.spawnStreaming(command, args, this.getOpts(pkg), this.prefix && pkg.name);
+    return childProcess.spawnStreaming(command, args, this.getOpts(pkg), (this.prefix && pkg.name) as string);
   }
 
   runCommandInPackageCapturing(pkg: Package) {
