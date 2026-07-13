@@ -541,14 +541,12 @@ describe("conventional-commits", () => {
       expect(leafChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
         ## [1.0.1](/compare/dragons-are-awesome1.0.0...dragons-are-awesome1.0.1) (YYYY-MM-DD)
 
-
         ### Bug Fixes
 
         * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
       `);
       expect(rootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
         ## [1.0.1](/compare/dragons-are-awesome1.0.0...dragons-are-awesome1.0.1) (YYYY-MM-DD)
-
 
         ### Bug Fixes
 
@@ -572,7 +570,6 @@ describe("conventional-commits", () => {
       // second commit should not show up again
       expect(lastRootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
         ## [1.0.2](/compare/dragons-are-awesome1.0.1...dragons-are-awesome1.0.2) (YYYY-MM-DD)
-
 
         ### Bug Fixes
 
@@ -766,16 +763,14 @@ describe("conventional-commits", () => {
       ]);
 
       expect(changelogOne.newEntry.trimRight()).toMatchInlineSnapshot(`
-        ## [1.0.1](/compare/package-1@1.0.0...package-1@1.0.1) (YYYY-MM-DD)
-
+        ## [1.0.1](/compare/package-1%401.0.0...package-1%401.0.1) (YYYY-MM-DD)
 
         ### Bug Fixes
 
         * **stuff:** changed ([SHA](COMMIT_URL))
       `);
       expect(changelogTwo.newEntry.trimRight()).toMatchInlineSnapshot(`
-        # [1.1.0](/compare/package-2@1.0.0...package-2@1.1.0) (YYYY-MM-DD)
-
+        # [1.1.0](/compare/package-2%401.0.0...package-2%401.1.0) (YYYY-MM-DD)
 
         ### Features
 
@@ -817,7 +812,6 @@ describe("conventional-commits", () => {
 
         ## [1.0.1](/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
 
-
         ### Bug Fixes
 
         * A second commit for our CHANGELOG ([SHA](COMMIT_URL))
@@ -834,7 +828,6 @@ describe("conventional-commits", () => {
         ### Features
 
         * I should be placed in the CHANGELOG
-
       `);
     });
   });

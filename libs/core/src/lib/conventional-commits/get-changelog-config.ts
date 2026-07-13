@@ -1,3 +1,4 @@
+import Handlebars from "handlebars";
 import npa from "npm-package-arg";
 import { promisify } from "node:util";
 import log from "../npmlog";
@@ -11,6 +12,58 @@ function isFunction(config: any) {
     Object.prototype.toString.call(config) === "[object Function]" ||
     Object.prototype.toString.call(config) === "[object AsyncFunction]"
   );
+}
+
+function normalizeLegacyWriterOptions(writer: any): any {
+  if (!writer || typeof writer !== "object") {
+    return writer;
+  }
+
+  const normalized = { ...writer };
+  const legacyMainTemplate =
+    typeof writer.mainTemplate === "string" ? Handlebars.compile(writer.mainTemplate) : undefined;
+  const legacyHeaderPartial =
+    typeof writer.headerPartial === "string" ? Handlebars.compile(writer.headerPartial) : undefined;
+  const legacyCommitPartial =
+    typeof writer.commitPartial === "string" ? Handlebars.compile(writer.commitPartial) : undefined;
+  const legacyFooterPartial =
+    typeof writer.footerPartial === "string" ? Handlebars.compile(writer.footerPartial) : undefined;
+
+  if (legacyMainTemplate) {
+    normalized.template = (context: any) =>
+      legacyMainTemplate(context, {
+        data: { root: context },
+        partials: {
+          header:
+            legacyHeaderPartial ||
+            ((partialContext: any) => (writer.headerPartial || context.headerPartial)(partialContext)),
+          commit:
+            legacyCommitPartial ||
+            ((commit: any, options: any) =>
+              (writer.commitPartial || context.commitPartial)(options.data.root, commit)),
+          footer:
+            legacyFooterPartial ||
+            ((partialContext: any) => (writer.footerPartial || context.footerPartial)(partialContext)),
+        },
+      });
+    delete normalized.mainTemplate;
+    delete normalized.headerPartial;
+    delete normalized.commitPartial;
+    delete normalized.footerPartial;
+  } else {
+    if (legacyHeaderPartial) {
+      normalized.headerPartial = (context: any) => legacyHeaderPartial(context);
+    }
+    if (legacyCommitPartial) {
+      normalized.commitPartial = (context: any, commit: any) =>
+        legacyCommitPartial(commit, { data: { root: context } });
+    }
+    if (legacyFooterPartial) {
+      normalized.footerPartial = (context: any) => legacyFooterPartial(context);
+    }
+  }
+
+  return normalized;
 }
 
 /**
@@ -29,7 +82,10 @@ function normalizePresetConfig(config: any): any {
     !config.writerOpts &&
     !config.conventionalChangelog
   ) {
-    return config;
+    return {
+      ...config,
+      writer: normalizeLegacyWriterOptions(config.writer),
+    };
   }
 
   // Legacy format → modern format
@@ -56,6 +112,7 @@ function normalizePresetConfig(config: any): any {
     if (!normalized.writer) {
       normalized.writer = cc.writerOpts || config.writerOpts;
     }
+    normalized.writer = normalizeLegacyWriterOptions(normalized.writer);
     if (!normalized.commits) {
       normalized.commits = cc.gitRawCommitsOpts || config.gitRawCommitsOpts;
     }

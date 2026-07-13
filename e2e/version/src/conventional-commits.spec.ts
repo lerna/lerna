@@ -81,11 +81,9 @@ describe("lerna-version-conventional-commits", () => {
 
         # 0.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-single-package/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
 
       expect(await fixture.readWorkspaceFile("packages/package-a/CHANGELOG.md")).toMatchInlineSnapshot(`
@@ -96,11 +94,9 @@ describe("lerna-version-conventional-commits", () => {
 
         # 0.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-single-package/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
     });
   });
@@ -184,12 +180,10 @@ describe("lerna-version-conventional-commits", () => {
 
         # 0.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
         * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
 
       expect(await fixture.readWorkspaceFile("packages/package-a/CHANGELOG.md")).toMatchInlineSnapshot(`
@@ -200,11 +194,9 @@ describe("lerna-version-conventional-commits", () => {
 
         # 0.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
 
       expect(await fixture.readWorkspaceFile("packages/package-b/CHANGELOG.md")).toMatchInlineSnapshot(`
@@ -215,11 +207,9 @@ describe("lerna-version-conventional-commits", () => {
 
         # 0.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
     });
 
@@ -618,11 +608,9 @@ describe("lerna-version-conventional-commits", () => {
 
           # 1.1.0 ({YYYY}-{MM}-{DD})
 
-
           ### Features
 
           * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
         `);
 
         const cachedPackageBChangelog = await fixture.readWorkspaceFile("packages/package-b/CHANGELOG.md");
@@ -634,11 +622,9 @@ describe("lerna-version-conventional-commits", () => {
 
           # 1.1.0 ({YYYY}-{MM}-{DD})
 
-
           ### Features
 
           * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
         `);
 
         // Update and version just package-a
@@ -670,8 +656,7 @@ describe("lerna-version-conventional-commits", () => {
           All notable changes to this project will be documented in this file.
           See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-          ## [1.1.1](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/compare/package-a@1.1.0...package-a@1.1.1) ({YYYY}-{MM}-{DD})
-
+          ## [1.1.1](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/compare/package-a%401.1.0...package-a%401.1.1) ({YYYY}-{MM}-{DD})
 
           ### Bug Fixes
 
@@ -680,11 +665,9 @@ describe("lerna-version-conventional-commits", () => {
 
           # 1.1.0 ({YYYY}-{MM}-{DD})
 
-
           ### Features
 
           * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
         `);
 
         // package-b CHANGELOG.md should not have been updated

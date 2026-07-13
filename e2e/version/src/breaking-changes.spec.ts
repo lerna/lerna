@@ -85,13 +85,11 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
         All notable changes to this project will be documented in this file.
         See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-        # [2.0.0](tmp/lerna-e2e/lerna-version-breaking-changes/origin/compare/package-a@1.1.0...package-a@2.0.0) ({YYYY}-{MM}-{DD})
-
+        # [2.0.0](tmp/lerna-e2e/lerna-version-breaking-changes/origin/compare/package-a%401.1.0...package-a%402.0.0) ({YYYY}-{MM}-{DD})
 
         ### Features
 
         * add new API ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-breaking-changes/origin/commits/{FULL_COMMIT_SHA}))
-
 
         ### BREAKING CHANGES
 
@@ -100,11 +98,9 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
 
         # 1.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-breaking-changes/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
     });
   });
@@ -148,7 +144,7 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
         All notable changes to this project will be documented in this file.
         See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-        ## [1.1.1](tmp/lerna-e2e/lerna-version-breaking-changes/origin/compare/package-a@1.1.0...package-a@1.1.1) ({YYYY}-{MM}-{DD})
+        ## [1.1.1](tmp/lerna-e2e/lerna-version-breaking-changes/origin/compare/package-a%401.1.0...package-a%401.1.1) ({YYYY}-{MM}-{DD})
 
         **Note:** Version bump only for package package-a
 
@@ -158,11 +154,9 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
 
         # 1.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-breaking-changes/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
     });
   });
@@ -205,11 +199,9 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
         All notable changes to this project will be documented in this file.
         See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-        # [2.0.0](tmp/lerna-e2e/lerna-version-breaking-changes/origin/compare/package-a@1.1.0...package-a@2.0.0) ({YYYY}-{MM}-{DD})
-
+        # [2.0.0](tmp/lerna-e2e/lerna-version-breaking-changes/origin/compare/package-a%401.1.0...package-a%402.0.0) ({YYYY}-{MM}-{DD})
 
         * feat!: rewrite public API ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-breaking-changes/origin/commits/{FULL_COMMIT_SHA}))
-
 
         ### BREAKING CHANGES
 
@@ -218,11 +210,9 @@ describe("lerna-version-conventional-commits-breaking-changes", () => {
 
         # 1.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-breaking-changes/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
     });
   });

@@ -154,7 +154,6 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
 
       ## [2.0.2](/compare/v2.0.1...v2.0.2) (YYYY-MM-DD)
 
-
       ### Bug Fixes
 
       * **package-2:** And another thing ([SHA](COMMIT_URL))
@@ -170,14 +169,12 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
 
       ## [2.0.1-alpha.0](/compare/v2.0.0...v2.0.1-alpha.0) (YYYY-MM-DD)
 
-
       ### Bug Fixes
 
       * **package-4:** And another thing ([SHA](COMMIT_URL))
 
 
       # [2.0.0](/compare/v2.0.0-alpha.1...v2.0.0) (YYYY-MM-DD)
-
 
       ### Features
 
@@ -186,11 +183,9 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
 
       # [2.0.0-alpha.1](/compare/v2.0.0-alpha.0...v2.0.0-alpha.1) (YYYY-MM-DD)
 
-
       ### Bug Fixes
 
       * **package-1:** Fix foo ([SHA](COMMIT_URL))
-
 
       ### Features
 
@@ -199,22 +194,18 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
 
       # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
 
-
       ### Bug Fixes
 
       * **package-2:** Fix bar ([SHA](COMMIT_URL))
-
 
       ### Features
 
       * **package-1:** Add foo ([SHA](COMMIT_URL))
       * **package-3:** Add baz feature ([SHA](COMMIT_URL))
 
-
       ### BREAKING CHANGES
 
       * **package-3:** yup
-
     `);
 
     /**
@@ -228,14 +219,12 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
 
       # [2.0.0](/compare/v2.0.0-alpha.1...v2.0.0) (YYYY-MM-DD)
 
-
       ### Features
 
       * **package-1:** Add baz ([SHA](COMMIT_URL))
 
 
       # [2.0.0-alpha.1](/compare/v2.0.0-alpha.0...v2.0.0-alpha.1) (YYYY-MM-DD)
-
 
       ### Bug Fixes
 
@@ -244,11 +233,9 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
 
       # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
 
-
       ### Features
 
       * **package-1:** Add foo ([SHA](COMMIT_URL))
-
     `);
 
     /**
@@ -261,7 +248,6 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
       See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
       ## [2.0.2](/compare/v2.0.1...v2.0.2) (YYYY-MM-DD)
-
 
       ### Bug Fixes
 
@@ -278,7 +264,6 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
 
       # [2.0.0-alpha.1](/compare/v2.0.0-alpha.0...v2.0.0-alpha.1) (YYYY-MM-DD)
 
-
       ### Features
 
       * **package-2:** Add baz ([SHA](COMMIT_URL))
@@ -286,11 +271,9 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
 
       # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
 
-
       ### Bug Fixes
 
       * **package-2:** Fix bar ([SHA](COMMIT_URL))
-
     `);
 
     /**
@@ -328,16 +311,13 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
 
       # [2.0.0-alpha.0](/compare/v1.0.0...v2.0.0-alpha.0) (YYYY-MM-DD)
 
-
       ### Features
 
       * **package-3:** Add baz feature ([SHA](COMMIT_URL))
 
-
       ### BREAKING CHANGES
 
       * **package-3:** yup
-
     `);
 
     /**
@@ -359,7 +339,6 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
 
       ## [2.0.1-alpha.0](/compare/v2.0.0...v2.0.1-alpha.0) (YYYY-MM-DD)
 
-
       ### Bug Fixes
 
       * **package-4:** And another thing ([SHA](COMMIT_URL))
@@ -368,7 +347,6 @@ describe(`lerna publish --conventional-prerelease/graduate fixed w/ changelog`, 
       # [2.0.0](/compare/v2.0.0-alpha.1...v2.0.0) (YYYY-MM-DD)
 
       **Note:** Version bump only for package package-4
-
     `);
 
     /**
