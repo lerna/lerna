@@ -80,7 +80,7 @@ import yargs from "yargs";
     if (!options.skipPublish) {
       await publish({ ...versionOptions, ...publishOptions });
     } else {
-      version(versionOptions);
+      await version(versionOptions);
       console.warn("Not Publishing because --dryRun was passed");
     }
   } finally {
