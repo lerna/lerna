@@ -18,15 +18,15 @@ describe("published ESM package", () => {
   it("emits native ESM without an esbuild CommonJS wrapper", () => {
     const distRoot = resolve(packageRoot, "dist");
     const cliOutput = readFileSync(resolve(distRoot, "cli.js"), "utf8");
-    const outputs = readdirSync(distRoot, { recursive: true })
+    const commonJsWrapperOutputs = readdirSync(distRoot, { recursive: true })
       .filter((filePath) => filePath.endsWith(".js"))
-      .map((filePath) => readFileSync(resolve(distRoot, filePath), "utf8"));
+      .filter((filePath) => readFileSync(resolve(distRoot, filePath), "utf8").includes("var __commonJS"));
 
     expect(pkg.type).toBe("module");
     expect(readFileSync(resolve(distRoot, "index.js"), "utf8")).toContain('main as "module.exports"');
     expect(cliOutput).toContain('"./index.js"');
     expect(cliOutput).not.toContain('from "./chunk-');
-    expect(outputs).not.toContain(expect.stringContaining("var __commonJS"));
+    expect(commonJsWrapperOutputs).toEqual([]);
   });
 
   it("supports ESM imports", () => {
