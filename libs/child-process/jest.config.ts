@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: "child-process",
   preset: "../../jest.preset.js",
   coverageDirectory: "../../../coverage/libs/child-process",

@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: "e2e-utils",
   preset: "../../jest.preset.js",
   testEnvironment: "node",

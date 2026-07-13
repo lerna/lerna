@@ -176,6 +176,55 @@ describe("createProjectGraphWithPackages", () => {
       ],
     });
   });
+
+  it("should restore root package dependencies omitted from the Nx project graph", async () => {
+    const graph = projectGraph();
+    graph.nodes.project.data.root = ".";
+    const files = projectFileMap();
+    files.project = [{ file: "package.json" } as FileData];
+
+    const result = await createProjectGraphWithPackages(graph, files, [
+      "packages/*",
+      "other-packages/*",
+      ".",
+    ]);
+
+    expect(result.localPackageDependencies.project).toContainEqual({
+      source: "project",
+      target: "projectA",
+      type: "static",
+      dependencyCollection: "dependencies",
+      targetResolvedNpaResult: expect.objectContaining({
+        name: "projectA",
+      }),
+      targetVersionMatchesDependencyRequirement: true,
+    });
+  });
+
+  it("should not duplicate root package dependencies supplied by the Nx project graph", async () => {
+    const graph = projectGraph();
+    graph.nodes.project.data.root = ".";
+    graph.dependencies.project = [
+      {
+        source: "project",
+        target: "projectA",
+        type: "static",
+      },
+    ];
+    const files = projectFileMap();
+    files.project = [{ file: "package.json" } as FileData];
+
+    const result = await createProjectGraphWithPackages(graph, files, [
+      "packages/*",
+      "other-packages/*",
+      ".",
+    ]);
+
+    expect(result.dependencies.project.filter((dependency) => dependency.target === "projectA")).toHaveLength(
+      1
+    );
+    expect(result.localPackageDependencies.project).toHaveLength(1);
+  });
 });
 
 describe("resolvePackage", () => {
@@ -400,6 +449,13 @@ const projectFileMap = (): ProjectFileMap => ({
 
 const getManifestForPath = (path: string): RawManifest | null => {
   const packages: Record<string, RawManifest> = {
+    "root/package.json": {
+      name: "project",
+      version: "1.0.0",
+      dependencies: {
+        projectA: "1.0.0",
+      },
+    },
     "root/packages/projectB/package.json": {
       name: "projectB",
       version: "1.0.0",
