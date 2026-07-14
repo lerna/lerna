@@ -6,10 +6,11 @@
     "packages/lerna"
   ],
   "volta": {
-    "node": "24.18.0",
+    "node": "26.5.0",
+    "npm": "12.0.1",
     "yarn": "1.22.19"
   },
-  "packageManager": "npm@11.16.0",
+  "packageManager": "npm@12.0.1",
   "scripts": {
     "build": "tools/scripts/build.sh",
     "e2e-build-package-publish": "ts-node -P tools/scripts/tsconfig.e2e.json tools/scripts/e2e-build-package-publish",
@@ -89,5 +90,12 @@
     "verdaccio": "6.7.4",
     "vite": "^8.1.4",
     "vitest": "^4.1.10"
+  },
+  "allowScripts": {
+    "@swc/core@1.15.8": true,
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.3": true,
+    "nx@23.0.1": true,
+    "unrs-resolver@1.11.1": true
   }
 }
