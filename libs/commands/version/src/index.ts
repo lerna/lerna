@@ -60,6 +60,7 @@ interface VersionCommandConfigOptions extends CommandConfigOptions {
   allowBranch?: string | string[];
   conventionalCommits?: boolean;
   amend?: boolean;
+  ciBehindBehavior?: "error" | "skip";
   json?: boolean;
   commitHooks?: boolean;
   gitRemote?: string;
@@ -264,6 +265,11 @@ export class VersionCommand extends Command {
         isBehindUpstream(this.gitRemote!, this.currentBranch, this.execOpts)
       ) {
         const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${this.currentBranch}`;
+
+        if (this.options.ci && this.options.ciBehindBehavior === "skip") {
+          this.logger.warn("EBEHIND", `${message}, exiting`);
+          return false;
+        }
 
         throw new ValidationError(
           "EBEHIND",

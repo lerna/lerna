@@ -18,6 +18,7 @@ import {
   loggingOutput,
   showCommit,
   tempDirSerializer,
+  updateLernaConfig,
 } from "@lerna/test-helpers";
 import execa from "execa";
 import fs from "fs-extra";
@@ -656,7 +657,7 @@ Changes:
   });
 
   describe("when local clone is behind upstream", () => {
-    it("throws an error during interactive publish", async () => {
+    it("throws an error during interactive version", async () => {
       isBehindUpstream.mockReturnValueOnce(true);
 
       const testDir = await initFixture("normal");
@@ -665,13 +666,62 @@ Changes:
       await expect(command).rejects.toThrow("Please merge remote changes");
     });
 
-    it("throws an error during CI publish", async () => {
+    it("throws an error during CI version", async () => {
       isBehindUpstream.mockReturnValueOnce(true);
 
       const testDir = await initFixture("normal");
       const command = lernaVersion(testDir)("--ci");
 
       await expect(command).rejects.toThrow("Please merge remote changes");
+    });
+
+    it("throws an error during CI version when explicitly configured to error", async () => {
+      isBehindUpstream.mockReturnValueOnce(true);
+
+      const testDir = await initFixture("normal");
+      const command = lernaVersion(testDir)("--ci", "--ci-behind-behavior", "error");
+
+      await expect(command).rejects.toThrow("Please merge remote changes");
+    });
+
+    it("logs a warning and exits early during CI version when configured to skip", async () => {
+      isBehindUpstream.mockReturnValueOnce(true);
+
+      const testDir = await initFixture("normal");
+
+      await lernaVersion(testDir)("--ci", "--ci-behind-behavior", "skip");
+
+      const [warning] = loggingOutput("warn");
+      expect(warning).toMatch("behind remote upstream");
+      expect(warning).toMatch("exiting");
+    });
+
+    it("still throws during interactive version when configured to skip", async () => {
+      isBehindUpstream.mockReturnValueOnce(true);
+
+      const testDir = await initFixture("normal");
+      const command = lernaVersion(testDir)("--no-ci", "--ci-behind-behavior", "skip");
+
+      await expect(command).rejects.toThrow("Please merge remote changes");
+    });
+
+    it("consumes the CI behind behavior from lerna.json", async () => {
+      isBehindUpstream.mockReturnValueOnce(true);
+
+      const testDir = await initFixture("normal");
+      updateLernaConfig(testDir, {
+        command: {
+          version: {
+            ciBehindBehavior: "skip",
+          },
+        },
+      });
+
+      await lernaVersion(testDir)("--ci");
+
+      const [warning] = loggingOutput("warn");
+      expect(warning).toMatch("behind remote upstream");
+      expect(warning).toMatch("exiting");
     });
   });
 
