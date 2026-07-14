@@ -40,7 +40,7 @@ jobs:
           --distribute-on="8 linux-lerna"
           --stop-agents-after="build,lint,test,integration,run-e2e-tests-ci"
           --require-explicit-completion
-          --with-env-vars="CI,GITHUB_ACTIONS,PUBLISHED_VERSION"
+          --with-env-vars="PUBLISHED_VERSION"
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
