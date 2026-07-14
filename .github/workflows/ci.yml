@@ -14,7 +14,7 @@ concurrency:
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  NX_VERBOSE_LOGGING: false
+  NX_VERBOSE_LOGGING: true
 
 # Minimal permissions by default
 permissions:
