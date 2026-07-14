@@ -69,44 +69,30 @@ our [guidelines for contributing](https://github.com/lerna/lerna/blob/main/CONTR
 
 ### Core Team
 
-| Victor Savkin                                                          | James Henry                                                           | Austin Fahsl                                                            |
-| ---------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| ![Victor Savkin](https://avatars1.githubusercontent.com/u/35996?s=160) | ![James Henry](https://avatars2.githubusercontent.com/u/900523?s=160) | ![Austin Fahsl](https://avatars0.githubusercontent.com/u/6913035?s=160) |
-| [vsavkin](https://github.com/vsavkin)                                  | [JamesHenry](https://github.com/JamesHenry)                           | [fahslaj](https://github.com/fahslaj)                                   |
-
-| Benjamin Cabanes                                                            | Juri Strumpflohner                                                           |
-| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| ![Benjamin Cabanes](https://avatars2.githubusercontent.com/u/3447705?s=160) | ![Juri Strumpflohner](https://avatars1.githubusercontent.com/u/542458?s=160) |
-| [bcabanes](https://github.com/bcabanes)                                     | [juristr](https://github.com/juristr)                                        |
+| Victor Savkin                                                          | James Henry                                                           | Benjamin Cabanes                                                            | Juri Strumpflohner                                                           |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| ![Victor Savkin](https://avatars1.githubusercontent.com/u/35996?s=160) | ![James Henry](https://avatars2.githubusercontent.com/u/900523?s=160) | ![Benjamin Cabanes](https://avatars2.githubusercontent.com/u/3447705?s=160) | ![Juri Strumpflohner](https://avatars1.githubusercontent.com/u/542458?s=160) |
+| [vsavkin](https://github.com/vsavkin)                                  | [JamesHenry](https://github.com/JamesHenry)                           | [bcabanes](https://github.com/bcabanes)                                     | [juristr](https://github.com/juristr)                                        |
 
 <br />
 
-### Contributors ✨
+### Important Contributors ✨
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Thanks goes to these wonderful people:
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/jeffbcross"><img src="https://avatars.githubusercontent.com/u/463703?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jeff Cross</b></sub></a><br /><a href="#business-jeffbcross" title="Business development">💼</a></td>
-    <td align="center"><a href="http://evocateur.org/"><img src="https://avatars.githubusercontent.com/u/5605?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Stockman</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=evocateur" title="Code">💻</a> <a href="https://github.com/lerna/lerna/commits?author=evocateur" title="Documentation">📖</a> <a href="#infra-evocateur" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-evocateur" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://jamie.build/"><img src="https://avatars.githubusercontent.com/u/952783?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jamie Kyle</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=jamiebuilds" title="Code">💻</a> <a href="https://github.com/lerna/lerna/commits?author=jamiebuilds" title="Documentation">📖</a> <a href="#infra-jamiebuilds" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-jamiebuilds" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://henryzoo.com/"><img src="https://avatars.githubusercontent.com/u/588473?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Henry Zhu</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=hzoo" title="Code">💻</a> <a href="https://github.com/lerna/lerna/commits?author=hzoo" title="Documentation">📖</a> <a href="#maintenance-hzoo" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="http://maonoodle.com/"><img src="https://avatars.githubusercontent.com/u/115908?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bo Borgerson</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=gigabo" title="Code">💻</a> <a href="#maintenance-gigabo" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/jeffbcross"><img src="https://avatars.githubusercontent.com/u/463703?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jeff Cross</b></sub></a></td>
+    <td align="center"><a href="http://evocateur.org/"><img src="https://avatars.githubusercontent.com/u/5605?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Stockman</b></sub></a></td>
+    <td align="center"><a href="https://github.com/fahslaj"><img src="https://avatars0.githubusercontent.com/u/6913035?s=160" width="100px;" alt=""/><br /><sub><b>Austin Fahsl</b></sub></a></td>
+    <td align="center"><a href="https://jamie.build/"><img src="https://avatars.githubusercontent.com/u/952783?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jamie Kyle</b></sub></a></td>
+    <td align="center"><a href="https://henryzoo.com/"><img src="https://avatars.githubusercontent.com/u/588473?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Henry Zhu</b></sub></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/sebmck"><img src="https://avatars.githubusercontent.com/u/853712?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sebastian</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=sebmck" title="Code">💻</a></td>
-    <td align="center"><a href="http://www.feth.com/"><img src="https://avatars.githubusercontent.com/u/188038?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joscha Feth</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=joscha" title="Code">💻</a> <a href="https://github.com/lerna/lerna/issues?q=author%3Ajoscha" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/noherczeg"><img src="https://avatars.githubusercontent.com/u/1084847?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Norbert Csaba Herczeg</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=noherczeg" title="Code">💻</a></td>
-    <td align="center"><a href="http://dougwade.io/"><img src="https://avatars.githubusercontent.com/u/3477707?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Douglas Wade</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=doug-wade" title="Code">💻</a></td>
+    <td align="center"><a href="http://maonoodle.com/"><img src="https://avatars.githubusercontent.com/u/115908?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bo Borgerson</b></sub></a></td>
+    <td align="center"><a href="https://github.com/sebmck"><img src="https://avatars.githubusercontent.com/u/853712?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sebastian</b></sub></a></td>
+    <td align="center"><a href="http://www.feth.com/"><img src="https://avatars.githubusercontent.com/u/188038?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joscha Feth</b></sub></a></td>
+    <td align="center"><a href="https://github.com/noherczeg"><img src="https://avatars.githubusercontent.com/u/1084847?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Norbert Csaba Herczeg</b></sub></a></td>
+    <td align="center"><a href="http://dougwade.io/"><img src="https://avatars.githubusercontent.com/u/3477707?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Douglas Wade</b></sub></a></td>
   </tr>
 </table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

@@ -126,7 +126,7 @@ Lerna always uses `npm` tooling to publish packages, regardless of the `npmClien
 
 ## Jest / Visual Studio Code Debugging
 
-It is possible to debug [Jest](https://facebook.github.io/jest/) tests in a Lerna-managed package using [Visual Studio Code](https://code.visualstudio.com/). Debugging with breakpoints works with the vscode launch configuration below in the monorepo's `<root>/.vscode/launch.json` file. This example launches Jest for a single package `my-package` located in the monorepo.
+It is possible to debug [Jest](https://jestjs.io/) tests in a Lerna-managed package using [Visual Studio Code](https://code.visualstudio.com/). Debugging with breakpoints works with the vscode launch configuration below in the monorepo's `<root>/.vscode/launch.json` file. This example launches Jest for a single package `my-package` located in the monorepo.
 
 ```javascript
 {
@@ -152,7 +152,7 @@ It is possible to debug [Jest](https://facebook.github.io/jest/) tests in a Lern
 }
 ```
 
-- [`--runInBand`](https://facebook.github.io/jest/docs/en/cli.html#runinband) avoids parallelizing tests across multiple processes
-- [`--no-cache`](https://facebook.github.io/jest/docs/en/cli.html#cache) helps avoid caching issues
+- [`--runInBand`](https://jestjs.io/docs/cli#--runinband) avoids parallelizing tests across multiple processes
+- [`--no-cache`](https://jestjs.io/docs/cli#--cache) helps avoid caching issues
 
 Tested with Visual Studio Code v1.19.3 and Jest v22.1.4.
