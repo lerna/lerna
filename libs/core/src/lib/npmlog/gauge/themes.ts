@@ -6,10 +6,12 @@
  */
 
 "use strict";
-var color = require("./console-control-strings").color;
-var ThemeSet = require("./theme-set");
+import { color } from "./console-control-strings";
+import ThemeSet from "./theme-set";
 
-var themes = (module.exports = new ThemeSet());
+var themes = new ThemeSet();
+
+export default themes;
 
 themes.addTheme("ASCII", {
   preProgressbar: "[",

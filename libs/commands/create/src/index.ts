@@ -13,13 +13,13 @@ import path from "path";
 import { slash } from "@lerna/core";
 import { URL } from "url";
 
-const initPackageJson = require("init-package-json");
+import initPackageJson from "init-package-json";
 
-const { builtinNpmrc } = require("./lib/builtin-npmrc");
+import { builtinNpmrc } from "./lib/builtin-npmrc";
 
-const { catFile } = require("./lib/cat-file");
+import { catFile } from "./lib/cat-file";
 
-const LERNA_MODULE_DATA = require.resolve(path.join(__dirname, "./lib/lerna-module-data.js"));
+const LERNA_MODULE_DATA = path.join(import.meta.dirname, "lib/lerna-module-data.cjs");
 const DEFAULT_DESCRIPTION = [
   "Now I’m the model of a modern major general",
   "The venerated Virginian veteran whose men are all",
@@ -31,11 +31,11 @@ const DEFAULT_DESCRIPTION = [
   "BOOM",
 ].join(" / ");
 
-module.exports = function factory(argv: Arguments<CommandConfigOptions>) {
+export function factory(argv: Arguments<CommandConfigOptions>) {
   return new CreateCommand(argv);
-};
+}
 
-class CreateCommand extends Command {
+export class CreateCommand extends Command {
   initialize() {
     // Build a lookup map from package name to project node
     this._pkgByName = new Map(
@@ -425,8 +425,8 @@ class CreateCommand extends Command {
             ${this.binFileName} --help
           `
           : this.options.esModule
-          ? `import ${this.camelName} from '${this.pkgName}';`
-          : `const ${this.camelName} = require('${this.pkgName}');`
+            ? `import ${this.camelName} from '${this.pkgName}';`
+            : `const ${this.camelName} = require('${this.pkgName}');`
       }
 
       // TODO: DEMONSTRATE API
@@ -555,11 +555,17 @@ class CreateCommand extends Command {
 
       // eslint-disable-next-line no-unused-expressions
       require('../${this.outDir}/cli')${
-      this.options.esModule ? ".default" : ""
-    }().parse(process.argv.slice(2));`;
+        this.options.esModule ? ".default" : ""
+      }().parse(process.argv.slice(2));`;
 
     return catFile(this.binDir, this.binFileName, binContent, { mode: 0o755 });
   }
 }
 
-module.exports.CreateCommand = CreateCommand;
+// The public shape of this module is a callable factory with the command class
+// attached (module.exports = factory; module.exports.CreateCommand = CreateCommand),
+// preserved for consumers of the lerna/commands/create deep import.
+const commonJsExport = Object.assign(factory, { CreateCommand });
+
+export default commonJsExport;
+export { commonJsExport as "module.exports" };

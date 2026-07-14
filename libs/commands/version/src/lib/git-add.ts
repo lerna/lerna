@@ -1,13 +1,16 @@
 import { log } from "@lerna/core";
 import { readJsonFile, workspaceRoot } from "@nx/devkit";
-import { ExecOptions } from "child_process";
 import fs from "fs";
+import { createRequire } from "node:module";
 import path from "path";
 import { slash } from "@lerna/core";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
+import type { LernaOptions } from "@lerna/child-process";
 
-let resolvedPrettier;
+const require = createRequire(import.meta.url);
+
+let resolvedPrettier: any;
 function resolvePrettier() {
   if (!resolvedPrettier) {
     try {
@@ -26,7 +29,7 @@ function resolvePrettier() {
   return resolvedPrettier;
 }
 
-async function maybeFormatFile(filePath) {
+async function maybeFormatFile(filePath: any) {
   const prettier = resolvePrettier();
   if (!prettier) {
     return;
@@ -57,7 +60,7 @@ async function maybeFormatFile(filePath) {
 export async function gitAdd(
   changedFiles: string[],
   gitOpts: { granularPathspec?: boolean },
-  execOpts: ExecOptions
+  execOpts: LernaOptions
 ) {
   let files: string | string[] = [];
   for (const file of changedFiles) {

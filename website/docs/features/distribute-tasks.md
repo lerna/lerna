@@ -44,7 +44,7 @@ Every organization manages their CI/CD pipelines differently, so it's not possib
 
 Note that only cacheable operations can be distributed because they have to be replayed on the main job.
 
-For more details on setting up DTE, read [this guide](https://nx.dev/nx-cloud/set-up/set-up-dte).
+For more details on setting up DTE, read [this guide](https://nx.dev/docs/features/ci-features/distribute-task-execution).
 
 ## CI Execution Flow
 

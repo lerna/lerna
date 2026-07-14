@@ -1,4 +1,4 @@
-const { execSync } = require("@lerna/child-process");
+import { execSync } from "@lerna/child-process";
 import { ExecOptions } from "child_process";
 import minimatch from "minimatch";
 import { relative } from "path";
@@ -67,5 +67,5 @@ function diffSinceIn(committish: string, location: string, opts: ExecOptions) {
   }
 
   log.silly("checking diff", formattedLocation);
-  return execSync("git", args, opts);
+  return execSync("git", args, opts as any);
 }

@@ -1,13 +1,5 @@
-import {
-  formatFiles,
-  names,
-  readProjectConfiguration,
-  Tree,
-  updateJson,
-  updateProjectConfiguration,
-} from "@nx/devkit";
-import { addPropertyToJestConfig } from "@nx/jest/src/utils/config/update-config";
-import { libraryGenerator } from "@nx/js/src/generators/library/library";
+import { formatFiles, names, readProjectConfiguration, Tree, updateProjectConfiguration } from "@nx/devkit";
+import { libraryGenerator } from "@nx/js";
 import { E2eProjectGeneratorSchema } from "./schema";
 
 interface NormalizedSchema extends E2eProjectGeneratorSchema {
@@ -41,7 +33,7 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
     name: normalizedOptions.projectName,
     directory: normalizedOptions.projectDirectory,
     skipTsConfig: true,
-    unitTestRunner: "jest",
+    unitTestRunner: "none",
   });
 
   tree.delete(`${normalizedOptions.projectRoot}/README.md`);
@@ -50,20 +42,45 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
     tree.delete(`${normalizedOptions.projectRoot}/src/lib/${file}`);
   });
 
-  addPropertyToJestConfig(tree, `${normalizedOptions.projectRoot}/jest.config.cts`, "maxWorkers", 1, {
-    valueAsString: false,
-  });
-  addPropertyToJestConfig(tree, `${normalizedOptions.projectRoot}/jest.config.cts`, "testTimeout", 60000, {
-    valueAsString: false,
-  });
-  addPropertyToJestConfig(
-    tree,
-    `${normalizedOptions.projectRoot}/jest.config.cts`,
-    "setupFiles",
-    ["<rootDir>/src/test-setup.ts"],
-    {
-      valueAsString: false,
-    }
+  const offsetToWorkspaceRoot = "../".repeat(normalizedOptions.projectRoot.split("/").length);
+
+  // The @nx/vitest plugin registered in nx.json infers the run-e2e-tests target
+  // from this config (serial execution, retries and the test-setup file all come
+  // from the shared defineLernaE2eVitestConfig defaults).
+  tree.write(
+    `${normalizedOptions.projectRoot}/vitest.config.ts`,
+    `import { defineConfig } from "vitest/config";
+import { defineLernaE2eVitestConfig } from "${offsetToWorkspaceRoot}vitest.shared";
+
+export default defineConfig(
+  defineLernaE2eVitestConfig({
+    projectRoot: "${normalizedOptions.projectRoot}",
+  })
+);
+`
+  );
+
+  tree.write(
+    `${normalizedOptions.projectRoot}/tsconfig.spec.json`,
+    JSON.stringify(
+      {
+        extends: "./tsconfig.json",
+        compilerOptions: {
+          outDir: `${offsetToWorkspaceRoot}dist/out-tsc`,
+          module: "commonjs",
+          types: ["vitest/globals", "node"],
+        },
+        include: [
+          "vitest.config.ts",
+          "src/**/*.test.ts",
+          "src/**/*.spec.ts",
+          "src/**/*.d.ts",
+          "src/test-setup.ts",
+        ],
+      },
+      null,
+      2
+    )
   );
 
   const projectConfig = readProjectConfiguration(tree, normalizedOptions.projectName);
@@ -101,15 +118,7 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
           parallel: false,
         },
       },
-      "run-e2e-tests": {
-        executor: "@nx/jest:jest",
-        options: {
-          jestConfig: `${normalizedOptions.projectRoot}/jest.config.ts`,
-          passWithNoTests: true,
-          runInBand: true,
-        },
-        outputs: [`{workspaceRoot}/coverage/${normalizedOptions.projectRoot}`],
-      },
+      // run-e2e-tests is inferred from vitest.config.ts by the @nx/vitest plugin
       lint: projectConfig.targets.lint,
       // Don't keep the original unit test target
     },
@@ -128,15 +137,9 @@ export default async function (tree: Tree, options: E2eProjectGeneratorSchema) {
 
   tree.write(
     `${normalizedOptions.projectRoot}/src/test-setup.ts`,
-    `jest.retryTimes(3);
+    `// Runs before each ${options.name} e2e test file (configured via the shared e2e vitest config)
 `
   );
-
-  updateJson(tree, `${normalizedOptions.projectRoot}/tsconfig.spec.json`, (json) => {
-    json.include = json.include ?? [];
-    json.include.push("src/test-setup.ts");
-    return json;
-  });
 
   await formatFiles(tree);
 }

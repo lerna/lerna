@@ -14,24 +14,26 @@ import path from "path";
 
 // mocked modules
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
+
+import command from "../command";
+
+// overwrite spawn so we get piped stdout, not inherited
+vi.mock("@lerna/child-process", async () => ({
+  ...(await vi.importActual<typeof import("@lerna/child-process")>("@lerna/child-process")),
+  spawn: vi.fn((...args: any[]) => (execa as any)(...args)),
+}));
 
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 
-const lernaDiff = commandRunner(require("../command"));
+const lernaDiff = commandRunner(command);
 
 // stabilize commit SHA
 expect.addSnapshotSerializer(gitSHASerializer);
 
 describe("DiffCommand", () => {
-  // overwrite spawn so we get piped stdout, not inherited
-  // TODO: refactor based on TS feedback
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  childProcess.spawn = jest.fn((...args) => execa(...args));
-
   it("should diff packages from the first commit", async () => {
     const cwd = await initFixture("basic");
     const [pkg1] = await getPackages(cwd);
@@ -139,7 +141,7 @@ describe("DiffCommand", () => {
   it("should error when git diff exits non-zero", async () => {
     const cwd = await initFixture("basic");
 
-    childProcess.spawn.mockImplementationOnce(() => {
+    vi.mocked(childProcess.spawn).mockImplementationOnce(() => {
       const nonZero = new Error("An actual non-zero, not git diff pager SIGPIPE") as any;
       nonZero.exitCode = 1;
 

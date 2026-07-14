@@ -6,9 +6,12 @@
  */
 
 "use strict";
-var process = require("./process");
+import process from "./process";
+
+var exported: typeof setImmediate;
 try {
-  module.exports = setImmediate;
+  exported = setImmediate;
 } catch (ex) {
-  module.exports = process.nextTick;
+  exported = process.nextTick;
 }
+export default exported;

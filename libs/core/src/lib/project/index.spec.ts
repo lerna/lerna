@@ -3,18 +3,20 @@
 import { initFixtureFactory, loggingOutput } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import { dump } from "js-yaml";
+import util from "node:util";
 import path from "path";
 
 // Serialize the JSONError output to be more human readable
 expect.addSnapshotSerializer({
-  serialize(str: string) {
-    const util = require("node:util");
+  serialize(val: string | Error) {
+    const str = typeof val === "string" ? val : val.message;
     return util
       .stripVTControlCharacters(str)
       .replace(/Error in: .*lerna\.json/, "Error in: normalized/path/to/lerna.json");
   },
-  test(val: string) {
-    return val != null && typeof val === "string" && val.includes("Error in: ");
+  test(val: unknown) {
+    const str = typeof val === "string" ? val : val instanceof Error ? val.message : null;
+    return str != null && str.includes("Error in: ");
   },
 });
 
@@ -229,7 +231,7 @@ describe("Project", () => {
         await fs.remove(path.join(cwd, "pnpm-workspace.yaml"));
 
         expect(() => new Project(cwd)).toThrowErrorMatchingInlineSnapshot(
-          `"No pnpm-workspace.yaml found. See https://pnpm.io/workspaces for help configuring workspaces in pnpm."`
+          `[ValidationError: No pnpm-workspace.yaml found. See https://pnpm.io/workspaces for help configuring workspaces in pnpm.]`
         );
 
         const verboseLogs = loggingOutput("verbose");
@@ -250,7 +252,7 @@ describe("Project", () => {
         await fs.writeFile(pnpmWorkspaceConfigPath, pnpmWorkspaceConfigContent);
 
         expect(() => new Project(cwd)).toThrowErrorMatchingInlineSnapshot(
-          `"No \\"packages\\" property found in \`pnpm-workspace.yaml\`. See https://pnpm.io/workspaces for help configuring workspaces in pnpm."`
+          `[ValidationError: No "packages" property found in \`pnpm-workspace.yaml\`. See https://pnpm.io/workspaces for help configuring workspaces in pnpm.]`
         );
       });
     });

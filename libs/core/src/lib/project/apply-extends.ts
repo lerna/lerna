@@ -1,6 +1,9 @@
+import { createRequire } from "node:module";
 import path from "path";
 import { ValidationError } from "../validation-error";
 import { shallowExtend } from "./shallow-extend";
+
+const require = createRequire(import.meta.url);
 
 export function applyExtends(config: { [x: string]: unknown; extends?: any }, cwd: string, seen = new Set()) {
   let defaultConfig = {};

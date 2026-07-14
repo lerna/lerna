@@ -2,7 +2,7 @@ import { log } from "@lerna/core";
 import { ExecOptions } from "child_process";
 import npa from "npm-package-arg";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 /**
  * Retrieve a list of git tags pointing to the current HEAD that match the provided pattern.
@@ -18,14 +18,14 @@ export async function getCurrentTags(execOpts: ExecOptions, matchingPattern: str
   const result = await childProcess.exec(
     "git",
     ["tag", "--sort", "version:refname", "--points-at", "HEAD", "--list", matchingPattern],
-    opts
+    opts as any
   );
   const lines: string[] = result.stdout.split("\n").filter(Boolean);
 
   if (matchingPattern === "*@*") {
     // independent mode does not respect tagVersionPrefix,
     // but embeds the package name in the tag "prefix"
-    return lines.map((tag) => npa(tag).name);
+    return lines.map((tag) => npa(tag).name!);
   }
 
   // "fixed" mode can have a custom tagVersionPrefix,

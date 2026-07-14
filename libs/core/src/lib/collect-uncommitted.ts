@@ -1,14 +1,14 @@
 import { colorize, type StyleFormat } from "@lerna/child-process";
 import npmlog from "./npmlog";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 interface UncommittedConfig {
   cwd: string;
   log?: typeof npmlog;
 }
 
-const maybeColorize = (format: StyleFormat) => (s: unknown) => s !== " " ? colorize(format, String(s)) : s;
+const maybeColorize = (format: StyleFormat) => (s: unknown) => (s !== " " ? colorize(format, String(s)) : s);
 const cRed = maybeColorize("red");
 const cGreen = maybeColorize("green");
 

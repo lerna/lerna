@@ -1,6 +1,6 @@
 export {};
 
-const progressBar = require("../progress-bar");
+import progressBar from "../progress-bar";
 
 describe("progressBar", () => {
   it("should handle different progress values correctly", () => {

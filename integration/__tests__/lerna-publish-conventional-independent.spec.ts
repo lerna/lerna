@@ -76,133 +76,116 @@ Successfully published:
    * ./packages/package-1/CHANGELOG.md
    */
   expect(pkg1Changelog).toMatchInlineSnapshot(`
-# Change Log
+    # Change Log
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+    All notable changes to this project will be documented in this file.
+    See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# 1.1.0 (YYYY-MM-DD)
+    # 1.1.0 (YYYY-MM-DD)
 
+    ### Bug Fixes
 
-### Bug Fixes
+    * **package-1:** Fix foo ([SHA](COMMIT_URL))
 
-* **package-1:** Fix foo ([SHA](COMMIT_URL))
+    ### Features
 
-
-### Features
-
-* init repo ([SHA](COMMIT_URL))
-* **package-1:** Add foo ([SHA](COMMIT_URL))
-
-`);
+    * init repo ([SHA](COMMIT_URL))
+    * **package-1:** Add foo ([SHA](COMMIT_URL))
+  `);
 
   /**
    * ./packages/package-2/CHANGELOG.md
    */
   expect(pkg2Changelog).toMatchInlineSnapshot(`
-# Change Log
+    # Change Log
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+    All notable changes to this project will be documented in this file.
+    See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [2.1.1](/compare/package-2@2.1.0...package-2@2.1.1) (YYYY-MM-DD)
+    ## [2.1.1](/compare/package-2%402.1.0...package-2%402.1.1) (YYYY-MM-DD)
 
+    ### Bug Fixes
 
-### Bug Fixes
-
-* **package-2:** And another thing ([SHA](COMMIT_URL))
-
+    * **package-2:** And another thing ([SHA](COMMIT_URL))
 
 
+    # 2.1.0 (YYYY-MM-DD)
 
+    ### Bug Fixes
 
-# 2.1.0 (YYYY-MM-DD)
+    * **package-2:** Fix bar ([SHA](COMMIT_URL))
 
+    ### Features
 
-### Bug Fixes
-
-* **package-2:** Fix bar ([SHA](COMMIT_URL))
-
-
-### Features
-
-* init repo ([SHA](COMMIT_URL))
-
-`);
+    * init repo ([SHA](COMMIT_URL))
+  `);
 
   /**
    * ./packages/package-3/CHANGELOG.md
    */
   expect(pkg3Changelog).toMatchInlineSnapshot(`
-# Change Log
+    # Change Log
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+    All notable changes to this project will be documented in this file.
+    See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [4.0.1](/compare/package-3@4.0.0...package-3@4.0.1) (YYYY-MM-DD)
+    ## [4.0.1](/compare/package-3%404.0.0...package-3%404.0.1) (YYYY-MM-DD)
 
-**Note:** Version bump only for package package-3
-
-
+    **Note:** Version bump only for package package-3
 
 
 
-# 4.0.0 (YYYY-MM-DD)
 
 
-### Features
+    # 4.0.0 (YYYY-MM-DD)
 
-* init repo ([SHA](COMMIT_URL))
-* **package-3:** Add baz feature ([SHA](COMMIT_URL))
+    ### Features
 
+    * init repo ([SHA](COMMIT_URL))
+    * **package-3:** Add baz feature ([SHA](COMMIT_URL))
 
-### BREAKING CHANGES
+    ### BREAKING CHANGES
 
-* **package-3:** yup
-
-`);
+    * **package-3:** yup
+  `);
 
   /**
    * ./packages/package-4/CHANGELOG.md
    */
   expect(pkg4Changelog).toMatchInlineSnapshot(`
-# Change Log
+    # Change Log
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+    All notable changes to this project will be documented in this file.
+    See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# 4.1.0 (YYYY-MM-DD)
+    # 4.1.0 (YYYY-MM-DD)
 
+    ### Features
 
-### Features
-
-* init repo ([SHA](COMMIT_URL))
-
-`);
+    * init repo ([SHA](COMMIT_URL))
+  `);
 
   /**
    * ./packages/package-5/CHANGELOG.md
    */
   expect(pkg5Changelog).toMatchInlineSnapshot(`
-# Change Log
+    # Change Log
 
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+    All notable changes to this project will be documented in this file.
+    See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [5.1.1](/compare/package-5@5.1.0...package-5@5.1.1) (YYYY-MM-DD)
+    ## [5.1.1](/compare/package-5%405.1.0...package-5%405.1.1) (YYYY-MM-DD)
 
-**Note:** Version bump only for package package-5
-
-
+    **Note:** Version bump only for package package-5
 
 
 
-# 5.1.0 (YYYY-MM-DD)
 
 
-### Features
+    # 5.1.0 (YYYY-MM-DD)
 
-* init repo ([SHA](COMMIT_URL))
+    ### Features
 
-`);
+    * init repo ([SHA](COMMIT_URL))
+  `);
 });

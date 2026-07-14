@@ -7,13 +7,18 @@ import {
   tempDirSerializer,
 } from "@lerna/test-helpers";
 
+import command from "../command";
+
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 
-const lernaChanged = commandRunner(require("../command"));
+const lernaChanged = commandRunner(command);
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
 
 // The mock modifies the exported symbols and therefore types
 const output = _output as any;

@@ -6,11 +6,11 @@
  */
 
 "use strict";
-var consoleControl = require("./console-control-strings");
-var renderTemplate = require("./render-template");
-var validate = require("./validate");
+import * as consoleControl from "./console-control-strings";
+import renderTemplate from "./render-template";
+import validate from "./validate";
 
-var Plumbing = (module.exports = function (theme, template, width) {
+var Plumbing = function (theme, template, width) {
   if (!width) {
     width = 80;
   }
@@ -19,8 +19,10 @@ var Plumbing = (module.exports = function (theme, template, width) {
   this.theme = theme;
   this.width = width;
   this.template = template;
-});
+};
 Plumbing.prototype = {};
+
+export default Plumbing;
 
 Plumbing.prototype.setTheme = function (theme) {
   validate("O", [theme]);

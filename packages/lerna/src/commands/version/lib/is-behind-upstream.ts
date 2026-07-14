@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/version/lib/is-behind-upstream");
+export * from "@lerna/commands/version/lib/is-behind-upstream";

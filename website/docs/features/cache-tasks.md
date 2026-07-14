@@ -82,7 +82,7 @@ header/
 └── dist/  <-- this folder gets recreated
 ```
 
-If your task creates output artifacts in a different location, you can [change the output folder(s)](https://nx.dev/reference/project-configuration#outputs) that are cached. You can also [customize which inputs](https://nx.dev/more-concepts/customizing-inputs) will invalidate the cache if they are changed.
+If your task creates output artifacts in a different location, you can [change the output folder(s)](https://nx.dev/reference/project-configuration#outputs) that are cached. You can also [customize which inputs](https://nx.dev/docs/guides/tasks--caching/configure-inputs) will invalidate the cache if they are changed.
 
 ## Advanced Caching
 

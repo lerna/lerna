@@ -1,9 +1,15 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-const cc = require("../index");
+import cc from "../index";
 
-test("chain load event", (done) => {
+// vitest does not support jest's done-callback signature; adapt callback-style
+// tests by wrapping them in a promise.
+function testDone(name: string, fn: (done: () => void) => void) {
+  test(name, () => new Promise<void>((resolve) => fn(resolve)));
+}
+
+testDone("chain load event", (done) => {
   const chain = cc();
   const name = "forFun";
 

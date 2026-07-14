@@ -7,15 +7,19 @@ import {
 import { commandRunner, initFixtureFactory, loggingOutput, normalizeRelativeDir } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import { glob } from "tinyglobby";
-import { afterEach } from "jest-circus";
 
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 
-const lernaRun = commandRunner(require("../command"));
+import command from "../command";
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+const lernaRun = commandRunner(command);
+
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
 
 // The mock modifies the exported symbols and therefore types
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,7 +36,7 @@ const ranInPackagesStreaming = (testDir: string) =>
       arr: string[],
       [script, { args, npmClient, pkg, prefix }]: [
         string,
-        { args: string[]; npmClient: string; pkg: Package; prefix: string }
+        { args: string[]; npmClient: string; pkg: Package; prefix: string },
       ]
     ) => {
       const dir = normalizeRelativeDir(testDir, pkg.location);

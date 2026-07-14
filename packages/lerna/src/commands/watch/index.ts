@@ -8,15 +8,15 @@ import {
 } from "@lerna/core";
 import { watch } from "nx/src/command-line/watch/watch";
 
-module.exports = function factory(argv: Arguments<WatchCommandOptions>) {
+export function factory(argv: Arguments<WatchCommandOptions>) {
   return new WatchCommand(argv);
-};
+}
 
 interface WatchCommandOptions extends CommandConfigOptions {
   command?: string;
 }
 
-class WatchCommand extends Command<WatchCommandOptions> {
+export class WatchCommand extends Command<WatchCommandOptions> {
   private filteredProjects: ProjectGraphProjectNodeWithPackage[] = [];
   private count = 0;
   private packagePlural = "packages";
@@ -59,4 +59,7 @@ class WatchCommand extends Command<WatchCommandOptions> {
   }
 }
 
-module.exports.WatchCommand = WatchCommand;
+const commonJsExport = Object.assign(factory, { WatchCommand });
+
+export default commonJsExport;
+export { commonJsExport as "module.exports" };

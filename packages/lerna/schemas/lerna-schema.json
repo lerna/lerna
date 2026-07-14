@@ -1389,9 +1389,9 @@
     "globals": {
       "npmClient": {
         "type": "string",
-        "description": "The npm client to use when running commands (either npm, yarn, or pnpm). Defaults to npm if unspecified.",
+        "description": "The npm client to use when running commands (npm, yarn, pnpm, or bun). Defaults to npm if unspecified.",
         "default": "npm",
-        "enum": ["npm", "yarn", "pnpm"]
+        "enum": ["npm", "yarn", "pnpm", "bun"]
       },
       "npmClientArgs": {
         "type": "array",

@@ -22,8 +22,8 @@ interface OidcOptions {
 /**
  * Handles OpenID Connect (OIDC) token retrieval and exchange for CI environments.
  *
- * This function is designed to work in Continuous Integration (CI) environments such as GitHub Actions
- * and GitLab. It retrieves an OIDC token from the CI environment, exchanges it for an npm token, and
+ * This function is designed to work in Continuous Integration (CI) environments such as GitHub Actions,
+ * GitLab, and CircleCI. It retrieves an OIDC token from the CI environment, exchanges it for an npm token, and
  * sets the token in the provided configuration for authentication with the npm registry.
  *
  * This function is intended to never throw, as it mutates the state of the `opts` and `config` objects on success.
@@ -31,6 +31,7 @@ interface OidcOptions {
  *
  * @see https://github.com/watson/ci-info for CI environment detection.
  * @see https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect for GitHub Actions OIDC.
+ * @see https://circleci.com/docs/openid-connect-tokens/ for CircleCI OIDC.
  */
 export async function oidc({ packageName, registry, opts, config }: OidcOptions) {
   /*
@@ -39,16 +40,14 @@ export async function oidc({ packageName, registry, opts, config }: OidcOptions)
    */
 
   try {
-    if (
-      !(
-        /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L152 */
-        (
-          ciInfo.GITHUB_ACTIONS ||
-          /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L161C13-L161C22 */
-          ciInfo.GITLAB
-        )
-      )
-    ) {
+    if (!(
+      /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L152 */
+      ciInfo.GITHUB_ACTIONS ||
+      /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L161C13-L161C22 */
+      ciInfo.GITLAB ||
+      /** @see https://github.com/watson/ci-info/blob/v4.2.0/vendors.json#L78 */
+      ciInfo.CIRCLE
+    )) {
       return undefined;
     }
 

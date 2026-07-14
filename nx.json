@@ -25,23 +25,9 @@
   },
   "targetDefaults": {
     "test": {
-      "inputs": [
-        "default",
-        "^production",
-        "{workspaceRoot}/jest.preset.js",
-        "{workspaceRoot}/jest.config.ts"
-      ],
+      "inputs": ["default", "^production", "{workspaceRoot}/vitest.shared.ts"],
       "dependsOn": ["build"],
-      "cache": true,
-      "options": {
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
-      }
+      "cache": true
     },
     "lint": {
       "inputs": ["default", "{workspaceRoot}/eslint.config.mjs"],
@@ -92,37 +78,16 @@
     },
     "run-e2e-tests-ci--**/*": {
       "dependsOn": ["prepare-for-e2e"],
-      "inputs": [
-        "default",
-        "^production",
-        "{workspaceRoot}/jest.preset.js",
-        "{workspaceRoot}/jest.config.ts"
-      ],
+      "inputs": ["default", "^production", "{workspaceRoot}/vitest.shared.ts"],
       "cache": true
     },
     "run-e2e-tests": {
-      "inputs": [
-        "default",
-        "^production",
-        "{workspaceRoot}/jest.preset.js",
-        "{workspaceRoot}/jest.config.ts"
-      ],
-      "executor": "@nx/jest:jest",
-      "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
-        "passWithNoTests": true,
-        "runInBand": true
-      },
+      "inputs": ["default", "^production", "{workspaceRoot}/vitest.shared.ts"],
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "cache": true
     },
     "run-e2e-tests-process": {
-      "inputs": [
-        "default",
-        "^production",
-        "{workspaceRoot}/jest.preset.js",
-        "{workspaceRoot}/jest.config.ts"
-      ],
+      "inputs": ["default", "^production", "{workspaceRoot}/vitest.shared.ts"],
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -143,15 +108,36 @@
   },
   "plugins": [
     {
-      "plugin": "@nx/jest/plugin",
+      "plugin": "@nx/vitest",
+      "include": ["libs/**", "packages/**"],
+      "options": {
+        "testTargetName": "test"
+      }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "include": ["integration/**"],
+      "options": {
+        "testTargetName": "integration"
+      }
+    },
+    {
+      "plugin": "@nx/vitest",
       "include": ["e2e/**"],
       "exclude": ["e2e/run/**"],
       "options": {
-        "targetName": "run-e2e-tests",
-        "ciTargetName": "run-e2e-tests-ci"
+        "ciTargetName": "run-e2e-tests-ci",
+        "testTargetName": "run-e2e-tests"
+      }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "include": ["e2e/run/**"],
+      "options": {
+        "testTargetName": "run-e2e-tests"
       }
     }
   ],
   "nxCloudAccessToken": "MGQ4ZjkyMWYtYTVhNi00ZWQ4LWE0OTctNTkxM2U0ZDUzYWQ1fHJlYWQ=",
-  "bust": 1
+  "analytics": true
 }

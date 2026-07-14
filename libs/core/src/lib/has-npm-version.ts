@@ -1,6 +1,6 @@
 import semver from "semver";
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 export function hasNpmVersion(range: string) {
   return rangeSatisfies(getNpmVersion(), range);

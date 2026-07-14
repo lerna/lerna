@@ -1,8 +1,6 @@
-"use strict";
+vi.mock("@lerna/child-process");
 
-jest.mock("@lerna/child-process");
-
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 import { describeRef, DescribeRefDetailedResult, describeRefSync } from "./describe-ref";
 

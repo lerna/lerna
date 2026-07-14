@@ -1,8 +1,8 @@
-jest.mock("@lerna/child-process");
+vi.mock("@lerna/child-process");
 
 // mocked modules
 
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 
 import { basename } from "path";
 import { Package } from "../package";
@@ -101,4 +101,4 @@ describe("makeDiffPredicate", () => {
 });
 
 const nodeWithPackage = (pkg: { location: string }): ProjectGraphProjectNodeWithPackage =>
-  ({ name: basename(pkg.location), package: pkg as Package } as ProjectGraphProjectNodeWithPackage);
+  ({ name: basename(pkg.location), package: pkg as Package }) as ProjectGraphProjectNodeWithPackage;

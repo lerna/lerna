@@ -1,10 +1,11 @@
+import type { MockInstance } from "vitest";
 import os from "os";
 import { colorSupport, type ColorSupportResult } from "../color-support";
 
 describe("colorSupport", () => {
   const originalEnv = process.env;
   const originalStdout = process.stdout;
-  let platformSpy: jest.SpyInstance;
+  let platformSpy: MockInstance;
 
   const hasNone: ColorSupportResult = { level: 0, hasBasic: false, has256: false, has16m: false };
   const hasBasic: ColorSupportResult = { level: 1, hasBasic: true, has256: false, has16m: false };
@@ -13,7 +14,7 @@ describe("colorSupport", () => {
 
   beforeEach(() => {
     process.env = { ...originalEnv };
-    platformSpy = jest.spyOn(os, "platform");
+    platformSpy = vi.spyOn(os, "platform");
     platformSpy.mockReturnValue("linux");
   });
 

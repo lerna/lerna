@@ -31,7 +31,7 @@ jobs:
         id: node-matrix
         # These versions intentionally do not contain our primary major version because that has already been tested by ci.yml
         run: |
-          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['20']));")
+          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['22.13.0', '26']));")
           echo $NODE_VERSIONS_JSON_ARRAY
           echo "node-versions=$NODE_VERSIONS_JSON_ARRAY" >> $GITHUB_OUTPUT
 
@@ -69,12 +69,13 @@ jobs:
         run: corepack install -g pnpm@8
         shell: bash
 
-      - name: Print installed node, npm, yarn and pnpm versions
+      - name: Print installed node, npm, yarn, pnpm and bun versions
         run: |
           node --version
           npm --version
           yarn --version
           pnpm --version
+          bun --version
         shell: bash
 
       - name: Configure git metadata
@@ -115,8 +116,8 @@ jobs:
         uses: jameshenry/parallel-bash-commands@943dfd1eebfab8bbf19782c47a85c9ca7e8d245c # v1
         with:
           cmd1: npx nx run-many -t build --parallel=3
-          cmd2: npx nx run-many -t test --parallel=3 --ci --maxWorkers=2
-          cmd3: npx nx run integration:integration --ci --maxWorkers=2
+          cmd2: npx nx run-many -t test --parallel=3 --maxWorkers=2
+          cmd3: npx nx run integration:integration --maxWorkers=2
 
       # e2e tests for everything except the primary task runner
       - run: PUBLISHED_VERSION=999.9.9-e2e.0 npx nx run-many --t e2e --parallel=1
@@ -131,9 +132,6 @@ jobs:
           # Silently disable nx cloud for task runner e2e (using NX_NO_CLOUD produces a warning log)
           NX_CLOUD_ACCESS_TOKEN: ""
           NX_CLOUD_DISTRIBUTED_EXECUTION: false
-          # Disable colored output so captured stdout matches local (non-TTY) snapshots
-          NO_COLOR: "1"
-          FORCE_COLOR: "0"
 
       - name: Stop all running agents
         # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes

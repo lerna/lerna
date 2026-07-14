@@ -1,10 +1,14 @@
+import { readFileSync } from "fs";
 import path from "path";
 import { tempDirSerializer } from "./serialize-tempdir";
 import { windowsPathSerializer } from "./serialize-windows-paths";
-import { Config, Refs, Printer } from "pretty-format";
+import type { Config, Refs, Printer } from "@vitest/pretty-format";
 
-const normalizeNewline = require("normalize-newline");
-const LERNA_VERSION = require(path.join(__dirname, "../../../../../", "packages/lerna/package.json")).version;
+import normalizeNewline from "normalize-newline";
+import type { SnapshotSerializer } from "vitest";
+const LERNA_VERSION = JSON.parse(
+  readFileSync(path.join(__dirname, "../../../../../", "packages/lerna/package.json"), "utf8")
+).version;
 
 const VERSION_REGEX = new RegExp(`^((?:.*?notice cli )|\\^?)v?${LERNA_VERSION}`, "g");
 // TODO: maybe even less naïve regex?
@@ -33,15 +37,21 @@ function stabilizeString(str: string) {
  *
  * @see http://facebook.github.io/jest/docs/expect.html#expectaddsnapshotserializerserializer
  */
-export const placeholderSerializer: jest.SnapshotSerializerPlugin = {
+export const placeholderSerializer: SnapshotSerializer = {
   serialize: (
-    thing: string | LernaObject,
+    thing: string | LernaObject | Error,
     config: Config,
     indentation: string,
     depth: number,
     refs: Refs,
     printer: Printer
   ) => {
+    // vitest passes thrown Error objects to serializers (jest passed the
+    // message string), so serialize the message to keep snapshots stable
+    if (thing instanceof Error) {
+      thing = thing.message;
+    }
+
     if (isString(thing)) {
       // this always removes redundant quotes for multiline strings
       let val = stabilizeString(thing);
@@ -58,7 +68,11 @@ export const placeholderSerializer: jest.SnapshotSerializerPlugin = {
 
     return printer(thing, config, indentation, depth, refs);
   },
-  test: (thing: string | LernaObject) => {
+  test: (thing: string | LernaObject | Error) => {
+    if (thing instanceof Error) {
+      thing = thing.message;
+    }
+
     if (isObject(thing) && isString(thing.lerna)) {
       // object properties only contain versions
       return VERSION_REGEX.test(thing.lerna);
@@ -75,5 +89,5 @@ export const placeholderSerializer: jest.SnapshotSerializerPlugin = {
   },
 };
 
-// this is needed to use the serializer in a jest.config.ts
-module.exports = placeholderSerializer;
+// this is needed to use the serializer via the snapshotSerializers config option
+export default placeholderSerializer;

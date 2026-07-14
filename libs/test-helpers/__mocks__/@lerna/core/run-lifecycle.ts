@@ -1,8 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-const mockRunLifecycle = jest.fn((pkg) => Promise.resolve(pkg));
-const mockCreateRunner = jest.fn((opts) => (pkg, stage) => {
+import { vi } from "vitest";
+
+const mockRunLifecycle = vi.fn((pkg) => Promise.resolve(pkg));
+const mockCreateRunner = vi.fn((opts) => (pkg, stage) => {
   // no longer the actual API, but approximates inner logic of default export
   if (pkg.scripts[stage]) {
     return mockRunLifecycle(pkg, stage, opts);
@@ -15,6 +17,5 @@ function getOrderedCalls() {
   return mockRunLifecycle.mock.calls.map(([pkg, script]) => [pkg.name, script]);
 }
 
-module.exports.runLifecycle = mockRunLifecycle;
-module.exports.createRunner = mockCreateRunner;
-module.exports.runLifecycle.getOrderedCalls = getOrderedCalls;
+export const runLifecycle = Object.assign(mockRunLifecycle, { getOrderedCalls });
+export const createRunner = mockCreateRunner;

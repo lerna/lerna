@@ -1,9 +1,5 @@
-"use strict";
+import { vi } from "vitest";
 
-const mockCheckWorkingTree = jest.fn(() => Promise.resolve());
-const mockThrowIfReleased = jest.fn(() => Promise.resolve());
-const mockThrowIfUncommitted = jest.fn(() => Promise.resolve());
-
-module.exports.checkWorkingTree = mockCheckWorkingTree;
-module.exports.throwIfReleased = mockThrowIfReleased;
-module.exports.throwIfUncommitted = mockThrowIfUncommitted;
+export const checkWorkingTree = vi.fn(() => Promise.resolve());
+export const throwIfReleased = vi.fn(() => Promise.resolve());
+export const throwIfUncommitted = vi.fn(() => Promise.resolve());

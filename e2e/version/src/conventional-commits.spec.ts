@@ -81,11 +81,9 @@ describe("lerna-version-conventional-commits", () => {
 
         # 0.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-single-package/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
 
       expect(await fixture.readWorkspaceFile("packages/package-a/CHANGELOG.md")).toMatchInlineSnapshot(`
@@ -96,11 +94,9 @@ describe("lerna-version-conventional-commits", () => {
 
         # 0.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-single-package/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
     });
   });
@@ -184,12 +180,10 @@ describe("lerna-version-conventional-commits", () => {
 
         # 0.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
         * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
 
       expect(await fixture.readWorkspaceFile("packages/package-a/CHANGELOG.md")).toMatchInlineSnapshot(`
@@ -200,11 +194,9 @@ describe("lerna-version-conventional-commits", () => {
 
         # 0.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
 
       expect(await fixture.readWorkspaceFile("packages/package-b/CHANGELOG.md")).toMatchInlineSnapshot(`
@@ -215,11 +207,9 @@ describe("lerna-version-conventional-commits", () => {
 
         # 0.1.0 ({YYYY}-{MM}-{DD})
 
-
         ### Features
 
         * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
       `);
     });
 
@@ -618,11 +608,9 @@ describe("lerna-version-conventional-commits", () => {
 
           # 1.1.0 ({YYYY}-{MM}-{DD})
 
-
           ### Features
 
           * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
         `);
 
         const cachedPackageBChangelog = await fixture.readWorkspaceFile("packages/package-b/CHANGELOG.md");
@@ -634,11 +622,9 @@ describe("lerna-version-conventional-commits", () => {
 
           # 1.1.0 ({YYYY}-{MM}-{DD})
 
-
           ### Features
 
           * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
         `);
 
         // Update and version just package-a
@@ -670,24 +656,18 @@ describe("lerna-version-conventional-commits", () => {
           All notable changes to this project will be documented in this file.
           See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-          ## [1.1.1](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/compare/package-a@1.1.0...package-a@1.1.1) ({YYYY}-{MM}-{DD})
-
+          ## [1.1.1](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/compare/package-a%401.1.0...package-a%401.1.1) ({YYYY}-{MM}-{DD})
 
           ### Bug Fixes
 
           * update package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
 
 
-
-
-
           # 1.1.0 ({YYYY}-{MM}-{DD})
-
 
           ### Features
 
           * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
-
         `);
 
         // package-b CHANGELOG.md should not have been updated
@@ -778,6 +758,111 @@ describe("lerna-version-conventional-commits", () => {
 
         `);
       });
+    });
+  });
+
+  describe("legacy preset API", () => {
+    let fixture: Fixture;
+
+    beforeEach(async () => {
+      fixture = await Fixture.create({
+        e2eRoot: process.env.E2E_ROOT,
+        name: "lerna-version-conventional-commits-legacy-preset",
+        packageManager: "npm",
+        initializeGit: true,
+        lernaInit: { args: [`--packages="packages/*"`] },
+        installDependencies: true,
+      });
+    });
+    afterEach(() => fixture.destroy());
+
+    it("should correctly version and generate changelog with an old-style preset using parserOpts/writerOpts/whatBump", async () => {
+      await fixture.createInitialGitCommit();
+
+      // Create a legacy preset file that uses the old API shape:
+      // { parserOpts, writerOpts, whatBump } instead of { parser, writer, whatBump }
+      const legacyPresetContent = `
+"use strict";
+
+module.exports = {
+  parserOpts: {
+    headerPattern: /^(\\w*)(?:\\(([\\w$\\.\\-\\* ]*)\\))?: (.*)$/,
+    headerCorrespondence: ["type", "scope", "subject"],
+    noteKeywords: ["BREAKING CHANGE"],
+    revertPattern: /^revert:\\s([\\s\\S]*?)\\s*This reverts commit (\\w*)\\./,
+    revertCorrespondence: ["header", "hash"],
+  },
+  writerOpts: {
+    transform: (commit) => {
+      if (commit.type === "feat") {
+        commit = { ...commit, type: "Features" };
+      } else if (commit.type === "fix") {
+        commit = { ...commit, type: "Bug Fixes" };
+      } else {
+        return null;
+      }
+      return commit;
+    },
+    groupBy: "type",
+    commitGroupsSort: "title",
+    commitsSort: ["scope", "subject"],
+  },
+  whatBump: (commits) => {
+    let level = 2;
+    commits.forEach((commit) => {
+      if (commit.notes.length > 0) {
+        level = 0;
+      } else if (commit.type === "feat" && level === 2) {
+        level = 1;
+      }
+    });
+    return { level, reason: "Using legacy preset API" };
+  },
+};
+`;
+      const { writeFile } = require("fs-extra");
+      await writeFile(fixture.getWorkspacePath("legacy-preset.js"), legacyPresetContent);
+
+      await fixture.lerna("create package-a -y");
+
+      await fixture.exec("git add --all");
+      await fixture.exec("git commit -m 'feat: add package-a with legacy preset'");
+      await fixture.exec("git push origin test-main");
+
+      const output = await fixture.lerna(
+        "version --conventional-commits --changelog-preset ./legacy-preset.js -y",
+        { silenceError: true }
+      );
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna info current version 0.0.0
+        lerna info Assuming all packages changed
+        lerna info getChangelogConfig Successfully resolved preset "/tmp/lerna-e2e/lerna-version-conventional-commits-legacy-preset/lerna-workspace/legacy-preset.js"
+
+        Changes:
+         - package-a: 0.0.0 => 0.1.0
+
+        lerna info auto-confirmed 
+        lerna info execute Skipping releases
+        lerna info git Pushing tags...
+        lerna success version finished
+
+      `);
+
+      // The changelog must contain commit links — proves the legacy preset normalization
+      // and parseRemoteUrl fallback work together end-to-end
+      expect(await fixture.readWorkspaceFile("packages/package-a/CHANGELOG.md")).toMatchInlineSnapshot(`
+        # Change Log
+
+        All notable changes to this project will be documented in this file.
+        See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+        ## 0.1.0 ({YYYY}-{MM}-{DD})
+
+        * feat: add package-a with legacy preset ([{FULL_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-legacy-preset/origin/commits/{FULL_COMMIT_SHA}))
+
+      `);
     });
   });
 });

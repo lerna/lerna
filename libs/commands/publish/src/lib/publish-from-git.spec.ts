@@ -6,39 +6,40 @@ import {
 } from "@lerna/core";
 import { commandRunner, gitTag, initFixtureFactory, loggingOutput } from "@lerna/test-helpers";
 
-jest.mock("@lerna/core", () => {
-  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
+vi.mock("@lerna/core", async () => {
+  const actual = (await vi.importActual("@lerna/core")) as any;
   return {
-    ...mockCore,
+    ...actual,
+    ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
     // we're actually testing integration with git
-    collectProjectUpdates: jest.requireActual("@lerna/core").collectProjectUpdates,
-    gitCheckout: jest.requireActual("@lerna/core").gitCheckout,
+    collectProjectUpdates: actual.collectProjectUpdates,
+    gitCheckout: actual.gitCheckout,
   };
 });
 
 // lerna publish mocks
-jest.mock("./get-packages-without-license", () => {
+vi.mock("./get-packages-without-license", async () => {
   return {
-    getPackagesWithoutLicense: jest.fn().mockResolvedValue([]),
+    getPackagesWithoutLicense: vi.fn().mockResolvedValue([]),
   };
 });
-jest.mock("./verify-npm-package-access");
-jest.mock("./get-npm-username");
-jest.mock("./get-two-factor-auth-required");
-jest.mock("./get-projects-with-unpublished-packages");
+vi.mock("./verify-npm-package-access");
+vi.mock("./get-npm-username");
+vi.mock("./get-two-factor-auth-required");
+vi.mock("./get-projects-with-unpublished-packages");
 
 // lerna version mocks
-jest.mock("@lerna/commands/version/lib/git-push");
-jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
-  isAnythingCommitted: jest.fn().mockResolvedValue(true),
+vi.mock("@lerna/commands/version/lib/git-push");
+vi.mock("@lerna/commands/version/lib/is-anything-committed", async () => ({
+  isAnythingCommitted: vi.fn().mockResolvedValue(true),
 }));
-jest.mock("@lerna/commands/version/lib/is-behind-upstream");
-jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
-  remoteBranchExists: jest.fn().mockResolvedValue(true),
+vi.mock("@lerna/commands/version/lib/is-behind-upstream");
+vi.mock("@lerna/commands/version/lib/remote-branch-exists", async () => ({
+  remoteBranchExists: vi.fn().mockResolvedValue(true),
 }));
 
-const promptConfirmation = jest.mocked(_promptConfirmation);
-const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
+const promptConfirmation = vi.mocked(_promptConfirmation);
+const throwIfUncommitted = vi.mocked(_throwIfUncommitted);
 
 // The mock differs from the real thing
 const output = _output as any;
@@ -48,7 +49,9 @@ const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 
-const lernaPublish = commandRunner(require("../command"));
+import command from "../command";
+
+const lernaPublish = commandRunner(command);
 
 describe("publish from-git", () => {
   it("publishes tagged packages", async () => {

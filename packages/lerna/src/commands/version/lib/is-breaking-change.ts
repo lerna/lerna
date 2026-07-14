@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/version/lib/is-breaking-change");
+export * from "@lerna/commands/version/lib/is-breaking-change";

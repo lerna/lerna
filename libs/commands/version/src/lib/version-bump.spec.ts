@@ -1,18 +1,22 @@
 import { promptSelectOne as _promptSelectOne } from "@lerna/core";
 import { commandRunner, getCommitMessage, initFixtureFactory } from "@lerna/test-helpers";
 import path from "path";
+import versionCommand from "../command";
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+}));
 
-jest.mock("./git-push");
-jest.mock("./is-anything-committed", () => ({
-  isAnythingCommitted: jest.fn().mockReturnValue(true),
+vi.mock("./git-push");
+vi.mock("./is-anything-committed", async () => ({
+  isAnythingCommitted: vi.fn().mockReturnValue(true),
 }));
-jest.mock("./is-behind-upstream", () => ({
-  isBehindUpstream: jest.fn().mockReturnValue(false),
+vi.mock("./is-behind-upstream", async () => ({
+  isBehindUpstream: vi.fn().mockReturnValue(false),
 }));
-jest.mock("./remote-branch-exists", () => ({
-  remoteBranchExists: jest.fn().mockResolvedValue(true),
+vi.mock("./remote-branch-exists", async () => ({
+  remoteBranchExists: vi.fn().mockResolvedValue(true),
 }));
 
 // helpers
@@ -24,7 +28,7 @@ const promptSelectOne = _promptSelectOne as any;
 
 // test command
 
-const lernaVersion = commandRunner(require("../command"));
+const lernaVersion = commandRunner(versionCommand);
 
 describe("version bump", () => {
   it("accepts explicit versions", async () => {

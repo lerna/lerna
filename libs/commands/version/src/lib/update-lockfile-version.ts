@@ -14,6 +14,8 @@ interface Lockfile {
   };
 }
 
+// Updates npm's package-lock.json only. Bun lockfile updates are handled by running `bun install`
+// in the version command after package.json changes are written.
 export async function updateLockfileVersion(pkg: Package): Promise<string | void> {
   const lockfilePath = path.join(pkg.location, "package-lock.json");
 

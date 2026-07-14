@@ -6,7 +6,7 @@ export function makePromptVersion(
   buildMetadata: string
 ) {
   return (node: { version: string; name?: string; prereleaseId?: string }) =>
-    promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId), buildMetadata);
+    promptVersion(node.version, node.name!, resolvePrereleaseId(node.prereleaseId!), buildMetadata);
 }
 
 /**
@@ -19,12 +19,12 @@ export function makePromptVersion(
  * @param {string} buildMetadata
  */
 function promptVersion(currentVersion: string, name: string, prereleaseId: string, buildMetadata: string) {
-  const patch = applyBuildMetadata(semver.inc(currentVersion, "patch"), buildMetadata);
-  const minor = applyBuildMetadata(semver.inc(currentVersion, "minor"), buildMetadata);
-  const major = applyBuildMetadata(semver.inc(currentVersion, "major"), buildMetadata);
-  const prepatch = applyBuildMetadata(semver.inc(currentVersion, "prepatch", prereleaseId), buildMetadata);
-  const preminor = applyBuildMetadata(semver.inc(currentVersion, "preminor", prereleaseId), buildMetadata);
-  const premajor = applyBuildMetadata(semver.inc(currentVersion, "premajor", prereleaseId), buildMetadata);
+  const patch = applyBuildMetadata(semver.inc(currentVersion, "patch")!, buildMetadata);
+  const minor = applyBuildMetadata(semver.inc(currentVersion, "minor")!, buildMetadata);
+  const major = applyBuildMetadata(semver.inc(currentVersion, "major")!, buildMetadata);
+  const prepatch = applyBuildMetadata(semver.inc(currentVersion, "prepatch", prereleaseId)!, buildMetadata);
+  const preminor = applyBuildMetadata(semver.inc(currentVersion, "preminor", prereleaseId)!, buildMetadata);
+  const premajor = applyBuildMetadata(semver.inc(currentVersion, "premajor", prereleaseId)!, buildMetadata);
 
   const message = `Select a new version ${name ? `for ${name} ` : ""}(currently ${currentVersion})`;
 
@@ -42,7 +42,7 @@ function promptVersion(currentVersion: string, name: string, prereleaseId: strin
   }).then((choice) => {
     if (choice === "CUSTOM") {
       return promptTextInput("Enter a custom version", {
-        filter: semver.valid,
+        filter: semver.valid as any,
         // semver.valid() always returns null with invalid input
         validate: (v) => v !== null || "Must be a valid semver version",
       });
@@ -54,7 +54,7 @@ function promptVersion(currentVersion: string, name: string, prereleaseId: strin
 
       return promptTextInput(`Enter a prerelease identifier ${prompt}`, {
         filter: (v) =>
-          applyBuildMetadata(semver.inc(currentVersion, "prerelease", v || prereleaseId), buildMetadata),
+          applyBuildMetadata(semver.inc(currentVersion, "prerelease", v || prereleaseId)!, buildMetadata),
       });
     }
 

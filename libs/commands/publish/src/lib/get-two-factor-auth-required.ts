@@ -16,7 +16,7 @@ export function getTwoFactorAuthRequired(options: Partial<FetchConfig> = {}): Pr
 
   return getProfileData(opts).then(success, failure);
 
-  function success(result) {
+  function success(result: any) {
     opts.log.silly("2FA", result.tfa);
 
     if (result.tfa.pending) {
@@ -27,7 +27,7 @@ export function getTwoFactorAuthRequired(options: Partial<FetchConfig> = {}): Pr
     return result.tfa.mode === "auth-and-writes";
   }
 
-  function failure(err) {
+  function failure(err: any) {
     // pass if registry does not support profile endpoint
     if (err.code === "E500" || err.code === "E404") {
       // most likely a private registry (npm Enterprise, verdaccio, etc)

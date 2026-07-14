@@ -1,5 +1,5 @@
 import { ProjectFileMap, ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nx/devkit";
-import { readJson } from "fs-extra";
+import fs from "fs-extra";
 import minimatch from "minimatch";
 import { resolve } from "npm-package-arg";
 import { join } from "path";
@@ -34,7 +34,7 @@ export async function createProjectGraphWithPackages(
           const manifestPath = getPackageManifestPath(node, projectFileMap[node.name] || []);
           if (manifestPath) {
             const fullManifestPath = join(_workspaceRoot, manifestPath);
-            resolve(readJson(fullManifestPath).then((manifest) => [node, manifest]));
+            resolve(fs.readJson(fullManifestPath).then((manifest) => [node, manifest]));
           } else {
             resolve([node, null]);
           }
@@ -60,6 +60,45 @@ export async function createProjectGraphWithPackages(
       ...node,
       package: pkg,
     };
+  });
+
+  // Nx 23 omits package.json dependencies for projects rooted at ".".
+  // Recreate the missing edges until https://github.com/nrwl/nx/issues/36290 is resolved.
+  Object.values(projectGraphWithOrderedNodes.nodes).forEach((source) => {
+    if (!source.package || source.data.root !== ".") {
+      return;
+    }
+
+    const sourcePkg = getPackage(source);
+    const existingTargets = new Set(
+      projectGraphWithOrderedNodes.dependencies[source.name]?.map((dependency) => dependency.target)
+    );
+    const localDependencyNames = new Set([
+      ...Object.keys(sourcePkg.dependencies || {}),
+      ...Object.keys(sourcePkg.devDependencies || {}),
+      ...Object.keys(sourcePkg.optionalDependencies || {}),
+      ...Object.keys(sourcePkg.peerDependencies || {}),
+    ]);
+
+    localDependencyNames.forEach((targetPackageName) => {
+      const targetProjectName = projectLookupByPackageName[targetPackageName];
+      if (
+        targetProjectName &&
+        source.name !== targetProjectName &&
+        !existingTargets.has(targetProjectName) &&
+        sourcePkg.getLocalDependency(targetPackageName)
+      ) {
+        projectGraphWithOrderedNodes.dependencies[source.name] = [
+          ...(projectGraphWithOrderedNodes.dependencies[source.name] || []),
+          {
+            source: source.name,
+            target: targetProjectName,
+            type: "static",
+          },
+        ];
+        existingTargets.add(targetProjectName);
+      }
+    });
   });
 
   // order dependencies to create consistent results when iterating over them

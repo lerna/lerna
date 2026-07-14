@@ -26,22 +26,26 @@ import { gitPush as _libPush } from "./git-push";
 import { isAnythingCommitted as _isAnythingCommitted } from "./is-anything-committed";
 import { isBehindUpstream as _isBehindUpstream } from "./is-behind-upstream";
 import { remoteBranchExists as _remoteBranchExists } from "./remote-branch-exists";
+import versionCommand from "../command";
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
-
-jest.mock("./git-push");
-jest.mock("./is-anything-committed", () => ({
-  isAnythingCommitted: jest.fn().mockReturnValue(true),
-}));
-jest.mock("./is-behind-upstream", () => ({
-  isBehindUpstream: jest.fn().mockReturnValue(false),
-}));
-jest.mock("./remote-branch-exists", () => ({
-  remoteBranchExists: jest.fn().mockResolvedValue(true),
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
 }));
 
-const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
-const checkWorkingTree = jest.mocked(_checkWorkingTree);
+vi.mock("./git-push");
+vi.mock("./is-anything-committed", async () => ({
+  isAnythingCommitted: vi.fn().mockReturnValue(true),
+}));
+vi.mock("./is-behind-upstream", async () => ({
+  isBehindUpstream: vi.fn().mockReturnValue(false),
+}));
+vi.mock("./remote-branch-exists", async () => ({
+  remoteBranchExists: vi.fn().mockResolvedValue(true),
+}));
+
+const throwIfUncommitted = vi.mocked(_throwIfUncommitted);
+const checkWorkingTree = vi.mocked(_checkWorkingTree);
 
 // The mocked version isn't the same as the real one
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,11 +68,11 @@ const remoteBranchExists = _remoteBranchExists as any;
 const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish"));
 
 // certain tests need to use the real thing
-const collectUpdatesActual = jest.requireActual("@lerna/core").collectProjectUpdates;
+const collectUpdatesActual = (await vi.importActual("@lerna/core")).collectProjectUpdates;
 
 // file under test
 
-const lernaVersion = commandRunner(require("../command"));
+const lernaVersion = commandRunner(versionCommand);
 
 // assertion helpers
 const listDirty = (cwd) =>
@@ -114,7 +118,7 @@ describe("VersionCommand", () => {
     it("should error when --skip-git is used", async () => {
       const testDir = await initFixture("normal");
       await expect(lernaVersion(testDir)("--skip-git")).rejects.toThrowErrorMatchingInlineSnapshot(
-        `"--skip-git was replaced by --no-git-tag-version --no-push. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from."`
+        `[Error: --skip-git was replaced by --no-git-tag-version --no-push. We recommend running \`lerna repair\` in order to ensure your lerna.json is up to date, otherwise check your CLI usage and/or any configs you extend from.]`
       );
     });
 

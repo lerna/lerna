@@ -13,23 +13,26 @@ import {
 import fs from "fs-extra";
 import os from "node:os";
 import path from "node:path";
+import versionCommand from "../command";
 
-jest.mock("./git-push");
-jest.mock("./is-anything-committed", () => ({
-  isAnythingCommitted: jest.fn().mockReturnValue(true),
+vi.mock("./git-push");
+vi.mock("./is-anything-committed", async () => ({
+  isAnythingCommitted: vi.fn().mockReturnValue(true),
 }));
-jest.mock("./is-behind-upstream", () => ({
-  isBehindUpstream: jest.fn().mockReturnValue(false),
+vi.mock("./is-behind-upstream", async () => ({
+  isBehindUpstream: vi.fn().mockReturnValue(false),
 }));
-jest.mock("./remote-branch-exists", () => ({
-  remoteBranchExists: jest.fn().mockResolvedValue(true),
+vi.mock("./remote-branch-exists", async () => ({
+  remoteBranchExists: vi.fn().mockResolvedValue(true),
 }));
 
-jest.mock("@lerna/core", () => {
-  const realCore = jest.requireActual("@lerna/core");
+vi.mock("@lerna/core", async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const realCore = (await vi.importActual("@lerna/core")) as any;
 
-  const mockCore = require("@lerna/test-helpers/__mocks__/@lerna/core");
+  const mockCore = await import("@lerna/test-helpers/__mocks__/@lerna/core");
   return {
+    ...realCore,
     ...mockCore,
     collectProjectUpdates: realCore.collectProjectUpdates,
     recommendVersion: realCore.recommendVersion,
@@ -37,7 +40,7 @@ jest.mock("@lerna/core", () => {
   };
 });
 
-const promptTextInput = jest.mocked(_promptTextInput);
+const promptTextInput = vi.mocked(_promptTextInput);
 
 // The mocked version isn't the same as the real one
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,7 +50,7 @@ const initFixture = initFixtureFactory(path.resolve(__dirname, "../../../publish
 
 // test command
 
-const lernaVersion = commandRunner(require("../command"));
+const lernaVersion = commandRunner(versionCommand);
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({
@@ -115,6 +118,26 @@ describe("version bump prerelease", () => {
 
     const message = await getCommitMessage(testDir);
     expect(message).toBe("v1.0.1-rc.0");
+  });
+
+  test("version prerelease interpolates configured message placeholders", async () => {
+    const testDir = await initFixture("republish-prereleased");
+    const lernaConfigPath = path.join(testDir, "lerna.json");
+    const lernaConfig = await fs.readJson(lernaConfigPath);
+
+    await fs.writeJson(lernaConfigPath, {
+      ...lernaConfig,
+      command: {
+        version: {
+          message: "chore(release): version %s",
+        },
+      },
+    });
+    await setupChanges(testDir);
+    await lernaVersion(testDir)("prerelease", "--preid", "rc");
+
+    const message = await getCommitMessage(testDir);
+    expect(message).toBe("chore(release): version v1.0.1-rc.0");
   });
 
   test("version prerelease with immediate graduation", async () => {

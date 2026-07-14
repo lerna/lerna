@@ -9,7 +9,7 @@ const Umask = () => {};
 const getLocalAddresses = () => [];
 const semver = () => {};
 
-exports.types = {
+export const types: Record<string, unknown> = {
   access: [null, "restricted", "public"],
   "allow-same-version": Boolean,
   "always-auth": Boolean,

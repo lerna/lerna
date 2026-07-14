@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/publish/lib/get-npm-username");
+export * from "@lerna/commands/publish/lib/get-npm-username";

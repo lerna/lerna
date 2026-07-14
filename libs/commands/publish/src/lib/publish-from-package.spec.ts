@@ -1,3 +1,4 @@
+import type { MockedFunction } from "vitest";
 import {
   npmPublish as _npmPublish,
   output as _output,
@@ -9,56 +10,59 @@ import { commandRunner, initFixtureFactory, loggingOutput } from "@lerna/test-he
 import fs from "fs-extra";
 import path from "path";
 
-jest.mock("@lerna/core", () => ({
-  ...require("@lerna/test-helpers/__mocks__/@lerna/core"),
-  gitCheckout: jest.requireActual("@lerna/core").gitCheckout,
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
+  gitCheckout: (await vi.importActual("@lerna/core")).gitCheckout,
 }));
 
 // lerna publish mocks
-jest.mock("./get-packages-without-license", () => ({
-  getPackagesWithoutLicense: jest.fn().mockResolvedValue([]),
+vi.mock("./get-packages-without-license", async () => ({
+  getPackagesWithoutLicense: vi.fn().mockResolvedValue([]),
 }));
-jest.mock("./verify-npm-package-access", () => ({
-  verifyNpmPackageAccess: jest.fn(() => Promise.resolve()),
+vi.mock("./verify-npm-package-access", async () => ({
+  verifyNpmPackageAccess: vi.fn(() => Promise.resolve()),
 }));
-jest.mock("./get-npm-username", () => ({
-  getNpmUsername: jest.fn(() => Promise.resolve("lerna-test")),
+vi.mock("./get-npm-username", async () => ({
+  getNpmUsername: vi.fn(() => Promise.resolve("lerna-test")),
 }));
-jest.mock("./get-two-factor-auth-required");
-jest.mock("./get-projects-with-unpublished-packages", () => ({
-  getProjectsWithUnpublishedPackages: jest.fn(() => Promise.resolve([])),
+vi.mock("./get-two-factor-auth-required");
+vi.mock("./get-projects-with-unpublished-packages", async () => ({
+  getProjectsWithUnpublishedPackages: vi.fn(() => Promise.resolve([])),
 }));
 
 // lerna version mocks
-jest.mock("@lerna/commands/version/lib/git-push");
-jest.mock("@lerna/commands/version/lib/is-anything-committed", () => ({
-  isAnythingCommitted: jest.fn().mockResolvedValue(true),
+vi.mock("@lerna/commands/version/lib/git-push");
+vi.mock("@lerna/commands/version/lib/is-anything-committed", async () => ({
+  isAnythingCommitted: vi.fn().mockResolvedValue(true),
 }));
-jest.mock("@lerna/commands/version/lib/is-behind-upstream");
-jest.mock("@lerna/commands/version/lib/remote-branch-exists", () => ({
-  remoteBranchExists: jest.fn().mockResolvedValue(true),
+vi.mock("@lerna/commands/version/lib/is-behind-upstream");
+vi.mock("@lerna/commands/version/lib/remote-branch-exists", async () => ({
+  remoteBranchExists: vi.fn().mockResolvedValue(true),
 }));
 
 import { getProjectsWithUnpublishedPackages as _getProjectsWithUnpublishedPackages } from "./get-projects-with-unpublished-packages";
-const getProjectsWithUnpublishedPackages = _getProjectsWithUnpublishedPackages as jest.MockedFunction<
+const getProjectsWithUnpublishedPackages = _getProjectsWithUnpublishedPackages as MockedFunction<
   typeof _getProjectsWithUnpublishedPackages
 >;
 
-const promptConfirmation = jest.mocked(_promptConfirmation);
-const throwIfUncommitted = jest.mocked(_throwIfUncommitted);
+const promptConfirmation = vi.mocked(_promptConfirmation);
+const throwIfUncommitted = vi.mocked(_throwIfUncommitted);
 
 // The mock differs from the real thing
-const npmPublish = _npmPublish as jest.MockedFunction<typeof _npmPublish> & { order: () => string[] };
-const writePackage = _writePackage as jest.MockedFunction<typeof _writePackage> & {
+const npmPublish = _npmPublish as MockedFunction<typeof _npmPublish> & { order: () => string[] };
+const writePackage = _writePackage as MockedFunction<typeof _writePackage> & {
   updatedManifest: (name: string) => { gitHead?: string };
 };
-const output = _output as jest.MockedFunction<typeof _output> & { logged: () => string[] };
+const output = _output as MockedFunction<typeof _output> & { logged: () => string[] };
 
 const initFixture = initFixtureFactory(__dirname);
 
 // file under test
 
-const lernaPublish = commandRunner(require("../command"));
+import command from "../command";
+
+const lernaPublish = commandRunner(command);
 
 describe("publish from-package", () => {
   it("publishes unpublished packages", async () => {

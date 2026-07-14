@@ -1,4 +1,4 @@
-const childProcess = require("@lerna/child-process");
+import * as childProcess from "@lerna/child-process";
 import { ExecOptions } from "child_process";
 import log from "../npmlog";
 
@@ -14,7 +14,7 @@ export function hasTags(opts?: ExecOptions) {
   let result = false;
 
   try {
-    result = !!childProcess.execSync("git", ["tag"], opts);
+    result = !!childProcess.execSync("git", ["tag"], opts as any);
   } catch (err) {
     log.warn("ENOTAGS", "No git tags were reachable from this branch!");
     // TODO: refactor based on TS feedback

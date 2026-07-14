@@ -1,11 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-"use strict";
+import { vi } from "vitest";
 
-const mockAdd = jest.fn(() => Promise.resolve());
-const mockList = jest.fn(() => Promise.resolve({}));
-const mockRemove = jest.fn(() => Promise.resolve());
-
-exports.add = mockAdd;
-exports.list = mockList;
-exports.remove = mockRemove;
+export const add = vi.fn(() => Promise.resolve());
+export const list = vi.fn(() => Promise.resolve({}));
+export const remove = vi.fn(() => Promise.resolve());

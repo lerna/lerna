@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/publish/lib/create-temp-licenses");
+export * from "@lerna/commands/publish/lib/create-temp-licenses";

@@ -1,7 +1,8 @@
 import execa from "execa";
 import { resetWorkspaceContext, setupWorkspaceContext } from "nx/src/utils/workspace-context";
 import { setWorkspaceRoot } from "nx/src/utils/workspace-root";
-import path, { join } from "path";
+import { createRequire } from "module";
+import { join } from "path";
 import yargs from "yargs";
 import { lernaCLI } from "@lerna/core";
 
@@ -14,16 +15,6 @@ export function commandRunner(commandModule: yargs.CommandModule) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const cmd = commandModule.command.split(" ")[0];
-
-  try {
-    // prime the pump so slow-as-molasses CI doesn't fail with delayed require()
-    // TODO: refactor to address type issues
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    require(path.resolve(require.main.filename, "../../"));
-  } catch {
-    /* empty */
-  }
 
   return (cwd: string) => {
     // create a _new_ yargs instance every time cwd changes to avoid singleton pollution
@@ -123,7 +114,9 @@ export function cliRunner(cwd: string, env?: any) {
     // stdio: ["ignore", "inherit", "inherit"],
   };
 
-  const LERNA_BIN = require.resolve(join(__dirname, "../../../../", "packages/lerna/dist/cli"));
+  const LERNA_BIN = createRequire(__filename).resolve(
+    join(__dirname, "../../../../", "packages/lerna/dist/cli")
+  );
 
   return (...args: any[]) => execa("node", [LERNA_BIN].concat(args), opts);
 }

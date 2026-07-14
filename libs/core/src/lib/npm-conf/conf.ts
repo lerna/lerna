@@ -9,7 +9,7 @@ import { toNerfDart } from "./nerf-dart";
 
 // config-chain does not have types
 
-const { ConfigChain } = require("./config-chain");
+import { ConfigChain } from "./config-chain";
 
 export class Conf extends ConfigChain {
   root: any;

@@ -4,12 +4,11 @@ import path from "path";
 import { Conf } from "./conf";
 import { toNerfDart } from "./nerf-dart";
 
-const { defaults } = require("./defaults");
+import { defaults } from "./defaults";
 
-module.exports = npmConf;
-module.exports.Conf = Conf;
-module.exports.defaults = Object.assign({}, defaults);
-module.exports.toNerfDart = toNerfDart;
+const defaultsCopy = Object.assign({}, defaults);
+
+export { npmConf, Conf, toNerfDart, defaultsCopy as defaults };
 
 // https://github.com/npm/npm/blob/latest/lib/config/core.js#L101-L200
 function npmConf(opts?: any) {

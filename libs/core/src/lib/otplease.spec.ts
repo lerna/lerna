@@ -2,7 +2,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-jest.mock("./prompt");
+vi.mock("./prompt");
 
 // mocked modules
 import { promptTextInput } from "./prompt";
@@ -29,7 +29,7 @@ describe("otplease", () => {
 
   it("no error", async () => {
     const obj = {};
-    const fn = jest.fn(() => obj);
+    const fn = vi.fn(() => obj);
     const result = await otplease(fn, {});
 
     expect(fn).toHaveBeenCalled();
@@ -39,7 +39,7 @@ describe("otplease", () => {
 
   it("request otp", async () => {
     const obj = {};
-    const fn = jest.fn(makeTestCallback("123456", obj));
+    const fn = vi.fn(makeTestCallback("123456", obj));
     const result = await otplease(fn, {});
 
     expect(fn).toHaveBeenCalledTimes(2);
@@ -50,7 +50,7 @@ describe("otplease", () => {
   it("request otp updates cache", async () => {
     const otpCache = { otp: undefined };
     const obj = {};
-    const fn = jest.fn(makeTestCallback("123456", obj));
+    const fn = vi.fn(makeTestCallback("123456", obj));
 
     const result = await otplease(fn, {}, otpCache);
     expect(fn).toHaveBeenCalledTimes(2);
@@ -62,7 +62,7 @@ describe("otplease", () => {
   it("uses cache if opts does not have own otp", async () => {
     const otpCache = { otp: "654321" };
     const obj = {};
-    const fn = jest.fn(makeTestCallback("654321", obj));
+    const fn = vi.fn(makeTestCallback("654321", obj));
     const result = await otplease(fn, {}, otpCache);
 
     expect(fn).toHaveBeenCalledTimes(1);
@@ -74,7 +74,7 @@ describe("otplease", () => {
   it("uses explicit otp regardless of cache value", async () => {
     const otpCache = { otp: "654321" };
     const obj = {};
-    const fn = jest.fn(makeTestCallback("987654", obj));
+    const fn = vi.fn(makeTestCallback("987654", obj));
     const result = await otplease(fn, { otp: "987654" }, otpCache);
 
     expect(fn).toHaveBeenCalledTimes(1);
@@ -87,7 +87,7 @@ describe("otplease", () => {
   it("using cache updated in a different task", async () => {
     const otpCache = { otp: undefined };
     const obj = {};
-    const fn = jest.fn(makeTestCallback("654321", obj));
+    const fn = vi.fn(makeTestCallback("654321", obj));
 
     // enqueue a promise resolution to update the otp at the start of the next turn.
     Promise.resolve().then(() => {
@@ -107,11 +107,11 @@ describe("otplease", () => {
     // overlapped calls to otplease that share an otpCache should
     // result in the user only being prompted *once* for an OTP.
     const obj1 = {};
-    const fn1 = jest.fn(makeTestCallback("123456", obj1));
+    const fn1 = vi.fn(makeTestCallback("123456", obj1));
     const p1 = otplease(fn1, {}, otpCache);
 
     const obj2 = {};
-    const fn2 = jest.fn(makeTestCallback("123456", obj2));
+    const fn2 = vi.fn(makeTestCallback("123456", obj2));
     const p2 = otplease(fn2, {}, otpCache);
 
     const [res1, res2] = await Promise.all([p1, p2]);
@@ -128,7 +128,7 @@ describe("otplease", () => {
     promptTextInput.mockImplementationOnce((msg, opts) => Promise.resolve(opts.filter(" 121212 ")));
 
     const obj = {};
-    const fn = jest.fn(makeTestCallback("121212", obj));
+    const fn = vi.fn(makeTestCallback("121212", obj));
     const result = await otplease(fn, {});
 
     expect(result).toBe(obj);
@@ -140,7 +140,7 @@ describe("otplease", () => {
     );
 
     const obj = {};
-    const fn = jest.fn(makeTestCallback("343434", obj));
+    const fn = vi.fn(makeTestCallback("343434", obj));
 
     await expect(otplease(fn, {})).rejects.toThrow("Must be a valid one-time-password");
   });
@@ -149,13 +149,13 @@ describe("otplease", () => {
     promptTextInput.mockImplementationOnce(() => Promise.reject(new Error("poopypants")));
 
     const obj = {};
-    const fn = jest.fn(makeTestCallback("343434", obj));
+    const fn = vi.fn(makeTestCallback("343434", obj));
 
     await expect(otplease(fn, {})).rejects.toThrow("poopypants");
   });
 
   it("re-throws non-EOTP errors", async () => {
-    const fn = jest.fn(() => {
+    const fn = vi.fn(() => {
       const err = new Error("not found");
       err.code = "E404";
       throw err;
@@ -165,7 +165,7 @@ describe("otplease", () => {
   });
 
   it("re-throws E401 errors that do not contain 'one-time pass' in the body", async () => {
-    const fn = jest.fn(() => {
+    const fn = vi.fn(() => {
       const err = new Error("auth required");
       err.body = "random arbitrary noise";
       err.code = "E401";
@@ -176,7 +176,7 @@ describe("otplease", () => {
   });
 
   it.each([["stdin"], ["stdout"]])("re-throws EOTP error when %s is not a TTY", async (pipe) => {
-    const fn = jest.fn(() => {
+    const fn = vi.fn(() => {
       const err = new Error(`non-interactive ${pipe}`);
       err.code = "EOTP";
       throw err;

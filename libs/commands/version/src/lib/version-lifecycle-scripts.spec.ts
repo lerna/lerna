@@ -1,20 +1,24 @@
 import { runLifecycle as _runLifecycle } from "@lerna/core";
 import { commandRunner, initFixtureFactory } from "@lerna/test-helpers";
 import _loadJsonFile from "load-json-file";
+import versionCommand from "../command";
 
-jest.mock("load-json-file", () => require("@lerna/test-helpers/__mocks__/load-json-file"));
+vi.mock("load-json-file", () => import("@lerna/test-helpers/__mocks__/load-json-file"));
 
-jest.mock("@lerna/core", () => require("@lerna/test-helpers/__mocks__/@lerna/core"));
-
-jest.mock("./git-push");
-jest.mock("./is-anything-committed", () => ({
-  isAnythingCommitted: jest.fn().mockReturnValue(true),
+vi.mock("@lerna/core", async () => ({
+  ...(await vi.importActual("@lerna/core")),
+  ...(await import("@lerna/test-helpers/__mocks__/@lerna/core")),
 }));
-jest.mock("./is-behind-upstream", () => ({
-  isBehindUpstream: jest.fn().mockReturnValue(false),
+
+vi.mock("./git-push");
+vi.mock("./is-anything-committed", async () => ({
+  isAnythingCommitted: vi.fn().mockReturnValue(true),
 }));
-jest.mock("./remote-branch-exists", () => ({
-  remoteBranchExists: jest.fn().mockResolvedValue(true),
+vi.mock("./is-behind-upstream", async () => ({
+  isBehindUpstream: vi.fn().mockReturnValue(false),
+}));
+vi.mock("./remote-branch-exists", async () => ({
+  remoteBranchExists: vi.fn().mockResolvedValue(true),
 }));
 
 // The mocked version isn't the same as the real one
@@ -27,7 +31,7 @@ const initFixture = initFixtureFactory(__dirname);
 
 // test command
 
-const lernaVersion = commandRunner(require("../command"));
+const lernaVersion = commandRunner(versionCommand);
 
 describe("lifecycle scripts", () => {
   const npmLifecycleEvent = process.env.npm_lifecycle_event;

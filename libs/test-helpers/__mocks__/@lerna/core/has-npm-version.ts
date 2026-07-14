@@ -1,3 +1,3 @@
-const mockHasNpmVersion = jest.fn(() => true);
+import { vi } from "vitest";
 
-module.exports.hasNpmVersion = mockHasNpmVersion;
+export const hasNpmVersion = vi.fn(() => true);

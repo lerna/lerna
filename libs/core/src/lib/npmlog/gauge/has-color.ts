@@ -6,6 +6,6 @@
  */
 
 "use strict";
-var { colorSupport } = require("./color-support");
+import { colorSupport } from "./color-support";
 
-module.exports = colorSupport().hasBasic;
+export default colorSupport().hasBasic;

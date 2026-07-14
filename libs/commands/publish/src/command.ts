@@ -1,7 +1,10 @@
 import { log } from "@lerna/core";
 import type { CommandModule } from "yargs";
 
-const versionCommand = require("@lerna/commands/version/command");
+import versionCommandModule from "@lerna/commands/version/command";
+
+// the version command module exposes extra members (e.g. addBumpPositional) beyond yargs' CommandModule type
+const versionCommand = versionCommandModule as any;
 
 function composeVersionOptions(yargs: any) {
   versionCommand.addBumpPositional(yargs, ["from-git", "from-package"]);
@@ -200,9 +203,11 @@ const command: CommandModule = {
         }
       }, true);
   },
-  handler(argv) {
-    return require(".")(argv);
+  async handler(argv) {
+    const cmd: any = await import(".");
+    return (cmd.default ?? cmd)(argv);
   },
 };
 
-export = command;
+export default command;
+export { command as "module.exports" };

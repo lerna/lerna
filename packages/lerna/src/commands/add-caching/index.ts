@@ -7,12 +7,12 @@ import {
   writeJsonFile,
 } from "@nx/devkit";
 import execa from "execa";
-import { appendFile } from "fs-extra";
+import fs from "fs-extra";
 import inquirer from "inquirer";
 
-module.exports = function factory(argv: Arguments<CommandConfigOptions>) {
+export function factory(argv: Arguments<CommandConfigOptions>) {
   return new AddCachingCommand(argv);
-};
+}
 
 interface UserAnswers {
   cacheableOperations: string[];
@@ -20,7 +20,7 @@ interface UserAnswers {
   scriptOutputs: Record<string, Record<string, string>>;
 }
 
-class AddCachingCommand extends Command {
+export class AddCachingCommand extends Command {
   uniqueScriptNames: string[] = [];
 
   constructor(argv: Arguments<CommandConfigOptions>) {
@@ -167,7 +167,7 @@ class AddCachingCommand extends Command {
       // .nx/cache is already ignored - no need to update .gitignore
     } catch (e) {
       try {
-        await appendFile(joinPathFragments(workspaceRoot, ".gitignore"), "\n.nx/cache\n");
+        await fs.appendFile(joinPathFragments(workspaceRoot, ".gitignore"), "\n.nx/cache\n");
       } catch (e) {
         this.logger.warn(
           "add-caching",
@@ -178,4 +178,7 @@ class AddCachingCommand extends Command {
   }
 }
 
-module.exports.AddCachingCommand = AddCachingCommand;
+const commonJsExport = Object.assign(factory, { AddCachingCommand });
+
+export default commonJsExport;
+export { commonJsExport as "module.exports" };
