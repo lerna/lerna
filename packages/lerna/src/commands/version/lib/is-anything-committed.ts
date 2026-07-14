@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/version/lib/is-anything-committed");
+export * from "@lerna/commands/version/lib/is-anything-committed";

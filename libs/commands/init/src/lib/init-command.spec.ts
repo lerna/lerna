@@ -368,6 +368,21 @@ describe("InitCommand", () => {
       expect(initCommand.packageManager).toBe("pnpm");
     });
 
+    it("detects pnpm from the package manager user agent", () => {
+      const previousUserAgent = process.env["npm_config_user_agent"];
+      process.env["npm_config_user_agent"] = "pnpm/10.17.1 npm/? node/v24.18.0 linux x64";
+      try {
+        const initCommand = createWithInvokerPath("/tmp/dlx/node_modules/lerna/dist/cli.js");
+        expect(initCommand.packageManager).toBe("pnpm");
+      } finally {
+        if (previousUserAgent === undefined) {
+          delete process.env["npm_config_user_agent"];
+        } else {
+          process.env["npm_config_user_agent"] = previousUserAgent;
+        }
+      }
+    });
+
     it("detects versioned package manager segment", () => {
       const initCommand = createWithInvokerPath("/home/user/.cache/npm@10/bin/lerna");
       expect(initCommand.packageManager).toBe("npm");

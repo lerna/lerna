@@ -4,18 +4,9 @@ import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { URL } from "node:url";
-import * as yargs from "yargs";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const version = require("lerna/commands/version");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const publish = require("lerna/commands/publish");
-
-function hideFromGitIndex(uncommittedFiles: string[]) {
-  execSync(`git update-index --assume-unchanged ${uncommittedFiles.join(" ")}`);
-
-  return () => execSync(`git update-index --no-assume-unchanged ${uncommittedFiles.join(" ")}`);
-}
+import publish from "lerna/commands/publish";
+import version from "lerna/commands/version";
+import yargs from "yargs";
 
 (async () => {
   const options = await parseArgs();
@@ -37,41 +28,6 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
   execSync(buildCommand, {
     stdio: [0, 1, 2],
   });
-
-  if (options.local) {
-    // JH: added change to dist dir
-    // process.chdir("dist");
-    // JH: added alternate package.json and lerna.json in dist
-    //     const distLernaJson = `{
-    //   "description": "This lerna.json exists to facilitate publish built packages via tools/scripts/lerna-release.ts",
-    //   "version": "0.0.0",
-    //   "ignoreChanges": [
-    //     "**/__fixtures__/**",
-    //     "**/__tests__/**",
-    //     "**/*.md"
-    //   ]
-    // }
-    // `;
-    //     const distPackageJson = `{
-    //   "private": true,
-    //   "description": "This package.json exists to facilitate publish built packages via tools/scripts/lerna-release.ts",
-    //   "workspaces": [
-    //     "packages/*"
-    //   ]
-    // }`;
-    //     writeFileSync("./lerna.json", distLernaJson);
-    //     writeFileSync("./package.json", distPackageJson);
-    // Force all projects to be not private
-    // const projects = JSON.parse(execSync("npx lerna list --json --all").toString());
-    // for (const proj of projects) {
-    //   if (proj.private) {
-    //     console.log("Publishing private package locally:", proj.name);
-    //     const packageJsonPath = join(proj.location, "package.json");
-    //     const original = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
-    //     writeFileSync(packageJsonPath, JSON.stringify({ ...original, private: false }));
-    //   }
-    // }
-  }
 
   const versionOptions = {
     bump: options.version ? options.version : undefined,
@@ -99,62 +55,48 @@ function hideFromGitIndex(uncommittedFiles: string[]) {
     versionOptions.bump = options.version ? options.version : "minor";
   }
 
-  const lernaJsonPath = join(__dirname, "../../lerna.json");
-  let originalLernaJson: Buffer | undefined;
-
-  if (options.local || options.tag === "next") {
-    originalLernaJson = readFileSync(lernaJsonPath);
-  }
+  const rootPath = join(import.meta.dirname, "../..");
+  const lernaJsonPath = join(rootPath, "lerna.json");
+  const filesToRestore = [];
   if (options.local) {
-    // /**
-    //  * Hide changes from Lerna
-    //  */
-    // const uncommittedFiles = execSync("git diff --name-only --relative HEAD .")
-    //   .toString()
-    //   .split("\n")
-    //   .filter((i) => i.length > 0)
-    //   .filter((f) => existsSync(f));
-    // const unhideFromGitIndex = hideFromGitIndex(uncommittedFiles);
-    // process.on("exit", unhideFromGitIndex);
-    // process.on("SIGTERM", unhideFromGitIndex);
-    // process.on("SIGINT", unhideFromGitIndex);
+    filesToRestore.push(
+      lernaJsonPath,
+      join(rootPath, "package.json"),
+      join(rootPath, "package-lock.json"),
+      join(rootPath, "packages/lerna/package.json")
+    );
+  } else if (options.tag === "next") {
+    filesToRestore.push(lernaJsonPath);
   }
+  const originalFiles = new Map(filesToRestore.map((filePath) => [filePath, readFileSync(filePath)]));
 
-  const publishOptions: Record<string, boolean | string | undefined> = {
+  const publishOptions = {
     gitReset: !!options.local,
     distTag: options.tag,
     includePrivate: options.local ? "*" : undefined,
   };
 
-  if (!options.skipPublish) {
-    // JH: remove unneeded await
-    await publish({ ...versionOptions, ...publishOptions });
-
-    // reset lerna.json and package-lock.json after publish of a local version
-    if (options.local) {
-      execSync("git checkout -- lerna.json package-lock.json");
+  try {
+    if (!options.skipPublish) {
+      await publish({ ...versionOptions, ...publishOptions });
+    } else {
+      await version(versionOptions);
+      console.warn("Not Publishing because --dryRun was passed");
     }
-  } else {
-    // JH: remove unneeded await
-    version(versionOptions);
-    console.warn("Not Publishing because --dryRun was passed");
-  }
-
-  if (originalLernaJson) {
-    writeFileSync(lernaJsonPath, originalLernaJson.toString());
+  } finally {
+    for (const [filePath, contents] of originalFiles) {
+      writeFileSync(filePath, contents);
+    }
   }
 })();
 
 async function parseArgs() {
   const parsedArgs =
     // JH: refactored to make it compatible with yargs 16, which lerna uses
-    await yargs
+    await yargs(process.argv.slice(2))
       // JH: changed to `npm run`
       .scriptName("npm run lerna-release")
       .wrap(144)
-      // TODO: why is this showing as a type error in lerna but not nx
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       .strictOptions()
       .version(false)
       .command("$0 [version]", "This script is for publishing lerna both locally and publicly", (yargs) => {
@@ -249,7 +191,6 @@ async function parseArgs() {
       })
       .parse();
 
-  // JH: made compatible with node v14
   if (parsedArgs.tag === undefined || parsedArgs.tag === null) {
     parsedArgs.tag = parsedArgs.local ? "latest" : "next";
   }

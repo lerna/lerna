@@ -17,7 +17,7 @@ import {
 } from "@nx/devkit";
 import * as childProcess from "@lerna/child-process";
 import { existsSync } from "fs";
-import { readFileSync } from "fs-extra";
+import fs from "fs-extra";
 import { FsTree, Tree, flushChanges } from "nx/src/generators/tree";
 import { diff } from "./lib/diff";
 
@@ -103,7 +103,7 @@ export class InitCommand {
           `${indent}${chalk.white("UPDATE")} ${f.path}${isDryRun ? chalk.yellow(" [preview]") : ""}`
         );
         if (isDryRun) {
-          const currentContentsOnDisk = readFileSync(joinPathFragments(tree.root, f.path)).toString();
+          const currentContentsOnDisk = fs.readFileSync(joinPathFragments(tree.root, f.path)).toString();
           printDiff(currentContentsOnDisk, f.content?.toString() || "");
         }
       } else if (f.type === "DELETE") {
@@ -249,12 +249,12 @@ export class InitCommand {
       existsSync("bun.lockb") || existsSync("bun.lock")
         ? "bun"
         : existsSync("yarn.lock")
-        ? "yarn"
-        : existsSync("pnpm-lock.yaml")
-        ? "pnpm"
-        : existsSync("package-lock.json")
-        ? "npm"
-        : null;
+          ? "yarn"
+          : existsSync("pnpm-lock.yaml")
+            ? "pnpm"
+            : existsSync("package-lock.json")
+              ? "npm"
+              : null;
     if (packageManager) {
       this.logger.verbose("", `Detected lock file for ${packageManager}`);
     }
@@ -262,7 +262,7 @@ export class InitCommand {
   }
 
   protected getInvokerModule(): { filename?: string; path?: string } | null {
-    return require.main || process["mainModule"] || null;
+    return process.argv[1] ? { filename: process.argv[1] } : null;
   }
 
   /**
@@ -277,10 +277,18 @@ export class InitCommand {
     let detectedPackageManager: PackageManager | null = null;
 
     // Bun sets process.versions.bun when running in its own runtime (e.g. via bunx).
-    // Check this first because require.main may be null in bun's CJS runtime.
+    // Check this first because the CLI path may not identify bun in every runtime.
     if ((process.versions as Record<string, string>)["bun"]) {
       this.logger.verbose("", "Detected package manager bun from process.versions.bun");
       return "bun";
+    }
+
+    const userAgent = process.env["npm_config_user_agent"]?.toLowerCase();
+    for (const pkgManager of ["pnpm", "yarn"] as const) {
+      if (userAgent?.startsWith(`${pkgManager}/`)) {
+        this.logger.verbose("", `Detected package manager ${pkgManager} from npm_config_user_agent`);
+        return pkgManager;
+      }
     }
 
     const invoker = this.getInvokerModule();

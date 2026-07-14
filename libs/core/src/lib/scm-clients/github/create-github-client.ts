@@ -1,9 +1,12 @@
 import { Octokit } from "@octokit/rest";
 import parseGitUrl from "git-url-parse";
+import { createRequire } from "node:module";
 import log from "../../npmlog";
 import { ValidationError } from "../../validation-error";
 
 import * as childProcess from "@lerna/child-process";
+
+const require = createRequire(import.meta.url);
 
 export function createGitHubClient(): Octokit {
   // TODO: refactor based on TS feedback

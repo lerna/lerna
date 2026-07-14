@@ -3,7 +3,10 @@ import path from "path";
 import log from "../../npmlog";
 
 export class GitLabClient {
-  constructor(public token: string, public baseUrl = "https://gitlab.com/api/v4") {}
+  constructor(
+    public token: string,
+    public baseUrl = "https://gitlab.com/api/v4"
+  ) {}
 
   // TODO: refactor based on TS feedback
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

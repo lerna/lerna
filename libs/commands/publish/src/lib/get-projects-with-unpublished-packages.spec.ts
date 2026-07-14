@@ -31,14 +31,12 @@ pacote.packument.mockImplementation(async (pkg) => {
 test("getProjectsWithUnpublishedPackages", async () => {
   const cwd = await initFixture("licenses-names");
   const packages = await getPackages(cwd);
-  const projectNodes = packages.map(
-    (pkg): ProjectGraphProjectNodeWithPackage => ({
-      name: pkg.name,
-      type: "lib",
-      data: { root: pkg.location },
-      package: pkg,
-    })
-  );
+  const projectNodes = packages.map((pkg): ProjectGraphProjectNodeWithPackage => ({
+    name: pkg.name,
+    type: "lib",
+    data: { root: pkg.location },
+    package: pkg,
+  }));
 
   const opts = {};
   const pkgs = await getProjectsWithUnpublishedPackages(projectNodes, opts);
@@ -63,14 +61,12 @@ test("getProjectsWithUnpublishedPackages", async () => {
 test("getProjectsWithUnpublishedPackages with private package", async () => {
   const cwd = await initFixture("public-private");
   const packages = await getPackages(cwd);
-  const projectNodes = packages.map(
-    (pkg): ProjectGraphProjectNodeWithPackage => ({
-      name: pkg.name,
-      type: "lib",
-      data: { root: pkg.location },
-      package: pkg,
-    })
-  );
+  const projectNodes = packages.map((pkg): ProjectGraphProjectNodeWithPackage => ({
+    name: pkg.name,
+    type: "lib",
+    data: { root: pkg.location },
+    package: pkg,
+  }));
 
   const opts = {};
   const pkgs = await getProjectsWithUnpublishedPackages(projectNodes, opts);
@@ -86,14 +82,12 @@ test("getProjectsWithUnpublishedPackages with private package", async () => {
 test("getProjectsWithUnpublishedPackages with strict-ssl = false", async () => {
   const cwd = await initFixture("public-private");
   const packages = await getPackages(cwd);
-  const projectNodes = packages.map(
-    (pkg): ProjectGraphProjectNodeWithPackage => ({
-      name: pkg.name,
-      type: "lib",
-      data: { root: pkg.location },
-      package: pkg,
-    })
-  );
+  const projectNodes = packages.map((pkg): ProjectGraphProjectNodeWithPackage => ({
+    name: pkg.name,
+    type: "lib",
+    data: { root: pkg.location },
+    package: pkg,
+  }));
 
   const opts = { "strict-ssl": false };
   const pkgs = await getProjectsWithUnpublishedPackages(projectNodes, opts);

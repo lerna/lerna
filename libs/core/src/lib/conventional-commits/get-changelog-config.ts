@@ -1,11 +1,13 @@
 import Handlebars from "handlebars";
 import npa from "npm-package-arg";
+import { createRequire } from "node:module";
 import { promisify } from "node:util";
 import log from "../npmlog";
 import { ValidationError } from "../validation-error";
 import { ChangelogPresetConfig } from "./constants";
 
 const cfgCache = new Map();
+const require = createRequire(import.meta.url);
 
 function isFunction(config: any) {
   return (

@@ -47,7 +47,7 @@ export var find = (cc.find = function () {
         return find(path.dirname(start), rel);
     }
   }
-  return find(__dirname, rel);
+  return find(import.meta.dirname, rel);
 });
 
 export var parse = (cc.parse = function (content, file, type) {
@@ -168,7 +168,7 @@ ConfigChain.prototype.get = function (key, where) {
 };
 
 ConfigChain.prototype.save = function (where, type, cb) {
-  if (typeof type === "function") (cb = type), (type = null);
+  if (typeof type === "function") ((cb = type), (type = null));
   var target = this.sources[where];
   if (!target || !(target.path || target.source) || !target.data) {
     // TODO: maybe save() to a url target could be a PUT or something?
@@ -254,12 +254,12 @@ ConfigChain.prototype.addUrl = function (req, type, name) {
             ct.indexOf("json") !== -1
               ? "json"
               : ct.indexOf("ini") !== -1
-              ? "ini"
-              : href.match(/\.json$/)
-              ? "json"
-              : href.match(/\.ini$/)
-              ? "ini"
-              : null;
+                ? "ini"
+                : href.match(/\.json$/)
+                  ? "json"
+                  : href.match(/\.ini$/)
+                    ? "ini"
+                    : null;
           marker.type = type;
         }
 

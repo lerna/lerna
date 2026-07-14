@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/publish/lib/git-checkout");
+export * from "@lerna/commands/publish/lib/git-checkout";

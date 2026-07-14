@@ -1,7 +1,10 @@
-import PQueue from "p-queue";
+import PQueueImport from "p-queue";
 import { getCycles, mergeOverlappingCycles, reportCycles } from "./cycles";
 import { ProjectGraphProjectNodeWithPackage, ProjectGraphWithPackages } from "./project-graph-with-packages";
 import { ValidationError } from "./validation-error";
+
+const PQueue =
+  (PQueueImport as typeof PQueueImport & { default?: typeof PQueueImport }).default ?? PQueueImport;
 
 interface TopologicalConfig {
   concurrency?: number;

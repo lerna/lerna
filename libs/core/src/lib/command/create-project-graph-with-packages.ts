@@ -1,5 +1,5 @@
 import { ProjectFileMap, ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nx/devkit";
-import { readJson } from "fs-extra";
+import fs from "fs-extra";
 import minimatch from "minimatch";
 import { resolve } from "npm-package-arg";
 import { join } from "path";
@@ -34,7 +34,7 @@ export async function createProjectGraphWithPackages(
           const manifestPath = getPackageManifestPath(node, projectFileMap[node.name] || []);
           if (manifestPath) {
             const fullManifestPath = join(_workspaceRoot, manifestPath);
-            resolve(readJson(fullManifestPath).then((manifest) => [node, manifest]));
+            resolve(fs.readJson(fullManifestPath).then((manifest) => [node, manifest]));
           } else {
             resolve([node, null]);
           }

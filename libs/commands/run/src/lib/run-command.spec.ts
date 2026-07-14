@@ -36,7 +36,7 @@ const ranInPackagesStreaming = (testDir: string) =>
       arr: string[],
       [script, { args, npmClient, pkg, prefix }]: [
         string,
-        { args: string[]; npmClient: string; pkg: Package; prefix: string }
+        { args: string[]; npmClient: string; pkg: Package; prefix: string },
       ]
     ) => {
       const dir = normalizeRelativeDir(testDir, pkg.location);

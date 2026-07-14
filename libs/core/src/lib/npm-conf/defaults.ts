@@ -30,175 +30,168 @@ const cacheExtra = process.platform === "win32" ? "npm-cache" : ".npm";
 const cacheRoot = (process.platform === "win32" && process.env["APPDATA"]) || home;
 const cache = path.resolve(cacheRoot, cacheExtra);
 
-let defaults: any;
-let globalPrefix;
+function getGlobalPrefix() {
+  let globalPrefix;
+  if (process.env["PREFIX"]) {
+    globalPrefix = process.env["PREFIX"];
+  } else if (process.platform === "win32") {
+    // c:\node\node.exe --> prefix=c:\node\
+    globalPrefix = path.dirname(process.execPath);
+  } else {
+    // /usr/local/bin/node --> prefix=/usr/local
+    globalPrefix = path.dirname(path.dirname(process.execPath)); // destdir only is respected on Unix
 
-Object.defineProperty(exports, "defaults", {
-  get() {
-    if (defaults) {
-      return defaults;
+    if (process.env["DESTDIR"]) {
+      globalPrefix = path.join(process.env["DESTDIR"], globalPrefix);
     }
+  }
 
-    if (process.env["PREFIX"]) {
-      globalPrefix = process.env["PREFIX"];
-    } else if (process.platform === "win32") {
-      // c:\node\node.exe --> prefix=c:\node\
-      globalPrefix = path.dirname(process.execPath);
-    } else {
-      // /usr/local/bin/node --> prefix=/usr/local
-      globalPrefix = path.dirname(path.dirname(process.execPath)); // destdir only is respected on Unix
+  return globalPrefix;
+}
 
-      if (process.env["DESTDIR"]) {
-        globalPrefix = path.join(process.env["DESTDIR"], globalPrefix);
-      }
-    }
+const globalPrefix = getGlobalPrefix();
 
-    defaults = {
-      access: null,
-      "allow-same-version": false,
-      "always-auth": false,
-      also: null,
-      audit: true,
-      "audit-level": "low",
-      "auth-type": "legacy",
-      "bin-links": true,
-      browser: null,
-      ca: null,
-      cafile: null,
-      cache,
-      "cache-lock-stale": 60000,
-      "cache-lock-retries": 10,
-      "cache-lock-wait": 10000,
-      "cache-max": Infinity,
-      "cache-min": 10,
-      cert: null,
-      cidr: null,
-      // color: true/false depending on NO_COLOR and FORCE_COLOR (NO_COLOR disables color, except NO_COLOR="false" means color enabled; FORCE_COLOR has priority if set)
-      color:
-        typeof process.env["FORCE_COLOR"] !== "undefined"
-          ? !!process.env["FORCE_COLOR"] && process.env["FORCE_COLOR"] !== "0"
-          : typeof process.env["NO_COLOR"] !== "undefined"
-          ? ["", "0"].includes(process.env["NO_COLOR"])
-            ? true
-            : process.env["NO_COLOR"] === "false"
+export const defaults = {
+  access: null,
+  "allow-same-version": false,
+  "always-auth": false,
+  also: null,
+  audit: true,
+  "audit-level": "low",
+  "auth-type": "legacy",
+  "bin-links": true,
+  browser: null,
+  ca: null,
+  cafile: null,
+  cache,
+  "cache-lock-stale": 60000,
+  "cache-lock-retries": 10,
+  "cache-lock-wait": 10000,
+  "cache-max": Infinity,
+  "cache-min": 10,
+  cert: null,
+  cidr: null,
+  // color: true/false depending on NO_COLOR and FORCE_COLOR (NO_COLOR disables color, except NO_COLOR="false" means color enabled; FORCE_COLOR has priority if set)
+  color:
+    typeof process.env["FORCE_COLOR"] !== "undefined"
+      ? !!process.env["FORCE_COLOR"] && process.env["FORCE_COLOR"] !== "0"
+      : typeof process.env["NO_COLOR"] !== "undefined"
+        ? ["", "0"].includes(process.env["NO_COLOR"])
+          ? true
+          : process.env["NO_COLOR"] === "false"
             ? true
             : false
-          : true,
-      depth: Infinity,
-      description: true,
-      dev: false,
-      "dry-run": false,
-      editor: osenv.editor(),
-      "engine-strict": false,
-      force: false,
-      "fetch-retries": 2,
-      "fetch-retry-factor": 10,
-      "fetch-retry-mintimeout": 10000,
-      "fetch-retry-maxtimeout": 60000,
-      git: "git",
-      "git-tag-version": true,
-      "commit-hooks": true,
-      global: false,
-      globalconfig: path.resolve(globalPrefix, "etc", "npmrc"),
-      "global-style": false,
-      group:
-        process.platform === "win32" ? 0 : process.env["SUDO_GID"] || (process.getgid && process.getgid()),
-      "ham-it-up": false,
-      heading: "npm",
-      "if-present": false,
-      "ignore-prepublish": false,
-      "ignore-scripts": false,
-      "init-module": path.resolve(home, ".npm-init.js"),
-      "init-author-name": "",
-      "init-author-email": "",
-      "init-author-url": "",
-      "init-version": "1.0.0",
-      "init-license": "ISC",
-      json: false,
-      key: null,
-      "legacy-bundling": false,
-      link: false,
-      "local-address": undefined,
-      loglevel: "notice",
-      logstream: process.stderr,
-      "logs-max": 10,
-      long: false,
-      maxsockets: 50,
-      message: "%s",
-      "metrics-registry": null,
-      "node-options": null,
-      "node-version": process.version,
-      offline: false,
-      "onload-script": false,
-      only: null,
-      optional: true,
-      otp: undefined,
-      "package-lock": true,
-      "package-lock-only": false,
-      parseable: false,
-      "prefer-offline": false,
-      "prefer-online": false,
-      prefix: globalPrefix,
-      preid: "",
-      production: process.env["NODE_ENV"] === "production",
-      progress: !process.env["TRAVIS"] && !process.env["CI"],
-      proxy: null,
-      "https-proxy": null,
-      noproxy: null,
-      "user-agent": "npm/{npm-version} " + "node/{node-version} " + "{platform} " + "{arch}",
-      "read-only": false,
-      "rebuild-bundle": true,
-      registry: "https://registry.npmjs.org/",
-      rollback: true,
-      save: true,
-      "save-bundle": false,
-      "save-dev": false,
-      "save-exact": false,
-      "save-optional": false,
-      "save-prefix": "^",
-      "save-prod": false,
-      scope: "",
-      "script-shell": undefined,
-      "scripts-prepend-node-path": "warn-only",
-      searchopts: "",
-      searchexclude: null,
-      searchlimit: 20,
-      searchstaleness: 15 * 60,
-      "send-metrics": false,
-      shell: osenv.shell(),
-      shrinkwrap: true,
-      "sign-git-commit": false,
-      "sign-git-tag": false,
-      "sso-poll-frequency": 500,
-      "sso-type": "oauth",
-      "strict-ssl": true,
-      tag: "latest",
-      "tag-version-prefix": "v",
-      timing: false,
-      tmp: temp,
-      unicode: hasUnicode(),
-      "unsafe-perm":
-        process.platform === "win32" ||
-        process.platform === "cygwin" ||
-        // TODO: refactor based on TS feedback
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        !(process.getuid && process.setuid && process.getgid && process.setgid) ||
-        process.getuid() !== 0,
-      "update-notifier": true,
-      usage: false,
-      user: process.platform === "win32" || os.type() === "OS400" ? 0 : "nobody",
-      userconfig: path.resolve(home, ".npmrc"),
-      // TODO: refactor based on TS feedback
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      umask: process.umask ? process.umask() : umask.fromString("022"),
-      version: false,
-      versions: false,
-      viewer: process.platform === "win32" ? "browser" : "man",
-      _exit: true,
-    };
-
-    return defaults;
-  },
-});
+        : true,
+  depth: Infinity,
+  description: true,
+  dev: false,
+  "dry-run": false,
+  editor: osenv.editor(),
+  "engine-strict": false,
+  force: false,
+  "fetch-retries": 2,
+  "fetch-retry-factor": 10,
+  "fetch-retry-mintimeout": 10000,
+  "fetch-retry-maxtimeout": 60000,
+  git: "git",
+  "git-tag-version": true,
+  "commit-hooks": true,
+  global: false,
+  globalconfig: path.resolve(globalPrefix, "etc", "npmrc"),
+  "global-style": false,
+  group: process.platform === "win32" ? 0 : process.env["SUDO_GID"] || (process.getgid && process.getgid()),
+  "ham-it-up": false,
+  heading: "npm",
+  "if-present": false,
+  "ignore-prepublish": false,
+  "ignore-scripts": false,
+  "init-module": path.resolve(home, ".npm-init.js"),
+  "init-author-name": "",
+  "init-author-email": "",
+  "init-author-url": "",
+  "init-version": "1.0.0",
+  "init-license": "ISC",
+  json: false,
+  key: null,
+  "legacy-bundling": false,
+  link: false,
+  "local-address": undefined,
+  loglevel: "notice",
+  logstream: process.stderr,
+  "logs-max": 10,
+  long: false,
+  maxsockets: 50,
+  message: "%s",
+  "metrics-registry": null,
+  "node-options": null,
+  "node-version": process.version,
+  offline: false,
+  "onload-script": false,
+  only: null,
+  optional: true,
+  otp: undefined,
+  "package-lock": true,
+  "package-lock-only": false,
+  parseable: false,
+  "prefer-offline": false,
+  "prefer-online": false,
+  prefix: globalPrefix,
+  preid: "",
+  production: process.env["NODE_ENV"] === "production",
+  progress: !process.env["TRAVIS"] && !process.env["CI"],
+  proxy: null,
+  "https-proxy": null,
+  noproxy: null,
+  "user-agent": "npm/{npm-version} " + "node/{node-version} " + "{platform} " + "{arch}",
+  "read-only": false,
+  "rebuild-bundle": true,
+  registry: "https://registry.npmjs.org/",
+  rollback: true,
+  save: true,
+  "save-bundle": false,
+  "save-dev": false,
+  "save-exact": false,
+  "save-optional": false,
+  "save-prefix": "^",
+  "save-prod": false,
+  scope: "",
+  "script-shell": undefined,
+  "scripts-prepend-node-path": "warn-only",
+  searchopts: "",
+  searchexclude: null,
+  searchlimit: 20,
+  searchstaleness: 15 * 60,
+  "send-metrics": false,
+  shell: osenv.shell(),
+  shrinkwrap: true,
+  "sign-git-commit": false,
+  "sign-git-tag": false,
+  "sso-poll-frequency": 500,
+  "sso-type": "oauth",
+  "strict-ssl": true,
+  tag: "latest",
+  "tag-version-prefix": "v",
+  timing: false,
+  tmp: temp,
+  unicode: hasUnicode(),
+  "unsafe-perm":
+    process.platform === "win32" ||
+    process.platform === "cygwin" ||
+    // TODO: refactor based on TS feedback
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    !(process.getuid && process.setuid && process.getgid && process.setgid) ||
+    process.getuid() !== 0,
+  "update-notifier": true,
+  usage: false,
+  user: process.platform === "win32" || os.type() === "OS400" ? 0 : "nobody",
+  userconfig: path.resolve(home, ".npmrc"),
+  // TODO: refactor based on TS feedback
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  umask: process.umask ? process.umask() : umask.fromString("022"),
+  version: false,
+  versions: false,
+  viewer: process.platform === "win32" ? "browser" : "man",
+  _exit: true,
+};

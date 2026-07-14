@@ -343,4 +343,5 @@ const command: CommandModule = {
   addBumpPositional,
 };
 
-export = command;
+export default command;
+export { command as "module.exports" };

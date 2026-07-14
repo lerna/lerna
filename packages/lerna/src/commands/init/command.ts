@@ -1,2 +1,4 @@
 import cmd from "@lerna/commands/init/command";
-module.exports = cmd;
+
+export default cmd;
+export { cmd as "module.exports" };

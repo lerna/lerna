@@ -1,1 +1,1 @@
-module.exports = require("@lerna/commands/version/lib/remote-branch-exists");
+export * from "@lerna/commands/version/lib/remote-branch-exists";

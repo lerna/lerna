@@ -1,13 +1,15 @@
 import { Arguments, Command, CommandConfigOptions, log } from "@lerna/core";
 import { repair } from "nx/src/command-line/repair/repair";
+import { createRequire } from "node:module";
+import migrationsJson from "../../../migrations.json" with { type: "json" };
 
-const migrationsJson = require("../../../migrations.json");
+const require = createRequire(import.meta.url);
 
-module.exports = function factory(argv: Arguments<CommandConfigOptions>) {
+export function factory(argv: Arguments<CommandConfigOptions>) {
   return new RepairCommand(argv);
-};
+}
 
-class RepairCommand extends Command {
+export class RepairCommand extends Command {
   constructor(argv: Arguments<CommandConfigOptions>) {
     super(argv, { skipValidations: true });
   }
@@ -50,4 +52,7 @@ class RepairCommand extends Command {
   }
 }
 
-module.exports.RepairCommand = RepairCommand;
+const commonJsExport = Object.assign(factory, { RepairCommand });
+
+export default commonJsExport;
+export { commonJsExport as "module.exports" };

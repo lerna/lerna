@@ -3,8 +3,6 @@ import { ExecOptions } from "child_process";
 
 import * as childProcess from "@lerna/child-process";
 
-module.exports.isAnythingCommitted = isAnythingCommitted;
-
 export function isAnythingCommitted(opts: ExecOptions) {
   log.silly("isAnythingCommitted", "");
 

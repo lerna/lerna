@@ -20,16 +20,16 @@ import versionCmd from "@lerna/commands/version/command";
 import addCachingCmd from "./commands/add-caching/command";
 import repairCmd from "./commands/repair/command";
 import watchCmd from "./commands/watch/command";
+import pkg from "../package.json" with { type: "json" };
+import yargsFactory from "yargs/yargs";
 
-// Evaluated at runtime to grab the current lerna version
-const pkg = require("../package.json");
-
-module.exports = function main(argv: NodeJS.Process["argv"]) {
+export function main(argv: NodeJS.Process["argv"]) {
   const context = {
     lernaVersion: pkg.version,
   };
 
   const cli = lernaCLI()
+    .version(pkg.version)
     .command(addCachingCmd)
     .command(changedCmd)
     .command(cleanCmd)
@@ -49,7 +49,7 @@ module.exports = function main(argv: NodeJS.Process["argv"]) {
   explicitlyHandleLegacyPackageManagementCommands(cli);
 
   return cli.parse(argv, context);
-};
+}
 
 /**
  * Legacy package management commands were finally removed in v9, after over 2 years of being deprecated
@@ -68,7 +68,7 @@ function explicitlyHandleLegacyPackageManagementCommands(yargsInstance: ReturnTy
          * Dynamically parse all given flags and apply them as options, so that our handler() is always called,
          * rather than yargs showing options based validation messaging.
          */
-        const parsed = require("yargs/yargs")(process.argv.slice(2)).argv;
+        const parsed = yargsFactory(process.argv.slice(2)).argv;
         for (const x of Object.keys(parsed)) {
           if (x !== "_" && x !== "$0") {
             yargs.option(x, {});
@@ -91,3 +91,6 @@ function explicitlyHandleLegacyPackageManagementCommands(yargsInstance: ReturnTy
     });
   });
 }
+
+export default main;
+export { main as "module.exports" };

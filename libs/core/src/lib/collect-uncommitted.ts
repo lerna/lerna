@@ -8,7 +8,7 @@ interface UncommittedConfig {
   log?: typeof npmlog;
 }
 
-const maybeColorize = (format: StyleFormat) => (s: unknown) => s !== " " ? colorize(format, String(s)) : s;
+const maybeColorize = (format: StyleFormat) => (s: unknown) => (s !== " " ? colorize(format, String(s)) : s);
 const cRed = maybeColorize("red");
 const cGreen = maybeColorize("green");
 
