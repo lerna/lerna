@@ -57,25 +57,18 @@ describe("lerna-exec", () => {
     const output = await fixture.lerna("exec --concurrency 1 npm run print-name");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
       test-package-X
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
       test-package-X
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
       test-package-X
       lerna notice cli v999.9.9-e2e.0
       lerna info Executing command in 3 packages: "npm run print-name"
+      npm notice run package-X@0.0.0 print-name
+      npm notice run echo test-package-X
+      npm notice run package-X@0.0.0 print-name
+      npm notice run echo test-package-X
+      npm notice run package-X@0.0.0 print-name
+      npm notice run echo test-package-X
       lerna success exec Executed command in 3 packages: "npm run print-name"
-
     `);
   });
 

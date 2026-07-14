@@ -12,7 +12,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install node and npm based on the given values (or the volta config in package.json)
+    - name: Install Node based on the given value (or the Volta config in package.json)
       uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
       with:
         node-version-file: ${{ inputs.node-version == '' && 'package.json' || '' }}
@@ -25,12 +25,23 @@ runs:
     # Github actions/cache now recommends _not_ caching node_modules when using npm ci
     # https://github.com/actions/cache/blob/940f3d7cf195ba83374c77632d1e2cbb2f24ae68/examples.md#node---npm
 
+    - name: Install Corepack for the primary Node version
+      if: ${{ inputs.node-version == '' }}
+      # Windows runners already provide Yarn shims that Corepack needs to replace.
+      run: npm install --global corepack@0.35.0 --min-release-age=0 --ignore-scripts --force
+      shell: bash
+
     - name: Enable corepack
       run: corepack enable
       shell: bash
       env:
         COREPACK_ENABLE_AUTO_PIN: "0"
         COREPACK_ENABLE_STRICT: "0"
+
+    - name: Install the pinned npm version
+      if: ${{ inputs.node-version == '' }}
+      run: npm install --global "$(node -p "require('./package.json').packageManager")" --min-release-age=0 --ignore-scripts
+      shell: bash
 
     - name: Install pnpm v8
       run: corepack install -g pnpm@8

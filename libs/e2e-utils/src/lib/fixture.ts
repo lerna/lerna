@@ -1,6 +1,7 @@
 import { joinPathFragments, readJsonFile, writeJsonFile } from "@nx/devkit";
 import { exec, spawn } from "child_process";
 import { WriteStream, createWriteStream, ensureDir, existsSync, readFile, remove, writeFile } from "fs-extra";
+import { normalizeFixtureCommandOutput } from "./normalize-fixture-command-output";
 
 interface RunCommandOptions {
   silenceError?: boolean;
@@ -311,9 +312,9 @@ export class Fixture {
       let error: Error | null = null;
 
       const createResult = (): RunCommandResult => ({
-        stdout: stripConsoleColors(stdout),
-        stderr: stripConsoleColors(stderr),
-        combinedOutput: stripConsoleColors(combinedOutput),
+        stdout: normalizeFixtureCommandOutput(command, stdout),
+        stderr: normalizeFixtureCommandOutput(command, stderr),
+        combinedOutput: normalizeFixtureCommandOutput(command, combinedOutput),
       });
 
       const childProcess = spawn(command, {
@@ -495,12 +496,13 @@ export class Fixture {
           },
           (err, stdout, stderr) => {
             if (!opts.silenceError && err) {
+              err.message = normalizeFixtureCommandOutput(command, err.message);
               reject(err);
             }
             resolve({
-              stdout: stripConsoleColors(stdout),
-              stderr: stripConsoleColors(stderr),
-              combinedOutput: stripConsoleColors(`${stdout}${stderr}`),
+              stdout: normalizeFixtureCommandOutput(command, stdout),
+              stderr: normalizeFixtureCommandOutput(command, stderr),
+              combinedOutput: normalizeFixtureCommandOutput(command, `${stdout}${stderr}`),
             });
           }
         );
@@ -542,14 +544,14 @@ export class Fixture {
           if (error) {
             reject(error);
           } else if (code !== 0) {
-            reject(new Error(stderr));
+            reject(new Error(normalizeFixtureCommandOutput(command, stderr)));
           }
         }
 
         resolve({
-          stdout: stripConsoleColors(stdout),
-          stderr: stripConsoleColors(stderr),
-          combinedOutput: stripConsoleColors(combinedOutput),
+          stdout: normalizeFixtureCommandOutput(command, stdout),
+          stderr: normalizeFixtureCommandOutput(command, stderr),
+          combinedOutput: normalizeFixtureCommandOutput(command, combinedOutput),
         });
       });
     });
@@ -579,16 +581,6 @@ export class Fixture {
   private async createEmptyDirectoryForWorkspace(): Promise<void> {
     await ensureDir(this.fixtureWorkspacePath);
   }
-}
-
-/**
- * Remove log colors for fail proof string search
- * @param log
- * @returns
- */
-function stripConsoleColors(log: string): string {
-  // eslint-disable-next-line no-control-regex
-  return log.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, "");
 }
 
 export function getPublishedVersion(): string {
