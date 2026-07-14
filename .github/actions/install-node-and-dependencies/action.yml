@@ -27,7 +27,8 @@ runs:
 
     - name: Install Corepack for the primary Node version
       if: ${{ inputs.node-version == '' }}
-      run: npm install --global corepack@0.35.0 --min-release-age=0 --ignore-scripts
+      # Windows runners already provide Yarn shims that Corepack needs to replace.
+      run: npm install --global corepack@0.35.0 --min-release-age=0 --ignore-scripts --force
       shell: bash
 
     - name: Enable corepack
