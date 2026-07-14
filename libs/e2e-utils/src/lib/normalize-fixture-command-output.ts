@@ -2,14 +2,14 @@
  * Remove terminal colors and npm's own launcher notices from the output of
  * Lerna commands executed through npx.
  */
-export function normalizeCommandOutput(command: string, output: string): string {
+export function normalizeFixtureCommandOutput(command: string, output: string): string {
   const normalizedOutput = stripConsoleColors(output);
 
   if (!command.startsWith("npx ") || !command.includes("lerna")) {
     return normalizedOutput;
   }
 
-  return normalizedOutput.replace(/^npm notice run npx\r?\nnpm notice run 'lerna'(?: [^\r\n]*)?\r?\n/, "");
+  return normalizedOutput.replace(/^npm notice run npx\r?\nnpm notice run 'lerna'(?: [^\r\n]*)?\r?\n/gm, "");
 }
 
 /**

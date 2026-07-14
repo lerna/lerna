@@ -1,7 +1,7 @@
 import { joinPathFragments, readJsonFile, writeJsonFile } from "@nx/devkit";
 import { exec, spawn } from "child_process";
 import { WriteStream, createWriteStream, ensureDir, existsSync, readFile, remove, writeFile } from "fs-extra";
-import { normalizeCommandOutput } from "./normalize-command-output";
+import { normalizeFixtureCommandOutput } from "./normalize-fixture-command-output";
 
 interface RunCommandOptions {
   silenceError?: boolean;
@@ -312,9 +312,9 @@ export class Fixture {
       let error: Error | null = null;
 
       const createResult = (): RunCommandResult => ({
-        stdout: normalizeCommandOutput(command, stdout),
-        stderr: normalizeCommandOutput(command, stderr),
-        combinedOutput: normalizeCommandOutput(command, combinedOutput),
+        stdout: normalizeFixtureCommandOutput(command, stdout),
+        stderr: normalizeFixtureCommandOutput(command, stderr),
+        combinedOutput: normalizeFixtureCommandOutput(command, combinedOutput),
       });
 
       const childProcess = spawn(command, {
@@ -496,12 +496,13 @@ export class Fixture {
           },
           (err, stdout, stderr) => {
             if (!opts.silenceError && err) {
+              err.message = normalizeFixtureCommandOutput(command, err.message);
               reject(err);
             }
             resolve({
-              stdout: normalizeCommandOutput(command, stdout),
-              stderr: normalizeCommandOutput(command, stderr),
-              combinedOutput: normalizeCommandOutput(command, `${stdout}${stderr}`),
+              stdout: normalizeFixtureCommandOutput(command, stdout),
+              stderr: normalizeFixtureCommandOutput(command, stderr),
+              combinedOutput: normalizeFixtureCommandOutput(command, `${stdout}${stderr}`),
             });
           }
         );
@@ -543,14 +544,14 @@ export class Fixture {
           if (error) {
             reject(error);
           } else if (code !== 0) {
-            reject(new Error(normalizeCommandOutput(command, stderr)));
+            reject(new Error(normalizeFixtureCommandOutput(command, stderr)));
           }
         }
 
         resolve({
-          stdout: normalizeCommandOutput(command, stdout),
-          stderr: normalizeCommandOutput(command, stderr),
-          combinedOutput: normalizeCommandOutput(command, combinedOutput),
+          stdout: normalizeFixtureCommandOutput(command, stdout),
+          stderr: normalizeFixtureCommandOutput(command, stderr),
+          combinedOutput: normalizeFixtureCommandOutput(command, combinedOutput),
         });
       });
     });
