@@ -47,6 +47,14 @@ const command: CommandModule = {
         requiresArg: true,
         type: "string",
       },
+      "ci-behind-behavior": {
+        describe:
+          "Control whether CI errors or exits successfully when the current branch is behind upstream.",
+        type: "string",
+        choices: ["error", "skip"],
+        requiresArg: true,
+        defaultDescription: "error",
+      },
       "conventional-commits": {
         describe: "Use conventional-changelog to determine version bump and generate CHANGELOG.",
         type: "boolean",

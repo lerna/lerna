@@ -962,6 +962,9 @@
             "buildMetadata": {
               "$ref": "#/$defs/commandOptions/version/buildMetadata"
             },
+            "ciBehindBehavior": {
+              "$ref": "#/$defs/commandOptions/version/ciBehindBehavior"
+            },
             "conventionalCommits": {
               "$ref": "#/$defs/commandOptions/shared/conventionalCommits"
             },
@@ -1659,6 +1662,11 @@
             }
           ],
           "description": "For `lerna version`, the branches to allow versioning from."
+        },
+        "ciBehindBehavior": {
+          "type": "string",
+          "description": "During `lerna version` in CI, whether to error or exit successfully without versioning when the current branch is behind upstream.",
+          "enum": ["error", "skip"]
         },
         "amend": {
           "type": "boolean",

@@ -52,6 +52,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--allow-branch <glob>`](#--allow-branch-glob)
     - [`--amend`](#--amend)
     - [`--build-metadata <buildMetadata>`](#--build-metadata)
+    - [`--ci-behind-behavior <behavior>`](#--ci-behind-behavior-behavior)
     - [`--changelog-preset`](#--changelog-preset)
     - [`--changelog-entry-additional-markdown`](#--changelog-entry-additional-markdown)
     - [`--conventional-commits`](#--conventional-commits)
@@ -151,6 +152,29 @@ lerna version --build-metadata 001
 ```
 
 Build metadata must be [SemVer compatible](https://semver.org/#spec-item-10). When provided it will apply to all updated packages, irrespective of whether independent or fixed versioning is utilised. If prompted to choose package version bumps, you can request a custom version to alter or remove build metadata for specific packages.
+
+### `--ci-behind-behavior <behavior>`
+
+```sh
+lerna version --ci-behind-behavior skip
+```
+
+Controls how `lerna version` behaves in CI when the current branch is behind its configured upstream remote.
+The default, `error`, fails with `EBEHIND` and a non-zero exit code. Set this option to `skip` to log an
+`EBEHIND` warning and exit successfully without versioning or publishing. Interactive execution outside CI
+always fails when the current branch is behind upstream.
+
+This option can also be configured in `lerna.json`:
+
+```json
+{
+  "command": {
+    "version": {
+      "ciBehindBehavior": "skip"
+    }
+  }
+}
+```
 
 ### `--changelog-preset`
 

@@ -19,6 +19,15 @@ const env = {
 test("lerna publish exits with EBEHIND when behind upstream remote", async () => {
   const { cwd, repository } = await cloneFixture("normal");
   const cloneDir = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "lerna-test-"));
+  const getReleaseState = async () => {
+    const [{ stdout: head }, { stdout: tags }, { stdout: status }] = await Promise.all([
+      execa("git", ["rev-parse", "HEAD"], { cwd }),
+      execa("git", ["tag", "--list"], { cwd }),
+      execa("git", ["status", "--porcelain"], { cwd }),
+    ]);
+
+    return { head, tags, status };
+  };
 
   // simulate upstream change from another clone
   await execa("git", ["clone", repository, cloneDir]);
@@ -31,7 +40,37 @@ test("lerna publish exits with EBEHIND when behind upstream remote", async () =>
   // throws during interactive publish (local)
   await expect(cliRunner(cwd, env)("publish", "--no-ci")).rejects.toThrow(/EBEHIND/);
 
-  // warns during non-interactive publish (CI)
-  const { stderr } = await cliRunner(cwd, env)("publish", "--ci");
+  // throws during non-interactive publish (CI)
+  await expect(cliRunner(cwd, env)("publish", "--ci")).rejects.toThrow(/EBEHIND/);
+
+  // warns and exits successfully when explicitly configured to skip in CI
+  const beforeCliSkip = await getReleaseState();
+  const { stderr } = await cliRunner(cwd, env)("publish", "--ci", "--ci-behind-behavior", "skip");
   expect(stderr).toMatch("EBEHIND");
+  expect(await getReleaseState()).toEqual(beforeCliSkip);
+
+  // consumes durable configuration when versioning is composed within publish
+  const lernaJsonPath = path.join(cwd, "lerna.json");
+  const lernaJson = await fs.readJSON(lernaJsonPath);
+  await fs.writeJSON(
+    lernaJsonPath,
+    {
+      ...lernaJson,
+      command: {
+        ...lernaJson.command,
+        version: {
+          ...lernaJson.command?.version,
+          ciBehindBehavior: "skip",
+        },
+      },
+    },
+    { spaces: 2 }
+  );
+  await gitAdd(cwd, "lerna.json");
+  await gitCommit(cwd, "configure CI behind behavior");
+
+  const beforeConfigSkip = await getReleaseState();
+  const configuredResult = await cliRunner(cwd, env)("publish", "--ci");
+  expect(configuredResult.stderr).toMatch("EBEHIND");
+  expect(await getReleaseState()).toEqual(beforeConfigSkip);
 });
