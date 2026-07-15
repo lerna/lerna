@@ -1,0 +1,11 @@
+# Socket.dev configuration
+# https://docs.socket.dev/docs/socket-yml
+version: 2
+
+# Test fixtures contain hundreds of sample package.json files (e.g. in
+# __fixtures__/, libs/**/__fixtures__/, integration/__tests__/__fixtures__/)
+# that are never installed as real dependencies, so exclude them from Socket
+# ingestion. Patterns use .gitignore syntax, so a bare directory name matches
+# at any depth.
+projectIgnorePaths:
+  - "__fixtures__"
