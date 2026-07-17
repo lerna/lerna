@@ -27,9 +27,10 @@ export const CopyToClipboard: React.FC<CopyToClipboardProps> = ({
   ...props
 }) => {
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
+    async (event: React.MouseEvent<HTMLElement>) => {
       const elem = React.Children.only(children) as React.ReactElement<ChildProps>;
-      const result = copy(text, options);
+      // copy-to-clipboard v4 uses the async Clipboard API and resolves to the copy result
+      const result = await copy(text, options);
 
       if (onCopy) {
         onCopy(text, result);

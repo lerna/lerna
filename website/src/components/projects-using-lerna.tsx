@@ -3,7 +3,7 @@ import styles from "./projects-using-lerna.module.css";
 
 interface ProjectItem {
   title: string;
-  svg: JSX.Element;
+  svg: React.JSX.Element;
   link: string;
 }
 
@@ -112,7 +112,7 @@ const projects: ProjectItem[] = [
   },
 ];
 
-function Project({ title, svg, link }: ProjectItem): JSX.Element {
+function Project({ title, svg, link }: ProjectItem): React.JSX.Element {
   return (
     <div className={styles.project}>
       {svg}
@@ -124,7 +124,7 @@ function Project({ title, svg, link }: ProjectItem): JSX.Element {
   );
 }
 
-export default function ProjectUsingLerna(): JSX.Element {
+export default function ProjectUsingLerna(): React.JSX.Element {
   return (
     <div className="padding-vert--xl container">
       <p className="margin-bottom--md" style={{ textAlign: "center" }}>
@@ -132,7 +132,7 @@ export default function ProjectUsingLerna(): JSX.Element {
       </p>
       <div className="row">
         {projects.map((p) => (
-          <div className="col col--4 margin-vert--sm">
+          <div key={p.title} className="col col--4 margin-vert--sm">
             <Project title={p.title} link={p.link} svg={p.svg} />
           </div>
         ))}

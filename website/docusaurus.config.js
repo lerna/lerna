@@ -11,7 +11,11 @@ const config = {
   url: "https://lerna.js.org",
   baseUrl: "/",
   onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: "warn",
+    },
+  },
   favicon: "images/favicon.ico",
   organizationName: "lerna",
   projectName: "website",

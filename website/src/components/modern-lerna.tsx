@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React from "react";
 import styles from "./about-lerna.module.css";
 
-export default function ModernLerna(): JSX.Element {
+export default function ModernLerna(): React.JSX.Element {
   return (
     <section className="padding-vert--xl container">
       <div className={clsx("row margin-bottom--xl", styles.hero)}>

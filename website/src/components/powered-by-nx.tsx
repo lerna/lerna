@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React from "react";
 import styles from "./powered-by-nx.module.css";
 
-export default function PoweredByNx(): JSX.Element {
+export default function PoweredByNx(): React.JSX.Element {
   return (
     <section className="padding-vert--xl container">
       <div className={clsx("row row--no-gutters shadow--md", styles.item)}>

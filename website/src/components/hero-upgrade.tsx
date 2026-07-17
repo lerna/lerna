@@ -1,6 +1,6 @@
 import { ArrowDownTrayIcon, CogIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { CopyToClipboard } from "./copy-to-clipboard";
 import styles from "./hero-upgrade.module.css";
 

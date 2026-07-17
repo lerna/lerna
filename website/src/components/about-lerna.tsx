@@ -16,7 +16,7 @@ interface Callout {
   title: string;
   text: string;
   link: string;
-  icon: (props: React.ComponentProps<"svg">) => JSX.Element;
+  icon: React.ComponentType<React.ComponentProps<"svg">>;
 }
 
 const callouts: Callout[] = [
@@ -86,7 +86,7 @@ const callouts: Callout[] = [
   },
 ];
 
-function Callout(props: Callout): JSX.Element {
+function Callout(props: Callout): React.JSX.Element {
   return (
     <div className={clsx("margin-top--xl card shadow--lw", styles.callout)}>
       <div className="card__header">
@@ -108,7 +108,7 @@ function Callout(props: Callout): JSX.Element {
   );
 }
 
-export default function AboutLerna(): JSX.Element {
+export default function AboutLerna(): React.JSX.Element {
   return (
     <section className="padding-vert--xl container">
       <div className={clsx("row margin-bottom--xl", styles.hero)}>

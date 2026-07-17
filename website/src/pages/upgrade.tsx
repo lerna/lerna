@@ -6,7 +6,7 @@ import Layout from "@theme/Layout";
 import ModernLerna from "../components/modern-lerna";
 import Head from "@docusaurus/Head";
 
-export default function Upgrade(): JSX.Element {
+export default function Upgrade(): React.JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout title="Upgrade" description="Get the latest developer experience from Lerna for your monorepo.">
