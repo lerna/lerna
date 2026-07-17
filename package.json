@@ -3,7 +3,8 @@
   "private": true,
   "description": "lerna dog-fooding lerna",
   "workspaces": [
-    "packages/lerna"
+    "packages/lerna",
+    "website"
   ],
   "volta": {
     "node": "26.5.0",

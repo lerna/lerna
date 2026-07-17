@@ -21,6 +21,7 @@ const sidebars = {
     "introduction",
     "getting-started",
     "lerna-and-nx",
+    "lerna-and-ai",
     {
       type: "category",
       label: "Features",

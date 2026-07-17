@@ -1,6 +1,6 @@
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { CopyToClipboard } from "./copy-to-clipboard";
 import styles from "./hero-lerna.module.css";
 import LernaIcon from "./lerna-icon";
@@ -22,7 +22,7 @@ export default function HeroLerna(): JSX.Element {
   }, [copied]);
 
   return (
-    <section className="padding-vert--xl">
+    <section className="padding-vert--md">
       <div className="container">
         <div className="row">
           <div className="col col--8 margin-vert--xl">

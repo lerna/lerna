@@ -1,5 +1,6 @@
 {
   "$schema": "packages/lerna/schemas/lerna-schema.json",
+  "packages": ["packages/lerna"],
   "command": {
     "create": {
       "homepage": "https://github.com/lerna/lerna",

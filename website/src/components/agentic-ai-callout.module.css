@@ -1,0 +1,28 @@
+.callout {
+  color: var(--ifm-color-emphasis-600);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  margin: 0 auto;
+  max-width: 44rem;
+  text-align: center;
+}
+
+.callout__polygraph {
+  white-space: nowrap;
+}
+
+.callout__more {
+  white-space: nowrap;
+}
+
+.callout__more::after {
+  content: " \2192";
+}
+
+.callout__mark {
+  height: 0.8em;
+  margin-right: 0.35em;
+  opacity: 0.85;
+  vertical-align: -0.02em;
+  width: auto;
+}

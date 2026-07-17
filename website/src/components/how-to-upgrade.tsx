@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./how-to-upgrade.module.css";
-export default function HowToUpgrade(): JSX.Element {
+export default function HowToUpgrade(): React.JSX.Element {
   return (
     <section className="padding-vert--xl container">
       <div className="row">
