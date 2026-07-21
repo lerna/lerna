@@ -74,7 +74,7 @@
     "env-cmd": "^10.1.0",
     "esbuild": "0.28.1",
     "eslint": "^9.32.0",
-    "js-yaml": "4.2.0",
+    "js-yaml": "4.3.0",
     "jsonc-eslint-parser": "^2.4.0",
     "lerna": "file:packages/lerna",
     "normalize-newline": "^3.0.0",
