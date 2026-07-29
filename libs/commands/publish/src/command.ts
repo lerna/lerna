@@ -21,7 +21,8 @@ const command: CommandModule = {
   builder(yargs) {
     const opts = {
       c: {
-        describe: "Publish packages after every successful merge using the sha as part of the tag.",
+        describe:
+          "Publish packages after every successful merge, appending the sha as a prerelease identifier (e.g. 1.0.1-alpha.0.sha-81e3b44).",
         alias: "canary",
         type: "boolean",
       },

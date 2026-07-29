@@ -15,6 +15,7 @@ import {
 } from "@lerna/test-helpers";
 import fs from "fs-extra";
 import path from "path";
+import semver from "semver";
 
 import * as childProcess from "@lerna/child-process";
 
@@ -112,10 +113,10 @@ Map {
 `);
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
-  "package-4": 1.0.1-alpha.0+SHA,
+  "package-1": 1.0.1-alpha.0.sha-SHA,
+  "package-2": 1.0.1-alpha.0.sha-SHA,
+  "package-3": 1.0.1-alpha.0.sha-SHA,
+  "package-4": 1.0.1-alpha.0.sha-SHA,
 }
 `);
   });
@@ -128,9 +129,9 @@ Object {
 
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-beta.0+SHA,
-  "package-2": 1.0.1-beta.0+SHA,
-  "package-3": 1.0.1-beta.0+SHA,
+  "package-1": 1.0.1-beta.0.sha-SHA,
+  "package-2": 1.0.1-beta.0.sha-SHA,
+  "package-3": 1.0.1-beta.0.sha-SHA,
 }
 `);
   });
@@ -143,9 +144,9 @@ Object {
 
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
+  "package-1": 1.0.1-alpha.0.sha-SHA,
+  "package-2": 1.0.1-alpha.0.sha-SHA,
+  "package-3": 1.0.1-alpha.0.sha-SHA,
 }
 `);
   });
@@ -159,9 +160,9 @@ Object {
 
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
+  "package-1": 1.0.1-alpha.0.sha-SHA,
+  "package-2": 1.0.1-alpha.0.sha-SHA,
+  "package-3": 1.0.1-alpha.0.sha-SHA,
 }
 `);
   });
@@ -174,9 +175,9 @@ Object {
 
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.1.0-alpha.0+SHA,
-  "package-2": 2.1.0-alpha.0+SHA,
-  "package-3": 3.1.0-alpha.0+SHA,
+  "package-1": 1.1.0-alpha.0.sha-SHA,
+  "package-2": 2.1.0-alpha.0.sha-SHA,
+  "package-3": 3.1.0-alpha.0.sha-SHA,
 }
 `);
   });
@@ -202,7 +203,7 @@ Object {
     // there have been two commits since the beginning of the repo
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-6": 1.0.0-alpha.1+SHA,
+  "package-6": 1.0.0-alpha.1.sha-SHA,
 }
 `);
   });
@@ -216,11 +217,11 @@ Object {
 
       expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
-  "package-4": 1.0.1-alpha.0+SHA,
-  "package-5": 1.0.1-alpha.0+SHA,
+  "package-1": 1.0.1-alpha.0.sha-SHA,
+  "package-2": 1.0.1-alpha.0.sha-SHA,
+  "package-3": 1.0.1-alpha.0.sha-SHA,
+  "package-4": 1.0.1-alpha.0.sha-SHA,
+  "package-5": 1.0.1-alpha.0.sha-SHA,
 }
 `);
     });
@@ -233,9 +234,9 @@ Object {
 
       expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-3": 1.1.0-alpha.0+SHA,
-  "package-4": 1.1.0-alpha.0+SHA,
-  "package-5": 1.1.0-alpha.0+SHA,
+  "package-3": 1.1.0-alpha.0.sha-SHA,
+  "package-4": 1.1.0-alpha.0.sha-SHA,
+  "package-5": 1.1.0-alpha.0.sha-SHA,
 }
 `);
     });
@@ -248,7 +249,7 @@ Object {
 
       expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-5": 2.0.0-alpha.0+SHA,
+  "package-5": 2.0.0-alpha.0.sha-SHA,
 }
 `);
     });
@@ -267,7 +268,7 @@ Object {
 
       expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-5": 5.0.1-alpha.0+SHA,
+  "package-5": 5.0.1-alpha.0.sha-SHA,
 }
 `);
     });
@@ -278,9 +279,9 @@ Object {
 
       expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-3": 3.0.1-alpha.1+SHA,
-  "package-4": 4.0.1-alpha.1+SHA,
-  "package-5": 5.0.1-alpha.1+SHA,
+  "package-3": 3.0.1-alpha.1.sha-SHA,
+  "package-4": 4.0.1-alpha.1.sha-SHA,
+  "package-5": 5.0.1-alpha.1.sha-SHA,
 }
 `);
     });
@@ -291,11 +292,11 @@ Object {
 
       expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.2+SHA,
-  "package-2": 2.0.1-alpha.2+SHA,
-  "package-3": 3.0.1-alpha.2+SHA,
-  "package-4": 4.0.1-alpha.2+SHA,
-  "package-5": 5.0.1-alpha.2+SHA,
+  "package-1": 1.0.1-alpha.2.sha-SHA,
+  "package-2": 2.0.1-alpha.2.sha-SHA,
+  "package-3": 3.0.1-alpha.2.sha-SHA,
+  "package-4": 4.0.1-alpha.2.sha-SHA,
+  "package-5": 5.0.1-alpha.2.sha-SHA,
 }
 `);
     });
@@ -306,9 +307,9 @@ Object {
 
       expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-3": 3.0.1-alpha.3+SHA,
-  "package-4": 4.0.1-alpha.3+SHA,
-  "package-5": 5.0.1-alpha.3+SHA,
+  "package-3": 3.0.1-alpha.3.sha-SHA,
+  "package-4": 4.0.1-alpha.3.sha-SHA,
+  "package-5": 5.0.1-alpha.3.sha-SHA,
 }
 `);
     });
@@ -319,9 +320,41 @@ Object {
 
       expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-5": 5.0.1-alpha.4+SHA,
+  "package-5": 5.0.1-alpha.4.sha-SHA,
 }
 `);
+    });
+  });
+
+  describe("publish --canary dependency ranges", () => {
+    test("writes parseable caret ranges pointing at canary versions", async () => {
+      const cwd = await initTaggedFixture("normal");
+
+      await setupChanges(cwd, ["packages/package-1/all-your-base.js", "belong to us"]);
+      await lernaPublish(cwd)("--canary");
+
+      const canaryVersion = writePackage.updatedManifest("package-1").version;
+      const spec = writePackage.updatedManifest("package-2").dependencies["package-1"];
+
+      expect(spec).toMatch(/^\^\d+\.\d+\.\d+-alpha\.\d+\.sha-[0-9a-f]+$/);
+      expect(() => new semver.Range(spec)).not.toThrow();
+      expect(semver.satisfies(canaryVersion, spec, { includePrerelease: true })).toBe(true);
+    });
+
+    test("writes parseable exact ranges pointing at canary versions with --exact", async () => {
+      const cwd = await initTaggedFixture("normal");
+
+      await setupChanges(cwd, ["packages/package-1/all-your-base.js", "belong to us"]);
+      await lernaPublish(cwd)("--canary", "--exact");
+
+      const canaryVersion = writePackage.updatedManifest("package-1").version;
+      const spec = writePackage.updatedManifest("package-2").dependencies["package-1"];
+
+      expect(spec).toMatch(/^\d+\.\d+\.\d+-alpha\.\d+\.sha-[0-9a-f]+$/);
+      // an exact pin on a canary version must remain a valid comparator,
+      // otherwise sibling packages are published uninstallable
+      expect(() => new semver.Range(spec)).not.toThrow();
+      expect(semver.satisfies(canaryVersion, spec, { includePrerelease: true })).toBe(true);
     });
   });
 
@@ -346,10 +379,10 @@ Object {
 
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
-  "package-4": 1.0.1-alpha.0+SHA,
+  "package-1": 1.0.1-alpha.0.sha-SHA,
+  "package-2": 1.0.1-alpha.0.sha-SHA,
+  "package-3": 1.0.1-alpha.0.sha-SHA,
+  "package-4": 1.0.1-alpha.0.sha-SHA,
 }
 `);
   });
@@ -370,8 +403,8 @@ Object {
 
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-2": 2.0.1-alpha.0+SHA,
-  "package-3": 3.0.1-alpha.0+SHA,
+  "package-2": 2.0.1-alpha.0.sha-SHA,
+  "package-3": 3.0.1-alpha.0.sha-SHA,
 }
 `);
   });
@@ -419,10 +452,10 @@ Object {
 
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
     Object {
-      "package-1": 1.0.1-alpha.0+SHA,
-      "package-2": 1.0.1-alpha.0+SHA,
-      "package-3": 1.0.1-alpha.0+SHA,
-      "package-4": 1.0.1-alpha.0+SHA,
+      "package-1": 1.0.1-alpha.0.sha-SHA,
+      "package-2": 1.0.1-alpha.0.sha-SHA,
+      "package-3": 1.0.1-alpha.0.sha-SHA,
+      "package-4": 1.0.1-alpha.0.sha-SHA,
     }
   `);
   });
@@ -433,11 +466,11 @@ Object {
 
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
     Object {
-      "package-1": 1.0.1-alpha.0+SHA,
-      "package-2": 2.0.1-alpha.0+SHA,
-      "package-3": 3.0.1-alpha.0+SHA,
-      "package-4": 4.0.1-alpha.0+SHA,
-      "package-6": 0.1.1-alpha.0+SHA,
+      "package-1": 1.0.1-alpha.0.sha-SHA,
+      "package-2": 2.0.1-alpha.0.sha-SHA,
+      "package-3": 3.0.1-alpha.0.sha-SHA,
+      "package-4": 4.0.1-alpha.0.sha-SHA,
+      "package-6": 0.1.1-alpha.0.sha-SHA,
     }
   `);
   });
@@ -463,8 +496,8 @@ Object {
 
     expect(writePackage.updatedVersions()).toMatchInlineSnapshot(`
     Object {
-      "package-1": 1.0.1-alpha.0+SHA,
-      "package-2": 2.0.1-alpha.0+SHA,
+      "package-1": 1.0.1-alpha.0.sha-SHA,
+      "package-2": 2.0.1-alpha.0.sha-SHA,
     }
   `);
   });
