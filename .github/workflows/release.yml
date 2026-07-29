@@ -10,6 +10,13 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      mode:
+        description: "release = version + publish; recover = publish the version already in package.json at the dispatched ref, if missing from npm (no version bump, no git writes)"
+        type: choice
+        options:
+          - release
+          - recover
+        default: release
       tag:
         description: "npm dist-tag to publish to"
         type: choice
@@ -63,6 +70,7 @@ jobs:
           persist-credentials: false
 
       - name: Configure git identity
+        if: inputs.mode == 'release'
         run: |
           # GitHub's reserved Actions bot identity (user ID 41898282 maps to the real
           # github-actions[bot] account, so the attribution cannot be squatted)
@@ -73,6 +81,7 @@ jobs:
         uses: ./.github/actions/install-node-and-dependencies
 
       - name: Version and publish
+        if: inputs.mode == 'release'
         env:
           # Used by lerna version to push the release commit/tag and create the GitHub Release
           RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
@@ -103,3 +112,19 @@ jobs:
             --preid "$RELEASE_PREID" \
             --clearLocalRegistry false \
             --noInteractive
+
+      # Recovery for a release that versioned but failed to publish: rebuilds the
+      # dispatched ref and publishes the package.json version if the registry lacks it.
+      # Provenance stays truthful because the built source is the run's own ref — recover
+      # from main (version commit on the tip) or from a v* tag. The version and preid
+      # inputs are ignored in this mode, and no git credential is present at all.
+      - name: Publish existing version (recovery)
+        if: inputs.mode == 'recover'
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+
+          npx nx build lerna --no-dte
+
+          npx lerna publish from-package --dist-tag "$RELEASE_TAG" --yes --loglevel info
