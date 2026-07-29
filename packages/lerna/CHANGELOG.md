@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.0.0](https://github.com/lerna/lerna/compare/v9.0.7...v10.0.0) (2026-07-29)
+
+- feat!: throw error in case of stale remote for CI mode (#4369) ([3e81682](https://github.com/lerna/lerna/commit/3e816822837edb0a1f70cd52c90207f520461907)), closes [#4369](https://github.com/lerna/lerna/issues/4369)
+- feat!: support node ^22.13.0 || ^24.0.0 || ^26.0.0, ship lerna as ESM-only (#4390) ([a148ba2](https://github.com/lerna/lerna/commit/a148ba23882e4e3d201b0198eefc37d6f18196d9)), closes [#4390](https://github.com/lerna/lerna/issues/4390)
+- fix(core)!: replace deprecated conventional-changelog dependencies (#4332) ([b1ff72f](https://github.com/lerna/lerna/commit/b1ff72f7053870eaf661b06af9759c9fe6c0c5d6)), closes [#4332](https://github.com/lerna/lerna/issues/4332)
+
+### Bug Fixes
+
+- **core:** remove p-map-series, p-pipe, p-reduce, and p-waterfall ([#4321](https://github.com/lerna/lerna/issues/4321)) ([fe066cb](https://github.com/lerna/lerna/commit/fe066cb52fa47a590022108a098a9ba5fb108af2))
+- **core:** remove upath dependency ([#4317](https://github.com/lerna/lerna/issues/4317)) ([aa65470](https://github.com/lerna/lerna/commit/aa654700fdfb3bfe79e79a38cabbe3ff078a5f5b))
+
+### Features
+
+- **core:** add bun as supported package manager ([#4264](https://github.com/lerna/lerna/issues/4264)) ([4ca7d2c](https://github.com/lerna/lerna/commit/4ca7d2cc46feef31641d6877cf32f420d2ebc897))
+
+### BREAKING CHANGES
+
+- In CI, `EBEHIND` will now be thrown during versioning and publishing if the checkout is behind the latest on the remote. This previously only occurred outside of CI environments.
+
+  If you wish to opt into the old behavior, you can do so by setting `--ci-behind-behavior` (error | skip, default error) or `command.version.ciBehindBehavior` in `lerna.json`.
+
+- Lerna is now shipped as ESM-only and the lowest supported node version has changed to 22.13.0, because on this version CommonJS consumers can still require in its entry points without any additional flags or warnings.
+- Lerna now uses the current conventional-changelog APIs instead of the deprecated conventional-changelog-core stack.
+
+  Generated CHANGELOG.md output may differ, including normalized whitespace and URL-encoded tag names. Projects using custom changelog presets should verify their output; Lerna retains compatibility for legacy parser/writer option names and Handlebars string templates.
+
+  CLI options and version-bump behavior remain unchanged.
+
 ## [9.0.7](https://github.com/lerna/lerna/compare/v9.0.6...v9.0.7) (2026-03-13)
 
 ### Bug Fixes

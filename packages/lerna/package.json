@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "9.0.7",
+  "version": "10.0.0",
   "type": "module",
   "description": "Lerna is a fast, modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository",
   "keywords": [
