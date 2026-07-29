@@ -1,0 +1,6 @@
+# The npm trusted publisher trusts whatever release.yml (and the scripts it runs)
+# says on main, so changes to the release trust boundary require maintainer review.
+# Owners mirror the required reviewers of the npm-production environment.
+
+/.github/ @JamesHenry @vsavkin
+/tools/scripts/ @JamesHenry @vsavkin

@@ -1,0 +1,105 @@
+name: Release
+
+# Publishing is tokenless: lerna publish exchanges this workflow's OIDC token for a
+# short-lived npm token via the trusted publisher configured on npmjs.com, which is
+# bound to this exact workflow filename and the npm-production environment. Provenance
+# is generated automatically as part of that flow. The only secret involved is
+# RELEASE_PAT (git pushes + GitHub Release creation), scoped to the gated environment
+# and exposed only to the final step rather than persisted by checkout.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "npm dist-tag to publish to"
+        type: choice
+        options:
+          - next
+          - latest
+          - previous
+        default: next
+      preid:
+        description: "Prerelease identifier (only used when publishing to next)"
+        type: choice
+        options:
+          - alpha
+          - beta
+          - rc
+        default: beta
+      version:
+        description: "Optional explicit version (inferred from conventional commits if empty)"
+        type: string
+        required: false
+
+permissions:
+  contents: read
+  id-token: write # required for the OIDC exchange with the npm registry
+
+concurrency:
+  group: release
+  cancel-in-progress: false # never kill a mid-publish run
+
+jobs:
+  release:
+    name: Version and publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    environment:
+      name: npm-production
+      url: https://www.npmjs.com/package/lerna
+    env:
+      # The provenance attestation asserts that the artifact was built from source in
+      # this run, so the release build must never be served from remote cache
+      NX_NO_CLOUD: "true"
+      # Pin the publish target so no checked-in or dependency-written npmrc can redirect it
+      NPM_CONFIG_REGISTRY: "https://registry.npmjs.org/"
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          # Conventional-commits version inference needs full history and tags
+          fetch-depth: 0
+          # Dependency installation and the build must not run with push credentials
+          # available; the release step configures its own authenticated remote
+          persist-credentials: false
+
+      - name: Configure git identity
+        run: |
+          # GitHub's reserved Actions bot identity (user ID 41898282 maps to the real
+          # github-actions[bot] account, so the attribution cannot be squatted)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Install node and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+
+      - name: Version and publish
+        env:
+          # Used by lerna version to push the release commit/tag and create the GitHub Release
+          RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+          # Env indirection so inputs are never interpolated into the script source
+          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_PREID: ${{ inputs.preid }}
+        run: |
+          set -euo pipefail
+
+          git remote set-url origin "https://x-access-token:${RELEASE_PAT}@github.com/${GITHUB_REPOSITORY}.git"
+
+          args=()
+          if [[ -n "$RELEASE_VERSION" ]]; then
+            # The free-text input must be a single exact semver version, nothing else,
+            # so it cannot smuggle additional flags into the release script
+            if [[ ! "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
+              echo "version input must be an exact semver version, got: $RELEASE_VERSION" >&2
+              exit 1
+            fi
+            args+=("$RELEASE_VERSION")
+          fi
+
+          npm run lerna-release -- "${args[@]}" \
+            --local false \
+            --tag "$RELEASE_TAG" \
+            --preid "$RELEASE_PREID" \
+            --clearLocalRegistry false \
+            --noInteractive
