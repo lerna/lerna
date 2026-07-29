@@ -78,20 +78,20 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 
 ```sh
 lerna publish --canary
-# 1.0.0 => 1.0.1-alpha.0+${SHA} of packages changed since the previous commit
-# a subsequent canary publish will yield 1.0.1-alpha.1+${SHA}, etc
+# 1.0.0 => 1.0.1-alpha.0.sha-${SHA} of packages changed since the previous commit
+# a subsequent canary publish will yield 1.0.1-alpha.1.sha-${SHA}, etc
 
 lerna publish --canary --preid beta
-# 1.0.0 => 1.0.1-beta.0+${SHA}
+# 1.0.0 => 1.0.1-beta.0.sha-${SHA}
 
 # The following are equivalent:
 lerna publish --canary minor
 lerna publish --canary preminor
-# 1.0.0 => 1.1.0-alpha.0+${SHA}
+# 1.0.0 => 1.1.0-alpha.0.sha-${SHA}
 ```
 
 When run with this flag, `lerna publish` publishes packages in a more granular way (per commit).
-Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next _minor_ version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0` becomes `1.1.0-alpha.0+81e3b443`).
+Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next _minor_ version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha as a final `sha-`-prefixed prerelease identifier (ex: `1.0.0` becomes `1.1.0-alpha.0.sha-81e3b443`).
 
 If you have publish canary releases from multiple active development branches in CI,
 it is recommended to customize the [`--preid`](#--preid) and [`--dist-tag <tag>`](#--dist-tag-tag) on a per-branch basis to avoid clashing versions.
@@ -244,11 +244,11 @@ Unlike the `lerna version` option of the same name, this option only applies to 
 ```sh
 lerna publish --canary
 # uses the next semantic prerelease version, e.g.
-# 1.0.0 => 1.0.1-alpha.0
+# 1.0.0 => 1.0.1-alpha.0.sha-${SHA}
 
 lerna publish --canary --preid next
 # uses the next semantic prerelease version with a specific prerelease identifier, e.g.
-# 1.0.0 => 1.0.1-next.0
+# 1.0.0 => 1.0.1-next.0.sha-${SHA}
 ```
 
 When run with this flag, `lerna publish --canary` will increment `premajor`, `preminor`, `prepatch`, or `prerelease` semver

@@ -12,9 +12,13 @@ function containsE2ERootWithNoLeadingSlash(str: string): boolean {
 }
 
 export function normalizeCommitSHAs(str: string): string {
-  return str
-    .replaceAll(/\b[0-9a-f]{7,8}\b/g, "{SHORT_COMMIT_SHA}")
-    .replaceAll(/\b[0-9a-f]{40}\b/g, "{FULL_COMMIT_SHA}");
+  return (
+    str
+      // canary versions embed the short SHA in a "sha-"-prefixed prerelease identifier
+      .replaceAll(/\.sha-[0-9a-f]+\b/g, ".sha-{SHORT_COMMIT_SHA}")
+      .replaceAll(/\b[0-9a-f]{7,8}\b/g, "{SHORT_COMMIT_SHA}")
+      .replaceAll(/\b[0-9a-f]{40}\b/g, "{FULL_COMMIT_SHA}")
+  );
 }
 
 /**

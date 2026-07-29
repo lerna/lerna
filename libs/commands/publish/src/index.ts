@@ -45,6 +45,7 @@ import { getProjectsWithUnpublishedPackages } from "./lib/get-projects-with-unpu
 import { getTwoFactorAuthRequired } from "./lib/get-two-factor-auth-required";
 import { gitCheckout } from "./lib/git-checkout";
 import { interpolate } from "./lib/interpolate";
+import { makeCanaryVersion } from "./lib/make-canary-version";
 import { removeTempLicenses } from "./lib/remove-temp-licenses";
 import { Queue, TailHeadQueue } from "./lib/throttle-queue";
 import { verifyNpmPackageAccess } from "./lib/verify-npm-package-access";
@@ -584,8 +585,7 @@ export class PublishCommand extends Command {
         );
 
         // semver.inc() starts a new prerelease at .0, git describe starts at .1
-        // and build metadata is always ignored when comparing dependency ranges
-        return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
+        return makeCanaryVersion(nextVersion as string, preid, refCount, sha);
       };
 
     let updatesVersions: [string, string][];
