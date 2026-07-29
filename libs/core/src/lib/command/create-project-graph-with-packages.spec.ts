@@ -175,31 +175,7 @@ describe("createProjectGraphWithPackages", () => {
     });
   });
 
-  it("should restore root package dependencies omitted from the Nx project graph", async () => {
-    const graph = projectGraph();
-    graph.nodes.project.data.root = ".";
-    const files = projectFileMap();
-    files.project = [{ file: "package.json" } as FileData];
-
-    const result = await createProjectGraphWithPackages(graph, files, [
-      "packages/*",
-      "other-packages/*",
-      ".",
-    ]);
-
-    expect(result.localPackageDependencies.project).toContainEqual({
-      source: "project",
-      target: "projectA",
-      type: "static",
-      dependencyCollection: "dependencies",
-      targetResolvedNpaResult: expect.objectContaining({
-        name: "projectA",
-      }),
-      targetVersionMatchesDependencyRequirement: true,
-    });
-  });
-
-  it("should not duplicate root package dependencies supplied by the Nx project graph", async () => {
+  it("should populate local package dependencies for the root project", async () => {
     const graph = projectGraph();
     graph.nodes.project.data.root = ".";
     graph.dependencies.project = [

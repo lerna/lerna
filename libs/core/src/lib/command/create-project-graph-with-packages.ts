@@ -48,57 +48,16 @@ export async function createProjectGraphWithPackages(
     nodes: {},
     localPackageDependencies: {},
   };
-  const projectLookupByPackageName: Record<string, string> = {};
   const sortedTuples = [...tuples].sort((a, b) => a[0].data.root.localeCompare(b[0].data.root));
   sortedTuples.forEach(([node, manifest]) => {
     let pkg: Package | null = null;
     if (manifest) {
       pkg = new Package(manifest, join(_workspaceRoot, node.data.root), _workspaceRoot);
-      projectLookupByPackageName[pkg.name] = node.name;
     }
     projectGraphWithOrderedNodes.nodes[node.name] = {
       ...node,
       package: pkg,
     };
-  });
-
-  // Nx 23 omits package.json dependencies for projects rooted at ".".
-  // Recreate the missing edges until https://github.com/nrwl/nx/issues/36290 is resolved.
-  Object.values(projectGraphWithOrderedNodes.nodes).forEach((source) => {
-    if (!source.package || source.data.root !== ".") {
-      return;
-    }
-
-    const sourcePkg = getPackage(source);
-    const existingTargets = new Set(
-      projectGraphWithOrderedNodes.dependencies[source.name]?.map((dependency) => dependency.target)
-    );
-    const localDependencyNames = new Set([
-      ...Object.keys(sourcePkg.dependencies || {}),
-      ...Object.keys(sourcePkg.devDependencies || {}),
-      ...Object.keys(sourcePkg.optionalDependencies || {}),
-      ...Object.keys(sourcePkg.peerDependencies || {}),
-    ]);
-
-    localDependencyNames.forEach((targetPackageName) => {
-      const targetProjectName = projectLookupByPackageName[targetPackageName];
-      if (
-        targetProjectName &&
-        source.name !== targetProjectName &&
-        !existingTargets.has(targetProjectName) &&
-        sourcePkg.getLocalDependency(targetPackageName)
-      ) {
-        projectGraphWithOrderedNodes.dependencies[source.name] = [
-          ...(projectGraphWithOrderedNodes.dependencies[source.name] || []),
-          {
-            source: source.name,
-            target: targetProjectName,
-            type: "static",
-          },
-        ];
-        existingTargets.add(targetProjectName);
-      }
-    });
   });
 
   // order dependencies to create consistent results when iterating over them

@@ -65,8 +65,8 @@ export class AddCachingCommand extends Command {
 
     log.pause();
 
-    const existingTargetDefaults = this.uniqueScriptNames.filter(
-      (scriptName) => nxJson.targetDefaults?.[scriptName]?.dependsOn?.length
+    const existingTargetDefaults = this.uniqueScriptNames.filter((scriptName) =>
+      this.getTargetDefaultEntries(nxJson, scriptName).some((entry) => entry.dependsOn?.length)
     );
     const { targetDefaults } = await inquirer.prompt<{ targetDefaults: UserAnswers["targetDefaults"] }>([
       {
@@ -79,8 +79,8 @@ export class AddCachingCommand extends Command {
       },
     ]);
 
-    const existingCacheableOperations = this.uniqueScriptNames.filter(
-      (scriptName) => nxJson.targetDefaults?.[scriptName]?.cache
+    const existingCacheableOperations = this.uniqueScriptNames.filter((scriptName) =>
+      this.getTargetDefaultEntries(nxJson, scriptName).some((entry) => entry.cache)
     );
     const { cacheableOperations } = await inquirer.prompt<{
       cacheableOperations: UserAnswers["cacheableOperations"];
@@ -135,30 +135,47 @@ export class AddCachingCommand extends Command {
       );
     }
 
-    nxJson.targetDefaults = nxJson.targetDefaults || {};
+    const targetDefaults = nxJson.targetDefaults || {};
+    nxJson.targetDefaults = targetDefaults;
 
     for (const scriptName of this.uniqueScriptNames) {
-      nxJson.targetDefaults[scriptName] = nxJson.targetDefaults[scriptName] || {};
+      const targetDefault = this.getObjectFormTargetDefault(targetDefaults, scriptName);
       if (answers.cacheableOperations.includes(scriptName)) {
-        nxJson.targetDefaults[scriptName].cache = true;
+        targetDefault.cache = true;
       } else {
-        delete nxJson.targetDefaults[scriptName].cache;
+        delete targetDefault.cache;
       }
       // always set dependsOn, even if empty array, so that `lerna run` knows not to assume any dependencies
-      nxJson.targetDefaults[scriptName].dependsOn = answers.targetDefaults.includes(scriptName)
-        ? [`^${scriptName}`]
-        : [];
+      targetDefault.dependsOn = answers.targetDefaults.includes(scriptName) ? [`^${scriptName}`] : [];
     }
 
     for (const [scriptName, scriptAnswerData] of Object.entries(answers.scriptOutputs)) {
       if (!scriptAnswerData[scriptName]) {
         continue;
       }
-      nxJson.targetDefaults[scriptName] = nxJson.targetDefaults[scriptName] || {};
-      nxJson.targetDefaults[scriptName].outputs = [`{projectRoot}/${scriptAnswerData[scriptName]}`];
+      const targetDefault = this.getObjectFormTargetDefault(targetDefaults, scriptName);
+      targetDefault.outputs = [`{projectRoot}/${scriptAnswerData[scriptName]}`];
     }
 
     writeJsonFile(nxJsonPath, nxJson);
+  }
+
+  // Nx 23 target defaults can also be an ordered array of filtered entries
+  private getTargetDefaultEntries(nxJson: NxJsonConfiguration, scriptName: string) {
+    const value = nxJson.targetDefaults?.[scriptName];
+    return Array.isArray(value) ? value : value ? [value] : [];
+  }
+
+  // Array-form target defaults cannot represent the per-script answers,
+  // so array-form entries are replaced with a plain object.
+  private getObjectFormTargetDefault(
+    targetDefaults: NonNullable<NxJsonConfiguration["targetDefaults"]>,
+    scriptName: string
+  ) {
+    const existing = targetDefaults[scriptName];
+    const targetDefault = existing && !Array.isArray(existing) ? existing : {};
+    targetDefaults[scriptName] = targetDefault;
+    return targetDefault;
   }
 
   private async configureGitIgnore(): Promise<void> {
