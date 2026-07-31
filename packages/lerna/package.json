@@ -81,7 +81,7 @@
     "signal-exit": "3.0.7",
     "ssri": "12.0.0",
     "string-width": "^4.2.3",
-    "tar": "7.5.20",
+    "tar": "7.5.22",
     "tinyglobby": "0.2.12",
     "validate-npm-package-license": "3.0.4",
     "validate-npm-package-name": "6.0.2",
