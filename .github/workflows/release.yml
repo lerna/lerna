@@ -79,6 +79,8 @@ jobs:
 
       - name: Install node and dependencies
         uses: ./.github/actions/install-node-and-dependencies
+        with:
+          install-additional-package-managers: "false"
 
       - name: Version and publish
         if: inputs.mode == 'release'

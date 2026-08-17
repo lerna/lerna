@@ -8,6 +8,10 @@ inputs:
     description: "The command to run to install dependencies"
     required: false
     default: "npm ci"
+  install-additional-package-managers:
+    description: "Whether to install package managers used by the integration and e2e test suites"
+    required: false
+    default: "true"
 
 runs:
   using: "composite"
@@ -26,12 +30,13 @@ runs:
     # https://github.com/actions/cache/blob/940f3d7cf195ba83374c77632d1e2cbb2f24ae68/examples.md#node---npm
 
     - name: Install Corepack for the primary Node version
-      if: ${{ inputs.node-version == '' }}
+      if: ${{ inputs.node-version == '' && inputs.install-additional-package-managers == 'true' }}
       # Windows runners already provide Yarn shims that Corepack needs to replace.
       run: npm install --global corepack@0.35.0 --min-release-age=0 --ignore-scripts --force
       shell: bash
 
     - name: Enable corepack
+      if: ${{ inputs.install-additional-package-managers == 'true' }}
       run: corepack enable
       shell: bash
       env:
@@ -44,6 +49,7 @@ runs:
       shell: bash
 
     - name: Install pnpm v8
+      if: ${{ inputs.install-additional-package-managers == 'true' }}
       run: corepack install -g pnpm@8
       shell: bash
       env:
@@ -51,6 +57,7 @@ runs:
         COREPACK_ENABLE_STRICT: "0"
 
     - name: Use Yarn classic
+      if: ${{ inputs.install-additional-package-managers == 'true' }}
       run: yarn set version classic
       shell: bash
       env:
@@ -58,16 +65,22 @@ runs:
         COREPACK_ENABLE_STRICT: "0"
 
     - name: Install Bun
+      if: ${{ inputs.install-additional-package-managers == 'true' }}
       uses: oven-sh/setup-bun@e3914758a49697077f7bcd190d36582a61667aad # v2 (Node.js 24 runtime)
       with:
         # Latest 1.x so e2e exercises the text-based bun.lock format that has been bun's
         # default since 1.2 (the legacy binary bun.lockb handling is covered by unit tests)
         bun-version: "1.x"
 
-    - name: Print installed node, npm, yarn, pnpm and bun versions
+    - name: Print installed Node and npm versions
       run: |
         node --version
         npm --version
+      shell: bash
+
+    - name: Print installed yarn, pnpm and bun versions
+      if: ${{ inputs.install-additional-package-managers == 'true' }}
+      run: |
         yarn --version
         pnpm --version
         bun --version
