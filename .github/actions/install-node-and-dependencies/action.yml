@@ -56,9 +56,9 @@ runs:
         COREPACK_ENABLE_AUTO_PIN: "0"
         COREPACK_ENABLE_STRICT: "0"
 
-    - name: Use Yarn classic
+    - name: Install Yarn classic
       if: ${{ inputs.install-additional-package-managers == 'true' }}
-      run: yarn set version classic
+      run: corepack install -g yarn@1.22.22
       shell: bash
       env:
         COREPACK_ENABLE_AUTO_PIN: "0"
