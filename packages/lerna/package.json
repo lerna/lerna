@@ -50,7 +50,7 @@
     "conventional-changelog": "8.1.0",
     "conventional-changelog-angular": "9.2.1",
     "conventional-commits-filter": "6.0.1",
-    "conventional-commits-parser": "7.1.0",
+    "conventional-commits-parser": "7.1.2",
     "conventional-recommended-bump": "12.1.0",
     "cosmiconfig": "9.0.0",
     "dedent": "1.5.3",
