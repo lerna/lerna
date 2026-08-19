@@ -155,7 +155,7 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Start Nx Cloud CI Run - Windows
-        run: npx nx-cloud start-ci-run --stop-agents-after="test"
+        run: npx nx-cloud start-ci-run --stop-agents-after="test,integration"
 
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
