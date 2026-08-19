@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.0.1](https://github.com/lerna/lerna/compare/v10.0.0...v10.0.1) (2026-08-19)
+
+### Bug Fixes
+
+- missing peer dependency in lerna 10 ([#4412](https://github.com/lerna/lerna/issues/4412)) ([06b8acb](https://github.com/lerna/lerna/commit/06b8acb541a6d00bd87c96cc39ae17d06eee7895))
+- skip unnecessary package managers during release ([#4413](https://github.com/lerna/lerna/issues/4413)) ([ed46de5](https://github.com/lerna/lerna/commit/ed46de57e4273400a4007faac8aaaffae24245e5))
+
 # [10.0.0](https://github.com/lerna/lerna/compare/v9.0.7...v10.0.0) (2026-07-29)
 
 - feat!: throw error in case of stale remote for CI mode (#4369) ([3e81682](https://github.com/lerna/lerna/commit/3e816822837edb0a1f70cd52c90207f520461907)), closes [#4369](https://github.com/lerna/lerna/issues/4369)
