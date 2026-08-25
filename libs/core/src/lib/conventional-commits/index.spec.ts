@@ -732,6 +732,33 @@ describe("conventional-commits", () => {
       `);
     });
 
+    it("keeps the writer template of a new v8+ preset that ships a legacy writer guard", async () => {
+      const cwd = await initFixture("fixed");
+
+      await gitTag(cwd, "v1.0.0");
+
+      const [pkg1] = await getPackages(cwd);
+
+      // make a change in package-1
+      await pkg1.set("changed", 1).serialize();
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix(pkg1): A commit using a preset with a legacy writer guard");
+
+      // update version
+      await pkg1.set("version", "1.0.1").serialize();
+
+      const leafChangelog = await updateChangelog(pkg1, "fixed", {
+        changelogPreset: "./scripts/legacy-guard-preset.js",
+      });
+
+      expect(leafChangelog.newEntry).toMatchInlineSnapshot(`
+        <a name="1.0.1"></a>
+        ## <small>1.0.1 (YYYY-MM-DD)</small>
+        * fix(pkg1): A commit using a preset with a legacy writer guard
+
+      `);
+    });
+
     it("updates independent changelogs", async () => {
       const cwd = await initFixture("independent");
 

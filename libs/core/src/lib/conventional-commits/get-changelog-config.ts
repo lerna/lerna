@@ -21,6 +21,11 @@ function normalizeLegacyWriterOptions(writer: any): any {
     return writer;
   }
 
+  // modern presets ship a string mainTemplate that only exists to fail loudly on pre-v9 writers
+  if (typeof writer.template === "function") {
+    return writer;
+  }
+
   const normalized = { ...writer };
   const legacyMainTemplate =
     typeof writer.mainTemplate === "string" ? Handlebars.compile(writer.mainTemplate) : undefined;
