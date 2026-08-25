@@ -3,20 +3,25 @@
 const parserOpts = require("./parser-opts");
 const whatBump = require("./what-bump");
 
-// Simulates a new v8+ preset that also ships the legacy writer guard, i.e. a
-// string mainTemplate which throws when rendered by a pre-v9 writer
+// Simulates a new v8+ preset that also ships the legacy writer guard:
+// a string mainTemplate which only renders on a pre-v9 writer
 module.exports = function createPreset() {
   return {
     parser: parserOpts,
     writer: {
       mainTemplate: "{{[this preset requires conventional-changelog-writer@9 or newer] true}}",
-      template: (context) =>
-        [
-          `<a name="${context.version}"></a>`,
-          `## <small>${context.version} (${context.date})</small>`,
-          ...context.commitGroups.flatMap((group) => group.commits.map((commit) => `* ${commit.header}`)),
+      template: (context) => {
+        const commits = context.commitGroups.flatMap((group) => group.commits);
+
+        return [
+          context.headerPartial(context),
+          ...commits.map((commit) => context.commitPartial(context, commit)),
           "",
-        ].join("\n"),
+        ].join("\n");
+      },
+      headerPartial: (context) =>
+        `<a name="${context.version}"></a>\n## <small>${context.version} (${context.date})</small>`,
+      commitPartial: (context, commit) => `* ${commit.header}`,
       groupBy: `type`,
     },
     commits: { merges: false },

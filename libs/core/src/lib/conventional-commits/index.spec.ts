@@ -732,7 +732,7 @@ describe("conventional-commits", () => {
       `);
     });
 
-    it("keeps the writer template of a new v8+ preset that ships a legacy writer guard", async () => {
+    it("keeps the writer template of a new v8+ preset with a legacy guard", async () => {
       const cwd = await initFixture("fixed");
 
       await gitTag(cwd, "v1.0.0");
