@@ -326,7 +326,7 @@ Map {
   });
 
   describe("auth-type", () => {
-    it("advertises the web auth type by default so the registry can issue a browser-based 2FA challenge", async () => {
+    it("advertises the web auth type and command by default so the registry can issue a browser-based 2FA challenge", async () => {
       const testDir = await initFixture("normal");
 
       await lernaPublish(testDir)();
@@ -334,7 +334,11 @@ Map {
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
-        expect.objectContaining({ authType: "web" }),
+        expect.objectContaining({
+          authType: "web",
+          npmCommand: "publish",
+          userAgent: expect.stringMatching(/^lerna\//),
+        }),
         expect.objectContaining({ root: expect.any(Object) }),
         expect.objectContaining({ otp: undefined })
       );
