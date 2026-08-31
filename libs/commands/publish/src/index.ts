@@ -226,6 +226,13 @@ export class PublishCommand extends Command {
 
     this.conf["set"]("user-agent", this.userAgent, "cli");
 
+    // npm-registry-fetch sends the camelCased `authType` as the `npm-auth-type` request header, which is how the
+    // registry learns whether the client can complete a browser-based ("web") two-factor challenge - required for
+    // accounts secured with a security key / passkey. Mirroring npm, an explicitly configured OTP forces the
+    // legacy (typed one-time password) flow, and so does any `auth-type` other than `web`.
+    const authType = !this.otpCache.otp && this.conf["get"]("auth-type") === "web" ? "web" : "legacy";
+    this.conf["set"]("authType", authType, "cli");
+
     if (this.conf["get"]("registry") === "https://registry.yarnpkg.com") {
       this.logger.warn("", "Yarn's registry proxy is broken, replacing with public npm registry");
       this.logger.warn("", "If you don't have an npm token, you should exit and run `npm login`");
