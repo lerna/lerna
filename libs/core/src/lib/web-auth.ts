@@ -11,7 +11,7 @@
  * - https://github.com/npm/npm-profile/blob/main/lib/index.js (webAuthOpener / webAuthCheckLogin)
  */
 
-import * as childProcess from "@lerna/child-process";
+import childProcess from "node:child_process";
 import fetch, { FetchOptions } from "npm-registry-fetch";
 import log from "./npmlog";
 
@@ -77,9 +77,7 @@ export async function getWebAuthOneTimePassword(
 
   // Opening the browser is best-effort: the URL has already been printed, so a missing or
   // failing opener (e.g. an SSH session) must not prevent the user from completing the challenge.
-  openInBrowser(authUrl, opts["browser"]).catch((err: Error) => {
-    log.verbose("web-auth", `Unable to open browser automatically: ${err?.message || err}`);
-  });
+  openInBrowser(authUrl, opts["browser"]);
 
   return pollForToken(doneUrl, opts);
 }
@@ -88,27 +86,53 @@ export async function getWebAuthOneTimePassword(
  * Open a URL with the user's default browser, honouring the npm `browser` config:
  * `false` disables opening entirely, a string is used as the opener command,
  * anything else uses the platform default (`open`, `start`, or `xdg-open`).
+ *
+ * This is deliberately fire-and-forget:
+ * - the child is unref'd so that an opener which stays in the foreground (as `xdg-open` may when it has to
+ *   launch the browser itself) cannot keep lerna alive after publishing has finished
+ * - failures are only logged, and never affect `process.exitCode`. `@lerna/child-process` is intentionally not
+ *   used here because it propagates a child's non-zero exit status onto `process.exitCode`, which would turn an
+ *   otherwise successful publish into a failed lerna run whenever no opener is available (SSH, containers, CI).
  */
-function openInBrowser(url: string, browser: unknown): Promise<unknown> {
+function openInBrowser(url: string, browser: unknown): void {
   if (browser === false) {
-    return Promise.resolve();
+    return;
   }
+
+  const onError = (err: unknown) => {
+    log.verbose("web-auth", `Unable to open browser automatically: ${(err as Error)?.message || err}`);
+  };
 
   // URLs are only ever passed through as a single argument, so escape anything that could be
   // interpreted by a shell (`"` etc) - the registry URL is expected to already be well-formed.
   const target = encodeURI(url);
 
-  if (typeof browser === "string") {
-    return childProcess.exec(browser, [target]);
-  }
+  try {
+    const child =
+      typeof browser === "string"
+        ? childProcess.spawn(browser, [target], { stdio: "ignore", windowsHide: true })
+        : process.platform === "win32"
+          ? // `start` is a cmd.exe builtin, so a shell is required. The empty quoted first argument is the
+            // window title, without which `start` would treat the URL as the title.
+            childProcess.spawn("start", ['""', `"${target}"`], {
+              shell: true,
+              stdio: "ignore",
+              windowsHide: true,
+            })
+          : childProcess.spawn(process.platform === "darwin" ? "open" : "xdg-open", [target], {
+              stdio: "ignore",
+            });
 
-  if (process.platform === "win32") {
-    // `start` is a cmd.exe builtin, so a shell is required. The empty quoted first argument is the
-    // window title, without which `start` would treat the URL as the title.
-    return childProcess.exec("start", ['""', `"${target}"`], { shell: true });
+    child.on("error", onError);
+    child.on("exit", (code) => {
+      if (code) {
+        onError(new Error(`opener exited with code ${code}`));
+      }
+    });
+    child.unref();
+  } catch (err) {
+    onError(err);
   }
-
-  return childProcess.exec(process.platform === "darwin" ? "open" : "xdg-open", [target]);
 }
 
 async function pollForToken(doneUrl: string, opts: Record<string, unknown>): Promise<string> {
