@@ -1,15 +1,26 @@
 vi.mock("npm-registry-fetch");
-vi.mock("@lerna/child-process");
 
+import childProcess from "node:child_process";
+import { EventEmitter } from "node:events";
 // mocked modules
-import * as childProcess from "@lerna/child-process";
 import fetch from "npm-registry-fetch";
+import log from "./npmlog";
 
 // file under test
 import { getWebAuthChallenge, getWebAuthOneTimePassword } from "./web-auth";
 
 const mockedFetch = vi.mocked(fetch);
-const mockedExec = vi.mocked(childProcess.exec);
+
+type FakeChild = EventEmitter & { unref: ReturnType<typeof vi.fn> };
+let spawnSpy: ReturnType<typeof vi.spyOn>;
+let spawnedChildren: FakeChild[];
+
+function fakeChild(): FakeChild {
+  const child = new EventEmitter() as FakeChild;
+  child.unref = vi.fn();
+  spawnedChildren.push(child);
+  return child;
+}
 
 function response(status: number, body?: unknown, headers: Record<string, string> = {}) {
   return {
@@ -21,10 +32,12 @@ function response(status: number, body?: unknown, headers: Record<string, string
 
 describe("web-auth", () => {
   beforeEach(() => {
-    mockedExec.mockResolvedValue(undefined as never);
+    spawnedChildren = [];
+    spawnSpy = vi.spyOn(childProcess, "spawn").mockImplementation(() => fakeChild() as never);
   });
 
   afterEach(() => {
+    spawnSpy.mockRestore();
     vi.resetAllMocks();
   });
 
@@ -101,7 +114,8 @@ describe("web-auth", () => {
       const result = await getWebAuthOneTimePassword(challenge, opts);
 
       expect(result).toBe("web-otp-token");
-      expect(mockedExec).toHaveBeenCalledTimes(1);
+      expect(spawnSpy).toHaveBeenCalledTimes(1);
+      expect(spawnedChildren[0].unref).toHaveBeenCalled();
       expect(mockedFetch).toHaveBeenCalledTimes(3);
       expect(mockedFetch).toHaveBeenCalledWith(
         challenge.doneUrl,
@@ -132,16 +146,16 @@ describe("web-auth", () => {
     });
 
     it.each([
-      ["darwin", "open", [challenge.authUrl], undefined],
-      ["linux", "xdg-open", [challenge.authUrl], undefined],
-      ["win32", "start", ['""', `"${challenge.authUrl}"`], { shell: true }],
-    ])("opens the auth url with the platform default on %s", async (os, command, args, execOpts) => {
+      ["darwin", "open", [challenge.authUrl], { stdio: "ignore" }],
+      ["linux", "xdg-open", [challenge.authUrl], { stdio: "ignore" }],
+      ["win32", "start", ['""', `"${challenge.authUrl}"`], { shell: true, stdio: "ignore" }],
+    ])("opens the auth url with the platform default on %s", async (os, command, args, spawnOpts) => {
       Object.defineProperty(process, "platform", { value: os });
       mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
 
       await getWebAuthOneTimePassword(challenge, opts);
 
-      expect(mockedExec).toHaveBeenCalledWith(command, args, ...(execOpts ? [execOpts] : []));
+      expect(spawnSpy).toHaveBeenCalledWith(command, args, expect.objectContaining(spawnOpts));
     });
 
     it("does not open a browser when the npm 'browser' config is false", async () => {
@@ -150,7 +164,7 @@ describe("web-auth", () => {
       await expect(getWebAuthOneTimePassword(challenge, { ...opts, browser: false })).resolves.toBe(
         "web-otp-token"
       );
-      expect(mockedExec).not.toHaveBeenCalled();
+      expect(spawnSpy).not.toHaveBeenCalled();
     });
 
     it("uses the npm 'browser' config as the opener command when it is a string", async () => {
@@ -158,14 +172,67 @@ describe("web-auth", () => {
 
       await getWebAuthOneTimePassword(challenge, { ...opts, browser: "firefox" });
 
-      expect(mockedExec).toHaveBeenCalledWith("firefox", [challenge.authUrl]);
+      expect(spawnSpy).toHaveBeenCalledWith(
+        "firefox",
+        [challenge.authUrl],
+        expect.objectContaining({ stdio: "ignore" })
+      );
     });
 
-    it("still resolves when the browser cannot be opened", async () => {
-      mockedExec.mockRejectedValue(Object.assign(new Error("spawn failed"), { exitCode: 127 }));
+    it("does not wait for the opener to exit", async () => {
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      // the fake child never emits "exit"
+      await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+    });
+
+    it("still resolves when the opener cannot be spawned", async () => {
+      const verbose = vi.spyOn(log, "verbose").mockImplementation(() => undefined);
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      const pending = getWebAuthOneTimePassword(challenge, opts);
+      spawnedChildren[0].emit("error", Object.assign(new Error("spawn xdg-open ENOENT"), { code: "ENOENT" }));
+
+      await expect(pending).resolves.toBe("web-otp-token");
+      expect(verbose).toHaveBeenCalledWith("web-auth", expect.stringContaining("spawn xdg-open ENOENT"));
+    });
+
+    it("still resolves when the opener exits with a non-zero status", async () => {
+      const verbose = vi.spyOn(log, "verbose").mockImplementation(() => undefined);
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      const pending = getWebAuthOneTimePassword(challenge, opts);
+      spawnedChildren[0].emit("exit", 127, null);
+
+      await expect(pending).resolves.toBe("web-otp-token");
+      expect(verbose).toHaveBeenCalledWith("web-auth", expect.stringContaining("exited with code 127"));
+    });
+
+    it("still resolves when spawn throws synchronously", async () => {
+      spawnSpy.mockImplementation(() => {
+        throw new Error("EACCES");
+      });
       mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
 
       await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+    });
+
+    it("does not touch process.exitCode when a real opener is missing", async () => {
+      // use the real child_process so that the ENOENT path is exercised end-to-end
+      spawnSpy.mockRestore();
+      const verbose = vi.spyOn(log, "verbose").mockImplementation(() => undefined);
+      const exitCode = process.exitCode;
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await expect(
+        getWebAuthOneTimePassword(challenge, { ...opts, browser: "lerna-web-auth-nonexistent-opener-xyz" })
+      ).resolves.toBe("web-otp-token");
+
+      // the spawn error is emitted asynchronously
+      await vi.waitFor(() => {
+        expect(verbose).toHaveBeenCalledWith("web-auth", expect.stringContaining("ENOENT"));
+      });
+      expect(process.exitCode).toBe(exitCode);
     });
 
     it("rejects when a 200 response does not contain a token", async () => {
