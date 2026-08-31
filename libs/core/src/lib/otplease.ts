@@ -1,3 +1,4 @@
+import log from "./npmlog";
 import { promptTextInput } from "./prompt";
 import { getWebAuthChallenge, getWebAuthOneTimePassword } from "./web-auth";
 
@@ -118,6 +119,7 @@ function requestOneTimePassword(err: unknown, opts: Record<string, unknown>): Pr
     return getWebAuthOneTimePassword(challenge, opts);
   }
 
+  log.silly("otplease", "registry did not offer a web-auth challenge, prompting for a one-time password");
   return getOneTimePassword();
 }
 
