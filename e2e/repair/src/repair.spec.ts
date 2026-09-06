@@ -63,8 +63,9 @@ describe("lerna-repair", () => {
       - nx: 22-7-0-add-self-healing-to-gitignore — Adds .nx/self-healing to .gitignore
       - nx: 23-0-0-consolidate-release-tag-config — Consolidates any remaining legacy releaseTag* flat properties into the nested releaseTag object. The flat properties were removed in Nx 23.
       - nx: 23-0-0-add-migrate-runs-to-git-ignore — Adds .nx/migrate-runs to .gitignore
+      - nx: 23-2-0-set-cache-on-executor-target-defaults — Sets "cache" on some executor-based target defaults whose caching was previously enabled by a target name default, maintaining compatibility with how cacheability resolved before Nx 23. Keys the migration cannot decide are left alone and keep working through a deprecated runtime fallback.
 
-      ── Migration 1 of 33 · lerna:remove-unnecessary-use-nx ──────────────────
+      ── Migration 1 of 34 · lerna:remove-unnecessary-use-nx ──────────────────
       → Running generator…
       Ran remove-unnecessary-use-nx from lerna
         Remove unnecessary \`useNx: true\` from lerna.json as it is the default
@@ -72,7 +73,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 2 of 33 · lerna:remove-invalid-init-config ─────────────────
+      ── Migration 2 of 34 · lerna:remove-invalid-init-config ─────────────────
       → Running generator…
       Ran remove-invalid-init-config from lerna
         Remove invalid \`init\` config from lerna.json as it is no longer applicable, given init cannot be run on an existing workspace
@@ -80,7 +81,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 3 of 33 · lerna:remove-invalid-lerna-config ────────────────
+      ── Migration 3 of 34 · lerna:remove-invalid-lerna-config ────────────────
       → Running generator…
       Ran remove-invalid-lerna-config from lerna
         Remove invalid \`lerna\` config from lerna.json as it is no longer used for anything
@@ -88,7 +89,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 4 of 33 · lerna:remove-invalid-use-workspaces ──────────────
+      ── Migration 4 of 34 · lerna:remove-invalid-use-workspaces ──────────────
       → Running generator…
       Ran remove-invalid-use-workspaces from lerna
         Remove invalid \`useWorkspaces\` config from lerna.json as it no longer exists
@@ -96,7 +97,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 5 of 33 · lerna:update-options-from-legacy-deprecate-config ───
+      ── Migration 5 of 34 · lerna:update-options-from-legacy-deprecate-config ───
       → Running generator…
       Ran update-options-from-legacy-deprecate-config from lerna
         Migrate legacy deprecated config usage to their updated counterparts
@@ -104,7 +105,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 6 of 33 · lerna:add-schema-config ──────────────────────────
+      ── Migration 6 of 34 · lerna:add-schema-config ──────────────────────────
       → Running generator…
       Ran add-schema-config from lerna
         Add \`$schema\` config to lerna.json if not already present to allow for IDE validation of lerna.json
@@ -112,7 +113,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 7 of 33 · nx:16.0.0-remove-nrwl-cli ────────────────────────
+      ── Migration 7 of 34 · nx:16.0.0-remove-nrwl-cli ────────────────────────
       → Running generator…
       Ran 16.0.0-remove-nrwl-cli from nx
         Remove @nrwl/cli.
@@ -120,7 +121,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 8 of 33 · nx:16.0.0-update-nx-cloud-runner ─────────────────
+      ── Migration 8 of 34 · nx:16.0.0-update-nx-cloud-runner ─────────────────
       → Running generator…
       Ran 16.0.0-update-nx-cloud-runner from nx
         Replace @nrwl/nx-cloud with nx-cloud
@@ -128,7 +129,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 9 of 33 · nx:16.0.0-tokens-for-depends-on ──────────────────
+      ── Migration 9 of 34 · nx:16.0.0-tokens-for-depends-on ──────────────────
       → Running generator…
       Ran 16.0.0-tokens-for-depends-on from nx
         Replace \`dependsOn.projects\` and \`inputs\` definitions with new configuration format.
@@ -136,7 +137,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 10 of 33 · nx:16.2.0-remove-output-path-from-run-commands ───
+      ── Migration 10 of 34 · nx:16.2.0-remove-output-path-from-run-commands ───
       → Running generator…
       Ran 16.2.0-remove-output-path-from-run-commands from nx
         Remove outputPath from run commands
@@ -144,7 +145,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 11 of 33 · nx:16.6.0-prefix-outputs ────────────────────────
+      ── Migration 11 of 34 · nx:16.6.0-prefix-outputs ────────────────────────
       → Running generator…
       Ran 16.6.0-prefix-outputs from nx
         Prefix outputs with {workspaceRoot}/{projectRoot} if needed
@@ -152,7 +153,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 12 of 33 · nx:17.0.0-move-cache-directory ──────────────────
+      ── Migration 12 of 34 · nx:17.0.0-move-cache-directory ──────────────────
       → Running generator…
       Ran 17.0.0-move-cache-directory from nx
         Updates the default cache directory to .nx/cache
@@ -160,7 +161,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 13 of 33 · nx:17.0.0-use-minimal-config-for-tasks-runner-options ───
+      ── Migration 13 of 34 · nx:17.0.0-use-minimal-config-for-tasks-runner-options ───
       → Running generator…
       Ran 17.0.0-use-minimal-config-for-tasks-runner-options from nx
         Use minimal config for tasksRunnerOptions
@@ -168,7 +169,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 14 of 33 · nx:rm-default-collection-npm-scope ──────────────
+      ── Migration 14 of 34 · nx:rm-default-collection-npm-scope ──────────────
       → Running generator…
       Ran rm-default-collection-npm-scope from nx
         Migration for v17.0.0-rc.1
@@ -176,7 +177,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 15 of 33 · nx:17.3.0-update-nx-wrapper ─────────────────────
+      ── Migration 15 of 34 · nx:17.3.0-update-nx-wrapper ─────────────────────
       → Running generator…
       Ran 17.3.0-update-nx-wrapper from nx
         Updates the nx wrapper.
@@ -184,7 +185,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 16 of 33 · nx:move-default-base-to-nx-json-root ────────────
+      ── Migration 16 of 34 · nx:move-default-base-to-nx-json-root ────────────
       → Running generator…
       Ran move-default-base-to-nx-json-root from nx
         Moves affected.defaultBase to defaultBase in \`nx.json\`
@@ -192,7 +193,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 17 of 33 · nx:19-2-0-move-graph-cache-directory ────────────
+      ── Migration 17 of 34 · nx:19-2-0-move-graph-cache-directory ────────────
       → Running generator…
       Ran 19-2-0-move-graph-cache-directory from nx
         Updates the default workspace data directory to .nx/workspace-data
@@ -200,7 +201,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 18 of 33 · nx:19-2-2-update-nx-wrapper ─────────────────────
+      ── Migration 18 of 34 · nx:19-2-2-update-nx-wrapper ─────────────────────
       → Running generator…
       Ran 19-2-2-update-nx-wrapper from nx
         Updates the nx wrapper.
@@ -208,7 +209,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 19 of 33 · nx:move-use-daemon-process ──────────────────────
+      ── Migration 19 of 34 · nx:move-use-daemon-process ──────────────────────
       → Running generator…
       Ran move-use-daemon-process from nx
         Migration for v20.0.0-beta.7
@@ -216,7 +217,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 20 of 33 · nx:remove-legacy-cache ──────────────────────────
+      ── Migration 20 of 34 · nx:remove-legacy-cache ──────────────────────────
       → Running generator…
       Ran remove-legacy-cache from nx
         Removes the legacy cache configuration from nx.json
@@ -224,7 +225,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 21 of 33 · nx:remove-custom-tasks-runner ───────────────────
+      ── Migration 21 of 34 · nx:remove-custom-tasks-runner ───────────────────
       → Running generator…
       Ran remove-custom-tasks-runner from nx
         Removes the legacy cache configuration from nx.json
@@ -232,7 +233,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 22 of 33 · nx:release-version-config-changes ───────────────
+      ── Migration 22 of 34 · nx:release-version-config-changes ───────────────
       → Running generator…
       Ran release-version-config-changes from nx
         Updates release version config based on the breaking changes in Nx v21
@@ -240,7 +241,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 23 of 33 · nx:release-changelog-config-changes ─────────────
+      ── Migration 23 of 34 · nx:release-changelog-config-changes ─────────────
       → Running generator…
       Ran release-changelog-config-changes from nx
         Updates release changelog config based on the breaking changes in Nx v21
@@ -248,7 +249,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 24 of 33 · nx:22-0-0-release-version-config-changes ────────
+      ── Migration 24 of 34 · nx:22-0-0-release-version-config-changes ────────
       → Running generator…
       Ran 22-0-0-release-version-config-changes from nx
         Updates release version config based on the breaking changes in Nx v22
@@ -256,7 +257,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 25 of 33 · nx:22-0-0-consolidate-release-tag-config ────────
+      ── Migration 25 of 34 · nx:22-0-0-consolidate-release-tag-config ────────
       → Running generator…
       Ran 22-0-0-consolidate-release-tag-config from nx
         Consolidates releaseTag* options into nested releaseTag object structure
@@ -264,7 +265,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 26 of 33 · nx:22-1-0-update-nx-wrapper ─────────────────────
+      ── Migration 26 of 34 · nx:22-1-0-update-nx-wrapper ─────────────────────
       → Running generator…
       Ran 22-1-0-update-nx-wrapper from nx
         Updates the nx wrapper.
@@ -272,7 +273,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 27 of 33 · nx:22-6-1-add-claude-worktrees-to-git-ignore ────
+      ── Migration 27 of 34 · nx:22-6-1-add-claude-worktrees-to-git-ignore ────
       → Running generator…
       Ran 22-6-1-add-claude-worktrees-to-git-ignore from nx
         Adds .claude/worktrees to .gitignore
@@ -280,7 +281,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 28 of 33 · nx:22-6-0-enable-analytics-prompt ───────────────
+      ── Migration 28 of 34 · nx:22-6-0-enable-analytics-prompt ───────────────
       → Running generator…
       Ran 22-6-0-enable-analytics-prompt from nx
         Prompts to enable usage analytics
@@ -288,7 +289,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 29 of 33 · nx:22-6-0-add-claude-settings-local-to-git-ignore ───
+      ── Migration 29 of 34 · nx:22-6-0-add-claude-settings-local-to-git-ignore ───
       → Running generator…
       Ran 22-6-0-add-claude-settings-local-to-git-ignore from nx
         Adds .claude/settings.local.json to .gitignore
@@ -296,7 +297,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 30 of 33 · nx:22-7-0-add-polygraph-to-git-ignore ───────────
+      ── Migration 30 of 34 · nx:22-7-0-add-polygraph-to-git-ignore ───────────
       → Running generator…
       Ran 22-7-0-add-polygraph-to-git-ignore from nx
         Adds .nx/polygraph to .gitignore
@@ -304,7 +305,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 31 of 33 · nx:22-7-0-add-self-healing-to-gitignore ─────────
+      ── Migration 31 of 34 · nx:22-7-0-add-self-healing-to-gitignore ─────────
       → Running generator…
       Ran 22-7-0-add-self-healing-to-gitignore from nx
         Adds .nx/self-healing to .gitignore
@@ -312,7 +313,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 32 of 33 · nx:23-0-0-consolidate-release-tag-config ────────
+      ── Migration 32 of 34 · nx:23-0-0-consolidate-release-tag-config ────────
       → Running generator…
       Ran 23-0-0-consolidate-release-tag-config from nx
         Consolidates any remaining legacy releaseTag* flat properties into the nested releaseTag object. The flat properties were removed in Nx 23.
@@ -320,7 +321,7 @@ describe("lerna-repair", () => {
       No changes were made
 
 
-      ── Migration 33 of 33 · nx:23-0-0-add-migrate-runs-to-git-ignore ────────
+      ── Migration 33 of 34 · nx:23-0-0-add-migrate-runs-to-git-ignore ────────
       → Running generator…
       Ran 23-0-0-add-migrate-runs-to-git-ignore from nx
         Adds .nx/migrate-runs to .gitignore
@@ -328,10 +329,16 @@ describe("lerna-repair", () => {
       No changes were made
 
 
+      ── Migration 34 of 34 · nx:23-2-0-set-cache-on-executor-target-defaults ───
+      → Running generator…
+      Ran 23-2-0-set-cache-on-executor-target-defaults from nx
+        Sets "cache" on some executor-based target defaults whose caching was previously enabled by a target name default, maintaining compatibility with how cacheability resolved before Nx 23. Keys the migration cannot decide are left alone and keep working through a deprecated runtime fallback.
+
+      No changes were made
+
+
 
        Lerna   No changes were necessary. This workspace is up to date!
-
-
     `);
   });
 });
