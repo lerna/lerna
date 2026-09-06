@@ -22,8 +22,11 @@ function normalizeLegacyWriterOptions(writer: any): any {
   }
 
   const normalized = { ...writer };
+  // Modern presets pair a function template with a string mainTemplate that only guards pre-v9 writers
   const legacyMainTemplate =
-    typeof writer.mainTemplate === "string" ? Handlebars.compile(writer.mainTemplate) : undefined;
+    typeof writer.mainTemplate === "string" && typeof writer.template !== "function"
+      ? Handlebars.compile(writer.mainTemplate)
+      : undefined;
   const legacyHeaderPartial =
     typeof writer.headerPartial === "string" ? Handlebars.compile(writer.headerPartial) : undefined;
   const legacyCommitPartial =
