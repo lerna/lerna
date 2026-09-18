@@ -107,15 +107,15 @@ jobs:
           git checkout HEAD~1 -- package.json package-lock.json packages/lerna/package.json
 
           # Run install and dedupe
-          # Intentionally allow lockfile modifications in this workflow
-          npm install --ignore-scripts --no-fund-lockfile
+          # `npm install` (unlike `npm ci`) is allowed to update the lockfile
+          npm install --ignore-scripts
           npm dedupe
 
           npx nx migrate "$NX_VERSION"
 
           # Sometimes Nx can require config formatting changes after a migrate command
           # We need to expect lock file changes to be applicable
-          npm install --ignore-scripts --no-fund-lockfile
+          npm install --ignore-scripts
           npx nx format
 
           # migrations.json may or may not exist after running nx migrate

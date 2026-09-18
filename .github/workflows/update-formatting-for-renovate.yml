@@ -87,8 +87,8 @@ jobs:
           SKIP_POSTINSTALL: "true"
         run: |
           # Run install and dedupe
-          # Intentionally allow lockfile modifications in this workflow
-          npm install --ignore-scripts --no-fund-lockfile
+          # `npm install` (unlike `npm ci`) is allowed to update the lockfile
+          npm install --ignore-scripts
           npm dedupe
 
           # Reset any changes that happened before formatting (e.g. to the lock file) so that we don't commit them
