@@ -80,7 +80,7 @@
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
     "nx": "23.1.2",
-    "pkg-pr-new": "0.0.75",
+    "pkg-pr-new": "0.0.88",
     "prettier": "^3.6.2",
     "signal-exit": "3.0.7",
     "string-width": "^4.2.3",
