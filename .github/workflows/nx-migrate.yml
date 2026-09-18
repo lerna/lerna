@@ -1,0 +1,196 @@
+# This workflow is used to augment the capabilities of the renovate GitHub app by running a full
+# `nx migrate` when renovate opens a PR to change the version of nx.
+#
+# You will therefore also notice that in the renovate configuration, we ignore any packages which
+# Nx will manage for us as part of `nx migrate` such as the remaining @nx/* packages.
+#
+# SECURITY: The work is intentionally split across two jobs so that the GH_FINE_GRAINED_PAT is
+# never present in the environment of any process which executes third-party code (npm install,
+# nx migrate and its migrations etc) and is therefore not exposed to package supply chain attacks:
+#
+#   1. maybe_nx_migrate runs the untrusted toolchain with no secrets available (beyond the
+#      default read-only GITHUB_TOKEN, which is itself scoped to a single trusted step) and
+#      produces a patch file artifact of the changes.
+#   2. push_nx_migrate_changes is the only job bound to the GitHub environment which holds the
+#      GH_FINE_GRAINED_PAT secret, and it must never run any third-party code - it only applies
+#      the patch and pushes using git itself.
+
+name: Nx Migrate
+
+on:
+  # NOTE: Never use pull_request_target here because that would populate secrets for forks
+  # Renovate creates branches directly on the main repo and acts like a trusted contributor
+  pull_request:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "packages/lerna/package.json"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+# Minimal permissions by default
+permissions:
+  contents: read
+
+jobs:
+  maybe_nx_migrate:
+    # Only run if it was the renovate bot that triggered the workflow (otherwise we'll create a loop)
+    if: contains('["renovate[bot]"]', github.actor) == true
+    name: Run nx migrate if required
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Required for `gh pr checkout` to be able to look up the PR via the API using the default GITHUB_TOKEN
+      pull-requests: read
+    outputs:
+      has-changes: ${{ steps.run-migrate.outputs.has-changes }}
+      nx-version: ${{ steps.nx-version.outputs.nx-version }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          # To allow us to perform the git diff we need the git history
+          fetch-depth: 0
+          # To ensure we can push from a different user (and therefore cause actions to rerun)
+          persist-credentials: false
+
+      - name: Check if nx was changed as part of the latest commit on the PR
+        id: relevant-packages-check
+        uses: ./.github/actions/check-package-changes
+        with:
+          packages: |
+            nx:package.json
+
+      - name: Install Node.js per package.json
+        if: ${{ steps.relevant-packages-check.outputs.was-changed == 'true' }}
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          # Use the volta.node property as the source of truth
+          node-version-file: "package.json"
+
+      - name: Install the pinned npm version
+        if: ${{ steps.relevant-packages-check.outputs.was-changed == 'true' }}
+        run: npm install --global "$(node -p "require('./package.json').packageManager")" --min-release-age=0 --ignore-scripts
+        shell: bash
+
+      - name: Checkout the PR branch
+        if: ${{ steps.relevant-packages-check.outputs.was-changed == 'true' }}
+        env:
+          # The default read-only GITHUB_TOKEN is all `gh pr checkout` needs, and it is scoped to
+          # this step only so that it is not visible to the untrusted steps below
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr checkout ${{ github.event.pull_request.number }}
+
+      - name: Get the version of Nx we are migrating to from package.json
+        if: ${{ steps.relevant-packages-check.outputs.was-changed == 'true' }}
+        id: nx-version
+        # SECURITY: This output is later used in the privileged push job, so it must be computed
+        # here, before any third-party code has run, so that it cannot be tampered with
+        run: |
+          NX_VERSION=$(node -e "const p=require('./package.json'); process.stdout.write(p.devDependencies.nx || p.dependencies.nx || '')")
+          echo "nx-version=$NX_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Run nx migrate if nx changed and generate a patch of the changes
+        if: ${{ steps.relevant-packages-check.outputs.was-changed == 'true' }}
+        id: run-migrate
+        env:
+          # SECURITY: No secrets must ever be added to this step - it executes a large amount of
+          # third-party code (including dynamically resolved Nx migrations) and is therefore
+          # exposed to package supply chain attacks
+          NX_VERSION: ${{ steps.nx-version.outputs.nx-version }}
+          # We don't want to run any of our postinstall logic when Nx is invoking install behind the scenes
+          SKIP_POSTINSTALL: "true"
+        run: |
+          # Revert renovate's changes to package manifests and the lockfile so that it is a clean migrate from the status quo
+          git checkout HEAD~1 -- package.json package-lock.json packages/lerna/package.json
+
+          # Run install and dedupe
+          # Intentionally allow lockfile modifications in this workflow
+          npm install --ignore-scripts --no-fund-lockfile
+          npm dedupe
+
+          npx nx migrate "$NX_VERSION"
+
+          # Sometimes Nx can require config formatting changes after a migrate command
+          # We need to expect lock file changes to be applicable
+          npm install --ignore-scripts --no-fund-lockfile
+          npx nx format
+
+          # migrations.json may or may not exist after running nx migrate
+          if [ -f migrations.json ]; then
+            npx nx migrate --run-migrations=migrations.json
+
+            # After we have run its migrations, we no longer need the migrations.json file
+            rm migrations.json
+          fi
+
+          # Ensure all the changed files are formatted appropriately
+          npm run format:write
+
+          git add --all
+          # Only produce a patch if there are changes to push (nx migrate may be a no-op, see the push_nx_migrate_changes job)
+          if git diff --cached --quiet; then
+            echo "No changes to commit after nx migrate"
+            echo "has-changes=false" >> "$GITHUB_OUTPUT"
+          else
+            git diff --cached --binary > "$RUNNER_TEMP/nx-migrate-changes.patch"
+            echo "has-changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload the patch of the changes for the push job to apply
+        if: ${{ steps.run-migrate.outputs.has-changes == 'true' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: nx-migrate-changes
+          path: ${{ runner.temp }}/nx-migrate-changes.patch
+          retention-days: 1
+          if-no-files-found: error
+
+  push_nx_migrate_changes:
+    name: Push nx migrate changes
+    needs: maybe_nx_migrate
+    if: ${{ needs.maybe_nx_migrate.outputs.has-changes == 'true' }}
+    runs-on: ubuntu-latest
+    # SECURITY: The GH_FINE_GRAINED_PAT secret is only available via this GitHub environment, it
+    # must not exist as a plain repository-level secret. Only jobs which reference the environment
+    # can read it, and this job must never execute any third-party code (no npm install, no nx)
+    # so that the PAT cannot be exfiltrated by a package supply chain attack.
+    environment: automated-dependency-updates
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          # To ensure we can push from a different user (and therefore cause actions to rerun)
+          persist-credentials: false
+
+      - name: Download the patch produced by the migrate job
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: nx-migrate-changes
+          path: ${{ runner.temp }}
+
+      - name: Apply the patch and push the changes to the PR
+        env:
+          # We cannot use secrets.GITHUB_TOKEN for this because it is not permitted to kick off subsequent actions workflow runs, so we use a fine-grained PAT instead
+          GITHUB_TOKEN: ${{ secrets.GH_FINE_GRAINED_PAT }}
+          # Passed as an environment variable (rather than interpolated into the script) so that it is always treated as data
+          NX_VERSION: ${{ needs.maybe_nx_migrate.outputs.nx-version }}
+        run: |
+          # If the PR branch has been updated since the patch was generated this may fail to apply,
+          # in which case the workflow will simply run again for the newer commit
+          git apply "$RUNNER_TEMP/nx-migrate-changes.patch"
+
+          git add --all
+
+          # Commit all the changes to the PR (see note on not being able to use secrets.GITHUB_TOKEN for this)
+          git config --global user.email "james@henry.sc"
+          git config --global user.name "JamesHenry"
+          git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git
+
+          # SECURITY: --no-verify ensures that no git hooks can run as part of committing and
+          # pushing. None should ever be registered in this job because nothing is installed, but
+          # this is cheap defence in depth against a malicious hook being registered somehow.
+          git commit --no-verify -m "chore: run nx migrate for nx v$NX_VERSION"
+          git push --no-verify origin HEAD

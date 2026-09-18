@@ -1,0 +1,28 @@
+{
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":semanticCommitScopeDisabled"
+  ],
+  // Wait well over npm's three day window for any new package as a precaution against malicious publishes.
+  // https://docs.npmjs.com/policies/unpublish/#packages-published-less-than-72-hours-ago
+  "minimumReleaseAge": "7 days",
+  // Run `npm dedupe` after every lockfile update so that transitive ranges do not
+  // resolve to a newer copy than the one we already have pinned, leaving two
+  // versions of the same package in the lockfile.
+  "postUpdateOptions": ["npmDedupe"],
+  "packageRules": [
+    {
+      // Let `nx migrate` manage the remaining @nx/* packages when renovate bumps `nx`.
+      "matchPackageNames": ["@nx/**"],
+      "enabled": false
+    },
+    {
+      // Keep the published lerna package on an nx major range. Repo pins are updated via nx migrate.
+      "matchPackageNames": ["nx", "@nx/devkit"],
+      "matchFileNames": ["packages/lerna/package.json"],
+      "enabled": false
+    }
+  ],
+  "rebaseWhen": "conflicted"
+}

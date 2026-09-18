@@ -1,0 +1,87 @@
+name: "Check Package Changes"
+description: "Checks if specified packages were changed in package.json files between HEAD and HEAD~1"
+
+inputs:
+  packages:
+    description: |
+      Newline-separated list of packages to check. Each line should be in the format:
+      package-name:json-file-path
+
+      Examples:
+        prettier:package.json
+        nx:package.json
+    required: true
+
+outputs:
+  was-changed:
+    description: "Whether any of the specified packages were changed (true/false)"
+    value: ${{ steps.check.outputs.was-changed }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check for package changes
+      id: check
+      shell: bash
+      env:
+        PACKAGES_INPUT: ${{ inputs.packages }}
+      run: |
+        set -euo pipefail
+
+        extract_version() {
+          local package_name="$1"
+          node -e '
+            const fs = require("fs");
+            const name = process.argv[1];
+            const pkg = JSON.parse(fs.readFileSync(0, "utf8"));
+            const version =
+              (pkg.dependencies && pkg.dependencies[name]) ||
+              (pkg.devDependencies && pkg.devDependencies[name]) ||
+              (pkg.optionalDependencies && pkg.optionalDependencies[name]) ||
+              (pkg.peerDependencies && pkg.peerDependencies[name]) ||
+              "";
+            process.stdout.write(String(version));
+          ' "$package_name"
+        }
+
+        changed=false
+
+        echo "Packages to check:"
+        echo "$PACKAGES_INPUT"
+        echo "---"
+
+        while IFS= read -r entry || [ -n "$entry" ]; do
+          # Skip empty lines
+          [ -z "$entry" ] && continue
+
+          # Split on first colon only
+          package="${entry%%:*}"
+          json_file="${entry#*:}"
+
+          echo "Checking $package in $json_file"
+
+          CURRENT_VERSION=""
+          if [ -f "$json_file" ]; then
+            CURRENT_VERSION=$(extract_version "$package" < "$json_file") || CURRENT_VERSION=""
+          else
+            echo "Warning: $json_file does not exist on HEAD"
+          fi
+
+          PREVIOUS_VERSION=""
+          if git cat-file -e "HEAD~1:$json_file" 2>/dev/null; then
+            PREVIOUS_VERSION=$(git show "HEAD~1:$json_file" | extract_version "$package") || PREVIOUS_VERSION=""
+          else
+            echo "Warning: $json_file does not exist on HEAD~1"
+          fi
+
+          if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
+            echo "✓ $package changed from '$PREVIOUS_VERSION' to '$CURRENT_VERSION'"
+            changed=true
+          else
+            echo "✗ $package unchanged ('$CURRENT_VERSION')"
+          fi
+        done <<< "$PACKAGES_INPUT"
+
+        if [ "$changed" = true ]; then
+          echo "was-changed=true" >> "$GITHUB_OUTPUT"
+        fi

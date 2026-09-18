@@ -2,6 +2,9 @@
 **/__fixtures__/**/*.json
 **/__fixtures__/**/*.md
 
+# Renovate accepts JSON5 comments in renovate.json
+.github/renovate.json
+
 dist
 tmp
 /.nx/cache
