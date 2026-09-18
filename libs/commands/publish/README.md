@@ -237,6 +237,8 @@ lerna publish --otp 123456
 
 > Please keep in mind that one-time passwords expire within 30 seconds of their generation. If it expires during publish operations, a prompt will request a refreshed value before continuing.
 
+If your npm account uses a security key or passkey for two-factor authentication (rather than an authenticator app), there is no code to type and `--otp` is not applicable. Instead, when the registry requests two-factor authentication, `lerna` will print a URL and open it in your browser so that you can complete the challenge with your security key. Once complete, publishing continues automatically. Set the npm `browser` config to `false` (e.g. `npm_config_browser=false`) to only print the URL without opening a browser. As with the npm CLI, providing `--otp` explicitly (or setting the npm `auth-type` config to `legacy`) opts out of the browser-based flow.
+
 ### `--preid`
 
 Unlike the `lerna version` option of the same name, this option only applies to [`--canary`](#--canary) version calculation.

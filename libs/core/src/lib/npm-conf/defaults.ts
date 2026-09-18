@@ -58,7 +58,7 @@ export const defaults = {
   also: null,
   audit: true,
   "audit-level": "low",
-  "auth-type": "legacy",
+  "auth-type": "web",
   "bin-links": true,
   browser: null,
   ca: null,
