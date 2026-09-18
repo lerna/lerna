@@ -1,0 +1,165 @@
+# This workflow is used to augment the capabilities of the renovate GitHub app by updating the
+# formatting of all relevant files whenever the prettier dependency is updated.
+#
+# SECURITY: The work is intentionally split across two jobs so that the GH_FINE_GRAINED_PAT is
+# never present in the environment of any process which executes third-party code (npm install,
+# prettier etc) and is therefore not exposed to package supply chain attacks:
+#
+#   1. maybe_update_formatting runs the untrusted toolchain with no secrets available (beyond the
+#      default read-only GITHUB_TOKEN, which is itself scoped to a single trusted step) and
+#      produces a patch file artifact of the changes.
+#   2. push_updated_formatting is the only job bound to the GitHub environment which holds the
+#      GH_FINE_GRAINED_PAT secret, and it must never run any third-party code - it only applies
+#      the patch and pushes using git itself.
+
+name: Renovate Update Formatting
+
+on:
+  # NOTE: Never use pull_request_target here because that would populate secrets for forks
+  # Renovate creates branches directly on the main repo and acts like a trusted contributor
+  pull_request:
+    branches: [main]
+    paths:
+      - "package.json"
+      - "package-lock.json"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+# Minimal permissions by default
+permissions:
+  contents: read
+
+jobs:
+  maybe_update_formatting:
+    # Only run if it was the renovate bot that triggered the workflow (otherwise we'll create a loop)
+    if: contains('["renovate[bot]"]', github.actor) == true
+    name: Update if required
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Required for `gh pr checkout` to be able to look up the PR via the API using the default GITHUB_TOKEN
+      pull-requests: read
+    outputs:
+      has-changes: ${{ steps.update-formatting.outputs.has-changes }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          # To allow us to perform the git diff we need the git history
+          fetch-depth: 0
+          # To ensure we can push from a different user (and therefore cause actions to rerun)
+          persist-credentials: false
+
+      - name: Check if prettier was changed as part of the latest commit by renovate bot on the PR
+        id: relevant-packages-check
+        uses: ./.github/actions/check-package-changes
+        with:
+          packages: |
+            prettier:package.json
+
+      - name: Install Node.js per package.json
+        if: ${{ steps.relevant-packages-check.outputs.was-changed == 'true' }}
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          # Use the volta.node property as the source of truth
+          node-version-file: "package.json"
+
+      - name: Install the pinned npm version
+        if: ${{ steps.relevant-packages-check.outputs.was-changed == 'true' }}
+        run: npm install --global "$(node -p "require('./package.json').packageManager")" --min-release-age=0 --ignore-scripts
+        shell: bash
+
+      - name: Checkout the PR branch
+        if: ${{ steps.relevant-packages-check.outputs.was-changed == 'true' }}
+        env:
+          # The default read-only GITHUB_TOKEN is all `gh pr checkout` needs, and it is scoped to
+          # this step only so that it is not visible to the untrusted steps below
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr checkout ${{ github.event.pull_request.number }}
+
+      - name: Update formatting if prettier was changed and generate a patch of the changes
+        if: ${{ steps.relevant-packages-check.outputs.was-changed == 'true' }}
+        id: update-formatting
+        env:
+          # SECURITY: No secrets must ever be added to this step - it executes a large amount of
+          # third-party code and is therefore exposed to package supply chain attacks
+          SKIP_POSTINSTALL: "true"
+        run: |
+          # Run install and dedupe
+          # Intentionally allow lockfile modifications in this workflow
+          npm install --ignore-scripts --no-fund-lockfile
+          npm dedupe
+
+          # Reset any changes that happened before formatting (e.g. to the lock file) so that we don't commit them
+          git reset --hard
+
+          # Update the formatting of all relevant files
+          npm run format:write
+
+          # Add everything that changed after the formatting
+          git add --all
+
+          # Only produce a patch if there are changes to push (see the push_updated_formatting job)
+          if git diff --cached --quiet; then
+            echo "No formatting changes detected"
+            echo "has-changes=false" >> "$GITHUB_OUTPUT"
+          else
+            git diff --cached --binary > "$RUNNER_TEMP/formatting-changes.patch"
+            echo "has-changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload the patch of the changes for the push job to apply
+        if: ${{ steps.update-formatting.outputs.has-changes == 'true' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: formatting-changes
+          path: ${{ runner.temp }}/formatting-changes.patch
+          retention-days: 1
+          if-no-files-found: error
+
+  push_updated_formatting:
+    name: Push updated formatting
+    needs: maybe_update_formatting
+    if: ${{ needs.maybe_update_formatting.outputs.has-changes == 'true' }}
+    runs-on: ubuntu-latest
+    # SECURITY: The GH_FINE_GRAINED_PAT secret is only available via this GitHub environment, it
+    # must not exist as a plain repository-level secret. Only jobs which reference the environment
+    # can read it, and this job must never execute any third-party code (no npm install, no
+    # prettier) so that the PAT cannot be exfiltrated by a package supply chain attack.
+    environment: automated-dependency-updates
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          # To ensure we can push from a different user (and therefore cause actions to rerun)
+          persist-credentials: false
+
+      - name: Download the patch produced by the update job
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: formatting-changes
+          path: ${{ runner.temp }}
+
+      - name: Apply the patch and push the changes to the PR
+        env:
+          # We cannot use secrets.GITHUB_TOKEN for this because it is not permitted to kick off subsequent actions workflow runs, so we use a fine-grained PAT instead
+          GITHUB_TOKEN: ${{ secrets.GH_FINE_GRAINED_PAT }}
+        run: |
+          # If the PR branch has been updated since the patch was generated this may fail to apply,
+          # in which case the workflow will simply run again for the newer commit
+          git apply "$RUNNER_TEMP/formatting-changes.patch"
+
+          # Add everything that changed after the formatting
+          git add --all
+
+          # Commit all formatting changes to the PR (see note on not being able to use secrets.GITHUB_TOKEN for this)
+          git config --global user.email "james@henry.sc"
+          git config --global user.name "JamesHenry"
+          git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git
+
+          # SECURITY: --no-verify ensures that no git hooks can run as part of committing and
+          # pushing. None should ever be registered in this job because nothing is installed, but
+          # this is cheap defence in depth against a malicious hook being registered somehow.
+          git commit --no-verify -m "chore: update formatting"
+          git push --no-verify origin HEAD
