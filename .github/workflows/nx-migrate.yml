@@ -102,6 +102,12 @@ jobs:
           NX_VERSION: ${{ steps.nx-version.outputs.nx-version }}
           # We don't want to run any of our postinstall logic when Nx is invoking install behind the scenes
           SKIP_POSTINSTALL: "true"
+          # `.npmrc` has min-release-age=7 so normal installs wait out npm's unpublish window.
+          # `nx migrate` must fetch the exact version Renovate already selected (read into
+          # NX_VERSION before any third-party code). npm's age gate then rejects that pin
+          # ("No matching version found for nx@… with a date before …") and migrate never runs.
+          # This job has no secrets; override only here so migrate can install the chosen version.
+          npm_config_min_release_age: "0"
         run: |
           # Revert renovate's changes to package manifests and the lockfile so that it is a clean migrate from the status quo
           git checkout HEAD~1 -- package.json package-lock.json packages/lerna/package.json
