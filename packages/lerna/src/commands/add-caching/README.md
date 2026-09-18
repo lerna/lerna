@@ -25,10 +25,10 @@ If you mark `build` as needing topological order, the `nx.json` file will look l
   "targetDefaults": {
     "build": {
       "dependsOn": [
-        "^build" // build all dependencies before building this project
-      ]
-    }
-  }
+        "^build", // build all dependencies before building this project
+      ],
+    },
+  },
 }
 ```
 
@@ -45,9 +45,9 @@ If you mark `build` as cacheable, the `nx.json` file will look like this:
 {
   "targetDefaults": {
     "build": {
-      "cache": true
-    }
-  }
+      "cache": true,
+    },
+  },
 }
 ```
 
@@ -61,9 +61,9 @@ If you specify `dist` as the output path for the `build` script, the `nx.json` f
 {
   "targetDefaults": {
     "build": {
-      "outputs": ["{projectRoot}/dist"]
-    }
-  }
+      "outputs": ["{projectRoot}/dist"],
+    },
+  },
 }
 ```
 
