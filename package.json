@@ -8,10 +8,10 @@
   ],
   "volta": {
     "node": "26.5.0",
-    "npm": "12.0.1",
+    "npm": "12.0.2",
     "yarn": "1.22.19"
   },
-  "packageManager": "npm@12.0.1",
+  "packageManager": "npm@12.0.2",
   "scripts": {
     "build": "tools/scripts/build.sh",
     "e2e-build-package-publish": "ts-node -P tools/scripts/tsconfig.e2e.json tools/scripts/e2e-build-package-publish",
