@@ -22,6 +22,12 @@
       "matchPackageNames": ["nx", "@nx/devkit"],
       "matchFileNames": ["packages/lerna/package.json"],
       "enabled": false
+    },
+    {
+      // group:nxMonorepo matches source URL https://github.com/nrwl/nx as a prefix, so it
+      // also swallows nrwl/nx-set-shas. That action does not ship with npm `nx`.
+      "matchPackageNames": ["nrwl/nx-set-shas"],
+      "groupName": null
     }
   ],
   "rebaseWhen": "conflicted"
