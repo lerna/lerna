@@ -72,7 +72,7 @@
     "@vitest/coverage-v8": "^4.1.10",
     "conventional-recommended-bump": "12.1.0",
     "env-cmd": "^10.1.0",
-    "esbuild": "0.28.1",
+    "esbuild": "0.28.2",
     "eslint": "^9.32.0",
     "js-yaml": "4.3.2",
     "jsonc-eslint-parser": "^2.4.0",
