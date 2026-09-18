@@ -104,20 +104,22 @@ jobs:
           SKIP_POSTINSTALL: "true"
           # Remove once the nx at HEAD~1 is >= 23.3.
           NX_MIGRATE_USE_REGISTRY_RESOLUTION: "false"
+          # Mid-migrate @nx/* peers do not resolve on npm 12.
+          npm_config_legacy_peer_deps: "true"
         run: |
           # Revert renovate's changes to package manifests and the lockfile so that it is a clean migrate from the status quo
           git checkout HEAD~1 -- package.json package-lock.json packages/lerna/package.json
 
           # Run install and dedupe
           # `npm install` (unlike `npm ci`) is allowed to update the lockfile
-          npm install --ignore-scripts
-          npm dedupe
+          npm install --ignore-scripts --legacy-peer-deps
+          npm dedupe --legacy-peer-deps
 
           npx nx migrate "$NX_VERSION"
 
           # Sometimes Nx can require config formatting changes after a migrate command
           # We need to expect lock file changes to be applicable
-          npm install --ignore-scripts
+          npm install --ignore-scripts --legacy-peer-deps
           npx nx format
 
           # migrations.json may or may not exist after running nx migrate
