@@ -41,9 +41,6 @@ describe("e2e-project generator", () => {
               "parallel": false,
             },
           },
-          "lint": Object {
-            "executor": "@nx/eslint:lint",
-          },
           "run-e2e-tests-process": Object {
             "executor": "nx:run-commands",
             "options": Object {
