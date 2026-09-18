@@ -102,6 +102,8 @@ jobs:
           NX_VERSION: ${{ steps.nx-version.outputs.nx-version }}
           # We don't want to run any of our postinstall logic when Nx is invoking install behind the scenes
           SKIP_POSTINSTALL: "true"
+          # Remove once the nx at HEAD~1 is >= 23.3.
+          NX_MIGRATE_USE_REGISTRY_RESOLUTION: "false"
         run: |
           # Revert renovate's changes to package manifests and the lockfile so that it is a clean migrate from the status quo
           git checkout HEAD~1 -- package.json package-lock.json packages/lerna/package.json
