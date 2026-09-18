@@ -102,11 +102,16 @@ jobs:
           NX_VERSION: ${{ steps.nx-version.outputs.nx-version }}
           # We don't want to run any of our postinstall logic when Nx is invoking install behind the scenes
           SKIP_POSTINSTALL: "true"
-          # `.npmrc` has min-release-age=7 so normal installs wait out npm's unpublish window.
-          # `nx migrate` must fetch the exact version Renovate already selected (read into
-          # NX_VERSION before any third-party code). npm's age gate then rejects that pin
-          # ("No matching version found for nx@… with a date before …") and migrate never runs.
-          # This job has no secrets; override only here so migrate can install the chosen version.
+          # After reverting Renovate's bump, this step runs the *old* `nx migrate`, which
+          # emulates npm's min-release-age by parsing `npm view <pkg> --json`. npm 12
+          # wraps that output in an array; nx 23.1/23.2 read `parsed.versions` on the
+          # array itself, see no versions, and report "No matching version found for
+          # nx@… with a date before …" without falling back to install. Skip that
+          # registry path so migrate installs the pin Renovate already selected.
+          NX_MIGRATE_USE_REGISTRY_RESOLUTION: "false"
+          # `.npmrc` has min-release-age=7. The install path must still be able to
+          # fetch that exact pin if npm's window and Renovate's 7-day check disagree.
+          # This job has no secrets; override only here.
           npm_config_min_release_age: "0"
         run: |
           # Revert renovate's changes to package manifests and the lockfile so that it is a clean migrate from the status quo
