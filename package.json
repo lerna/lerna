@@ -9,7 +9,7 @@
   "volta": {
     "node": "26.5.0",
     "npm": "12.0.2",
-    "yarn": "1.22.19"
+    "yarn": "1.22.22"
   },
   "packageManager": "npm@12.0.2",
   "scripts": {
