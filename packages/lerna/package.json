@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@npmcli/arborist": "9.1.6",
-    "@npmcli/package-json": "7.0.2",
+    "@npmcli/package-json": "7.0.5",
     "@npmcli/run-script": "10.0.3",
     "@nx/devkit": ">=23.1.0 < 24.0.0",
     "@octokit/plugin-enterprise-rest": "6.0.1",
@@ -83,7 +83,6 @@
     "string-width": "^4.2.3",
     "tar": "7.5.22",
     "tinyglobby": "0.2.17",
-    "validate-npm-package-license": "3.0.4",
     "validate-npm-package-name": "6.0.2",
     "write-file-atomic": "5.0.1",
     "yargs": "17.7.2"

@@ -26,7 +26,7 @@ Conveniently, all of these parameters are also available on `this`.
 We exploit this fact to avoid eslint breaking on the reserved word.
 */
 
-const validateLicense = require("validate-npm-package-license");
+const validateLicense = require("@npmcli/package-json/lib/license");
 const validateName = require("validate-npm-package-name");
 const npa = require("npm-package-arg");
 const semver = require("semver");
@@ -136,13 +136,11 @@ const license = this.package.license || this.config.get("init-license") || "ISC"
 exports.license = this.yes
   ? license
   : this.prompt("license", license, (data) => {
-      const its = validateLicense(data);
-      if (its.validForNewPackages) {
+      if (validateLicense(data)) {
         return data;
       }
 
-      const errors = (its.errors || []).concat(its.warnings || []);
-      const er = new Error(`Sorry, ${errors.join(" and ")}.`);
+      const er = new Error("Sorry, license should be a valid SPDX license expression");
       er.notValid = true;
       return er;
     });
