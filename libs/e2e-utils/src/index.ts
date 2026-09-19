@@ -1,3 +1,3 @@
-export * from "./lib/fixture";
-export * from "./lib/snapshot-serializer-utils";
-export * from "./lib/wait";
+export * from "./lib/fixture.ts";
+export * from "./lib/snapshot-serializer-utils.ts";
+export * from "./lib/wait.ts";
