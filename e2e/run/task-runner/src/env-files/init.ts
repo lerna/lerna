@@ -1,5 +1,5 @@
 import { Fixture } from "@lerna/e2e-utils";
-import { writeFile } from "fs-extra";
+import { writeFile } from "node:fs/promises";
 
 (async () => {
   const fixture = await Fixture.create({
