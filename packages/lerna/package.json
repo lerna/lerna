@@ -40,7 +40,7 @@
   "dependencies": {
     "@npmcli/arborist": "9.1.6",
     "@npmcli/package-json": "7.0.5",
-    "@npmcli/run-script": "10.0.3",
+    "@npmcli/run-script": "10.0.4",
     "@nx/devkit": ">=23.1.0 < 24.0.0",
     "@octokit/plugin-enterprise-rest": "6.0.1",
     "@octokit/rest": "20.1.2",
