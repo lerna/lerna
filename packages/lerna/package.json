@@ -38,7 +38,7 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@npmcli/arborist": "9.1.6",
+    "@npmcli/arborist": "9.9.1",
     "@npmcli/package-json": "7.0.5",
     "@npmcli/run-script": "10.0.3",
     "@nx/devkit": ">=23.1.0 < 24.0.0",
