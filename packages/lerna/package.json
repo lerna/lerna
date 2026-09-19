@@ -69,7 +69,7 @@
     "load-json-file": "6.2.0",
     "make-fetch-happen": "15.0.2",
     "minimatch": "3.1.5",
-    "npm-package-arg": "13.0.1",
+    "npm-package-arg": "13.0.2",
     "npm-packlist": "10.0.3",
     "npm-registry-fetch": "19.1.1",
     "nx": ">=23.1.0 < 24.0.0",
