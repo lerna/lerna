@@ -31,10 +31,7 @@ jobs:
         id: node-matrix
         # These versions intentionally do not contain our primary major version because that has already been tested by ci.yml
         run: |
-          # 22.18.0 is the Node 22 floor where type stripping is unflagged (`node file.ts`).
-          # The published package's 22.13.0 engines floor is still covered by ci.yml's
-          # esm-compat-node-floor job.
-          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['22.18.0', '24']));")
+          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['22.13.0', '24']));")
           echo $NODE_VERSIONS_JSON_ARRAY
           echo "node-versions=$NODE_VERSIONS_JSON_ARRAY" >> $GITHUB_OUTPUT
 
@@ -44,6 +41,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NX_CI_EXECUTION_ENV: linux-node-${{ matrix.node }}
+      # Type stripping is still experimental and off by default on 22.13.0.
+      NODE_OPTIONS: ${{ matrix.node == '22.13.0' && '--experimental-strip-types' || '' }}
     strategy:
       # Do not kill all versions of node just because one version failed
       fail-fast: false
@@ -158,6 +157,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NX_CI_EXECUTION_ENV: linux-node-${{ matrix.node }}
+      # Type stripping is still experimental and off by default on 22.13.0.
+      NODE_OPTIONS: ${{ matrix.node == '22.13.0' && '--experimental-strip-types' || '' }}
     strategy:
       # Do not kill all versions of node just because one version failed
       fail-fast: false
