@@ -88,7 +88,7 @@
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
     "typescript-eslint": "8.43.0",
-    "verdaccio": "6.7.4",
+    "verdaccio": "6.10.3",
     "vite": "^8.1.4",
     "vitest": "^4.1.10"
   },
