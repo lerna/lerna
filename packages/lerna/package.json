@@ -54,7 +54,7 @@
     "conventional-recommended-bump": "12.1.0",
     "cosmiconfig": "9.0.2",
     "dedent": "1.5.3",
-    "envinfo": "7.13.0",
+    "envinfo": "7.21.0",
     "execa": "5.0.0",
     "fs-extra": "^11.2.0",
     "git-url-parse": "14.0.0",
