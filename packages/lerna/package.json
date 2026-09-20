@@ -48,7 +48,7 @@
     "cmd-shim": "6.0.3",
     "columnify": "1.6.0",
     "conventional-changelog": "8.1.3",
-    "conventional-changelog-angular": "9.2.1",
+    "conventional-changelog-angular": "9.4.0",
     "conventional-commits-filter": "6.0.1",
     "conventional-commits-parser": "7.1.2",
     "conventional-recommended-bump": "12.1.0",
