@@ -51,7 +51,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/libnpmpublish": "^9.0.1",
     "@types/make-fetch-happen": "^10.0.4",
-    "@types/minimatch": "^3.0.5",
+    "@types/minimatch": "^6.0.0",
     "@types/node": "^24.0.0",
     "@types/normalize-path": "^3.0.2",
     "@types/npm-package-arg": "^6.1.4",
