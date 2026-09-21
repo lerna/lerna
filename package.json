@@ -64,7 +64,7 @@
     "@types/signal-exit": "^3.0.4",
     "@types/ssri": "^7.1.5",
     "@types/tar": "^6.1.13",
-    "@types/temp-dir": "^1.0.0",
+    "@types/temp-dir": "^2.0.0",
     "@types/tmp": "^0.2.6",
     "@types/uuid": "^10.0.0",
     "@types/write-file-atomic": "^4.0.3",
