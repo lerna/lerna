@@ -52,7 +52,7 @@
     "@types/libnpmpublish": "^9.0.1",
     "@types/make-fetch-happen": "^10.0.4",
     "@types/minimatch": "^3.0.5",
-    "@types/node": "^20.19.37",
+    "@types/node": "^24.0.0",
     "@types/normalize-path": "^3.0.2",
     "@types/npm-package-arg": "^6.1.4",
     "@types/npm-packlist": "^7.0.3",
