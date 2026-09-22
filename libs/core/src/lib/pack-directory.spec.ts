@@ -15,7 +15,7 @@ import { npmConf } from "./npm-conf";
 
 const initFixture = initFixtureFactory(__dirname);
 
-// temp-write creates temp directories that are 36 characters long (uuid.v4())
+// temp-write creates temp directories that are 36 characters long (crypto.randomUUID())
 const TAR_DIR_REGEXP = /([^\s"]*[\\/][-0-9a-f]{36})([^\s"]*)/g;
 const hasOwn = Object.prototype.hasOwnProperty;
 
