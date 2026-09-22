@@ -59,7 +59,7 @@
     "@types/npm-registry-fetch": "^8.0.9",
     "@types/npmcli__arborist": "^6.3.1",
     "@types/npmlog": "^7.0.0",
-    "@types/pify": "^5.0.4",
+    "@types/pify": "^6.0.0",
     "@types/semver": "^7.7.0",
     "@types/signal-exit": "^3.0.4",
     "@types/ssri": "^7.1.5",
