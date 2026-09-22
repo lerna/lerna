@@ -45,7 +45,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4
+      - uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5
 
       - name: Start Nx Cloud CI Run - Linux
         run: npx nx-cloud start-ci-run --stop-agents-after="run-e2e-tests-ci"
@@ -227,7 +227,7 @@ jobs:
           fetch-depth: 0
 
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4
+        uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5
 
       - name: Configure git metadata
         run: |
