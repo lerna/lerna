@@ -1,7 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
-import { initFixtureFactory } from "@lerna/test-helpers";
-import normalizePath from "normalize-path";
+import { initFixtureFactory, normalizePath } from "@lerna/test-helpers";
 import path from "path";
 import { packDirectory } from "./pack-directory";
 import { getPackages } from "./project";

@@ -1,12 +1,13 @@
 import { joinPathFragments, readJsonFile, writeJsonFile } from "@nx/devkit";
-import normalizePath from "normalize-path";
 import path from "path";
+import { normalizePath } from "./lib/normalize";
 
 export * from "./lib/cli";
 export * from "./lib/fixtures";
 export * from "./lib/git";
 export * from "./lib/logging-output";
 export { multiLineTrimRight } from "./lib/multi-line-trim-right";
+export { normalizeNewline, normalizePath } from "./lib/normalize";
 export * from "./lib/npm";
 export * from "./lib/serializers";
 
