@@ -62,7 +62,7 @@
     "@vitest/coverage-v8": "^4.1.10",
     "esbuild": "0.28.2",
     "eslint": "^9.32.0",
-    "jsonc-eslint-parser": "^2.4.0",
+    "jsonc-eslint-parser": "^3.0.0",
     "lerna": "file:packages/lerna",
     "nx": "23.2.1",
     "pkg-pr-new": "0.0.88",
