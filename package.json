@@ -66,7 +66,6 @@
     "@types/tar": "^6.1.13",
     "@types/temp-dir": "^1.0.0",
     "@types/tmp": "^0.2.6",
-    "@types/uuid": "^10.0.0",
     "@types/write-file-atomic": "^4.0.3",
     "@vitest/coverage-v8": "^4.1.10",
     "conventional-recommended-bump": "12.1.0",
