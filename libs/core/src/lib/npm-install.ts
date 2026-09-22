@@ -1,6 +1,6 @@
 import fs from "fs-extra";
 import npa from "npm-package-arg";
-import onExit from "signal-exit";
+import { onExit } from "signal-exit";
 import { writePackage } from "./write-package";
 import { getNpmExecOpts } from "./get-npm-exec-opts";
 import log from "./npmlog";
