@@ -1,6 +1,6 @@
 import { ProjectFileMap, ProjectGraph, ProjectGraphProjectNode, workspaceRoot } from "@nx/devkit";
 import fs from "fs-extra";
-import minimatch from "minimatch";
+import { minimatch } from "minimatch";
 import { resolve } from "npm-package-arg";
 import { join } from "path";
 import { satisfies } from "semver";

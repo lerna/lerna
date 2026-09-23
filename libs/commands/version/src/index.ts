@@ -28,7 +28,7 @@ import {
 import dedent from "dedent";
 import execa from "execa";
 import fs from "fs";
-import minimatch from "minimatch";
+import { minimatch } from "minimatch";
 import os from "os";
 import pMap from "p-map";
 import path from "path";
