@@ -43,7 +43,7 @@
     "@npmcli/run-script": "10.0.4",
     "@nx/devkit": ">=23.1.0 < 24.0.0",
     "@octokit/plugin-enterprise-rest": "6.0.1",
-    "@octokit/rest": "20.1.2",
+    "@octokit/rest": "22.0.1",
     "ci-info": "4.4.0",
     "columnify": "1.6.0",
     "conventional-changelog": "8.1.3",
