@@ -56,7 +56,7 @@
     "@types/ssri": "^7.1.5",
     "@types/tmp": "^0.2.6",
     "@types/write-file-atomic": "^4.0.3",
-    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/coverage-v8": "^5.0.0",
     "esbuild": "0.28.2",
     "eslint": "^9.32.0",
     "js-yaml": "5.4.2",
@@ -70,7 +70,7 @@
     "typescript-eslint": "8.70.0",
     "verdaccio": "6.10.3",
     "vite": "^8.1.4",
-    "vitest": "^4.1.10"
+    "vitest": "^5.0.0"
   },
   "allowScripts": {
     "esbuild@0.28.1": true,
