@@ -44,7 +44,7 @@ jobs:
     outputs:
       has-changes: ${{ steps.update-formatting.outputs.has-changes }}
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           # To allow us to perform the git diff we need the git history
           fetch-depth: 0
@@ -129,7 +129,7 @@ jobs:
     # prettier) so that the PAT cannot be exfiltrated by a package supply chain attack.
     environment: automated-dependency-updates
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           # To ensure we can push from a different user (and therefore cause actions to rerun)

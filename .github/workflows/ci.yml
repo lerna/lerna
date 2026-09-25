@@ -25,7 +25,7 @@ jobs:
     name: ESM compatibility - Node 22.13.0
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Install minimum supported Node version and dependencies
         uses: ./.github/actions/install-node-and-dependencies
@@ -41,7 +41,7 @@ jobs:
     env:
       NX_CI_EXECUTION_ENV: "linux"
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
@@ -83,7 +83,7 @@ jobs:
       matrix:
         agent: [1, 2, 3, 4, 5, 6, 7, 8]
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Configure git metadata
         run: |
@@ -152,7 +152,7 @@ jobs:
       TEMP: C:\temp
       TMP: C:\temp
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Start Nx Cloud CI Run - Windows
         run: npx nx-cloud start-ci-run --stop-agents-after="test,integration"
@@ -197,7 +197,7 @@ jobs:
       TEMP: C:\temp
       TMP: C:\temp
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Configure git metadata
         run: |
@@ -222,7 +222,7 @@ jobs:
       NX_CI_EXECUTION_ENV: "linux"
       NX_CLOUD_DISTRIBUTED_EXECUTION: false
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
