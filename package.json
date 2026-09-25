@@ -66,7 +66,7 @@
     "nx": "23.2.1",
     "pkg-pr-new": "0.0.88",
     "prettier": "3.9.8",
-    "typescript": "5.9.3",
+    "typescript": "7.0.2",
     "typescript-eslint": "8.70.0",
     "verdaccio": "6.10.3",
     "vite": "^8.1.4",
