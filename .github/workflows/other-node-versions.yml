@@ -49,7 +49,7 @@ jobs:
       matrix:
         node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
@@ -167,7 +167,7 @@ jobs:
         # Create 4 agents per node version
         agent: [1, 2, 3, 4]
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Configure git metadata
         run: |
