@@ -22,13 +22,13 @@
     "clsx": "2.1.1",
     "copy-to-clipboard": "4.0.2",
     "prism-react-renderer": "2.4.1",
-    "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.10.2",
     "@docusaurus/tsconfig": "3.10.2",
-    "@types/react": "19.2.17"
+    "@types/react": "19.3.0"
   },
   "browserslist": {
     "production": [

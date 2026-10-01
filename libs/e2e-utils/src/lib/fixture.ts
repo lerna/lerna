@@ -1,7 +1,9 @@
 import { joinPathFragments, readJsonFile, writeJsonFile } from "@nx/devkit";
 import { exec, spawn } from "child_process";
-import { WriteStream, createWriteStream, ensureDir, existsSync, readFile, remove, writeFile } from "fs-extra";
-import { normalizeFixtureCommandOutput } from "./normalize-fixture-command-output";
+import { createWriteStream, existsSync, type WriteStream } from "node:fs";
+import { readFile, writeFile } from "node:fs/promises";
+import { ensureDir, remove } from "fs-extra";
+import { normalizeFixtureCommandOutput } from "./normalize-fixture-command-output.ts";
 
 interface RunCommandOptions {
   silenceError?: boolean;
@@ -42,6 +44,10 @@ const noopWriteStream = {
  *
  */
 export class Fixture {
+  private readonly e2eRoot: string;
+  private readonly name: string;
+  private readonly packageManager: PackageManager;
+  private readonly forceDeterministicTerminalOutput: boolean;
   private readonly fixtureRootPath: string;
   private readonly fixtureWorkspacePath: string;
   private readonly fixtureOriginPath: string;
@@ -49,11 +55,15 @@ export class Fixture {
   debugWriteStream: WriteStream;
 
   constructor(
-    private readonly e2eRoot: string,
-    private readonly name: string,
-    private readonly packageManager: PackageManager = "npm",
-    private readonly forceDeterministicTerminalOutput: boolean
+    e2eRoot: string,
+    name: string,
+    packageManager: PackageManager = "npm",
+    forceDeterministicTerminalOutput: boolean
   ) {
+    this.e2eRoot = e2eRoot;
+    this.name = name;
+    this.packageManager = packageManager;
+    this.forceDeterministicTerminalOutput = forceDeterministicTerminalOutput;
     this.fixtureRootPath = joinPathFragments(this.e2eRoot, this.name);
     this.fixtureWorkspacePath = joinPathFragments(this.fixtureRootPath, "lerna-workspace");
     this.fixtureOriginPath = joinPathFragments(this.fixtureRootPath, ORIGIN_GIT);

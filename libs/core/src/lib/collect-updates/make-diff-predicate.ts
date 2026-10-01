@@ -1,6 +1,6 @@
 import { execSync } from "@lerna/child-process";
 import { ExecOptions } from "child_process";
-import minimatch from "minimatch";
+import { minimatch } from "minimatch";
 import { relative } from "path";
 import { slash } from "../slash";
 import log from "../npmlog";

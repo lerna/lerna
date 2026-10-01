@@ -2,8 +2,8 @@
 // @ts-nocheck
 
 import path from "path";
-import normalizePath from "normalize-path";
 import { afterEach, vi } from "vitest";
+import { normalizePath } from "../src/lib/normalize";
 
 const actual = await vi.importActual<any>("load-json-file");
 const loadJsonFile = actual.default ?? actual;

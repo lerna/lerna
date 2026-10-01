@@ -4,8 +4,8 @@ import { tempDirSerializer } from "./serialize-tempdir";
 import { windowsPathSerializer } from "./serialize-windows-paths";
 import type { Config, Refs, Printer } from "@vitest/pretty-format";
 
-import normalizeNewline from "normalize-newline";
 import type { SnapshotSerializer } from "vitest";
+import { normalizeNewline } from "../normalize";
 const LERNA_VERSION = JSON.parse(
   readFileSync(path.join(__dirname, "../../../../../", "packages/lerna/package.json"), "utf8")
 ).version;

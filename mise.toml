@@ -1,0 +1,9 @@
+# Toolchain installed on Nx Agents by .nx/workflows/agents.yaml.
+# GitHub Actions still reads the primary Node version from package.json `volta`.
+# Keep this default in sync with volta.node.
+[tools]
+node = "{{ env['NODE_VERSION'] | default(value='26.9.0') }}"
+yarn = "1.22.22"
+pnpm = "8"
+# Latest 1.x, matching oven-sh/setup-bun bun-version: "1.x" in the composite action.
+bun = "1"

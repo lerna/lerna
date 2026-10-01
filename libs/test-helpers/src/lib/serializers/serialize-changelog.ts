@@ -1,5 +1,5 @@
-import normalizeNewline from "normalize-newline";
 import type { SnapshotSerializer } from "vitest";
+import { normalizeNewline } from "../normalize";
 import { gitSHASerializer } from "./serialize-git-sha";
 
 export const changelogSerializer: SnapshotSerializer = {

@@ -192,14 +192,17 @@ e2e/run/task-runner/src/run-tests.sh env-files --update-snapshots # to update ju
 
 ### Releasing
 
-If you are a member of Lerna's [GitHub org](https://github.com/orgs/lerna/people) and have read-write privileges in Lerna's [npm org](https://www.npmjs.com/org/lerna) _with 2-factor auth enabled_, congratulations, you can cut a release!
+Releases are published exclusively through the [Release GitHub Actions workflow](.github/workflows/release.yml). Do not run a real (non-local) publish from your machine.
 
-You'll need to set up a local `.env` file in the repo root to provide the required environment variables.
-The `.env.example` file is available in the root as a template.
-The root `.env` file is _never_ placed under version control.
+If you are a member of Lerna's [GitHub org](https://github.com/orgs/lerna/people) with access to the `npm-production` environment, you can cut a release by dispatching that workflow from the Actions tab.
 
-Once that's done, run the release script and await glory:
+The workflow supports:
 
-```sh
-npx env-cmd npm run lerna-release -- --local false
-```
+- **mode**: `release` (infer or apply a version, then publish) or `recover` (publish the version already in `package.json` if it is missing from npm, with no version bump or git writes)
+- **tag**: npm dist-tag to publish to (`next`, `latest`, or `previous`)
+- **preid**: prerelease identifier (`alpha`, `beta`, or `rc`) used when publishing to `next`
+- **version**: optional exact semver; inferred from conventional commits when omitted
+
+Publishing is tokenless: the workflow exchanges its OIDC token for a short-lived npm token via the trusted publisher configured on npmjs.com. The only secret involved is `RELEASE_PAT`, used for git pushes and GitHub Release creation.
+
+For publishing a throwaway version to a local Verdaccio registry, use the Local CLI Testing section above.

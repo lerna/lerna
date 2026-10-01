@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-process-exit */
-const { exec } = require("child_process");
+import { exec } from "child_process";
 
 const verdacio = exec("npx verdaccio --config ./tools/scripts/local-registry/config.yml");
 verdacio.unref();

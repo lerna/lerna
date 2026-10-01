@@ -3,7 +3,10 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "declaration": true,
-    "types": []
+    "types": [],
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "noEmit": true
   },
   "include": ["**/*.ts"],
   "exclude": ["vitest.config.ts", "**/*.spec.ts"]

@@ -1,8 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../tools/scripts/tools-out",
-    "module": "commonjs",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "erasableSyntaxOnly": true,
+    "noEmit": true,
     "types": ["node"]
   },
   "include": ["**/*.ts"]

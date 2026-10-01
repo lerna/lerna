@@ -1,7 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
-import { initFixtureFactory } from "@lerna/test-helpers";
-import normalizePath from "normalize-path";
+import { initFixtureFactory, normalizePath } from "@lerna/test-helpers";
 import path from "path";
 import { packDirectory } from "./pack-directory";
 import { getPackages } from "./project";
@@ -15,7 +14,7 @@ import { npmConf } from "./npm-conf";
 
 const initFixture = initFixtureFactory(__dirname);
 
-// temp-write creates temp directories that are 36 characters long (uuid.v4())
+// temp-write creates temp directories that are 36 characters long (crypto.randomUUID())
 const TAR_DIR_REGEXP = /([^\s"]*[\\/][-0-9a-f]{36})([^\s"]*)/g;
 const hasOwn = Object.prototype.hasOwnProperty;
 
