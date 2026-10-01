@@ -206,7 +206,10 @@ export class PublishCommand extends Command {
       this.logger.info("require-scripts", "enabled");
     }
 
-    // npmSession and user-agent are consumed by npm-registry-fetch (via libnpmpublish)
+    // npmSession, npmCommand and userAgent are consumed by npm-registry-fetch (via libnpmpublish) and sent as the
+    // `npm-session`, `npm-command` and `user-agent` request headers. Note that npm-registry-fetch only reads the
+    // camelCased option names. The registry requires `npm-command` (alongside `npm-auth-type: web`, see below) in
+    // order to respond to a two-factor requirement with a browser-based challenge.
     this.logger.verbose("session", this.npmSession);
     this.logger.verbose("user-agent", this.userAgent);
 
@@ -214,7 +217,9 @@ export class PublishCommand extends Command {
       lernaCommand: "publish",
       _auth: this.options.legacyAuth,
       npmSession: this.npmSession,
+      npmCommand: "publish",
       npmVersion: this.userAgent,
+      userAgent: this.userAgent,
       otp: this.options.otp,
       registry: this.options.registry,
       "ignore-prepublish": this.options.ignorePrepublish,
@@ -225,6 +230,13 @@ export class PublishCommand extends Command {
     this.otpCache = { otp: this.conf["get"]("otp") };
 
     this.conf["set"]("user-agent", this.userAgent, "cli");
+
+    // npm-registry-fetch sends the camelCased `authType` as the `npm-auth-type` request header, which is how the
+    // registry learns whether the client can complete a browser-based ("web") two-factor challenge - required for
+    // accounts secured with a security key / passkey. Mirroring npm, an explicitly configured OTP forces the
+    // legacy (typed one-time password) flow, and so does any `auth-type` other than `web`.
+    const authType = !this.otpCache.otp && this.conf["get"]("auth-type") === "web" ? "web" : "legacy";
+    this.conf["set"]("authType", authType, "cli");
 
     if (this.conf["get"]("registry") === "https://registry.yarnpkg.com") {
       this.logger.warn("", "Yarn's registry proxy is broken, replacing with public npm registry");
