@@ -1,9 +1,9 @@
-import minimatch from "minimatch";
+import { minimatch, type MinimatchOptions } from "minimatch";
 
 export function multimatch(
   list: string | string[],
   patterns: string | string[],
-  options: minimatch.IOptions = {}
+  options: MinimatchOptions = {}
 ): string[] {
   list = Array.isArray(list) ? list : [list];
   patterns = Array.isArray(patterns) ? patterns : [patterns];
