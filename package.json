@@ -68,7 +68,7 @@
     "prettier": "3.9.8",
     "typescript": "5.9.3",
     "typescript-eslint": "8.70.0",
-    "verdaccio": "6.10.3",
+    "verdaccio": "6.10.4",
     "vite": "^8.1.4",
     "vitest": "^4.1.10"
   },
