@@ -1,15 +1,24 @@
 # Nx Agent launch templates for Linux CI.
 # Replaces the GitHub Actions agent matrix in ci.yml and other-node-versions.yml.
-# Keep the toolchain aligned with .github/actions/install-node-and-dependencies.
+#
+# Node, Yarn, pnpm, and Bun come from mise.toml (the install-mise step), which is
+# how nrwl/nx provisions agent toolchains. Other-node templates set NODE_VERSION
+# so mise installs that Node instead of the volta default.
 #
 # CI and a UTF-8 locale are set here (not forwarded from GitHub Actions) so task
 # output matches the previous runners without GitHub log grouping.
 
-install-primary-package-managers: &install-primary-package-managers
-  name: Install Package Managers
+install-mise: &install-mise
+  name: Install toolchains
+  uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-mise/main.yaml"
+
+# Primary Node matches the composite action: pinned corepack, then the packageManager npm.
+# Yarn and pnpm are already on PATH via mise; corepack install prepares the same
+# versions for commands that go through corepack.
+install-primary-npm: &install-primary-npm
+  name: Install pinned npm
   script: |
     set -euo pipefail
-    # Primary Node matches the composite action: pinned corepack, then the packageManager npm.
     npm install --global corepack@0.35.0 --min-release-age=0 --ignore-scripts --force
     corepack enable
     npm install --global "$(node -p "require('./package.json').packageManager")" --min-release-age=0 --ignore-scripts
@@ -19,33 +28,17 @@ install-primary-package-managers: &install-primary-package-managers
     COREPACK_ENABLE_AUTO_PIN: "0"
     COREPACK_ENABLE_STRICT: "0"
 
-install-additional-package-managers: &install-additional-package-managers
-  name: Install Package Managers
+# Alternate Node versions keep the npm that ships with that Node.
+enable-corepack: &enable-corepack
+  name: Enable corepack
   script: |
     set -euo pipefail
-    # Alternate Node versions do not install the repo's pinned npm; they use the npm that ships with that Node.
     corepack enable
     corepack install -g pnpm@8
     corepack install -g yarn@1.22.22
   env:
     COREPACK_ENABLE_AUTO_PIN: "0"
     COREPACK_ENABLE_STRICT: "0"
-
-# nrwl/nx installs bun for e2e through mise (mise.toml `bun = "1.3"` plus the
-# install-mise step). Inline `tools` would write a repo mise.toml, so activate
-# bun globally instead. `bun@1` tracks the latest 1.x, matching setup-bun's `1.x`.
-install-mise: &install-mise
-  name: Install mise
-  uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-mise/main.yaml"
-  inputs:
-    auto-install: "false"
-
-activate-bun: &activate-bun
-  name: Install Bun
-  script: |
-    set -euo pipefail
-    mise use -g bun@1
-    bun --version
 
 print-tool-versions: &print-tool-versions
   name: Print Tool Versions
@@ -81,14 +74,9 @@ launch-templates:
       - name: Checkout
         uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml"
 
-      - name: Install Node From Volta
-        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-node/main.yaml"
-
-      - *install-primary-package-managers
-
       - *install-mise
 
-      - *activate-bun
+      - *install-primary-npm
 
       - *print-tool-versions
 
@@ -108,22 +96,16 @@ launch-templates:
       LC_ALL: C.UTF-8
       COREPACK_ENABLE_AUTO_PIN: "0"
       COREPACK_ENABLE_STRICT: "0"
+      NODE_VERSION: "22.13.0"
       # Type stripping is still experimental and off by default on 22.13.0.
       NODE_OPTIONS: "--experimental-strip-types"
     init-steps:
       - name: Checkout
         uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml"
 
-      - name: Install Node 22.13.0
-        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-node/main.yaml"
-        inputs:
-          node_version: "22.13.0"
-
-      - *install-additional-package-managers
-
       - *install-mise
 
-      - *activate-bun
+      - *enable-corepack
 
       - *print-tool-versions
 
@@ -145,20 +127,14 @@ launch-templates:
       LC_ALL: C.UTF-8
       COREPACK_ENABLE_AUTO_PIN: "0"
       COREPACK_ENABLE_STRICT: "0"
+      NODE_VERSION: "24"
     init-steps:
       - name: Checkout
         uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml"
 
-      - name: Install Node 24
-        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-node/main.yaml"
-        inputs:
-          node_version: "24"
-
-      - *install-additional-package-managers
-
       - *install-mise
 
-      - *activate-bun
+      - *enable-corepack
 
       - *print-tool-versions
 
