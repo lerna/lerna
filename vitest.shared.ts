@@ -95,6 +95,10 @@ export function defineLernaVitestConfig(options: LernaVitestOptions): ViteUserCo
       // remain valid.
       snapshotFormat: { escapeString: true, printBasicPrototype: true },
       clearMocks: true,
+      // Vitest's default hookTimeout is 10s and is independent of testTimeout
+      // (including the --testTimeout=60000 Windows CI flag). Unit fixtures that
+      // git-init in beforeAll can exceed 10s on a busy Windows runner.
+      hookTimeout: 60000,
       // Plugin isolation is not relevant to lerna or its tests (previously set
       // in jest-global-setup.js).
       env: { NX_ISOLATE_PLUGINS: "false" },

@@ -76,7 +76,7 @@
     "p-queue": "6.6.2",
     "pacote": "21.5.1",
     "semver": "7.8.5",
-    "signal-exit": "3.0.7",
+    "signal-exit": "4.1.0",
     "ssri": "12.0.0",
     "string-width": "^4.2.3",
     "tar": "7.5.22",
