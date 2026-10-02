@@ -6,7 +6,7 @@ import fs from "fs";
 import { globParent } from "../glob-utils";
 import { globSync } from "tinyglobby";
 import { load } from "js-yaml";
-import loadJsonFile from "load-json-file";
+import { loadJsonFile, loadJsonFileSync } from "load-json-file";
 import pMap from "p-map";
 import path from "path";
 import log from "../npmlog";
@@ -190,11 +190,7 @@ export class Project {
   getPackagesSync(): Package[] {
     const syncFileFinder = makeSyncFileFinder(this.rootPath, this.packageConfigs);
     return syncFileFinder<Package>("package.json", (packageConfigPath) => {
-      return new Package(
-        loadJsonFile.sync(packageConfigPath),
-        path.dirname(packageConfigPath),
-        this.rootPath
-      );
+      return new Package(loadJsonFileSync(packageConfigPath), path.dirname(packageConfigPath), this.rootPath);
     });
   }
 
@@ -215,7 +211,7 @@ export class Project {
   #resolveRootPackageJson(): Package {
     try {
       const manifestLocation = path.join(this.rootPath, "package.json");
-      const packageJson = loadJsonFile.sync<RawManifest>(manifestLocation);
+      const packageJson = loadJsonFileSync<RawManifest>(manifestLocation);
 
       if (!packageJson.name) {
         // npm-lifecycle chokes if this is missing, so default like npm init does

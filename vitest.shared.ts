@@ -76,7 +76,16 @@ export function defineLernaVitestConfig(options: LernaVitestOptions): ViteUserCo
     // creating stray (untracked) node_modules dirs inside each project.
     cacheDir: join(workspaceRoot, "node_modules", ".vite", options.projectRoot),
     resolve: {
-      alias: workspaceAliases(workspaceRoot),
+      alias: [
+        ...workspaceAliases(workspaceRoot),
+        // These majors are nested under packages/lerna because other workspace
+        // tools still depend on the previous major. Tests import them from
+        // libs/*, which would otherwise resolve the hoisted copy.
+        ...["yargs", "p-map", "p-queue", "string-width", "write-file-atomic"].map((name) => ({
+          find: new RegExp(`^${escapeRegExp(name)}$`),
+          replacement: join(workspaceRoot, "packages/lerna/node_modules", name),
+        })),
+      ],
       // Also resolve any remaining tsconfig paths (e.g. project-local ones)
       tsconfigPaths: true,
     },

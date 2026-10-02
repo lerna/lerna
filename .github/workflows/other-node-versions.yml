@@ -32,7 +32,7 @@ jobs:
         # These versions intentionally do not contain our primary major version because that has already been tested by ci.yml.
         # Each version needs a matching launch template in .nx/workflows/agents.yaml (linux-node22-lerna, linux-node24-lerna).
         run: |
-          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['22.13.0', '24']));")
+          NODE_VERSIONS_JSON_ARRAY=$(node -e "console.log(JSON.stringify(['22.22.2', '24']));")
           echo $NODE_VERSIONS_JSON_ARRAY
           echo "node-versions=$NODE_VERSIONS_JSON_ARRAY" >> $GITHUB_OUTPUT
 
@@ -43,8 +43,6 @@ jobs:
     env:
       NX_CI_EXECUTION_ENV: linux-node-${{ matrix.node }}
       PUBLISHED_VERSION: 999.9.9-e2e.0
-      # Type stripping is still experimental and off by default on 22.13.0.
-      NODE_OPTIONS: ${{ matrix.node == '22.13.0' && '--experimental-strip-types' || '' }}
     strategy:
       # Do not kill all versions of node just because one version failed
       fail-fast: false
@@ -58,7 +56,7 @@ jobs:
       - name: Start Nx Cloud CI Run - node-${{ matrix.node }}
         run: >
           npx nx-cloud start-ci-run
-          --distribute-on="4 ${{ matrix.node == '22.13.0' && 'linux-node22-lerna' || matrix.node == '24' && 'linux-node24-lerna' || 'unsupported-node' }}"
+          --distribute-on="4 ${{ matrix.node == '22.22.2' && 'linux-node22-lerna' || matrix.node == '24' && 'linux-node24-lerna' || 'unsupported-node' }}"
           --stop-agents-after="build,test,integration,e2e"
           --require-explicit-completion
           --with-env-vars="PUBLISHED_VERSION"
