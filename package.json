@@ -44,7 +44,7 @@
     "@types/columnify": "^1.5.4",
     "@types/envinfo": "^7.8.4",
     "@types/fs-extra": "^11.0.4",
-    "@types/libnpmpublish": "^9.0.1",
+    "@types/libnpmpublish": "^11.0.0",
     "@types/make-fetch-happen": "^10.0.4",
     "@types/node": "^24.0.0",
     "@types/npm-package-arg": "^6.1.4",
