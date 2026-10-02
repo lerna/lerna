@@ -3,7 +3,7 @@
 # Keep this default in sync with volta.node.
 [tools]
 node = "{{ env['NODE_VERSION'] | default(value='26.9.0') }}"
-yarn = "1.22.22"
+yarn = "4.18.1"
 pnpm = "8"
 # Latest 1.x, matching oven-sh/setup-bun bun-version: "1.x" in the composite action.
 bun = "1"
