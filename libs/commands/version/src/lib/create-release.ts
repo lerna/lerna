@@ -1,8 +1,15 @@
+import type { Octokit } from "@octokit/rest";
 import { createGitHubClient, createGitLabClient, parseGitRepo, ValidationError } from "@lerna/core";
 import { ExecOptions } from "child_process";
 import semver from "semver";
 
 export type ReleaseClientType = "gitlab" | "github";
+
+/**
+ * `@octokit/rest` v21+ nests plugin types that TypeScript cannot name from an
+ * inferred union. Keep the public signature on the exported `Octokit` type.
+ */
+export type ReleaseClient = Octokit | ReturnType<typeof createGitLabClient>;
 
 export function truncateReleaseBody(body: string, type?: ReleaseClientType) {
   let maxReleaseBodyLength: number | undefined;
@@ -25,7 +32,7 @@ export function truncateReleaseBody(body: string, type?: ReleaseClientType) {
   return body;
 }
 
-export function createReleaseClient(type?: ReleaseClientType) {
+export function createReleaseClient(type?: ReleaseClientType): ReleaseClient {
   switch (type) {
     case "gitlab":
       return createGitLabClient();
@@ -38,7 +45,7 @@ export function createReleaseClient(type?: ReleaseClientType) {
 }
 
 export function createRelease(
-  client: ReturnType<typeof createReleaseClient>,
+  client: ReleaseClient,
   {
     type,
     tags,
@@ -51,7 +58,7 @@ export function createRelease(
     releaseNotes: { name: string; notes: string }[];
   },
   { gitRemote, execOpts }: { gitRemote: string; execOpts: ExecOptions }
-) {
+): Promise<unknown> {
   const repo = parseGitRepo(gitRemote, execOpts);
 
   return Promise.all(
