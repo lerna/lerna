@@ -33,7 +33,7 @@ import os from "os";
 import pMap from "p-map";
 import path from "path";
 import semver, { ReleaseType } from "semver";
-import { createRelease, createReleaseClient, ReleaseClientType } from "./lib/create-release";
+import { createRelease, createReleaseClient, ReleaseClient, ReleaseClientType } from "./lib/create-release";
 import { getCurrentBranch } from "./lib/get-current-branch";
 import { gitAdd } from "./lib/git-add";
 import { gitCommit } from "./lib/git-commit";
@@ -105,7 +105,7 @@ export class VersionCommand extends Command {
   allowBranch?: boolean;
   gitRemote?: string;
   tagPrefix?: string;
-  releaseClient?: ReturnType<typeof createReleaseClient>;
+  releaseClient?: ReleaseClient;
   releaseNotes?: { name: string; notes: string }[];
   gitOpts?: {
     amend?: boolean;
