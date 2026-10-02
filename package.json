@@ -72,6 +72,11 @@
     "vite": "^8.1.4",
     "vitest": "^5.0.0"
   },
+  "overrides": {
+    "@nx/vitest": {
+      "vitest": "$vitest"
+    }
+  },
   "allowScripts": {
     "esbuild@0.28.1": true,
     "fsevents@2.3.3": true,
