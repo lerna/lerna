@@ -61,7 +61,7 @@
     "import-local": "3.2.0",
     "ini": "^7.0.0",
     "init-package-json": "9.0.0",
-    "inquirer": "12.11.1",
+    "inquirer": "14.2.2",
     "js-yaml": "5.4.2",
     "libnpmaccess": "10.0.3",
     "libnpmpublish": "11.1.2",
