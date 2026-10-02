@@ -1,5 +1,5 @@
 import { glob } from "tinyglobby";
-import loadJsonFile from "load-json-file";
+import { loadJsonFile } from "load-json-file";
 
 export function loadManifests(cwd: string): any {
   return glob(

@@ -1,6 +1,6 @@
 import { workspaceRoot } from "@nx/devkit";
 import fs from "fs";
-import loadJsonFile from "load-json-file";
+import { loadJsonFile, loadJsonFileSync } from "load-json-file";
 import npa from "npm-package-arg";
 import path from "path";
 import { writePackage } from "./write-package";
@@ -99,7 +99,7 @@ export class Package {
   static lazy(ref: string | Package | RawManifest, dir = "."): Package {
     if (typeof ref === "string") {
       const location = path.resolve(path.basename(ref) === "package.json" ? path.dirname(ref) : ref);
-      const manifest = loadJsonFile.sync<RawManifest>(path.join(location, "package.json"));
+      const manifest = loadJsonFileSync<RawManifest>(path.join(location, "package.json"));
 
       return new Package(manifest, location);
     }

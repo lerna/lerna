@@ -96,9 +96,7 @@ launch-templates:
       LC_ALL: C.UTF-8
       COREPACK_ENABLE_AUTO_PIN: "0"
       COREPACK_ENABLE_STRICT: "0"
-      NODE_VERSION: "22.13.0"
-      # Type stripping is still experimental and off by default on 22.13.0.
-      NODE_OPTIONS: "--experimental-strip-types"
+      NODE_VERSION: "22.22.2"
     init-steps:
       - name: Checkout
         uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml"

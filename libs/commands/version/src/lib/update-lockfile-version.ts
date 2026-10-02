@@ -1,6 +1,6 @@
 import { Package, log } from "@lerna/core";
 import { writeJsonFile } from "@nx/devkit";
-import loadJsonFile from "load-json-file";
+import { loadJsonFile } from "load-json-file";
 import path from "path";
 
 interface Lockfile {

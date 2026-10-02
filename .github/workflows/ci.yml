@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   esm-compat-node-floor:
-    name: ESM compatibility - Node 22.13.0
+    name: ESM compatibility - Node 22.22.2
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -30,7 +30,7 @@ jobs:
       - name: Install minimum supported Node version and dependencies
         uses: ./.github/actions/install-node-and-dependencies
         with:
-          node-version: 22.13.0
+          node-version: 22.22.2
 
       - name: Test the published package entrypoints
         run: npx nx test lerna --skip-nx-cache

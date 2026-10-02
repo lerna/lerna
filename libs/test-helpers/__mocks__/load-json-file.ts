@@ -6,7 +6,8 @@ import { afterEach, vi } from "vitest";
 import { normalizePath } from "../src/lib/normalize";
 
 const actual = await vi.importActual<any>("load-json-file");
-const loadJsonFile = actual.default ?? actual;
+const loadJsonFile = actual.loadJsonFile ?? actual.default ?? actual;
+const loadJsonFileSyncImpl = actual.loadJsonFileSync ?? loadJsonFile.sync;
 
 const asyncRegistry = new Map();
 const syncRegistry = new Map();
@@ -30,7 +31,7 @@ const mockLoadJsonFile = vi.fn((manifestLocation) => {
 const mockLoadJsonFileSync = vi.fn((manifestLocation) => {
   incrementCalled(syncRegistry, manifestLocation);
 
-  return loadJsonFile.sync(manifestLocation);
+  return loadJsonFileSyncImpl(manifestLocation);
 });
 
 // keep test data isolated
@@ -39,7 +40,11 @@ afterEach(() => {
   syncRegistry.clear();
 });
 
+export const loadJsonFileSync = Object.assign(mockLoadJsonFileSync, { registry: syncRegistry });
+
+export { mockLoadJsonFile as loadJsonFile };
+
 export default Object.assign(mockLoadJsonFile, {
   registry: asyncRegistry,
-  sync: Object.assign(mockLoadJsonFileSync, { registry: syncRegistry }),
+  sync: loadJsonFileSync,
 });
