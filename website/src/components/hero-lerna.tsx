@@ -17,7 +17,9 @@ export default function HeroLerna(): JSX.Element {
       }, 3000);
     }
     return () => {
-      t && clearTimeout(t);
+      if (t) {
+        clearTimeout(t);
+      }
     };
   }, [copied]);
 

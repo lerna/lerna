@@ -6,10 +6,6 @@
   "targets": {
     "e2e": {},
     "run-e2e-tests-process": {},
-    "run-e2e-tests": {},
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    }
+    "run-e2e-tests": {}
   }
 }

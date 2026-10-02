@@ -5,10 +5,6 @@
   "implicitDependencies": ["lerna", "commands-clean"],
   "targets": {
     "e2e": {},
-    "prepare-for-e2e": {},
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    }
+    "prepare-for-e2e": {}
   }
 }

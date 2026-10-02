@@ -19,18 +19,13 @@
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/jest.config.[jt]s",
-      "!{projectRoot}/eslint.config.mjs"
+      "!{projectRoot}/jest.config.[jt]s"
     ]
   },
   "targetDefaults": {
     "test": {
       "inputs": ["default", "^production", "{workspaceRoot}/vitest.shared.ts"],
       "dependsOn": ["build"],
-      "cache": true
-    },
-    "lint": {
-      "inputs": ["default", "{workspaceRoot}/eslint.config.mjs"],
       "cache": true
     },
     "build": {
@@ -107,6 +102,12 @@
     }
   },
   "plugins": [
+    {
+      "plugin": "@nx/oxlint",
+      "options": {
+        "targetName": "lint"
+      }
+    },
     {
       "plugin": "@nx/vitest",
       "include": ["libs/**", "packages/**"],

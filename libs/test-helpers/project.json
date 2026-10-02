@@ -4,11 +4,5 @@
   "sourceRoot": "libs/test-helpers/src",
   "projectType": "library",
   "tags": [],
-  "implicitDependencies": ["!test-helpers"],
-  "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    }
-  }
+  "implicitDependencies": ["!test-helpers"]
 }

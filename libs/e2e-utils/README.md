@@ -8,4 +8,4 @@ Run `nx test e2e-utils` to execute the unit tests via [Vitest](https://vitest.de
 
 ## Running lint
 
-Run `nx lint e2e-utils` to execute the lint via [ESLint](https://eslint.org/).
+Run `nx lint e2e-utils` to execute the lint via [Oxlint](https://oxc.rs/docs/guide/usage/linter.html).
