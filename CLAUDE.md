@@ -72,12 +72,11 @@ This is a monorepo with the following main structure:
 - **Module system**: Modern Node.js compatibility
 - **Node.js version**: 22.19.0 (managed by Volta)
 
-### ESLint Configuration
+### Linting and formatting
 
-- Uses **flat config** format (eslint.config.mjs)
-- Nx ESLint plugin for monorepo management
-- TypeScript ESLint for type-aware linting
-- Enforces module boundaries between packages
+- Oxlint, via the `@nx/oxlint` plugin and a root `.oxlintrc.json`
+- Module boundaries stay on through `@nx/oxlint/boundaries-plugin`
+- Oxfmt, via `nx format:check` and `nx format:write`, configured in `.oxfmtrc.json`
 
 ### File Naming and Structure
 

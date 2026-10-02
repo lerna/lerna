@@ -8,4 +8,4 @@ Run `nx test test-helpers` to execute the unit tests via [Vitest](https://vitest
 
 ## Running lint
 
-Run `nx lint test-helpers` to execute the lint via [ESLint](https://eslint.org/).
+Run `nx lint test-helpers` to execute the lint via [Oxlint](https://oxc.rs/docs/guide/usage/linter.html).

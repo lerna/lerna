@@ -96,7 +96,7 @@ npm run integration -- --testFile lerna-add.spec.ts --watch
 npm run lint
 ```
 
-It's also a good idea to hook up your editor to an ESLint extension (such as `vscode-eslint`).
+It's also a good idea to hook up your editor to the Oxc extension (`oxc.oxc-vscode`), which covers Oxlint and Oxfmt.
 
 To fix lint errors from the command line:
 
