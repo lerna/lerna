@@ -1,0 +1,146 @@
+# Nx Agent launch templates for Linux CI.
+# Replaces the GitHub Actions agent matrix in ci.yml and other-node-versions.yml.
+#
+# Node, Yarn, pnpm, and Bun come from mise.toml (the install-mise step), which is
+# how nrwl/nx provisions agent toolchains. Other-node templates set NODE_VERSION
+# so mise installs that Node instead of the volta default.
+#
+# CI and a UTF-8 locale are set here (not forwarded from GitHub Actions) so task
+# output matches the previous runners without GitHub log grouping.
+
+install-mise: &install-mise
+  name: Install toolchains
+  uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-mise/main.yaml"
+
+# Primary Node matches the composite action: pinned corepack, then the packageManager npm.
+# Yarn and pnpm are already on PATH via mise; corepack install prepares the same
+# versions for commands that go through corepack.
+install-primary-npm: &install-primary-npm
+  name: Install pinned npm
+  script: |
+    set -euo pipefail
+    npm install --global corepack@0.35.0 --min-release-age=0 --ignore-scripts --force
+    corepack enable
+    npm install --global "$(node -p "require('./package.json').packageManager")" --min-release-age=0 --ignore-scripts
+    corepack install -g pnpm@8
+    corepack install -g yarn@1.22.22
+  env:
+    COREPACK_ENABLE_AUTO_PIN: "0"
+    COREPACK_ENABLE_STRICT: "0"
+
+# Alternate Node versions keep the npm that ships with that Node.
+enable-corepack: &enable-corepack
+  name: Enable corepack
+  script: |
+    set -euo pipefail
+    corepack enable
+    corepack install -g pnpm@8
+    corepack install -g yarn@1.22.22
+  env:
+    COREPACK_ENABLE_AUTO_PIN: "0"
+    COREPACK_ENABLE_STRICT: "0"
+
+print-tool-versions: &print-tool-versions
+  name: Print Tool Versions
+  script: |
+    node --version
+    npm --version
+    yarn --version
+    pnpm --version
+    bun --version
+
+configure-git-metadata: &configure-git-metadata
+  name: Configure Git Metadata
+  script: |
+    git config --global user.email test@example.com
+    git config --global user.name "Tester McPerson"
+
+remove-volta-pin: &remove-volta-pin
+  name: Remove Volta Pin
+  script: |
+    node -e 'const fs=require("fs"); const pkg=JSON.parse(fs.readFileSync("package.json","utf8")); delete pkg.volta; fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");'
+
+launch-templates:
+  linux-lerna:
+    resource-class: "docker_linux_amd64/medium"
+    image: "ubuntu22.04-node24.14-v1"
+    env:
+      CI: "true"
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      COREPACK_ENABLE_AUTO_PIN: "0"
+      COREPACK_ENABLE_STRICT: "0"
+    init-steps:
+      - name: Checkout
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml"
+
+      - *install-mise
+
+      - *install-primary-npm
+
+      - *print-tool-versions
+
+      - name: Install Node Modules
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-node-modules/main.yaml"
+        inputs:
+          npm_legacy_install: "false"
+
+      - *configure-git-metadata
+
+  linux-node22-lerna:
+    resource-class: "docker_linux_amd64/medium"
+    image: "ubuntu22.04-node24.14-v1"
+    env:
+      CI: "true"
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      COREPACK_ENABLE_AUTO_PIN: "0"
+      COREPACK_ENABLE_STRICT: "0"
+      NODE_VERSION: "22.22.2"
+    init-steps:
+      - name: Checkout
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml"
+
+      - *install-mise
+
+      - *enable-corepack
+
+      - *print-tool-versions
+
+      - name: Install Node Modules
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-node-modules/main.yaml"
+        inputs:
+          npm_legacy_install: "false"
+
+      - *remove-volta-pin
+
+      - *configure-git-metadata
+
+  linux-node24-lerna:
+    resource-class: "docker_linux_amd64/medium"
+    image: "ubuntu22.04-node24.14-v1"
+    env:
+      CI: "true"
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      COREPACK_ENABLE_AUTO_PIN: "0"
+      COREPACK_ENABLE_STRICT: "0"
+      NODE_VERSION: "24"
+    init-steps:
+      - name: Checkout
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml"
+
+      - *install-mise
+
+      - *enable-corepack
+
+      - *print-tool-versions
+
+      - name: Install Node Modules
+        uses: "nrwl/nx-cloud-workflows/v6/workflow-steps/install-node-modules/main.yaml"
+        inputs:
+          npm_legacy_install: "false"
+
+      - *remove-volta-pin
+
+      - *configure-git-metadata

@@ -76,7 +76,16 @@ export function defineLernaVitestConfig(options: LernaVitestOptions): ViteUserCo
     // creating stray (untracked) node_modules dirs inside each project.
     cacheDir: join(workspaceRoot, "node_modules", ".vite", options.projectRoot),
     resolve: {
-      alias: workspaceAliases(workspaceRoot),
+      alias: [
+        ...workspaceAliases(workspaceRoot),
+        // These majors are nested under packages/lerna because other workspace
+        // tools still depend on the previous major. Tests import them from
+        // libs/*, which would otherwise resolve the hoisted copy.
+        ...["yargs", "p-map", "p-queue", "string-width", "write-file-atomic"].map((name) => ({
+          find: new RegExp(`^${escapeRegExp(name)}$`),
+          replacement: join(workspaceRoot, "packages/lerna/node_modules", name),
+        })),
+      ],
       // Also resolve any remaining tsconfig paths (e.g. project-local ones)
       tsconfigPaths: true,
     },
@@ -95,6 +104,10 @@ export function defineLernaVitestConfig(options: LernaVitestOptions): ViteUserCo
       // remain valid.
       snapshotFormat: { escapeString: true, printBasicPrototype: true },
       clearMocks: true,
+      // Vitest's default hookTimeout is 10s and is independent of testTimeout
+      // (including the --testTimeout=60000 Windows CI flag). Unit fixtures that
+      // git-init in beforeAll can exceed 10s on a busy Windows runner.
+      hookTimeout: 60000,
       // Plugin isolation is not relevant to lerna or its tests (previously set
       // in jest-global-setup.js).
       env: { NX_ISOLATE_PLUGINS: "false" },

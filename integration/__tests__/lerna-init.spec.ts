@@ -1,5 +1,5 @@
 import { cliRunner, initFixtureFactory } from "@lerna/test-helpers";
-import loadJsonFile from "load-json-file";
+import { loadJsonFile } from "load-json-file";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";

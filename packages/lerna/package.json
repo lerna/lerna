@@ -24,7 +24,7 @@
   ],
   "main": "./dist/index.js",
   "engines": {
-    "node": "^22.13.0 || ^24.0.0 || ^26.0.0"
+    "node": "^22.22.2 || ^24.15.0 || ^26.0.0"
   },
   "publishConfig": {
     "tag": "next"
@@ -38,7 +38,7 @@
     "migrations": "./migrations.json"
   },
   "dependencies": {
-    "@npmcli/arborist": "9.9.1",
+    "@npmcli/arborist": "10.0.3",
     "@npmcli/package-json": "8.0.0",
     "@npmcli/run-script": "11.0.0",
     "@nx/devkit": ">=23.1.0 < 24.0.0",
@@ -59,31 +59,31 @@
     "git-url-parse": "16.1.0",
     "handlebars": "4.7.9",
     "import-local": "3.2.0",
-    "ini": "^1.3.8",
-    "init-package-json": "8.2.5",
-    "inquirer": "12.11.1",
+    "ini": "^7.0.0",
+    "init-package-json": "9.0.0",
+    "inquirer": "14.2.2",
     "js-yaml": "5.4.2",
-    "libnpmaccess": "10.0.3",
-    "libnpmpublish": "11.1.2",
-    "load-json-file": "6.2.0",
-    "make-fetch-happen": "15.0.6",
+    "libnpmaccess": "11.0.0",
+    "libnpmpublish": "12.0.1",
+    "load-json-file": "7.0.1",
+    "make-fetch-happen": "16.0.1",
     "minimatch": "10.2.6",
-    "npm-package-arg": "13.0.2",
-    "npm-packlist": "10.0.4",
-    "npm-registry-fetch": "19.1.1",
+    "npm-package-arg": "14.0.0",
+    "npm-packlist": "11.3.0",
+    "npm-registry-fetch": "20.0.1",
     "nx": ">=23.1.0 < 24.0.0",
-    "p-map": "4.0.0",
-    "p-queue": "6.6.2",
-    "pacote": "21.5.1",
+    "p-map": "7.0.8",
+    "p-queue": "9.3.3",
+    "pacote": "22.0.0",
     "semver": "7.8.5",
-    "signal-exit": "3.0.7",
-    "ssri": "12.0.0",
-    "string-width": "^4.2.3",
+    "signal-exit": "4.1.0",
+    "ssri": "14.0.0",
+    "string-width": "^8.0.0",
     "tar": "7.5.22",
     "tinyglobby": "0.2.17",
-    "validate-npm-package-name": "6.0.2",
-    "write-file-atomic": "5.0.1",
-    "yargs": "17.7.3"
+    "validate-npm-package-name": "8.0.0",
+    "write-file-atomic": "8.0.0",
+    "yargs": "18.2.0"
   },
   "exports": {
     ".": "./dist/index.js",

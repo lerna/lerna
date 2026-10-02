@@ -2,7 +2,7 @@ vi.mock("load-json-file");
 vi.mock("./write-package");
 
 import path from "path";
-import loadJsonFile from "load-json-file";
+import { loadJsonFile, loadJsonFileSync } from "load-json-file";
 import { writePackage as writePackage } from "./write-package";
 
 // file under test
@@ -274,7 +274,7 @@ describe("Package", () => {
 });
 
 describe("Package.lazy()", () => {
-  (loadJsonFile.sync as any).mockImplementation(() => ({ name: "bar", version: "1.0.0" }));
+  (loadJsonFileSync as any).mockImplementation(() => ({ name: "bar", version: "1.0.0" }));
 
   it("returns package instance from string directory argument", () => {
     const pkg = Package.lazy("/foo/bar");

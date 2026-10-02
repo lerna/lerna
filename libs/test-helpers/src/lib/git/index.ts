@@ -1,7 +1,7 @@
 import { tempWrite } from "@lerna/core";
 import cp from "child_process";
 import execa from "execa";
-import loadJsonFile from "load-json-file";
+import { loadJsonFile } from "load-json-file";
 import os from "os";
 import path from "path";
 import { writeJsonFile } from "@nx/devkit";

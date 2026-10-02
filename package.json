@@ -8,11 +8,11 @@
     "libs/e2e-utils"
   ],
   "volta": {
-    "node": "26.9.0",
-    "npm": "12.0.2",
+    "node": "26.10.0",
+    "npm": "12.1.0",
     "yarn": "1.22.22"
   },
-  "packageManager": "npm@12.0.2",
+  "packageManager": "npm@12.1.0",
   "scripts": {
     "build": "tools/scripts/build.sh",
     "e2e-build-package-publish": "node tools/scripts/e2e-build-package-publish.ts",
@@ -44,7 +44,7 @@
     "@types/columnify": "^1.5.4",
     "@types/envinfo": "^7.8.4",
     "@types/fs-extra": "^11.0.4",
-    "@types/libnpmpublish": "^9.0.1",
+    "@types/libnpmpublish": "^11.0.0",
     "@types/make-fetch-happen": "^10.0.4",
     "@types/node": "^24.0.0",
     "@types/npm-package-arg": "^6.1.4",
@@ -52,7 +52,6 @@
     "@types/npm-registry-fetch": "^8.0.9",
     "@types/npmcli__arborist": "^6.3.1",
     "@types/semver": "^7.7.0",
-    "@types/signal-exit": "^3.0.4",
     "@types/ssri": "^7.1.5",
     "@types/tmp": "^0.2.6",
     "@types/write-file-atomic": "^4.0.3",
@@ -65,10 +64,11 @@
     "minimatch": "10.2.6",
     "nx": "23.2.1",
     "pkg-pr-new": "0.0.88",
-    "prettier": "3.9.8",
+    "prettier": "3.9.9",
+    "signal-exit": "4.1.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.70.0",
-    "verdaccio": "6.10.3",
+    "typescript-eslint": "8.70.1",
+    "verdaccio": "6.10.4",
     "vite": "^8.1.4",
     "vitest": "^4.1.10"
   },
