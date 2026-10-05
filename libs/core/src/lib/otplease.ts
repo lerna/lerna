@@ -1,4 +1,6 @@
+import log from "./npmlog";
 import { promptTextInput } from "./prompt";
+import { getWebAuthChallenge, getWebAuthOneTimePassword } from "./web-auth";
 
 export interface OneTimePasswordCache {
   otp: string | null;
@@ -35,7 +37,12 @@ const semaphore = {
 };
 
 /**
- * Attempt to execute Promise callback, prompting for OTP if necessary.
+ * Attempt to execute Promise callback, obtaining an OTP if necessary.
+ *
+ * Accounts secured with an authenticator app are prompted to type a one-time password.
+ * Accounts secured with a security key / passkey receive a web-auth challenge from the registry
+ * instead, which is completed in the browser (see `./web-auth`).
+ *
  * @template {Record<string, unknown>} T
  * @param {(opts: T) => Promise<unknown>} fn
  * @param {T} _opts The options to be passed to `fn`
@@ -76,7 +83,7 @@ function attempt<T extends Record<string, unknown>>(
           semaphore.release();
           return attempt(fn, { ...opts, ...otpCache }, otpCache);
         }
-        return getOneTimePassword()
+        return requestOneTimePassword(err, opts)
           .then(
             (otp) => {
               // update the otp and release the lock so that waiting
@@ -99,6 +106,21 @@ function attempt<T extends Record<string, unknown>>(
       });
     }
   });
+}
+
+/**
+ * Obtain a one-time password appropriate to the EOTP error received:
+ * complete the web-auth challenge when the registry sent one, otherwise prompt the user to type one.
+ */
+function requestOneTimePassword(err: unknown, opts: Record<string, unknown>): Promise<string> {
+  const challenge = getWebAuthChallenge(err);
+
+  if (challenge) {
+    return getWebAuthOneTimePassword(challenge, opts);
+  }
+
+  log.silly("otplease", "registry did not offer a web-auth challenge, prompting for a one-time password");
+  return getOneTimePassword();
 }
 
 /**
