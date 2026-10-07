@@ -9,10 +9,10 @@
   ],
   "volta": {
     "node": "26.10.0",
-    "npm": "12.1.0",
+    "npm": "12.2.0",
     "yarn": "1.22.22"
   },
-  "packageManager": "npm@12.1.0",
+  "packageManager": "npm@12.2.0",
   "scripts": {
     "build": "tools/scripts/build.sh",
     "e2e-build-package-publish": "node tools/scripts/e2e-build-package-publish.ts",
