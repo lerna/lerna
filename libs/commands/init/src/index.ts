@@ -4,6 +4,7 @@ import {
   CommandConfigOptions,
   LernaConfig,
   LernaLogger,
+  colorize,
   isGitInitialized,
   log,
 } from "@lerna/core";
@@ -66,17 +67,15 @@ export class InitCommand {
 
     const isDryRun = this.args.dryRun;
 
-    const { default: chalk } = await import("chalk");
-
     function printDiff(before: string, after: string) {
       console.error(
         diff(before, after, {
           omitAnnotationLines: true,
           contextLines: 1,
           expand: false,
-          aColor: chalk.red,
-          bColor: chalk.green,
-          commonColor: chalk.dim,
+          aColor: (s) => colorize("red", s),
+          bColor: (s) => colorize("green", s),
+          commonColor: (s) => colorize("dim", s),
           patchColor: () => "",
         })
       );
@@ -93,21 +92,21 @@ export class InitCommand {
     changes.forEach((f) => {
       if (f.type === "CREATE") {
         console.error(
-          `${indent}${chalk.green("CREATE")} ${f.path}${isDryRun ? chalk.yellow(" [preview]") : ""}`
+          `${indent}${colorize("green", "CREATE")} ${f.path}${isDryRun ? colorize("yellow", " [preview]") : ""}`
         );
         if (isDryRun) {
           printDiff("", f.content?.toString() || "");
         }
       } else if (f.type === "UPDATE") {
         console.error(
-          `${indent}${chalk.white("UPDATE")} ${f.path}${isDryRun ? chalk.yellow(" [preview]") : ""}`
+          `${indent}${colorize("white", "UPDATE")} ${f.path}${isDryRun ? colorize("yellow", " [preview]") : ""}`
         );
         if (isDryRun) {
           const currentContentsOnDisk = fs.readFileSync(joinPathFragments(tree.root, f.path)).toString();
           printDiff(currentContentsOnDisk, f.content?.toString() || "");
         }
       } else if (f.type === "DELETE") {
-        console.error(`${indent}${chalk.yellow("DELETE")} ${f.path}`);
+        console.error(`${indent}${colorize("yellow", "DELETE")} ${f.path}`);
       }
     });
 
