@@ -87,28 +87,31 @@ describe("lerna-run-nx", () => {
 
         > package-X:print-name
 
-        package-X: > package-X@0.0.0 print-name
-        package-X: > echo test-package-X
-        package-X: test-package-X
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
 
         > package-X:print-name
 
-        package-X: > package-X@0.0.0 print-name
-        package-X: > echo test-package-X
-        package-X: test-package-X
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
 
         > package-X:print-name
 
-        package-X: > package-X@0.0.0 print-name
-        package-X: > echo test-package-X
-        package-X: test-package-X
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
 
 
 
         Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
-
       `);
     });
   });
@@ -230,28 +233,31 @@ describe("lerna-run-nx", () => {
 
           > package-X:print-name
 
+
           > package-X@0.0.0 print-name
           > echo test-package-X
+
           test-package-X
 
           > package-X:print-name
 
+
           > package-X@0.0.0 print-name
           > echo test-package-X
+
           test-package-X
 
           > package-X:print-name
 
+
           > package-X@0.0.0 print-name
           > echo test-package-X
+
           test-package-X
 
 
 
           Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
-
-
-
         `);
       });
     });
