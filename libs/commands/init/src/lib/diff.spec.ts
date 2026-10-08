@@ -2,7 +2,7 @@ import { diff } from "./diff";
 
 describe("diff", () => {
   // The exact options lerna init passes when printing dry-run diffs, with
-  // every color pinned so comparisons don't depend on chalk's color detection.
+  // every color pinned so comparisons don't depend on color detection.
   const initCommandOptions = {
     omitAnnotationLines: true,
     contextLines: 1,
