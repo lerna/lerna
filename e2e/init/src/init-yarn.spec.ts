@@ -37,12 +37,10 @@ describe("lerna-init-yarn", () => {
 
   afterEach(() => fixture.destroy());
 
-  it(
-    "should set npmClient to yarn in lerna.json",
-    async () => {
-      const result = await fixture.lernaInit();
+  it("should set npmClient to yarn in lerna.json", async () => {
+    const result = await fixture.lernaInit();
 
-      expect(result.combinedOutput).toMatchInlineSnapshot(`
+    expect(result.combinedOutput).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
         lerna info Applying the following file system updates:
         CREATE lerna.json
@@ -55,9 +53,9 @@ describe("lerna-init-yarn", () => {
 
       `);
 
-      const lernaJson = await fixture.readWorkspaceFile("lerna.json");
+    const lernaJson = await fixture.readWorkspaceFile("lerna.json");
 
-      expect(lernaJson).toMatchInlineSnapshot(`
+    expect(lernaJson).toMatchInlineSnapshot(`
         {
           "$schema": "node_modules/lerna/schemas/lerna-schema.json",
           "version": "0.0.0",
@@ -65,7 +63,5 @@ describe("lerna-init-yarn", () => {
         }
 
       `);
-    },
-    120000
-  );
+  }, 120000);
 });
