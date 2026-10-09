@@ -157,7 +157,7 @@ export class Fixture {
     if (this.packageManager === "pnpm") {
       await this.exec(`mkdir ${this.fixturePnpmStorePath}`);
       await this.exec(
-        `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false" > .npmrc`
+        `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false\nlink-workspace-packages=true\nprefer-workspace-packages=true" > .npmrc`
       );
     } else if (this.packageManager === "bun") {
       // .npmrc covers the npm operations lerna itself runs inside the fixture

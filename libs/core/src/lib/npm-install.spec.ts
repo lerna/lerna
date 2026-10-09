@@ -79,6 +79,8 @@ describe("npm-install", () => {
             PNPM_CONFIG_STRICT_DEP_BUILDS: "false",
             PNPM_CONFIG_LINK_WORKSPACE_PACKAGES: "true",
             PNPM_CONFIG_PREFER_WORKSPACE_PACKAGES: "true",
+            npm_config_link_workspace_packages: "true",
+            npm_config_prefer_workspace_packages: "true",
           }),
         })
       );

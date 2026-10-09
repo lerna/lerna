@@ -97,7 +97,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
       ...pkg,
       dependencies: {
         ...(pkg.dependencies as any),
-        "package-a": "workspace:^0.0.0",
+        "package-a": "workspace:~0.0.0",
       },
     }));
     await fixture.exec("git add packages/package-b/package.json");
@@ -148,7 +148,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
         packages/package-b: Object {
           dependencies: Object {
             package-a: Object {
-              specifier: workspace:^3.3.3,
+              specifier: workspace:~3.3.3,
               version: link:../package-a,
             },
           },

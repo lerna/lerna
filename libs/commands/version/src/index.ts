@@ -11,6 +11,7 @@ import {
   execPackageManager,
   execPackageManagerSync,
   formatJSON,
+  getPnpmLockfileInstallConfigArgs,
   getPackage,
   getPackagesForOption,
   output,
@@ -793,6 +794,7 @@ export class VersionCommand extends Command {
           "install",
           "--lockfile-only",
           !runScriptsOnLockfileUpdate ? "--ignore-scripts" : "",
+          ...getPnpmLockfileInstallConfigArgs(),
           ...npmClientArgs,
         ].filter(Boolean),
         this.execOpts

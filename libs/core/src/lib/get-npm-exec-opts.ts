@@ -9,7 +9,14 @@ export function getPnpmInstallEnv(): Record<string, string> {
     // Resolve semver workspace siblings during `install --lockfile-only` (version command).
     PNPM_CONFIG_LINK_WORKSPACE_PACKAGES: "true",
     PNPM_CONFIG_PREFER_WORKSPACE_PACKAGES: "true",
+    npm_config_link_workspace_packages: "true",
+    npm_config_prefer_workspace_packages: "true",
   };
+}
+
+/** CLI flags for pnpm lockfile updates when a custom registry is configured. */
+export function getPnpmLockfileInstallConfigArgs(): string[] {
+  return ["--config.link-workspace-packages=true", "--config.prefer-workspace-packages=true"];
 }
 
 export function getNpmExecOpts(pkg: { name: any; location: string }, registry?: any, npmClient?: string) {
