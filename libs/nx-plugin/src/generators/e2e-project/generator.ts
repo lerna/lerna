@@ -119,7 +119,7 @@ export default defineConfig(
         },
       },
       // run-e2e-tests is inferred from vitest.config.ts by the @nx/vitest plugin
-      lint: projectConfig.targets.lint,
+      lint: projectConfig.targets!.lint,
       // Don't keep the original unit test target
     },
   });
