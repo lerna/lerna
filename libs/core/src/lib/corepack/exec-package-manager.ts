@@ -14,7 +14,7 @@ function withPackageManagerExecEnv(npmClient: string, opts: ExecOptions): ExecOp
     ...opts,
     env: {
       ...process.env,
-      ...(opts.env || {}),
+      ...opts.env,
       ...getPnpmInstallEnv(),
     },
   };
