@@ -58,6 +58,30 @@ describe("npm-install", () => {
       );
     });
 
+    it("disables pnpm strictDepBuilds for pnpm 12+ compatibility", async () => {
+      const pkg = new Package(
+        {
+          name: "test-npm-install",
+        } as any,
+        path.normalize("/test/npm-install-pnpm"),
+        path.normalize("/test")
+      );
+
+      await npmInstall(pkg, {
+        npmClient: "pnpm",
+      });
+
+      expect(childProcess.exec).toHaveBeenLastCalledWith(
+        "pnpm",
+        ["install"],
+        expect.objectContaining({
+          env: expect.objectContaining({
+            PNPM_CONFIG_STRICT_DEP_BUILDS: "false",
+          }),
+        })
+      );
+    });
+
     it("installs with bun without yarn-specific flags", async () => {
       const pkg = new Package(
         {

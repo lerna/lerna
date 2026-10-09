@@ -29,6 +29,10 @@ type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string
 const PNPM_STORE = "pnpm.store";
 const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4873/";
+/** Matches lerna core pnpm installs; pnpm 12+ needs strictDepBuilds disabled. */
+const PNPM_INSTALL_ENV = {
+  PNPM_CONFIG_STRICT_DEP_BUILDS: "false",
+} as const;
 
 const noopWriteStream = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -499,6 +503,7 @@ export class Fixture {
           {
             cwd: opts.cwd || this.fixtureRootPath,
             env: {
+              ...(this.packageManager === "pnpm" ? PNPM_INSTALL_ENV : {}),
               ...(opts.env || process.env),
               FORCE_COLOR: "false",
             },
@@ -528,6 +533,7 @@ export class Fixture {
         shell: true,
         cwd: opts.cwd || this.fixtureRootPath,
         env: {
+          ...(this.packageManager === "pnpm" ? PNPM_INSTALL_ENV : {}),
           ...(opts.env || process.env),
           FORCE_COLOR: "false",
         },
