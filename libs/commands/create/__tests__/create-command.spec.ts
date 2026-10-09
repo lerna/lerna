@@ -229,6 +229,21 @@ describe("CreateCommand", () => {
     });
   });
 
+  it("adds workspace protocol for pnpm sibling dependencies", async () => {
+    const cwd = await initRemoteFixture("independent");
+    const lernaJsonPath = path.join(cwd, "lerna.json");
+    const lernaJson = await fs.readJSON(lernaJsonPath);
+
+    lernaJson.npmClient = "pnpm";
+    await fs.writeJSON(lernaJsonPath, lernaJson);
+
+    await lernaCreate(cwd)("foo-pkg", "--dependencies", "sibling-pkg");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("dependencies", {
+      "sibling-pkg": "workspace:^2.0.0",
+    });
+  });
+
   it("adds local dependency as relative file specifier when others exist", async () => {
     const cwd = await initRemoteFixture("relative-file-spec");
 

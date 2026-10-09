@@ -29,6 +29,11 @@ type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string
 const PNPM_STORE = "pnpm.store";
 const ORIGIN_GIT = "origin.git";
 const REGISTRY = "http://localhost:4873/";
+/** Matches lerna core pnpm installs; pnpm 12+ needs strictDepBuilds disabled. */
+const PNPM_INSTALL_ENV = {
+  PNPM_CONFIG_STRICT_DEP_BUILDS: "false",
+  PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
+} as const;
 
 const noopWriteStream = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -152,7 +157,7 @@ export class Fixture {
     if (this.packageManager === "pnpm") {
       await this.exec(`mkdir ${this.fixturePnpmStorePath}`);
       await this.exec(
-        `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false" > .npmrc`
+        `echo "registry=${REGISTRY}\nstore-dir=${this.fixturePnpmStorePath}\nverify-store-integrity=false\nlink-workspace-packages=true\nprefer-workspace-packages=true" > .npmrc`
       );
     } else if (this.packageManager === "bun") {
       // .npmrc covers the npm operations lerna itself runs inside the fixture
@@ -499,6 +504,7 @@ export class Fixture {
           {
             cwd: opts.cwd || this.fixtureRootPath,
             env: {
+              ...(this.packageManager === "pnpm" ? PNPM_INSTALL_ENV : {}),
               ...(opts.env || process.env),
               FORCE_COLOR: "false",
             },
@@ -528,6 +534,7 @@ export class Fixture {
         shell: true,
         cwd: opts.cwd || this.fixtureRootPath,
         env: {
+          ...(this.packageManager === "pnpm" ? PNPM_INSTALL_ENV : {}),
           ...(opts.env || process.env),
           FORCE_COLOR: "false",
         },

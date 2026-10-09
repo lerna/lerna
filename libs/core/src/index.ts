@@ -14,6 +14,7 @@ export { detectProjects } from "./lib/command/detect-projects";
 export { isGitInitialized } from "./lib/command/is-git-initialized";
 export { applyBuildMetadata, recommendVersion, updateChangelog } from "./lib/conventional-commits";
 export * from "./lib/corepack";
+export { getPnpmLockfileInstallConfigArgs } from "./lib/get-npm-exec-opts";
 export { describeRef, describeRefSync } from "./lib/describe-ref";
 export { FilterOptions, filterOptions } from "./lib/filter-options";
 export { filterProjects } from "./lib/filter-projects";

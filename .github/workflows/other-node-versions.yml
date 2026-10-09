@@ -75,8 +75,8 @@ jobs:
         run: corepack enable
         shell: bash
 
-      - name: Install pnpm v8
-        run: corepack install -g pnpm@8
+      - name: Install pnpm v12
+        run: corepack install -g pnpm@12
         shell: bash
 
       - name: Print installed node, npm, yarn, pnpm and bun versions
@@ -84,7 +84,7 @@ jobs:
           node --version
           npm --version
           yarn --version
-          pnpm --version
+          (cd "${RUNNER_TEMP:-/tmp}" && pnpm --version)
           bun --version
         shell: bash
 

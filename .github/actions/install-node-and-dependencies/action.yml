@@ -48,9 +48,9 @@ runs:
       run: npm install --global "$(node -p "require('./package.json').packageManager")" --min-release-age=0 --ignore-scripts
       shell: bash
 
-    - name: Install pnpm v8
+    - name: Install pnpm v12
       if: ${{ inputs.install-additional-package-managers == 'true' }}
-      run: corepack install -g pnpm@8
+      run: corepack install -g pnpm@12
       shell: bash
       env:
         COREPACK_ENABLE_AUTO_PIN: "0"
@@ -82,7 +82,8 @@ runs:
       if: ${{ inputs.install-additional-package-managers == 'true' }}
       run: |
         yarn --version
-        pnpm --version
+        # pnpm 12+ errors in an npm-root repo; print the global toolchain version elsewhere.
+        (cd "${RUNNER_TEMP:-/tmp}" && pnpm --version)
         bun --version
       shell: bash
       env:

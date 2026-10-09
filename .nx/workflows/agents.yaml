@@ -22,7 +22,7 @@ install-primary-npm: &install-primary-npm
     npm install --global corepack@0.35.0 --min-release-age=0 --ignore-scripts --force
     corepack enable
     npm install --global "$(node -p "require('./package.json').packageManager")" --min-release-age=0 --ignore-scripts
-    corepack install -g pnpm@8
+    corepack install -g pnpm@12
     corepack install -g yarn@1.22.22
   env:
     COREPACK_ENABLE_AUTO_PIN: "0"
@@ -34,7 +34,7 @@ enable-corepack: &enable-corepack
   script: |
     set -euo pipefail
     corepack enable
-    corepack install -g pnpm@8
+    corepack install -g pnpm@12
     corepack install -g yarn@1.22.22
   env:
     COREPACK_ENABLE_AUTO_PIN: "0"
@@ -46,7 +46,7 @@ print-tool-versions: &print-tool-versions
     node --version
     npm --version
     yarn --version
-    pnpm --version
+    (cd /tmp && pnpm --version)
     bun --version
 
 configure-git-metadata: &configure-git-metadata

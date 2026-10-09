@@ -96,6 +96,8 @@ describe("lerna-init-pnpm", () => {
       expect(pnpmWorkspaceYaml).toMatchInlineSnapshot(`
         packages:
           - 'packages/*'
+        minimumReleaseAgeExclude:
+          - lerna@${getPublishedVersion()}
 
       `);
     });

@@ -4,6 +4,7 @@
 [tools]
 node = "{{ env['NODE_VERSION'] | default(value='26.9.0') }}"
 yarn = "1.22.22"
-pnpm = "8"
+# npm backend avoids aqua asset resolution on mise 2025.12.2 (Nx Agents).
+"npm:pnpm" = "12"
 # Latest 1.x, matching oven-sh/setup-bun bun-version: "1.x" in the composite action.
 bun = "1"

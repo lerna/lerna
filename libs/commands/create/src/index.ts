@@ -287,6 +287,11 @@ export class CreateCommand extends Command {
           return this.resolveRelative(depNode);
         }
 
+        if (this.project.config.npmClient === "pnpm") {
+          // pnpm 12+ lockfile updates require the workspace protocol for sibling packages.
+          return `workspace:${savePrefix}${depNode.package.version}`;
+        }
+
         // yarn workspace or lerna packages config
         return `${savePrefix}${depNode.package.version}`;
       }

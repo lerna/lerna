@@ -23,9 +23,23 @@ describe("execPackageManager", () => {
       delete process.env["COREPACK_ROOT"];
     });
 
-    it.each(["npm", "yarn", "pnpm", "bun"])("invokes %s directly", (npmClient) => {
+    it.each(["npm", "yarn", "bun"])("invokes %s directly", (npmClient) => {
       execPackageManager(npmClient, ["install"], opts);
       expect(childProcess.exec).toHaveBeenCalledWith(npmClient, ["install"], opts);
+    });
+
+    it("invokes pnpm directly with strictDepBuilds disabled for pnpm 12+", () => {
+      execPackageManager("pnpm", ["install"], opts);
+      expect(childProcess.exec).toHaveBeenCalledWith("pnpm", ["install"], {
+        ...opts,
+        env: expect.objectContaining({
+          PNPM_CONFIG_STRICT_DEP_BUILDS: "false",
+          PNPM_CONFIG_LINK_WORKSPACE_PACKAGES: "true",
+          PNPM_CONFIG_PREFER_WORKSPACE_PACKAGES: "true",
+          npm_config_link_workspace_packages: "true",
+          npm_config_prefer_workspace_packages: "true",
+        }),
+      });
     });
   });
 
@@ -34,13 +48,27 @@ describe("execPackageManager", () => {
       process.env["COREPACK_ROOT"] = "/usr/local/lib/corepack";
     });
 
-    it.each(["npm", "yarn", "pnpm"])("wraps %s in corepack", (npmClient) => {
+    it.each(["npm", "yarn"])("wraps %s in corepack", (npmClient) => {
       execPackageManager(npmClient, ["install", "--lockfile-only"], opts);
       expect(childProcess.exec).toHaveBeenCalledWith(
         "corepack",
         [npmClient, "install", "--lockfile-only"],
         opts
       );
+    });
+
+    it("wraps pnpm in corepack with strictDepBuilds disabled for pnpm 12+", () => {
+      execPackageManager("pnpm", ["install", "--lockfile-only"], opts);
+      expect(childProcess.exec).toHaveBeenCalledWith("corepack", ["pnpm", "install", "--lockfile-only"], {
+        ...opts,
+        env: expect.objectContaining({
+          PNPM_CONFIG_STRICT_DEP_BUILDS: "false",
+          PNPM_CONFIG_LINK_WORKSPACE_PACKAGES: "true",
+          PNPM_CONFIG_PREFER_WORKSPACE_PACKAGES: "true",
+          npm_config_link_workspace_packages: "true",
+          npm_config_prefer_workspace_packages: "true",
+        }),
+      });
     });
 
     it("bypasses corepack for bun, which corepack does not support", () => {
