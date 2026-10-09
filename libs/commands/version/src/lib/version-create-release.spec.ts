@@ -27,7 +27,7 @@ vi.mock("./remote-branch-exists", async () => ({
 vi.mock("execa", async () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const actual = (await vi.importActual("execa")) as any;
-  const execa = actual.default;
+  const execaFn = actual.execa;
 
   const mockExeca = (...args) => {
     // assume there are changes if git diff is called
@@ -41,10 +41,10 @@ vi.mock("execa", async () => {
       return Promise.reject(new Error("Changes found"));
     }
 
-    return execa(...args);
+    return execaFn(...args);
   };
 
-  return { ...actual, default: Object.assign(mockExeca, execa) };
+  return { ...actual, execa: Object.assign(mockExeca, execaFn) };
 });
 
 // The mocked version isn't the same as the real one

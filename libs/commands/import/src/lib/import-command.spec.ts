@@ -7,7 +7,7 @@ import {
   initNamedFixtureFactory,
   updateLernaConfig,
 } from "@lerna/test-helpers";
-import execa from "execa";
+import { execa, execaSync } from "execa";
 import fs from "fs-extra";
 import path from "path";
 
@@ -215,11 +215,11 @@ describe("ImportCommand", () => {
           } else {
             await lernaImport(testDir)(externalDir);
             // whatever the current git user is
-            expectedEmail = execa.sync("git", ["config", "user.email"], { cwd: testDir }).stdout;
-            expectedName = execa.sync("git", ["config", "user.name"], { cwd: testDir }).stdout;
+            expectedEmail = execaSync("git", ["config", "user.email"], { cwd: testDir }).stdout;
+            expectedName = execaSync("git", ["config", "user.name"], { cwd: testDir }).stdout;
           }
 
-          expect(execa.sync("git", ["log", "-1", "--format=%cn <%ce>"], { cwd: testDir }).stdout).toBe(
+          expect(execaSync("git", ["log", "-1", "--format=%cn <%ce>"], { cwd: testDir }).stdout).toBe(
             `${expectedName} <${expectedEmail}>`
           );
         })

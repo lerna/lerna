@@ -1,4 +1,4 @@
-import execa from "execa";
+import { execa } from "execa";
 import { resetWorkspaceContext, setupWorkspaceContext } from "nx/src/utils/workspace-context";
 import { setWorkspaceRoot } from "nx/src/utils/workspace-root";
 import { createRequire } from "module";

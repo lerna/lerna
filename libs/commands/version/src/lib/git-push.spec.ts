@@ -1,5 +1,5 @@
 import { cloneFixtureFactory } from "@lerna/test-helpers";
-import execa from "execa";
+import { execa } from "execa";
 import { gitPush } from "./git-push";
 
 const cloneFixture = cloneFixtureFactory(__dirname);

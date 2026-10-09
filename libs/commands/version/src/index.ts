@@ -26,7 +26,7 @@ import {
   ValidationError,
 } from "@lerna/core";
 import dedent from "dedent";
-import execa from "execa";
+import { execa, type Options } from "execa";
 import fs from "fs";
 import { minimatch } from "minimatch";
 import os from "os";
@@ -944,7 +944,7 @@ export class VersionCommand extends Command {
         stdio: "pipe",
         ...this.execOpts,
         cwd: this.execOpts.cwd as string, // force it to a string
-      });
+      } as Options);
     } catch (e) {
       // git diff exited with a non-zero exit code, so we assume changes were found
       return true;

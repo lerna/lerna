@@ -18,13 +18,8 @@ import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
 
 /**
- * Execa compatible options type
- *
- * Current used execa version options type uses```cwd: string``` and not
- * ``` cwd?: string | URL ```
- *
- * Can be removed when latest execa version is used!!!
- * */
+ * Execa-compatible options type with a string cwd and permissive encoding.
+ */
 export type ExecOptions = Omit<NodeExecOptions, "cwd" | "encoding"> & { cwd?: string; encoding?: string };
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
