@@ -75,7 +75,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
           devDependencies: Object {
             lerna: Object {
               specifier: ^999.9.9-e2e.0,
-              version: 999.9.9-e2e.0,
+              version: 999.9.9-e2e.0(supports-color@7.2.0),
             },
           },
         },
@@ -83,7 +83,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
         packages/package-b: Object {
           dependencies: Object {
             package-a: Object {
-              specifier: ^3.3.3,
+              specifier: workspace:^3.3.3,
               version: link:../package-a,
             },
           },
@@ -140,7 +140,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
           devDependencies: Object {
             lerna: Object {
               specifier: ^999.9.9-e2e.0,
-              version: 999.9.9-e2e.0,
+              version: 999.9.9-e2e.0(supports-color@7.2.0),
             },
           },
         },
@@ -209,7 +209,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
           devDependencies: Object {
             lerna: Object {
               specifier: ^999.9.9-e2e.0,
-              version: 999.9.9-e2e.0,
+              version: 999.9.9-e2e.0(supports-color@7.2.0),
             },
           },
         },
@@ -217,7 +217,7 @@ describe("lerna-version-positional-arguments-pnpm", () => {
         packages/package-b: Object {
           dependencies: Object {
             package-a: Object {
-              specifier: ^3.3.3,
+              specifier: workspace:^3.3.3,
               version: link:../package-a,
             },
           },

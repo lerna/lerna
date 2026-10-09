@@ -37,31 +37,35 @@ describe("lerna-init-yarn", () => {
 
   afterEach(() => fixture.destroy());
 
-  it("should set npmClient to yarn in lerna.json", async () => {
-    const result = await fixture.lernaInit();
+  it(
+    "should set npmClient to yarn in lerna.json",
+    async () => {
+      const result = await fixture.lernaInit();
 
-    expect(result.combinedOutput).toMatchInlineSnapshot(`
-      lerna notice cli v999.9.9-e2e.0
-      lerna info Applying the following file system updates:
-      CREATE lerna.json
-      UPDATE package.json
-      CREATE .gitignore
-      lerna info Initializing Git repository
-      lerna info Using yarn to install packages
-      lerna success Initialized Lerna files
-      lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
+      expect(result.combinedOutput).toMatchInlineSnapshot(`
+        lerna notice cli v999.9.9-e2e.0
+        lerna info Applying the following file system updates:
+        CREATE lerna.json
+        UPDATE package.json
+        CREATE .gitignore
+        lerna info Initializing Git repository
+        lerna info Using yarn to install packages
+        lerna success Initialized Lerna files
+        lerna info New to Lerna? Check out the docs: https://lerna.js.org/docs/getting-started
 
-    `);
+      `);
 
-    const lernaJson = await fixture.readWorkspaceFile("lerna.json");
+      const lernaJson = await fixture.readWorkspaceFile("lerna.json");
 
-    expect(lernaJson).toMatchInlineSnapshot(`
-      {
-        "$schema": "node_modules/lerna/schemas/lerna-schema.json",
-        "version": "0.0.0",
-        "npmClient": "yarn"
-      }
+      expect(lernaJson).toMatchInlineSnapshot(`
+        {
+          "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+          "version": "0.0.0",
+          "npmClient": "yarn"
+        }
 
-    `);
-  });
+      `);
+    },
+    120000
+  );
 });

@@ -6,6 +6,9 @@ export function getPnpmInstallEnv(): Record<string, string> {
     PNPM_CONFIG_STRICT_DEP_BUILDS: "false",
     // pnpm 12 runs a preflight install before `pnpm exec`; skip it for lerna workspaces.
     PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
+    // Resolve semver workspace siblings during `install --lockfile-only` (version command).
+    PNPM_CONFIG_LINK_WORKSPACE_PACKAGES: "true",
+    PNPM_CONFIG_PREFER_WORKSPACE_PACKAGES: "true",
   };
 }
 
