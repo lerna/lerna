@@ -1,6 +1,8 @@
 {
   "$schema": "packages/lerna/schemas/lerna-schema.json",
-  "packages": ["packages/lerna"],
+  "packages": [
+    "packages/lerna"
+  ],
   "command": {
     "create": {
       "homepage": "https://github.com/lerna/lerna",
@@ -16,6 +18,10 @@
       "message": "chore(release): %s"
     }
   },
-  "ignoreChanges": ["**/__fixtures__/**", "**/__tests__/**", "**/*.md"],
-  "version": "10.0.1"
+  "ignoreChanges": [
+    "**/__fixtures__/**",
+    "**/__tests__/**",
+    "**/*.md"
+  ],
+  "version": "10.1.0"
 }

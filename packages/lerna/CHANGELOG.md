@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.1.0](https://github.com/lerna/lerna/compare/v10.0.1...v10.1.0) (2026-10-09)
+
+### Bug Fixes
+
+* bump conventional-changelog so --conventional-commits can resolve conventional-commits-filter ([#4432](https://github.com/lerna/lerna/issues/4432)) ([a7fa0de](https://github.com/lerna/lerna/commit/a7fa0de07bccd4e13547372dd07df004d8a9e79d))
+* **core:** migrate execa to v10 ([#4551](https://github.com/lerna/lerna/issues/4551)) ([9486e1a](https://github.com/lerna/lerna/commit/9486e1a9ad2e03af4840370c77501d0ae85c9112))
+* update dependency @npmcli/arborist to v10 ([#4512](https://github.com/lerna/lerna/issues/4512)) ([92f53b3](https://github.com/lerna/lerna/commit/92f53b3dc399da7893746e96746cf46c60e8f991))
+* update dependency @npmcli/arborist to v9.9.1 ([#4476](https://github.com/lerna/lerna/issues/4476)) ([1ccfe09](https://github.com/lerna/lerna/commit/1ccfe090ae3461c8828f52b97bfa2919560aa256))
+* update dependency @npmcli/package-json to v7.0.5 ([#4456](https://github.com/lerna/lerna/issues/4456)) ([6c1725d](https://github.com/lerna/lerna/commit/6c1725d3e21b53e0131493698c0350109d50a533))
+* update dependency @npmcli/package-json to v8 ([#4513](https://github.com/lerna/lerna/issues/4513)) ([d41d625](https://github.com/lerna/lerna/commit/d41d625e6068537471456b0cf762542d318d0ee3))
+* update dependency @npmcli/run-script to v10.0.4 ([#4457](https://github.com/lerna/lerna/issues/4457)) ([3034c8a](https://github.com/lerna/lerna/commit/3034c8a2bfbe0305ed7c6857495939db0586c1ce))
+* update dependency @npmcli/run-script to v11 ([#4516](https://github.com/lerna/lerna/issues/4516)) ([9f6408a](https://github.com/lerna/lerna/commit/9f6408aef75b682ca46ff99d59681ea2418af497))
+* update dependency @octokit/rest to v22 ([#4517](https://github.com/lerna/lerna/issues/4517)) ([87da4c1](https://github.com/lerna/lerna/commit/87da4c1977c40e3189d696af4ec5d4822d5a05de))
+* update dependency ci-info to v4.4.0 ([#4477](https://github.com/lerna/lerna/issues/4477)) ([a3d6824](https://github.com/lerna/lerna/commit/a3d6824d9ac5b9bd436bc828bf5dd4d010bd03ba))
+* update dependency conventional-changelog-angular to v9.4.0 ([#4479](https://github.com/lerna/lerna/issues/4479)) ([2da2de5](https://github.com/lerna/lerna/commit/2da2de50e7e322817c056a41a0cd627b358a6c90))
+* update dependency cosmiconfig to v9.0.2 ([#4458](https://github.com/lerna/lerna/issues/4458)) ([158cd00](https://github.com/lerna/lerna/commit/158cd005b71ed01e49dbf0ba9d70f37254af9e72))
+* update dependency dedent to v1.7.2 ([#4480](https://github.com/lerna/lerna/issues/4480)) ([4f574fa](https://github.com/lerna/lerna/commit/4f574fad234713817a5c07c26458937f4947a757))
+* update dependency envinfo to v7.21.0 ([#4481](https://github.com/lerna/lerna/issues/4481)) ([c2f3006](https://github.com/lerna/lerna/commit/c2f30065f29c7a6dfd63168f7c064510651c35d9))
+* update dependency execa to v5.1.1 ([#4482](https://github.com/lerna/lerna/issues/4482)) ([14c7f5e](https://github.com/lerna/lerna/commit/14c7f5ef8bd73c87eb097867a2f129f1fed901b5))
+* update dependency git-url-parse to v14.1.0 ([#4483](https://github.com/lerna/lerna/issues/4483)) ([bbc7e10](https://github.com/lerna/lerna/commit/bbc7e10e2afc6057376444a7f6bdc38b5d5333d1))
+* update dependency import-local to v3.2.0 ([#4484](https://github.com/lerna/lerna/issues/4484)) ([c94d31d](https://github.com/lerna/lerna/commit/c94d31d03804c0ecea000378db88a57c123d17a5))
+* update dependency ini to v7 ([#4531](https://github.com/lerna/lerna/issues/4531)) ([d089b01](https://github.com/lerna/lerna/commit/d089b01e8d753148c06baabab8abd9f553961b21))
+* update dependency init-package-json to v8.2.5 ([#4459](https://github.com/lerna/lerna/issues/4459)) ([deca54b](https://github.com/lerna/lerna/commit/deca54b005af3d80db67de8d6e88be06630e2402))
+* update dependency init-package-json to v9 ([#4532](https://github.com/lerna/lerna/issues/4532)) ([81bdf78](https://github.com/lerna/lerna/commit/81bdf78262a3db1cf662a874ba347f7b967f5e3b))
+* update dependency inquirer to v12.11.1 ([#4485](https://github.com/lerna/lerna/issues/4485)) ([ef25910](https://github.com/lerna/lerna/commit/ef259106ed83f2ecdd63000c5e08db54c3036ad7))
+* update dependency inquirer to v14 ([#4533](https://github.com/lerna/lerna/issues/4533)) ([8ce4cb3](https://github.com/lerna/lerna/commit/8ce4cb397400d7ff1fda9d661a4aae1650154b76))
+* update dependency make-fetch-happen to v15.0.6 ([#4460](https://github.com/lerna/lerna/issues/4460)) ([9fe6c09](https://github.com/lerna/lerna/commit/9fe6c098c7b74f2841f12c87e0264dd472961e1a))
+* update dependency minimatch to v3.1.5 ([#4461](https://github.com/lerna/lerna/issues/4461)) ([b32552d](https://github.com/lerna/lerna/commit/b32552d55aa92eab7dc77d935eb48a80c8d69632))
+* update dependency npm-package-arg to v13.0.2 ([#4462](https://github.com/lerna/lerna/issues/4462)) ([abab2cf](https://github.com/lerna/lerna/commit/abab2cf928dda78470c5573c6c3967b63da917f0))
+* update dependency npm-packlist to v10.0.4 ([#4463](https://github.com/lerna/lerna/issues/4463)) ([f287125](https://github.com/lerna/lerna/commit/f2871254615985bb923a05d4adedf0b21b97d371))
+* update dependency npm-registry-fetch to v19.1.1 ([#4464](https://github.com/lerna/lerna/issues/4464)) ([3290563](https://github.com/lerna/lerna/commit/3290563ab7298a6098f223d9d3f512d3b04a07b4))
+* update dependency semver to v7.8.5 ([#4486](https://github.com/lerna/lerna/issues/4486)) ([ee1c914](https://github.com/lerna/lerna/commit/ee1c9140e3474277d42142566d28bfbd55edc1f1))
+* update dependency tinyglobby to v0.2.17 ([#4465](https://github.com/lerna/lerna/issues/4465)) ([451e922](https://github.com/lerna/lerna/commit/451e922581a80bd3610e25e1b9cefde529134658))
+* update dependency yargs to v17.7.3 ([#4466](https://github.com/lerna/lerna/issues/4466)) ([47d1b53](https://github.com/lerna/lerna/commit/47d1b53e93f5a083a011d0afc0065a6b5bee5801))
+
+### Features
+
+* upgrade the npm publishing dependency stack ([#4536](https://github.com/lerna/lerna/issues/4536)) ([430e676](https://github.com/lerna/lerna/commit/430e67618ff31de3b861da1ba3cc6538478679c3))
+
+
 ## [10.0.1](https://github.com/lerna/lerna/compare/v10.0.0...v10.0.1) (2026-08-19)
 
 ### Bug Fixes
