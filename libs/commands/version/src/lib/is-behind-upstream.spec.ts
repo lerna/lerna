@@ -1,5 +1,5 @@
 import { cloneFixtureFactory } from "@lerna/test-helpers";
-import execa from "execa";
+import { execa } from "execa";
 import { isBehindUpstream } from "./is-behind-upstream";
 
 const cloneFixture = cloneFixtureFactory(__dirname);

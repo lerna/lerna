@@ -1,5 +1,5 @@
 import { commandRunner, gitAdd, gitSHASerializer, initFixtureFactory } from "@lerna/test-helpers";
-import execa from "execa";
+import { execa } from "execa";
 import fs from "fs-extra";
 import _pacote from "pacote";
 import path from "path";

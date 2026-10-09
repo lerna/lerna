@@ -1,5 +1,5 @@
 import { cloneFixtureFactory } from "@lerna/test-helpers";
-import execa from "execa";
+import { execa } from "execa";
 import { remoteBranchExists } from "./remote-branch-exists";
 
 const cloneFixture = cloneFixtureFactory(__dirname);
