@@ -32,6 +32,7 @@ const REGISTRY = "http://localhost:4873/";
 /** Matches lerna core pnpm installs; pnpm 12+ needs strictDepBuilds disabled. */
 const PNPM_INSTALL_ENV = {
   PNPM_CONFIG_STRICT_DEP_BUILDS: "false",
+  PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
 } as const;
 
 const noopWriteStream = {

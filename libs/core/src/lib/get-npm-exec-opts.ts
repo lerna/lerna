@@ -4,6 +4,8 @@ import log from "./npmlog";
 export function getPnpmInstallEnv(): Record<string, string> {
   return {
     PNPM_CONFIG_STRICT_DEP_BUILDS: "false",
+    // pnpm 12 runs a preflight install before `pnpm exec`; skip it for lerna workspaces.
+    PNPM_CONFIG_VERIFY_DEPS_BEFORE_RUN: "false",
   };
 }
 
