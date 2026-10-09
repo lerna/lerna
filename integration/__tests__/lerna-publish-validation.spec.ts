@@ -1,5 +1,5 @@
 import { changelogSerializer, cliRunner, cloneFixtureFactory, gitAdd, gitCommit } from "@lerna/test-helpers";
-import execa from "execa";
+import { execa } from "execa";
 import fs from "fs-extra";
 import os from "node:os";
 import path from "node:path";

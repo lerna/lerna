@@ -20,7 +20,7 @@ export async function getCurrentTags(execOpts: ExecOptions, matchingPattern: str
     ["tag", "--sort", "version:refname", "--points-at", "HEAD", "--list", matchingPattern],
     opts as any
   );
-  const lines: string[] = result.stdout.split("\n").filter(Boolean);
+  const lines: string[] = result.stdout?.split("\n").filter(Boolean) ?? [];
 
   if (matchingPattern === "*@*") {
     // independent mode does not respect tagVersionPrefix,

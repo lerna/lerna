@@ -8,7 +8,7 @@ process.env["npm_config_legacy_peer_deps"] ??= "false";
 
 import dedent from "dedent";
 import os from "node:os";
-import yargs from "yargs";
+import yargs, { type Argv, type Options } from "yargs";
 import log from "./npmlog";
 
 /**
@@ -23,7 +23,7 @@ export function lernaCLI(argv?: string | readonly string[], cwd?: string) {
     .demandCommand(1, "A command is required. Pass --help to see all available commands and options.")
     .recommendCommands()
     .strict()
-    .fail((msg, err: any) => {
+    .fail((msg: string, err: any) => {
       // certain yargs validations throw strings :P
       const actual = err || new Error(msg);
 
@@ -52,9 +52,9 @@ export function lernaCLI(argv?: string | readonly string[], cwd?: string) {
     `);
 }
 
-function globalOptions(argv: yargs.Argv) {
+function globalOptions(argv: Argv) {
   // the global options applicable to _every_ command
-  const opts: { [key: string]: yargs.Options } = {
+  const opts: { [key: string]: Options } = {
     loglevel: {
       defaultDescription: "info",
       describe: "What level of logs to report.",

@@ -1,4 +1,4 @@
-import execa from "execa";
+import { execa } from "execa";
 import { resetWorkspaceContext, setupWorkspaceContext } from "nx/src/utils/workspace-context";
 import { setWorkspaceRoot } from "nx/src/utils/workspace-root";
 import { createRequire } from "module";
@@ -105,7 +105,7 @@ export function cliRunner(cwd: string, env?: any) {
     env: Object.assign(
       {
         CI: "true",
-        // always turn off chalk
+        // always turn off color
         FORCE_COLOR: "0",
       },
       env

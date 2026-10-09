@@ -6,7 +6,7 @@ import {
   workspaceRoot,
   writeJsonFile,
 } from "@nx/devkit";
-import execa from "execa";
+import { execa } from "execa";
 import fs from "fs-extra";
 import inquirer from "inquirer";
 

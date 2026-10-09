@@ -1,18 +1,30 @@
 import { colorize } from "./colorize";
 export { colorize, type StyleFormat } from "./colorize";
-import execa from "execa";
+import {
+  execa,
+  execaSync,
+  type ExecaError,
+  type Options,
+  type Result,
+  type Subprocess,
+  type SyncOptions,
+} from "execa";
 import os from "node:os";
 import strongLogTransformer from "./forked-strong-log-transformer";
 import { setExitCode } from "./set-exit-code";
 
 type withPkg<T> = T & { pkg?: unknown };
 
-export type LernaChildProcess = withPkg<execa.ExecaChildProcess<string>>;
-export type LernaReturnValue = withPkg<execa.ExecaReturnValue<string>>;
-export type LernaOptions = withPkg<execa.Options>;
+type LernaExecaOptions = Omit<Options, "encoding" | "cwd"> & { encoding?: string; cwd?: string };
+type LernaSyncOptions = Omit<SyncOptions, "encoding"> & { encoding?: string };
+type LernaResult = Result & { stdout: string; stderr: string };
+
+export type LernaChildProcess = withPkg<Subprocess>;
+export type LernaReturnValue = withPkg<LernaResult>;
+export type LernaOptions = withPkg<LernaExecaOptions>;
 
 // bookkeeping for spawned processes
-const children = new Set<execa.ExecaChildProcess<string>>();
+const children = new Set<Subprocess>();
 
 // when streaming processes are spawned, use this color for prefix
 const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "blueBright"] as const;
@@ -41,8 +53,8 @@ export function exec(command: string, args: string[], opts?: LernaOptions): Prom
  * @param args
  * @param opts
  */
-export function execSync(command: string, args: string[], opts?: import("execa").SyncOptions): string {
-  return execa.sync(command, args, opts).stdout;
+export function execSync(command: string, args: string[], opts?: LernaSyncOptions): string {
+  return execaSync(command, args, opts as SyncOptions).stdout as string;
 }
 
 /**
@@ -109,9 +121,7 @@ export function getChildProcessCount() {
  * @param result
  * @returns
  */
-export function getExitCode(
-  result: execa.ExecaError<string> & { code?: string | number }
-): number | undefined {
+export function getExitCode(result: ExecaError & { code?: string | number }): number | undefined {
   if (result.exitCode) {
     return result.exitCode;
   }
@@ -138,13 +148,14 @@ export function getExitCode(
  * @param opts
  */
 function spawnProcess(command: string, args: string[], opts?: LernaOptions): LernaChildProcess {
-  const child: LernaChildProcess = execa(command, args, opts);
+  const child = execa(command, args, opts as Options) as LernaChildProcess;
+  const nodeChildProcess = child.nodeChildProcess;
   const drain = (exitCode: number, signal: number) => {
     children.delete(child);
 
     // don't run repeatedly if this is the error event
     if (signal === undefined) {
-      child.removeListener("exit", drain);
+      nodeChildProcess.removeListener("exit", drain);
     }
 
     // propagate exit code, if any
@@ -153,8 +164,8 @@ function spawnProcess(command: string, args: string[], opts?: LernaOptions): Ler
     }
   };
 
-  child.once("exit", drain);
-  child.once("error", drain);
+  nodeChildProcess.once("exit", drain);
+  nodeChildProcess.once("error", drain);
 
   if (opts?.pkg) {
     child.pkg = opts.pkg;
@@ -168,7 +179,7 @@ function spawnProcess(command: string, args: string[], opts?: LernaOptions): Ler
 /**
  * @param spawned
  */
-function wrapError(spawned: LernaChildProcess) {
+function wrapError(spawned: LernaChildProcess): Promise<LernaReturnValue> {
   if (spawned.pkg) {
     return spawned.catch((err: any) => {
       // ensure exit code is always a number
@@ -178,8 +189,8 @@ function wrapError(spawned: LernaChildProcess) {
       err.pkg = spawned.pkg;
 
       throw err;
-    });
+    }) as Promise<LernaReturnValue>;
   }
 
-  return spawned;
+  return spawned as Promise<LernaReturnValue>;
 }

@@ -9,10 +9,10 @@
   ],
   "volta": {
     "node": "26.10.0",
-    "npm": "12.1.0",
+    "npm": "12.2.0",
     "yarn": "1.22.22"
   },
-  "packageManager": "npm@12.1.0",
+  "packageManager": "npm@12.2.0",
   "scripts": {
     "build": "tools/scripts/build.sh",
     "e2e-build-package-publish": "node tools/scripts/e2e-build-package-publish.ts",
@@ -60,11 +60,12 @@
     "lerna": "file:packages/lerna",
     "minimatch": "10.2.6",
     "nx": "23.2.1",
-    "oxfmt": "0.70.0",
+    "oxfmt": "0.71.0",
     "oxlint": "1.86.0",
     "pkg-pr-new": "0.0.88",
     "signal-exit": "4.1.0",
-    "typescript": "5.9.3",
+    "@typescript/native": "npm:typescript@7.0.2",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
     "verdaccio": "6.10.4",
     "vite": "^8.1.4",
     "vitest": "^5.0.0"

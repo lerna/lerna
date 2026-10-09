@@ -1,5 +1,5 @@
 import { commandRunner, gitSHASerializer, initFixtureFactory } from "@lerna/test-helpers";
-import execa from "execa";
+import { execa } from "execa";
 import path from "path";
 import versionCommand from "../command";
 

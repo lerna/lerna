@@ -1,5 +1,5 @@
 import { Arguments, Command, CommandConfigOptions, getPackage, ValidationError } from "@lerna/core";
-import execa from "execa";
+import type { ExecaError } from "execa";
 import { getLastCommit } from "./lib/get-last-commit";
 import { hasCommit } from "./lib/has-commit";
 import { spawn } from "@lerna/child-process";
@@ -54,7 +54,7 @@ export class DiffCommand extends Command<DiffCommandOptions> {
   }
 
   override execute() {
-    return spawn("git", this.args, this.execOpts).catch((err: execa.ExecaError) => {
+    return spawn("git", this.args, this.execOpts).catch((err: ExecaError) => {
       if (err.exitCode) {
         // quitting the diff viewer is not an error
         throw err;

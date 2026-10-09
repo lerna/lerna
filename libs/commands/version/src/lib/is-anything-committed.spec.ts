@@ -1,5 +1,5 @@
 import { initFixtureFactory } from "@lerna/test-helpers";
-import execa from "execa";
+import { execa } from "execa";
 import { isAnythingCommitted } from "./is-anything-committed";
 
 const initFixture = initFixtureFactory(__dirname);

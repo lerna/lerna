@@ -22,7 +22,6 @@ export async function recommendVersion(
 
   const [config, { Bumper, packagePrefix }] = await Promise.all([
     getChangelogConfig(changelogPreset, rootPath),
-    // @ts-expect-error ESM package with exports field not resolved by moduleResolution: "node"
     import("conventional-recommended-bump") as Promise<typeof import("conventional-recommended-bump")>,
   ]);
 

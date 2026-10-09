@@ -1,5 +1,5 @@
 import { ExecOptions } from "child_process";
-import { ExecaReturnValue } from "execa";
+import type { Result } from "execa";
 import { getPnpmInstallEnv } from "../get-npm-exec-opts";
 import { isCorepackEnabled } from "./is-corepack-enabled";
 
@@ -34,11 +34,7 @@ function createCommandAndArgs(npmClient: string, args: string[]) {
   return { command, commandArgs };
 }
 
-export function execPackageManager(
-  npmClient: string,
-  args: string[],
-  opts: ExecOptions
-): Promise<ExecaReturnValue<string>> {
+export function execPackageManager(npmClient: string, args: string[], opts: ExecOptions): Promise<Result> {
   const { command, commandArgs } = createCommandAndArgs(npmClient, args);
   return childProcess.exec(command, commandArgs, withPackageManagerExecEnv(npmClient, opts) as any);
 }

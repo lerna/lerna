@@ -1,4 +1,4 @@
-import execa from "execa";
+import { execa } from "execa";
 import findUp from "find-up";
 import { copy, ensureDir } from "fs-extra";
 import { mkdtempSync, realpathSync } from "node:fs";

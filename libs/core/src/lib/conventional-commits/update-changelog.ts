@@ -71,7 +71,6 @@ export async function updateChangelog(
 
   const [config, { ConventionalChangelog, packagePrefix }] = await Promise.all([
     getChangelogConfig(changelogPreset, rootPath),
-    // @ts-expect-error ESM package with exports field not resolved by moduleResolution: "node"
     import("conventional-changelog") as Promise<typeof import("conventional-changelog")>,
   ]);
 

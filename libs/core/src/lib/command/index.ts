@@ -4,7 +4,7 @@ import { ExecOptions as NodeExecOptions } from "child_process";
 import dedent from "dedent";
 import { daemonClient } from "nx/src/daemon/client/client";
 import os from "os";
-import yargs from "yargs";
+import yargs, { type ArgumentsCamelCase } from "yargs";
 import log, { Logger } from "../npmlog";
 import { CommandConfigOptions, Project } from "../project";
 import { ProjectGraphWithPackages } from "../project-graph-with-packages";
@@ -18,13 +18,8 @@ import { logPackageError } from "./log-package-error";
 import { warnIfHanging } from "./warn-if-hanging";
 
 /**
- * Execa compatible options type
- *
- * Current used execa version options type uses```cwd: string``` and not
- * ``` cwd?: string | URL ```
- *
- * Can be removed when latest execa version is used!!!
- * */
+ * Execa-compatible options type with a string cwd and permissive encoding.
+ */
 export type ExecOptions = Omit<NodeExecOptions, "cwd" | "encoding"> & { cwd?: string; encoding?: string };
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
@@ -52,7 +47,7 @@ export type Arguments<T extends CommandConfigOptions = CommandConfigOptions> = {
   lernaVersion?: string;
   onResolved?: (value: unknown) => unknown;
   onRejected?: (reason: unknown) => unknown;
-} & yargs.ArgumentsCamelCase<T>;
+} & ArgumentsCamelCase<T>;
 
 export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   name: string;
