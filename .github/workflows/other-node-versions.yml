@@ -84,7 +84,7 @@ jobs:
           node --version
           npm --version
           yarn --version
-          pnpm --version
+          (cd "${RUNNER_TEMP:-/tmp}" && pnpm --version)
           bun --version
         shell: bash
 

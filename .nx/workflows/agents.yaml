@@ -46,7 +46,7 @@ print-tool-versions: &print-tool-versions
     node --version
     npm --version
     yarn --version
-    pnpm --version
+    (cd /tmp && pnpm --version)
     bun --version
 
 configure-git-metadata: &configure-git-metadata

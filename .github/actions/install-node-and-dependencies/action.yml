@@ -82,7 +82,8 @@ runs:
       if: ${{ inputs.install-additional-package-managers == 'true' }}
       run: |
         yarn --version
-        pnpm --version
+        # pnpm 12+ errors in an npm-root repo; print the global toolchain version elsewhere.
+        (cd "${RUNNER_TEMP:-/tmp}" && pnpm --version)
         bun --version
       shell: bash
       env:
