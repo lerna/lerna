@@ -4,7 +4,7 @@ import { ExecOptions as NodeExecOptions } from "child_process";
 import dedent from "dedent";
 import { daemonClient } from "nx/src/daemon/client/client";
 import os from "os";
-import yargs from "yargs";
+import yargs, { type ArgumentsCamelCase } from "yargs";
 import log, { Logger } from "../npmlog";
 import { CommandConfigOptions, Project } from "../project";
 import { ProjectGraphWithPackages } from "../project-graph-with-packages";
@@ -52,7 +52,7 @@ export type Arguments<T extends CommandConfigOptions = CommandConfigOptions> = {
   lernaVersion?: string;
   onResolved?: (value: unknown) => unknown;
   onRejected?: (reason: unknown) => unknown;
-} & yargs.ArgumentsCamelCase<T>;
+} & ArgumentsCamelCase<T>;
 
 export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   name: string;

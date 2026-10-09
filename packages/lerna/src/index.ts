@@ -21,6 +21,7 @@ import addCachingCmd from "./commands/add-caching/command";
 import repairCmd from "./commands/repair/command";
 import watchCmd from "./commands/watch/command";
 import pkg from "../package.json" with { type: "json" };
+import { type Argv } from "yargs";
 import yargsFactory from "yargs/yargs";
 
 export function main(argv: NodeJS.Process["argv"]) {
@@ -63,7 +64,7 @@ function explicitlyHandleLegacyPackageManagementCommands(yargsInstance: ReturnTy
     yargsInstance.command({
       command: commandName === "add" ? "add <pkg> [globs..]" : commandName,
       describe: `The "${commandName}" command was removed by default in v7, and is no longer maintained.`,
-      builder: (yargs) => {
+      builder: (yargs: Argv) => {
         /**
          * Dynamically parse all given flags and apply them as options, so that our handler() is always called,
          * rather than yargs showing options based validation messaging.
