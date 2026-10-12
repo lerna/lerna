@@ -1,4 +1,7 @@
+import inquirer from "inquirer";
+import type { MockInstance } from "vitest";
 import log from "../npmlog";
+import { promptConfirmation } from "../prompt";
 import { createProjectGraph } from "../test-helpers/create-project-graph";
 
 import fs from "fs-extra";
@@ -255,6 +258,50 @@ describe("command", () => {
 
       await expect(command).rejects.toThrow("message");
       expect(console.error).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("when a prompt fails", () => {
+    class PromptCommand extends Command {
+      initialize() {
+        return true;
+      }
+
+      execute() {
+        return promptConfirmation("Continue?");
+      }
+    }
+
+    const rejectPrompt = (err: Error) => {
+      vi.spyOn(inquirer, "prompt").mockImplementation(() => Promise.reject(err) as any);
+    };
+
+    const printedOutput = (write: MockInstance) => write.mock.calls.map(([msg]) => msg).join("");
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("prints the error", async () => {
+      const write = vi.spyOn(log, "write").mockImplementation(() => {});
+      rejectPrompt(new Error("prompt broke"));
+
+      const command = new (PromptCommand as any)({ cwd: testDir });
+
+      await expect(command).rejects.toThrow("prompt broke");
+      expect(printedOutput(write)).toContain("Error: prompt broke");
+    });
+
+    it("prints no stack trace when the prompt was closed by the user", async () => {
+      const write = vi.spyOn(log, "write").mockImplementation(() => {});
+      const err = new Error("User force closed the prompt with SIGINT");
+      err.name = "ExitPromptError";
+      rejectPrompt(err);
+
+      const command = new (PromptCommand as any)({ cwd: testDir });
+
+      await expect(command).rejects.toThrow("User force closed the prompt with SIGINT");
+      expect(printedOutput(write)).not.toContain("ExitPromptError");
     });
   });
 

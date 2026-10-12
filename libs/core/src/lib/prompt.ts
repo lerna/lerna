@@ -21,11 +21,8 @@ export function promptConfirmation(message: string): Promise<boolean> {
         ],
       },
     ])
-    .then((answers) => {
-      log.resume();
-
-      return answers["confirm"];
-    });
+    .then((answers) => answers["confirm"])
+    .finally(() => log.resume());
 }
 
 /**
@@ -48,20 +45,17 @@ export function promptSelectOne(
   return inquirer
     .prompt([
       {
-        type: "list",
+        type: "select",
         name: "prompt",
         message,
         choices,
         pageSize: choices?.length,
         filter,
         validate,
-      } as any,
+      },
     ])
-    .then((answers) => {
-      log.resume();
-
-      return answers["prompt"];
-    });
+    .then((answers) => answers["prompt"])
+    .finally(() => log.resume());
 }
 
 /**
@@ -86,9 +80,6 @@ export function promptTextInput(
         validate,
       },
     ])
-    .then((answers) => {
-      log.resume();
-
-      return answers["input"];
-    });
+    .then((answers) => answers["input"])
+    .finally(() => log.resume());
 }
