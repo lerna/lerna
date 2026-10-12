@@ -150,9 +150,11 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
           if (err.pkg) {
             // Cleanly log specific package error details
             logPackageError(err, this.options.stream);
-          } else if (err.name !== "ValidationError") {
+          } else if (err.name !== "ValidationError" && err.name !== "ExitPromptError") {
             // npmlog does some funny stuff to the stack by default,
             // so pass it directly to avoid duplication.
+            // A prompt the user closed (e.g. ctrl+c) needs no stack trace,
+            // its message is still reported by cli.fail()
             log.error("", cleanStack(err, this.constructor.name));
           }
 
