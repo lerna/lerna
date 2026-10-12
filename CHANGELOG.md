@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.1.1](https://github.com/lerna/lerna/compare/v10.1.0...v10.1.1) (2026-10-12)
+
+### Bug Fixes
+
+* **core:** report errors from failed prompts ([#4557](https://github.com/lerna/lerna/issues/4557)) ([05d2999](https://github.com/lerna/lerna/commit/05d2999a42083c5d3c4630b7a8bc581532f31458))
+* **core:** use the select prompt type, the list alias was removed in inquirer 13 ([#4556](https://github.com/lerna/lerna/issues/4556)) ([6c4f71c](https://github.com/lerna/lerna/commit/6c4f71c7cd2dd03976cc15e85eebe7f69de0a951))
+
+
 # [10.1.0](https://github.com/lerna/lerna/compare/v10.0.1...v10.1.0) (2026-10-09)
 
 ### Bug Fixes
