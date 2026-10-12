@@ -48,14 +48,14 @@ export function promptSelectOne(
   return inquirer
     .prompt([
       {
-        type: "list",
+        type: "select",
         name: "prompt",
         message,
         choices,
         pageSize: choices?.length,
         filter,
         validate,
-      } as any,
+      },
     ])
     .then((answers) => {
       log.resume();
