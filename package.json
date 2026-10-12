@@ -61,7 +61,7 @@
     "minimatch": "10.2.6",
     "nx": "23.2.1",
     "oxfmt": "0.71.0",
-    "oxlint": "1.86.0",
+    "oxlint": "1.87.0",
     "pkg-pr-new": "0.0.88",
     "signal-exit": "4.1.0",
     "@typescript/native": "npm:typescript@7.0.2",
