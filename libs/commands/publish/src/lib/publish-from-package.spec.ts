@@ -113,6 +113,29 @@ describe("publish from-package", () => {
     ]);
   });
 
+  it("does not check the registry for private packages", async () => {
+    const cwd = await initFixture("independent");
+
+    getProjectsWithUnpublishedPackages.mockImplementationOnce((nodes) => Promise.resolve(nodes));
+
+    await lernaPublish(cwd)("from-package");
+
+    const [nodes] = getProjectsWithUnpublishedPackages.mock.calls[0];
+    expect(nodes.map((node) => node.name)).not.toContain("package-5");
+  });
+
+  it("checks the registry for private packages included with --include-private", async () => {
+    const cwd = await initFixture("independent");
+
+    getProjectsWithUnpublishedPackages.mockImplementationOnce((nodes) => Promise.resolve(nodes));
+
+    await lernaPublish(cwd)("from-package", "--include-private", "package-5");
+
+    const [nodes] = getProjectsWithUnpublishedPackages.mock.calls[0];
+    expect(nodes.map((node) => node.name)).toContain("package-5");
+    expect(npmPublish.order()).toContain("package-5");
+  });
+
   it("logs the name of the package that fails to be published", async () => {
     const cwd = await initFixture("independent");
 
