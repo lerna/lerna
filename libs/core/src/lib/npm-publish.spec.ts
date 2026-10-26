@@ -199,6 +199,32 @@ describe("npm-publish", () => {
     expect(runLifecycle).toHaveBeenCalledTimes(2);
   });
 
+  it("forwards the user-agent config key as opts.userAgent", async () => {
+    const userAgent = "lerna/1.0.0/node@v22.0.0+x64 (linux)";
+
+    await npmPublish(pkg, tarFilePath, { "user-agent": userAgent }, conf);
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({
+        userAgent,
+      })
+    );
+  });
+
+  it("prefers an explicit userAgent over the user-agent config key", async () => {
+    await npmPublish(pkg, tarFilePath, { userAgent: "lerna/explicit", "user-agent": "lerna/config" }, conf);
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({
+        userAgent: "lerna/explicit",
+      })
+    );
+  });
+
   it.each([["true"], [true], ["false"], [false]])(
     "aliases strict-ssl to strictSSL",
     async (strictSSLValue) => {

@@ -325,6 +325,24 @@ Map {
     });
   });
 
+  describe("user agent", () => {
+    it("passes the lerna userAgent to registry clients", async () => {
+      const testDir = await initFixture("normal");
+
+      await lernaPublish(testDir)();
+
+      expect(npmPublish).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.objectContaining({
+          userAgent: `lerna/__TEST_VERSION__/node@${process.version}+${process.arch} (${process.platform})`,
+        }),
+        expect.objectContaining({ root: expect.any(Object) }),
+        expect.objectContaining({ otp: undefined })
+      );
+    });
+  });
+
   describe("--registry", () => {
     it("passes registry to npm commands", async () => {
       const testDir = await initFixture("normal");
