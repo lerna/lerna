@@ -17,6 +17,10 @@ export async function getProjectsWithUnpublishedPackages(
     const pkg = getPackage(node);
     // libnpmpublish / npm-registry-fetch check strictSSL rather than strict-ssl
     opts["strictSSL"] = opts["strict-ssl"];
+    // pacote / npm-registry-fetch read userAgent rather than the user-agent config key
+    if (opts["userAgent"] == null && opts["user-agent"] != null) {
+      opts["userAgent"] = opts["user-agent"];
+    }
     return pacote.packument(pkg.name, opts as any).then(
       (packument) => {
         if (packument.versions === undefined || packument.versions[pkg.version] === undefined) {

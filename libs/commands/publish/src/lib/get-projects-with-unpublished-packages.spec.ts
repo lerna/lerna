@@ -79,6 +79,25 @@ test("getProjectsWithUnpublishedPackages with private package", async () => {
   ]);
 });
 
+test("getProjectsWithUnpublishedPackages forwards user-agent as userAgent", async () => {
+  const cwd = await initFixture("public-private");
+  const packages = await getPackages(cwd);
+  const projectNodes = packages.map((pkg): ProjectGraphProjectNodeWithPackage => ({
+    name: pkg.name,
+    type: "lib",
+    data: { root: pkg.location },
+    package: pkg,
+  }));
+
+  const opts = { "user-agent": "lerna/1.0.0/node@v22.0.0+x64 (linux)" };
+  await getProjectsWithUnpublishedPackages(projectNodes, opts);
+
+  expect(pacote.packument).toHaveBeenCalledWith("package-1", {
+    "user-agent": "lerna/1.0.0/node@v22.0.0+x64 (linux)",
+    userAgent: "lerna/1.0.0/node@v22.0.0+x64 (linux)",
+  });
+});
+
 test("getProjectsWithUnpublishedPackages with strict-ssl = false", async () => {
   const cwd = await initFixture("public-private");
   const packages = await getPackages(cwd);
