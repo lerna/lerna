@@ -56,7 +56,7 @@
     "@types/write-file-atomic": "^4.0.3",
     "@vitest/coverage-v8": "^5.0.0",
     "esbuild": "0.28.2",
-    "js-yaml": "5.4.2",
+    "js-yaml": "5.5.0",
     "lerna": "file:packages/lerna",
     "minimatch": "10.2.6",
     "nx": "23.2.1",

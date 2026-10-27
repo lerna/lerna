@@ -62,7 +62,7 @@
     "ini": "^7.0.0",
     "init-package-json": "9.0.0",
     "inquirer": "14.2.2",
-    "js-yaml": "5.4.2",
+    "js-yaml": "5.5.0",
     "libnpmaccess": "11.0.0",
     "libnpmpublish": "12.0.1",
     "load-json-file": "7.0.1",
