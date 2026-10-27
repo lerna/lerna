@@ -302,7 +302,6 @@ describe("lerna-publish-private", () => {
 
       expect(replaceVersion(output.combinedOutput)).toMatchInlineSnapshot(`
         lerna notice cli v999.9.9-e2e.0
-        lerna WARN Unable to determine published version, assuming "test-X" unpublished.
         lerna notice from-package No unpublished release found
         lerna success No changed packages to publish
 
@@ -337,7 +336,6 @@ describe("lerna-publish-private", () => {
         expect(replaceVersion(output.combinedOutput)).toMatchInlineSnapshot(`
           lerna notice cli v999.9.9-e2e.0
           lerna info publish Including private packages ["test-X","test-X"]
-          lerna WARN Unable to determine published version, assuming "test-X" unpublished.
           lerna WARN Unable to determine published version, assuming "test-X" unpublished.
           lerna WARN Unable to determine published version, assuming "test-X" unpublished.
           lerna WARN Unable to determine published version, assuming "test-X" unpublished.
