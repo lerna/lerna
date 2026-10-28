@@ -10,6 +10,9 @@ When used in a `pnpm` workspace, Lerna will:
 - respect the [workspace protocol](https://pnpm.io/workspaces#workspace-protocol-workspace) for package dependencies.
   - During `lerna version`, dependencies will be updated as normal, but will preserve the `workspace:` prefix if it exists.
   - If a [workspace alias](https://pnpm.io/workspaces#referencing-workspace-packages-through-aliases) is used, then `lerna version` will not bump the version of the dependency, since aliases don't specify a version number to bump.
+- respect [catalogs](https://pnpm.io/catalogs) defined in `pnpm-workspace.yaml` for package dependencies.
+  - During `lerna version`, dependencies that use the `catalog:` protocol are left as they are, since their version range is defined in the catalog.
+  - During `lerna publish`, `catalog:` and `catalog:<name>` specs are replaced with the version range from the matching catalog, the same way `pnpm publish` does it.
 
 ## Getting Started
 

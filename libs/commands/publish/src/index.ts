@@ -9,6 +9,7 @@ import {
   describeRef,
   getOneTimePassword,
   getPackage,
+  getPnpmCatalogs,
   logPacked,
   npmConf,
   npmDistTag,
@@ -16,10 +17,12 @@ import {
   output,
   Package,
   packDirectory,
+  PnpmCatalogs,
   prereleaseIdFromVersion,
   ProjectGraphProjectNodeWithPackage,
   promptConfirmation,
   pulseTillDone,
+  resolveCatalogSpec,
   runProjectsTopologically,
   throwIfUncommitted,
   ValidationError,
@@ -387,6 +390,7 @@ export class PublishCommand extends Command {
 
     await this.resolveLocalDependencyLinks();
     await this.resolveWorkspaceDependencyLinks();
+    this.resolveCatalogDependencyLinks();
     this.annotateGitHead();
     await this.serializeChanges();
     await this.packUpdated();
@@ -798,6 +802,29 @@ export class PublishCommand extends Command {
 
       // writing changes to disk handled in serializeChanges()
     });
+  }
+
+  private resolveCatalogDependencyLinks() {
+    // replace pnpm catalog: specs with their version range, like `pnpm publish` does (https://pnpm.io/catalogs#publishing)
+    let catalogs: PnpmCatalogs | undefined;
+
+    for (const pkg of this.packagesToPublish!) {
+      for (const depCollection of [
+        pkg.dependencies,
+        pkg.devDependencies,
+        pkg.optionalDependencies,
+        pkg.peerDependencies,
+      ]) {
+        for (const [depName, spec] of Object.entries(depCollection || {})) {
+          if (spec.startsWith("catalog:")) {
+            catalogs ??= getPnpmCatalogs(this.project.rootPath);
+            depCollection![depName] = resolveCatalogSpec(depName, spec, catalogs);
+          }
+        }
+      }
+    }
+
+    // writing changes to disk handled in serializeChanges()
   }
 
   private annotateGitHead() {
