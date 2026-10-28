@@ -199,6 +199,53 @@ describe("createProjectGraphWithPackages", () => {
     );
     expect(result.localPackageDependencies.project).toHaveLength(1);
   });
+
+  describe("with pnpm catalogs", () => {
+    const workspaceConfigPath = join("root", "pnpm-workspace.yaml");
+
+    beforeEach(() => {
+      vi.spyOn(fsExtra, "existsSync").mockImplementation((path) => path === workspaceConfigPath);
+      vi.spyOn(fsExtra, "readFileSync").mockImplementation(
+        () => "catalog:\n  projectA: ^1.0.0\ncatalogs:\n  legacy:\n    otherProjectB: ^0.9.0\n"
+      );
+    });
+
+    afterEach(() => {
+      vi.mocked(fsExtra.existsSync).mockRestore();
+      vi.mocked(fsExtra.readFileSync).mockRestore();
+    });
+
+    it("should resolve catalog: specs with the catalogs in pnpm-workspace.yaml", async () => {
+      const graph = projectGraph();
+      graph.nodes.project.data.root = "packages/catalog-consumer";
+      graph.dependencies.project = [
+        { source: "project", target: "projectA", type: "static" },
+        { source: "project", target: "otherProjectB", type: "static" },
+      ];
+      const files = projectFileMap();
+      files.project = [{ file: "packages/catalog-consumer/package.json" } as FileData];
+
+      const result = await createProjectGraphWithPackages(graph, files, ["packages/*", "other-packages/*"]);
+
+      expect(fsExtra.readFileSync).toHaveBeenCalledWith(workspaceConfigPath, "utf8");
+      expect(result.dependencies.project).toEqual([
+        expect.objectContaining({
+          target: "projectA",
+          targetResolvedNpaResult: expect.objectContaining({ fetchSpec: "^1.0.0", catalogSpec: "catalog:" }),
+          targetVersionMatchesDependencyRequirement: true,
+        }),
+        expect.objectContaining({
+          target: "otherProjectB",
+          targetResolvedNpaResult: expect.objectContaining({
+            fetchSpec: "^0.9.0",
+            catalogSpec: "catalog:legacy",
+          }),
+          targetVersionMatchesDependencyRequirement: false,
+        }),
+      ]);
+      expect(result.localPackageDependencies.project.map((dep) => dep.target)).toEqual(["projectA"]);
+    });
+  });
 });
 
 describe("resolvePackage", () => {
@@ -301,6 +348,70 @@ describe("resolvePackage", () => {
         workspaceAlias: "~",
         workspaceSpec: "workspace:~",
       });
+    });
+  });
+
+  describe("with a catalog spec", () => {
+    const catalogs = {
+      defaultCatalog: { projectA: "^1.0.0" },
+      namedCatalogs: { legacy: { projectA: "~0.9.0" } },
+    };
+
+    it("should resolve catalog: to the version range in the default catalog", () => {
+      const result = resolvePackage("projectA", "1.0.4", "catalog:", "/test/packages/packageB", catalogs);
+      expect(result).toEqual({
+        escapedName: "projectA",
+        fetchSpec: "^1.0.0",
+        gitCommittish: undefined,
+        gitRange: undefined,
+        name: "projectA",
+        raw: "projectA@^1.0.0",
+        rawSpec: "^1.0.0",
+        registry: true,
+        saveSpec: null,
+        scope: undefined,
+        type: "range",
+        where: undefined,
+        catalogSpec: "catalog:",
+        workspaceAlias: undefined,
+        workspaceSpec: undefined,
+      });
+    });
+
+    it("should resolve catalog:default to the version range in the default catalog", () => {
+      const result = resolvePackage(
+        "projectA",
+        "1.0.4",
+        "catalog:default",
+        "/test/packages/packageB",
+        catalogs
+      );
+      expect(result).toMatchObject({
+        fetchSpec: "^1.0.0",
+        type: "range",
+        catalogSpec: "catalog:default",
+      });
+    });
+
+    it("should resolve catalog:<name> to the version range in the named catalog", () => {
+      const result = resolvePackage(
+        "projectA",
+        "1.0.4",
+        "catalog:legacy",
+        "/test/packages/packageB",
+        catalogs
+      );
+      expect(result).toMatchObject({
+        fetchSpec: "~0.9.0",
+        type: "range",
+        catalogSpec: "catalog:legacy",
+      });
+    });
+
+    it("should throw when the catalog has no entry for the package", () => {
+      expect(() =>
+        resolvePackage("projectA", "1.0.4", "catalog:missing", "/test/packages/packageB", catalogs)
+      ).toThrow('No version found for "projectA" in the "missing" catalog in pnpm-workspace.yaml');
     });
   });
 
@@ -454,6 +565,14 @@ const getManifestForPath = (path: string): RawManifest | null => {
     "root/other-packages/projectB/package.json": {
       name: "otherProjectB",
       version: "1.0.0",
+    },
+    "root/packages/catalog-consumer/package.json": {
+      name: "project",
+      version: "1.0.0",
+      dependencies: {
+        projectA: "catalog:",
+        otherProjectB: "catalog:legacy",
+      },
     },
   };
 
