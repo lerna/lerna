@@ -72,6 +72,7 @@ export interface RawManifest {
 }
 
 export type ExtendedNpaResult = npa.Result & {
+  catalogSpec?: string;
   workspaceSpec?: string;
   workspaceAlias?: "*" | "^" | "~";
 };

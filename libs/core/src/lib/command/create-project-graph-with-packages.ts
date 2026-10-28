@@ -6,6 +6,7 @@ import { join } from "path";
 import { satisfies } from "semver";
 import { getPackageManifestPath } from "../get-package-manifest-path";
 import { ExtendedNpaResult, Package, RawManifest } from "../package";
+import { getPnpmCatalogs, PnpmCatalogs, resolveCatalogSpec } from "../pnpm-catalogs";
 import {
   getPackage,
   isExternalNpmDependency,
@@ -71,6 +72,8 @@ export async function createProjectGraphWithPackages(
       {}
     );
 
+  const catalogs = getPnpmCatalogs(_workspaceRoot);
+
   // populate local npm package dependencies
   Object.values(projectGraphWithOrderedNodes.dependencies).forEach((projectDeps) => {
     const workspaceDeps = projectDeps.filter(
@@ -98,7 +101,8 @@ export async function createProjectGraphWithPackages(
         targetPkg.name,
         targetPkg.version,
         sourceNpmDependency.spec,
-        sourcePkg.location
+        sourcePkg.location,
+        catalogs
       );
       const targetMatchesRequirement =
         hasWorkspaceProtocol ||
@@ -129,12 +133,22 @@ export const resolvePackage = (
   name: string,
   version: string,
   spec: string,
-  location?: string
+  location?: string,
+  catalogs: PnpmCatalogs = { defaultCatalog: {}, namedCatalogs: {} }
 ): ExtendedNpaResult => {
   // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
   // As they apparently have no intention of being compatible, we have to do it for them.
   // @see https://github.com/yarnpkg/yarn/issues/4212
   spec = spec.replace(/^link:/, "file:");
+
+  // Support catalog: protocol for pnpm (https://pnpm.io/catalogs)
+  const isCatalogSpec = /^catalog:/.test(spec);
+
+  let catalogSpec: string | undefined;
+  if (isCatalogSpec) {
+    catalogSpec = spec;
+    spec = resolveCatalogSpec(name, spec, catalogs);
+  }
 
   // Support workspace: protocol for pnpm and yarn 2+ (https://pnpm.io/workspaces#workspace-protocol-workspace)
   const isWorkspaceSpec = /^workspace:/.test(spec);
@@ -158,6 +172,7 @@ export const resolvePackage = (
   }
 
   const resolved = resolve(name, spec, location) as ExtendedNpaResult;
+  resolved.catalogSpec = catalogSpec;
   resolved.workspaceSpec = workspaceSpec;
   resolved.workspaceAlias = workspaceAlias;
 
