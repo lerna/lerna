@@ -66,7 +66,7 @@
     "signal-exit": "4.1.0",
     "@typescript/native": "npm:typescript@7.0.2",
     "typescript": "npm:@typescript/typescript6@6.0.2",
-    "verdaccio": "6.10.5",
+    "verdaccio": "6.10.7",
     "vite": "^8.1.4",
     "vitest": "^5.0.0"
   },
