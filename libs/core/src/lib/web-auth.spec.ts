@@ -27,6 +27,7 @@ function response(status: number, body?: unknown, headers: Record<string, string
     status,
     headers: new Headers(headers),
     json: () => Promise.resolve(body),
+    buffer: vi.fn(() => Promise.resolve(Buffer.from(body === undefined ? "" : JSON.stringify(body)))),
   } as unknown as Awaited<ReturnType<typeof fetch>>;
 }
 
@@ -139,6 +140,20 @@ describe("web-auth", () => {
       expect(fetchOpts).not.toHaveProperty("body");
       expect(fetchOpts).not.toHaveProperty("headers");
       expect(fetchOpts).not.toHaveProperty("otp");
+    });
+
+    it("reads and discards the body of a 202 response before polling again", async () => {
+      const pending = response(202, { pending: true }, { "retry-after": "0.001" });
+      const unreadable = response(202, undefined, { "retry-after": "0.001" });
+      vi.mocked(unreadable.buffer).mockRejectedValueOnce(new Error("socket hang up"));
+      mockedFetch
+        .mockResolvedValueOnce(pending)
+        .mockResolvedValueOnce(unreadable)
+        .mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+      expect(pending.buffer).toHaveBeenCalledTimes(1);
+      expect(unreadable.buffer).toHaveBeenCalledTimes(1);
     });
 
     it("waits for the retry-after header between polls", async () => {

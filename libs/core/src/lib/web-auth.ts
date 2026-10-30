@@ -159,6 +159,9 @@ async function pollForToken(doneUrl: string, opts: Record<string, unknown>): Pro
     }
 
     if (res.status === 202) {
+      // read and discard the body, an unread body can hold on to the keep-alive socket
+      await res.buffer().catch(() => undefined);
+
       const retryAfter = Number(res.headers.get("retry-after"));
       const delay =
         Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : DEFAULT_RETRY_DELAY_MS;
