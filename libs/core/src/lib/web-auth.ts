@@ -136,9 +136,17 @@ function openInBrowser(url: string, browser: unknown): void {
 }
 
 async function pollForToken(doneUrl: string, opts: Record<string, unknown>): Promise<string> {
+  // drop the options that belong to the request that failed (e.g. the dist-tag PUT), a GET cannot carry a body
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { body, headers, method, otp, ...fetchOpts } = opts;
+
   while (true) {
     // the done endpoint must never be served from the local http cache
-    const res = await fetch(doneUrl, { ...opts, method: "GET", cache: false } as unknown as FetchOptions);
+    const res = await fetch(doneUrl, {
+      ...fetchOpts,
+      method: "GET",
+      cache: false,
+    } as unknown as FetchOptions);
 
     if (res.status === 200) {
       const content = (await res.json()) as { token?: unknown };

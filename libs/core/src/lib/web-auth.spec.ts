@@ -123,6 +123,24 @@ describe("web-auth", () => {
       );
     });
 
+    it("does not send the options of the failed request to the done url", async () => {
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await getWebAuthOneTimePassword(challenge, {
+        ...opts,
+        method: "PUT",
+        body: JSON.stringify("1.0.0"),
+        headers: { "content-type": "application/json" },
+        otp: "stale-otp",
+      });
+
+      const fetchOpts = mockedFetch.mock.calls[0][1];
+      expect(fetchOpts).toEqual(expect.objectContaining({ ...opts, method: "GET", cache: false }));
+      expect(fetchOpts).not.toHaveProperty("body");
+      expect(fetchOpts).not.toHaveProperty("headers");
+      expect(fetchOpts).not.toHaveProperty("otp");
+    });
+
     it("waits for the retry-after header between polls", async () => {
       vi.useFakeTimers();
       try {
