@@ -965,7 +965,8 @@ export class PublishCommand extends Command {
     let chain: Promise<unknown> = Promise.resolve();
 
     // if account-level 2FA is enabled, prime the OTP cache
-    if (this.twoFactorAuthRequired) {
+    // (not with the web auth type: the registry challenge drives that flow, and a security key cannot answer this prompt)
+    if (this.twoFactorAuthRequired && this.conf!["get"]("authType") !== "web") {
       chain = chain.then(() => this.requestOneTimePassword());
     }
 
