@@ -2,6 +2,7 @@ vi.mock("npm-registry-fetch");
 
 import childProcess from "node:child_process";
 import { EventEmitter } from "node:events";
+import readline from "node:readline/promises";
 // mocked modules
 import fetch from "npm-registry-fetch";
 import log from "./npmlog";
@@ -20,6 +21,19 @@ function fakeChild(): FakeChild {
   child.unref = vi.fn();
   spawnedChildren.push(child);
   return child;
+}
+
+type FakeReadline = EventEmitter & {
+  question: ReturnType<typeof vi.fn>;
+  close: ReturnType<typeof vi.fn>;
+};
+
+function fakeReadline(): FakeReadline {
+  const rl = new EventEmitter() as FakeReadline;
+  // the user presses ENTER straight away
+  rl.question = vi.fn(() => Promise.resolve(""));
+  rl.close = vi.fn();
+  return rl;
 }
 
 function response(status: number, body?: unknown, headers: Record<string, string> = {}) {
@@ -95,9 +109,24 @@ describe("web-auth", () => {
 
   describe("getWebAuthOneTimePassword()", () => {
     const platform = process.platform;
+    const stdinIsTTY = process.stdin.isTTY;
+    const stdoutIsTTY = process.stdout.isTTY;
+
+    let rl: FakeReadline;
+    let createInterfaceSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      process.stdin.isTTY = true;
+      process.stdout.isTTY = true;
+      rl = fakeReadline();
+      createInterfaceSpy = vi.spyOn(readline, "createInterface").mockImplementation(() => rl as never);
+    });
 
     afterEach(() => {
       Object.defineProperty(process, "platform", { value: platform });
+      process.stdin.isTTY = stdinIsTTY;
+      process.stdout.isTTY = stdoutIsTTY;
+      createInterfaceSpy.mockRestore();
     });
 
     const challenge = {
@@ -191,14 +220,75 @@ describe("web-auth", () => {
       expect(spawnSpy).toHaveBeenCalledWith(command, args, expect.objectContaining(spawnOpts));
     });
 
-    it("does not open a browser when the npm 'browser' config is false", async () => {
+    it("prompts before opening the browser, and opens it when ENTER is pressed", async () => {
+      mockedFetch
+        .mockResolvedValueOnce(response(202, undefined, { "retry-after": "0.001" }))
+        .mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+
+      expect(rl.question).toHaveBeenCalledWith("Press ENTER to open in the browser...", {
+        signal: expect.any(AbortSignal),
+      });
+      expect(rl.close).toHaveBeenCalled();
+      expect(spawnSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("cancels the prompt without opening the browser when the poll returns a token", async () => {
+      let promptSignal: AbortSignal | undefined;
+      rl.question.mockImplementation(
+        (_query: string, { signal }: { signal: AbortSignal }) =>
+          new Promise((_resolve, reject) => {
+            promptSignal = signal;
+            signal.addEventListener("abort", () => reject(signal.reason));
+          })
+      );
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+
+      expect(promptSignal?.aborted).toBe(true);
+      expect(rl.close).toHaveBeenCalled();
+      expect(spawnSpy).not.toHaveBeenCalled();
+    });
+
+    it("rejects and stops polling when the prompt is cancelled with ctrl+c", async () => {
+      rl.question.mockImplementation(() => new Promise(() => undefined));
+      mockedFetch.mockResolvedValue(response(202, undefined, { "retry-after": "0.001" }));
+
+      const pending = getWebAuthOneTimePassword(challenge, opts);
+      await vi.waitFor(() => expect(rl.question).toHaveBeenCalled());
+      rl.emit("SIGINT");
+
+      await expect(pending).rejects.toThrow("canceled");
+
+      const polls = mockedFetch.mock.calls.length;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      expect(mockedFetch).toHaveBeenCalledTimes(polls);
+      expect(spawnSpy).not.toHaveBeenCalled();
+    });
+
+    it("does not prompt or open a browser when the npm 'browser' config is false", async () => {
       mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
 
       await expect(getWebAuthOneTimePassword(challenge, { ...opts, browser: false })).resolves.toBe(
         "web-otp-token"
       );
+      expect(createInterfaceSpy).not.toHaveBeenCalled();
       expect(spawnSpy).not.toHaveBeenCalled();
     });
+
+    it.each(["stdin", "stdout"] as const)(
+      "does not prompt or open a browser when %s is not a TTY",
+      async (pipe) => {
+        process[pipe].isTTY = false;
+        mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+        await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+        expect(createInterfaceSpy).not.toHaveBeenCalled();
+        expect(spawnSpy).not.toHaveBeenCalled();
+      }
+    );
 
     it("uses the npm 'browser' config as the opener command when it is a string", async () => {
       mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
@@ -224,6 +314,7 @@ describe("web-auth", () => {
       mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
 
       const pending = getWebAuthOneTimePassword(challenge, opts);
+      await vi.waitFor(() => expect(spawnedChildren).toHaveLength(1));
       spawnedChildren[0].emit("error", Object.assign(new Error("spawn xdg-open ENOENT"), { code: "ENOENT" }));
 
       await expect(pending).resolves.toBe("web-otp-token");
@@ -235,6 +326,7 @@ describe("web-auth", () => {
       mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
 
       const pending = getWebAuthOneTimePassword(challenge, opts);
+      await vi.waitFor(() => expect(spawnedChildren).toHaveLength(1));
       spawnedChildren[0].emit("exit", 127, null);
 
       await expect(pending).resolves.toBe("web-otp-token");

@@ -9,9 +9,12 @@
  * Adapted from:
  * - https://github.com/npm/cli/blob/latest/lib/utils/auth.js (otplease)
  * - https://github.com/npm/npm-profile/blob/main/lib/index.js (webAuthOpener / webAuthCheckLogin)
+ * - https://github.com/npm/cli/blob/latest/lib/utils/open-url.js (openUrlPrompt)
  */
 
 import childProcess from "node:child_process";
+import { once } from "node:events";
+import readline from "node:readline/promises";
 import fetch, { FetchOptions } from "npm-registry-fetch";
 import log from "./npmlog";
 
@@ -62,8 +65,11 @@ function isHttpUrl(value: unknown): value is string {
 }
 
 /**
- * Complete a web-auth challenge: direct the user to `authUrl`, then poll `doneUrl`
+ * Complete a web-auth challenge: print `authUrl` and offer to open it in the browser, while polling `doneUrl`
  * until the registry hands back a token. The token is used as the `otp` on the retried request.
+ *
+ * As in npm (npm-profile's `webAuthOpener`), the prompt and the poll run side by side and share an
+ * AbortController: a token from the poll cancels the prompt, and a failure of either one stops the other.
  *
  * @param challenge The `authUrl` / `doneUrl` pair from the EOTP error body
  * @param opts The registry fetch options of the request that failed (registry, auth, etc)
@@ -72,14 +78,73 @@ export async function getWebAuthOneTimePassword(
   { authUrl, doneUrl }: WebAuthChallenge,
   opts: Record<string, unknown>
 ): Promise<string> {
+  const abortController = new AbortController();
+  const { signal } = abortController;
+
+  try {
+    const [, token] = await Promise.all([
+      openUrlPrompt(authUrl, opts["browser"], { signal }).catch((err) => {
+        if (err.name === "AbortError") {
+          abortController.abort();
+          return;
+        }
+        throw err;
+      }),
+      pollForToken(doneUrl, opts, { signal }).then((token) => {
+        abortController.abort();
+        return token;
+      }),
+    ]);
+
+    return token;
+  } catch (err) {
+    abortController.abort();
+    throw err;
+  }
+}
+
+/**
+ * Print the URL, then (on a TTY, unless the npm `browser` config is `false`) wait for the user to press ENTER
+ * before opening it in the browser. Aborting the signal cancels the prompt without opening anything.
+ */
+async function openUrlPrompt(
+  url: string,
+  browser: unknown,
+  { signal }: { signal: AbortSignal }
+): Promise<void> {
   log.notice("", "This operation requires two-factor authentication. Authenticate your account at:");
-  log.notice("", authUrl);
+  log.notice("", url);
 
-  // Opening the browser is best-effort: the URL has already been printed, so a missing or
-  // failing opener (e.g. an SSH session) must not prevent the user from completing the challenge.
-  openInBrowser(authUrl, opts["browser"]);
+  if (browser === false || !process.stdin.isTTY || !process.stdout.isTTY) {
+    return;
+  }
 
-  return pollForToken(doneUrl, opts);
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+
+  // keep log output (e.g. the progress bar) from drawing over the prompt
+  log.pause();
+
+  try {
+    await Promise.race([
+      rl.question("Press ENTER to open in the browser...", { signal }),
+      once(rl, "error"),
+      once(rl, "SIGINT").then(() => {
+        throw new Error("canceled");
+      }),
+    ]);
+    rl.close();
+
+    // Opening the browser is best-effort: the URL has already been printed, so a missing or
+    // failing opener (e.g. an SSH session) must not prevent the user from completing the challenge.
+    openInBrowser(url, browser);
+  } catch (err) {
+    rl.close();
+    if ((err as Error).name !== "AbortError") {
+      throw err;
+    }
+  } finally {
+    log.resume();
+  }
 }
 
 /**
@@ -135,12 +200,18 @@ function openInBrowser(url: string, browser: unknown): void {
   }
 }
 
-async function pollForToken(doneUrl: string, opts: Record<string, unknown>): Promise<string> {
+async function pollForToken(
+  doneUrl: string,
+  opts: Record<string, unknown>,
+  { signal }: { signal: AbortSignal }
+): Promise<string> {
   // drop the options that belong to the request that failed (e.g. the dist-tag PUT), a GET cannot carry a body
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { body, headers, method, otp, ...fetchOpts } = opts;
 
   while (true) {
+    signal.throwIfAborted();
+
     // the done endpoint must never be served from the local http cache
     const res = await fetch(doneUrl, {
       ...fetchOpts,
