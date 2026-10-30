@@ -272,21 +272,44 @@ Map {
       expect(getOneTimePassword).not.toHaveBeenCalled();
     });
 
-    it("prompts for OTP when option missing, account-level 2FA enabled, and verify access is true", async () => {
+    it("prompts for OTP when option missing, account-level 2FA enabled, verify access is true, and auth-type is legacy", async () => {
+      const testDir = await initFixture("normal");
+
+      getTwoFactorAuthRequired.mockResolvedValueOnce(true);
+      vi.stubEnv("npm_config_auth_type", "legacy");
+
+      try {
+        await lernaPublish(testDir)("--verify-access", true);
+      } finally {
+        vi.unstubAllEnvs();
+      }
+
+      expect(npmPublish).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.objectContaining({ otp: undefined, authType: "legacy" }),
+        expect.objectContaining({ root: expect.any(Object) }),
+        expect.objectContaining({ otp: "654321" })
+      );
+      expect(getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
+    });
+
+    it("does not prompt for OTP when account-level 2FA enabled and verify access is true, with the default web auth-type", async () => {
       const testDir = await initFixture("normal");
 
       getTwoFactorAuthRequired.mockResolvedValueOnce(true);
 
       await lernaPublish(testDir)("--verify-access", true);
 
+      expect(getTwoFactorAuthRequired).toHaveBeenCalled();
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
-        expect.objectContaining({ otp: undefined }),
+        expect.objectContaining({ otp: undefined, authType: "web" }),
         expect.objectContaining({ root: expect.any(Object) }),
-        expect.objectContaining({ otp: "654321" })
+        expect.objectContaining({ otp: undefined })
       );
-      expect(getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
+      expect(getOneTimePassword).not.toHaveBeenCalled();
     });
 
     it("defers OTP prompt when option missing, account-level 2FA enabled, and verify access is not true", async () => {
@@ -318,9 +341,43 @@ Map {
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
-        expect.objectContaining({ "auth-type": "legacy", _auth: auth }),
+        expect.objectContaining({ authType: "web", _auth: auth }),
         expect.objectContaining({ root: expect.any(Object) }),
         expect.objectContaining({ otp: undefined })
+      );
+    });
+  });
+
+  describe("auth-type", () => {
+    it("advertises the web auth type and command by default so the registry can issue a browser-based 2FA challenge", async () => {
+      const testDir = await initFixture("normal");
+
+      await lernaPublish(testDir)();
+
+      expect(npmPublish).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.objectContaining({
+          authType: "web",
+          npmCommand: "publish",
+          userAgent: expect.stringMatching(/^lerna\//),
+        }),
+        expect.objectContaining({ root: expect.any(Object) }),
+        expect.objectContaining({ otp: undefined })
+      );
+    });
+
+    it("falls back to the legacy auth type when an OTP is provided explicitly", async () => {
+      const testDir = await initFixture("normal");
+
+      await lernaPublish(testDir)("--otp", "123456");
+
+      expect(npmPublish).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.objectContaining({ authType: "legacy" }),
+        expect.objectContaining({ root: expect.any(Object) }),
+        expect.objectContaining({ otp: "123456" })
       );
     });
   });

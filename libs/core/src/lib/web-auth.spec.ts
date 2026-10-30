@@ -1,0 +1,381 @@
+vi.mock("npm-registry-fetch");
+
+import childProcess from "node:child_process";
+import { EventEmitter } from "node:events";
+import readline from "node:readline/promises";
+// mocked modules
+import fetch from "npm-registry-fetch";
+import log from "./npmlog";
+
+// file under test
+import { getWebAuthChallenge, getWebAuthOneTimePassword } from "./web-auth";
+
+const mockedFetch = vi.mocked(fetch);
+
+type FakeChild = EventEmitter & { unref: ReturnType<typeof vi.fn> };
+let spawnSpy: ReturnType<typeof vi.spyOn>;
+let spawnedChildren: FakeChild[];
+
+function fakeChild(): FakeChild {
+  const child = new EventEmitter() as FakeChild;
+  child.unref = vi.fn();
+  spawnedChildren.push(child);
+  return child;
+}
+
+type FakeReadline = EventEmitter & {
+  question: ReturnType<typeof vi.fn>;
+  close: ReturnType<typeof vi.fn>;
+};
+
+function fakeReadline(): FakeReadline {
+  const rl = new EventEmitter() as FakeReadline;
+  // the user presses ENTER straight away
+  rl.question = vi.fn(() => Promise.resolve(""));
+  rl.close = vi.fn();
+  return rl;
+}
+
+function response(status: number, body?: unknown, headers: Record<string, string> = {}) {
+  return {
+    status,
+    headers: new Headers(headers),
+    json: () => Promise.resolve(body),
+    buffer: vi.fn(() => Promise.resolve(Buffer.from(body === undefined ? "" : JSON.stringify(body)))),
+  } as unknown as Awaited<ReturnType<typeof fetch>>;
+}
+
+describe("web-auth", () => {
+  beforeEach(() => {
+    spawnedChildren = [];
+    spawnSpy = vi.spyOn(childProcess, "spawn").mockImplementation(() => fakeChild() as never);
+  });
+
+  afterEach(() => {
+    spawnSpy.mockRestore();
+    vi.resetAllMocks();
+  });
+
+  describe("getWebAuthChallenge()", () => {
+    const authUrl = "https://www.npmjs.com/auth/cli/abc123";
+    const doneUrl = "https://registry.npmjs.org/-/v1/done?sessionId=abc123";
+
+    it("returns the challenge from an EOTP error body", () => {
+      const err = Object.assign(new Error("OTP required for authentication"), {
+        code: "EOTP",
+        body: { authUrl, doneUrl },
+      });
+
+      expect(getWebAuthChallenge(err)).toEqual({ authUrl, doneUrl });
+    });
+
+    it("returns undefined for classic EOTP errors without a challenge", () => {
+      expect(getWebAuthChallenge(Object.assign(new Error("otp"), { code: "EOTP" }))).toBeUndefined();
+      expect(
+        getWebAuthChallenge(Object.assign(new Error("otp"), { code: "EOTP", body: {} }))
+      ).toBeUndefined();
+      expect(
+        getWebAuthChallenge(Object.assign(new Error("otp"), { code: "EOTP", body: { authUrl } }))
+      ).toBeUndefined();
+    });
+
+    it("returns undefined when the body is not an object", () => {
+      const err = Object.assign(new Error("otp"), {
+        code: "EOTP",
+        body: "this operation requires a one-time pass",
+      });
+
+      expect(getWebAuthChallenge(err)).toBeUndefined();
+    });
+
+    it("returns undefined for non-EOTP errors", () => {
+      const err = Object.assign(new Error("not found"), { code: "E404", body: { authUrl, doneUrl } });
+
+      expect(getWebAuthChallenge(err)).toBeUndefined();
+    });
+
+    it("returns undefined for non-http(s) urls", () => {
+      expect(
+        getWebAuthChallenge({ code: "EOTP", body: { authUrl: "javascript:alert(1)", doneUrl } })
+      ).toBeUndefined();
+      expect(getWebAuthChallenge({ code: "EOTP", body: { authUrl, doneUrl: "not a url" } })).toBeUndefined();
+    });
+
+    it("tolerates nullish input", () => {
+      expect(getWebAuthChallenge(undefined)).toBeUndefined();
+      expect(getWebAuthChallenge(null)).toBeUndefined();
+    });
+  });
+
+  describe("getWebAuthOneTimePassword()", () => {
+    const platform = process.platform;
+    const stdinIsTTY = process.stdin.isTTY;
+    const stdoutIsTTY = process.stdout.isTTY;
+
+    let rl: FakeReadline;
+    let createInterfaceSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      process.stdin.isTTY = true;
+      process.stdout.isTTY = true;
+      rl = fakeReadline();
+      createInterfaceSpy = vi.spyOn(readline, "createInterface").mockImplementation(() => rl as never);
+    });
+
+    afterEach(() => {
+      Object.defineProperty(process, "platform", { value: platform });
+      process.stdin.isTTY = stdinIsTTY;
+      process.stdout.isTTY = stdoutIsTTY;
+      createInterfaceSpy.mockRestore();
+    });
+
+    const challenge = {
+      authUrl: "https://www.npmjs.com/auth/cli/abc123",
+      doneUrl: "https://registry.npmjs.org/-/v1/done?sessionId=abc123",
+    };
+    const opts = { registry: "https://registry.npmjs.org/", "//registry.npmjs.org/:_authToken": "token" };
+
+    it("opens the auth url and polls the done url until a token is returned", async () => {
+      mockedFetch
+        .mockResolvedValueOnce(response(202, undefined, { "retry-after": "0.001" }))
+        .mockResolvedValueOnce(response(202, undefined, { "retry-after": "0.001" }))
+        .mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      const result = await getWebAuthOneTimePassword(challenge, opts);
+
+      expect(result).toBe("web-otp-token");
+      expect(spawnSpy).toHaveBeenCalledTimes(1);
+      expect(spawnedChildren[0].unref).toHaveBeenCalled();
+      expect(mockedFetch).toHaveBeenCalledTimes(3);
+      expect(mockedFetch).toHaveBeenCalledWith(
+        challenge.doneUrl,
+        expect.objectContaining({ ...opts, method: "GET", cache: false })
+      );
+    });
+
+    it("does not send the options of the failed request to the done url", async () => {
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await getWebAuthOneTimePassword(challenge, {
+        ...opts,
+        method: "PUT",
+        body: JSON.stringify("1.0.0"),
+        headers: { "content-type": "application/json" },
+        otp: "stale-otp",
+      });
+
+      const fetchOpts = mockedFetch.mock.calls[0][1];
+      expect(fetchOpts).toEqual(expect.objectContaining({ ...opts, method: "GET", cache: false }));
+      expect(fetchOpts).not.toHaveProperty("body");
+      expect(fetchOpts).not.toHaveProperty("headers");
+      expect(fetchOpts).not.toHaveProperty("otp");
+    });
+
+    it("reads and discards the body of a 202 response before polling again", async () => {
+      const pending = response(202, { pending: true }, { "retry-after": "0.001" });
+      const unreadable = response(202, undefined, { "retry-after": "0.001" });
+      vi.mocked(unreadable.buffer).mockRejectedValueOnce(new Error("socket hang up"));
+      mockedFetch
+        .mockResolvedValueOnce(pending)
+        .mockResolvedValueOnce(unreadable)
+        .mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+      expect(pending.buffer).toHaveBeenCalledTimes(1);
+      expect(unreadable.buffer).toHaveBeenCalledTimes(1);
+    });
+
+    it("waits for the retry-after header between polls", async () => {
+      vi.useFakeTimers();
+      try {
+        mockedFetch
+          .mockResolvedValueOnce(response(202, undefined, { "retry-after": "5" }))
+          .mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+        const pending = getWebAuthOneTimePassword(challenge, opts);
+
+        // first poll happens immediately, second must wait 5s
+        await vi.advanceTimersByTimeAsync(4999);
+        expect(mockedFetch).toHaveBeenCalledTimes(1);
+
+        await vi.advanceTimersByTimeAsync(1);
+        expect(mockedFetch).toHaveBeenCalledTimes(2);
+
+        await expect(pending).resolves.toBe("web-otp-token");
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it.each([
+      ["darwin", "open", [challenge.authUrl], { stdio: "ignore" }],
+      ["linux", "xdg-open", [challenge.authUrl], { stdio: "ignore" }],
+      ["win32", "start", ['""', `"${challenge.authUrl}"`], { shell: true, stdio: "ignore" }],
+    ])("opens the auth url with the platform default on %s", async (os, command, args, spawnOpts) => {
+      Object.defineProperty(process, "platform", { value: os });
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await getWebAuthOneTimePassword(challenge, opts);
+
+      expect(spawnSpy).toHaveBeenCalledWith(command, args, expect.objectContaining(spawnOpts));
+    });
+
+    it("prompts before opening the browser, and opens it when ENTER is pressed", async () => {
+      mockedFetch
+        .mockResolvedValueOnce(response(202, undefined, { "retry-after": "0.001" }))
+        .mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+
+      expect(rl.question).toHaveBeenCalledWith("Press ENTER to open in the browser...", {
+        signal: expect.any(AbortSignal),
+      });
+      expect(rl.close).toHaveBeenCalled();
+      expect(spawnSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it("cancels the prompt without opening the browser when the poll returns a token", async () => {
+      let promptSignal: AbortSignal | undefined;
+      rl.question.mockImplementation(
+        (_query: string, { signal }: { signal: AbortSignal }) =>
+          new Promise((_resolve, reject) => {
+            promptSignal = signal;
+            signal.addEventListener("abort", () => reject(signal.reason));
+          })
+      );
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+
+      expect(promptSignal?.aborted).toBe(true);
+      expect(rl.close).toHaveBeenCalled();
+      expect(spawnSpy).not.toHaveBeenCalled();
+    });
+
+    it("rejects and stops polling when the prompt is cancelled with ctrl+c", async () => {
+      rl.question.mockImplementation(() => new Promise(() => undefined));
+      mockedFetch.mockResolvedValue(response(202, undefined, { "retry-after": "0.001" }));
+
+      const pending = getWebAuthOneTimePassword(challenge, opts);
+      await vi.waitFor(() => expect(rl.question).toHaveBeenCalled());
+      rl.emit("SIGINT");
+
+      await expect(pending).rejects.toThrow("canceled");
+
+      const polls = mockedFetch.mock.calls.length;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      expect(mockedFetch).toHaveBeenCalledTimes(polls);
+      expect(spawnSpy).not.toHaveBeenCalled();
+    });
+
+    it("does not prompt or open a browser when the npm 'browser' config is false", async () => {
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await expect(getWebAuthOneTimePassword(challenge, { ...opts, browser: false })).resolves.toBe(
+        "web-otp-token"
+      );
+      expect(createInterfaceSpy).not.toHaveBeenCalled();
+      expect(spawnSpy).not.toHaveBeenCalled();
+    });
+
+    it.each(["stdin", "stdout"] as const)(
+      "does not prompt or open a browser when %s is not a TTY",
+      async (pipe) => {
+        process[pipe].isTTY = false;
+        mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+        await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+        expect(createInterfaceSpy).not.toHaveBeenCalled();
+        expect(spawnSpy).not.toHaveBeenCalled();
+      }
+    );
+
+    it("uses the npm 'browser' config as the opener command when it is a string", async () => {
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await getWebAuthOneTimePassword(challenge, { ...opts, browser: "firefox" });
+
+      expect(spawnSpy).toHaveBeenCalledWith(
+        "firefox",
+        [challenge.authUrl],
+        expect.objectContaining({ stdio: "ignore" })
+      );
+    });
+
+    it("does not wait for the opener to exit", async () => {
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      // the fake child never emits "exit"
+      await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+    });
+
+    it("still resolves when the opener cannot be spawned", async () => {
+      const verbose = vi.spyOn(log, "verbose").mockImplementation(() => undefined);
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      const pending = getWebAuthOneTimePassword(challenge, opts);
+      await vi.waitFor(() => expect(spawnedChildren).toHaveLength(1));
+      spawnedChildren[0].emit("error", Object.assign(new Error("spawn xdg-open ENOENT"), { code: "ENOENT" }));
+
+      await expect(pending).resolves.toBe("web-otp-token");
+      expect(verbose).toHaveBeenCalledWith("web-auth", expect.stringContaining("spawn xdg-open ENOENT"));
+    });
+
+    it("still resolves when the opener exits with a non-zero status", async () => {
+      const verbose = vi.spyOn(log, "verbose").mockImplementation(() => undefined);
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      const pending = getWebAuthOneTimePassword(challenge, opts);
+      await vi.waitFor(() => expect(spawnedChildren).toHaveLength(1));
+      spawnedChildren[0].emit("exit", 127, null);
+
+      await expect(pending).resolves.toBe("web-otp-token");
+      expect(verbose).toHaveBeenCalledWith("web-auth", expect.stringContaining("exited with code 127"));
+    });
+
+    it("still resolves when spawn throws synchronously", async () => {
+      spawnSpy.mockImplementation(() => {
+        throw new Error("EACCES");
+      });
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await expect(getWebAuthOneTimePassword(challenge, opts)).resolves.toBe("web-otp-token");
+    });
+
+    it("does not touch process.exitCode when a real opener is missing", async () => {
+      // use the real child_process so that the ENOENT path is exercised end-to-end
+      spawnSpy.mockRestore();
+      const verbose = vi.spyOn(log, "verbose").mockImplementation(() => undefined);
+      const exitCode = process.exitCode;
+      mockedFetch.mockResolvedValueOnce(response(200, { token: "web-otp-token" }));
+
+      await expect(
+        getWebAuthOneTimePassword(challenge, { ...opts, browser: "lerna-web-auth-nonexistent-opener-xyz" })
+      ).resolves.toBe("web-otp-token");
+
+      // the spawn error is emitted asynchronously
+      await vi.waitFor(() => {
+        expect(verbose).toHaveBeenCalledWith("web-auth", expect.stringContaining("ENOENT"));
+      });
+      expect(process.exitCode).toBe(exitCode);
+    });
+
+    it("rejects when a 200 response does not contain a token", async () => {
+      mockedFetch.mockResolvedValueOnce(response(200, { nope: true }));
+
+      await expect(getWebAuthOneTimePassword(challenge, opts)).rejects.toThrow("expected a token");
+    });
+
+    it("rejects on an unexpected status", async () => {
+      mockedFetch.mockResolvedValueOnce(response(204));
+
+      await expect(getWebAuthOneTimePassword(challenge, opts)).rejects.toThrow("unexpected status 204");
+    });
+
+    it("propagates fetch errors", async () => {
+      mockedFetch.mockRejectedValueOnce(Object.assign(new Error("boom"), { code: "E500" }));
+
+      await expect(getWebAuthOneTimePassword(challenge, opts)).rejects.toThrow("boom");
+    });
+  });
+});
