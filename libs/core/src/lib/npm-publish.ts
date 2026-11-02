@@ -15,20 +15,27 @@ interface NpmPublishOptions {
   dryRun?: boolean;
   ["dry-run"]?: boolean;
   ["strict-ssl"]?: boolean;
+  ["user-agent"]?: string;
   tag?: string; // Passed to libnpmpublish as `opts.defaultTag` to preserve npm v6 back-compat
   registry?: string;
+  userAgent?: string;
 }
 
 /**
  * Alias dash-cased npmConf to camelCase
  */
 function flattenOptions(obj: NpmPublishOptions) {
+  // npm-registry-fetch reads opts.userAgent. Omit the key when unset so the
+  // client default is not overwritten with undefined.
+  const userAgent = obj.userAgent ?? obj["user-agent"];
+
   return {
     defaultTag: obj["tag"] || "latest",
     dryRun: obj["dry-run"],
     // libnpmpublish / npm-registry-fetch check strictSSL rather than strict-ssl
     strictSSL: obj["strict-ssl"],
     ...obj,
+    ...(userAgent ? { userAgent } : {}),
   };
 }
 
