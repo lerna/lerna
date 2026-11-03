@@ -16,14 +16,15 @@ export async function getProjectsWithTaggedPackages(
 
   // @see https://stackoverflow.com/a/424142/5707
   // FIXME: --root is only necessary for tests :P
+  // -z keeps git from quoting and escaping paths with non-ASCII characters (core.quotePath)
   const result = await childProcess.exec(
     "git",
-    ["diff-tree", "--name-only", "--no-commit-id", "--root", "-r", "-c", "HEAD"],
+    ["diff-tree", "--name-only", "-z", "--no-commit-id", "--root", "-r", "-c", "HEAD"],
     execOpts as any
   );
 
   const stdout: string = result.stdout;
-  const files = new Set(stdout.split("\n"));
+  const files = new Set(stdout.split("\0").filter(Boolean));
 
   return projectNodes.filter((node) => projectFileMap[node.name]?.some((file) => files.has(file.file)));
 }
