@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.1.2](https://github.com/lerna/lerna/compare/v10.1.1...v10.1.2) (2026-11-06)
+
+### Bug Fixes
+
+- update dependency conventional-commits-parser to v7.1.3 ([#4561](https://github.com/lerna/lerna/issues/4561)) ([9e351cb](https://github.com/lerna/lerna/commit/9e351cbc9f5d5946189efeb94abe7d54954236a2))
+- update dependency execa to v10.2.0 ([#4564](https://github.com/lerna/lerna/issues/4564)) ([b8d94ff](https://github.com/lerna/lerna/commit/b8d94ff5a95597322c0cf13bfaeaf6b91a2f5e0f))
+- update dependency inquirer to v14.2.5 ([#4554](https://github.com/lerna/lerna/issues/4554)) ([46aaf07](https://github.com/lerna/lerna/commit/46aaf07cd40761b488a260ac97b17e55f0b1b77f))
+- update dependency js-yaml to v5.5.0 ([#4562](https://github.com/lerna/lerna/issues/4562)) ([bf133ec](https://github.com/lerna/lerna/commit/bf133ec8e26987721d00c216aab18d597198b48e))
+- update dependency minimatch to v11 [security] ([#4592](https://github.com/lerna/lerna/issues/4592)) ([dfa96d2](https://github.com/lerna/lerna/commit/dfa96d206d0860f7baa29ec6fe160469b5ee7918))
+
 ## [10.1.1](https://github.com/lerna/lerna/compare/v10.1.0...v10.1.1) (2026-10-12)
 
 ### Bug Fixes
