@@ -133,6 +133,53 @@ describe("publish tagging", () => {
     expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "beta", conf, cache);
   });
 
+  test("publish without --dist-tag does not mark the tag as explicit", async () => {
+    const cwd = await initFixture("integration");
+
+    await lernaPublish(cwd)();
+
+    // package-1 has publishConfig.tag "CUSTOM", which must win over the implicit default
+    expect(npmPublish).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "@integration/package-1" }),
+      expect.anything(),
+      expect.objectContaining({ tag: "latest", explicitTag: false }),
+      expect.anything(),
+      expect.anything()
+    );
+  });
+
+  test("publish --dist-tag latest marks the tag as explicit", async () => {
+    const cwd = await initFixture("integration");
+
+    await lernaPublish(cwd)("--dist-tag", "latest");
+
+    // package-1 has publishConfig.tag "CUSTOM", which an explicit --dist-tag must override
+    expect(npmPublish).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "@integration/package-1" }),
+      expect.anything(),
+      expect.objectContaining({ tag: "latest", explicitTag: true }),
+      expect.anything(),
+      expect.anything()
+    );
+  });
+
+  test("publish --dist-tag latest --temp-tag", async () => {
+    const cwd = await initFixture("integration");
+
+    await lernaPublish(cwd)("--dist-tag", "latest", "--temp-tag");
+
+    const conf = expect.objectContaining({
+      tag: "latest",
+    });
+    const cache = expect.objectContaining({
+      otp: undefined,
+    });
+
+    // explicit --dist-tag latest overrides package-1's publishConfig.tag "CUSTOM"
+    expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1", "latest", conf, cache);
+    expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "latest", conf, cache);
+  });
+
   test("publish prerelease --pre-dist-tag beta", async () => {
     const cwd = await initFixture("normal");
 

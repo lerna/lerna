@@ -994,7 +994,9 @@ export class PublishCommand extends Command {
       (pkg: Package) => {
         const preDistTag = this.getPreDistTag(pkg);
         const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
-        const pkgOpts = Object.assign({}, opts, { tag });
+        // an explicitly chosen tag (including "latest") must win over pkg.publishConfig.tag
+        const explicitTag = !!this.options.tempTag || !!preDistTag || !!this.options.distTag;
+        const pkgOpts = Object.assign({}, opts, { tag, explicitTag });
 
         return pulseTillDone(
           queue
@@ -1081,7 +1083,8 @@ export class PublishCommand extends Command {
 
     const opts = this.conf!["snapshot"];
     const getDistTag = (publishConfig: any) => {
-      if (opts.tag === "latest" && publishConfig && publishConfig.tag) {
+      // an explicit --dist-tag (including "latest") wins over pkg.publishConfig.tag
+      if (!this.options.distTag && opts.tag === "latest" && publishConfig && publishConfig.tag) {
         return publishConfig.tag;
       }
 

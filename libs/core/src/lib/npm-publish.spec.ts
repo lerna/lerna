@@ -131,6 +131,58 @@ describe("npm-publish", () => {
     );
   });
 
+  it("overrides pkg.publishConfig.tag when 'latest' is explicitly chosen", async () => {
+    readJSON.mockImplementationOnce(() => ({
+      content: {
+        publishConfig: {
+          tag: "next",
+        },
+      },
+    }));
+    const opts = { tag: "latest", explicitTag: true };
+
+    await npmPublish(pkg, tarFilePath, opts, conf);
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        publishConfig: {
+          tag: "latest",
+        },
+      }),
+      mockTarData,
+      expect.objectContaining({
+        defaultTag: "latest",
+      })
+    );
+    // lerna-only option, never forwarded to libnpmpublish
+    expect(publish.mock.lastCall![2]).not.toHaveProperty("explicitTag");
+  });
+
+  it("respects pkg.publishConfig.tag when 'latest' is not explicitly chosen", async () => {
+    readJSON.mockImplementationOnce(() => ({
+      content: {
+        publishConfig: {
+          tag: "next",
+        },
+      },
+    }));
+    const opts = { tag: "latest" };
+
+    await npmPublish(pkg, tarFilePath, opts, conf);
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        publishConfig: {
+          tag: "next",
+        },
+      }),
+      mockTarData,
+      expect.objectContaining({
+        defaultTag: "next",
+      })
+    );
+  });
+
   it("uses pkg.contents manifest when pkg.publishConfig.directory is defined", async () => {
     const fancyPkg = new Package(
       {

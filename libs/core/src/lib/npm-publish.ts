@@ -16,6 +16,12 @@ interface NpmPublishOptions {
   ["dry-run"]?: boolean;
   ["strict-ssl"]?: boolean;
   tag?: string; // Passed to libnpmpublish as `opts.defaultTag` to preserve npm v6 back-compat
+  /**
+   * The tag was explicitly chosen (e.g. via --dist-tag), so it must override pkg.publishConfig.tag
+   * even when it is "latest". Otherwise a "latest" tag is assumed to be npm's default and
+   * pkg.publishConfig.tag takes precedence.
+   */
+  explicitTag?: boolean;
   registry?: string;
 }
 
@@ -47,7 +53,7 @@ export async function npmPublish(
   conf: Conf,
   otpCache?: OneTimePasswordCache
 ): Promise<void | Response> {
-  const { dryRun, ...remainingOptions } = flattenOptions(options);
+  const { dryRun, explicitTag, ...remainingOptions } = flattenOptions(options);
   const { scope } = npa(pkg.name);
   // pass only the package scope to libnpmpublish
   const opts = {
@@ -75,10 +81,10 @@ export async function npmPublish(
 
     const manifestContent = npmCliPackageJson.content;
 
-    // non-default tag needs to override publishConfig.tag,
+    // an explicit or non-default tag needs to override publishConfig.tag,
     // which is merged into opts below if necessary
     if (
-      opts.defaultTag !== "latest" &&
+      (explicitTag || opts.defaultTag !== "latest") &&
       manifestContent.publishConfig &&
       manifestContent.publishConfig.tag &&
       manifestContent.publishConfig.tag !== opts.defaultTag
