@@ -23,7 +23,8 @@
     "lerna-release": "nx build lerna --no-dte --no-cloud && node tools/scripts/lerna-release.mjs",
     "lint": "nx run-many -t lint",
     "local-registry": "tools/scripts/local-registry.sh",
-    "test": "nx run-many -t test"
+    "test": "nx run-many -t test",
+    "version": "oxfmt lerna.json CHANGELOG.md packages/lerna/CHANGELOG.md"
   },
   "repository": {
     "type": "git",
