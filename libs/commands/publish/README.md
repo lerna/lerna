@@ -404,7 +404,7 @@ You can customize the dist-tag on a per-package basis by setting [`tag`](https:/
   }
 ```
 
-- Passing [`--dist-tag`](#--dist-tag-tag) will _overwrite_ this value.
+- Passing [`--dist-tag`](#--dist-tag-tag) will _overwrite_ this value, even when the tag passed is `latest`.
 - This value is _always_ ignored when [`--canary`](#--canary) is passed.
 
 ### `publishConfig.directory`
