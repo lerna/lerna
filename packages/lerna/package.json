@@ -73,7 +73,7 @@
     "npm-registry-fetch": "20.0.1",
     "nx": ">=23.1.0 < 24.0.0",
     "p-map": "7.0.8",
-    "p-queue": "9.3.3",
+    "p-queue": "9.3.5",
     "pacote": "22.0.0",
     "semver": "7.8.5",
     "signal-exit": "4.1.0",
