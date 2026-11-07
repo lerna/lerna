@@ -72,6 +72,7 @@ export interface RawManifest {
 }
 
 export type ExtendedNpaResult = npa.Result & {
+  catalogSpec?: string;
   workspaceSpec?: string;
   workspaceAlias?: "*" | "^" | "~";
 };
@@ -370,6 +371,11 @@ export class Package {
     savePrefix: string,
     options: { eraseWorkspacePrefix: boolean } = { eraseWorkspacePrefix: false }
   ) {
+    // the version range of a catalog: dependency lives in pnpm-workspace.yaml, so the spec is left as it is
+    if (resolved.catalogSpec) {
+      return;
+    }
+
     const depName = resolved.name as string;
 
     // determine which dependency collection the resolved name came from.

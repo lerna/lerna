@@ -1,0 +1,17 @@
+{
+  "name": "package-2",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-1": "catalog:",
+    "foo": "catalog:"
+  },
+  "devDependencies": {
+    "bar": "catalog:default"
+  },
+  "optionalDependencies": {
+    "qux": "catalog:legacy"
+  },
+  "peerDependencies": {
+    "baz": "catalog:legacy"
+  }
+}

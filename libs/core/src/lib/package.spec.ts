@@ -254,6 +254,23 @@ describe("Package", () => {
     });
   });
 
+  describe(".updateLocalDependency()", () => {
+    it("leaves catalog: specs unchanged", () => {
+      const pkg = factory({
+        name: "uses-catalog",
+        dependencies: { "local-dep": "catalog:" },
+      });
+
+      pkg.updateLocalDependency(
+        { name: "local-dep", registry: true, type: "range", catalogSpec: "catalog:" } as any,
+        "2.0.0",
+        "^"
+      );
+
+      expect(pkg.dependencies).toEqual({ "local-dep": "catalog:" });
+    });
+  });
+
   describe(".serialize()", () => {
     it("writes changes to disk", async () => {
       (writePackage as any).mockImplementation(() => Promise.resolve());
