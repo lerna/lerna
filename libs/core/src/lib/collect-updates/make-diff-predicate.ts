@@ -37,7 +37,7 @@ export function makeDiffPredicate(
     }
 
     log.silly("found diff in", diff);
-    let changedFiles = diff.split("\n");
+    let changedFiles = diff.split("\0").filter(Boolean);
 
     if (ignoreFilters.size) {
       for (const ignored of ignoreFilters) {
@@ -58,7 +58,8 @@ export function makeDiffPredicate(
 }
 
 function diffSinceIn(committish: string, location: string, opts: ExecOptions) {
-  const args = ["diff", "--name-only", committish];
+  // -z keeps git from quoting and escaping paths with non-ASCII characters (core.quotePath)
+  const args = ["diff", "--name-only", "-z", committish];
   const formattedLocation = slash(relative(opts.cwd as string, location));
 
   if (formattedLocation) {

@@ -4,16 +4,23 @@ vi.mock("@lerna/child-process");
 
 import * as childProcess from "@lerna/child-process";
 
-import { basename } from "path";
+/* eslint-disable @nx/enforce-module-boundaries */
+// nx-ignore-next-line
+import { gitAdd, gitCommit, initFixtureFactory } from "@lerna/test-helpers";
+import { execFileSync } from "child_process";
+import fs from "fs-extra";
+import { basename, join } from "path";
 import { Package } from "../package";
 import { ProjectGraphProjectNodeWithPackage } from "../project-graph-with-packages";
 // file under test
 import { makeDiffPredicate } from "./make-diff-predicate";
 
+const initFixture = initFixtureFactory(__dirname);
+
 function setup(changes: string[]) {
   const baseChanges: string[] = [];
   // mock git diff to return the provided changes
-  childProcess.execSync.mockReturnValueOnce(baseChanges.concat(changes).join("\n"));
+  childProcess.execSync.mockReturnValueOnce(baseChanges.concat(changes).join("\0"));
 }
 
 describe("makeDiffPredicate", () => {
@@ -35,7 +42,7 @@ describe("makeDiffPredicate", () => {
     expect(result).toBe(true);
     expect(childProcess.execSync).toHaveBeenLastCalledWith(
       "git",
-      ["diff", "--name-only", "v1.0.0", "--", "packages/pkg-1"],
+      ["diff", "--name-only", "-z", "v1.0.0", "--", "packages/pkg-1"],
       { cwd: "/test" }
     );
   });
@@ -64,7 +71,7 @@ describe("makeDiffPredicate", () => {
     );
 
     expect(result).toBe(true);
-    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", ["diff", "--name-only", "deadbeef"], {
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", ["diff", "--name-only", "-z", "deadbeef"], {
       cwd: "/test",
     });
   });
@@ -93,6 +100,28 @@ describe("makeDiffPredicate", () => {
     const result = hasDiff(
       nodeWithPackage({
         location: "/test/packages/pkg-3",
+      })
+    );
+
+    expect(result).toBe(false);
+  });
+
+  it("ignore changes (non-ASCII file names)", async () => {
+    // run the real git, which quotes non-ASCII paths in its default output
+    const actual = await vi.importActual<typeof childProcess>("@lerna/child-process");
+    vi.mocked(childProcess.execSync).mockImplementationOnce(actual.execSync);
+
+    const cwd = await initFixture("basic");
+    // git's default, set explicitly so a user-level `core.quotePath=false` can't hide the problem
+    execFileSync("git", ["config", "core.quotePath", "true"], { cwd });
+    await fs.outputFile(join(cwd, "packages/pkg-4/docs/使い方.md"), "# docs\n");
+    await gitAdd(cwd, "-A");
+    await gitCommit(cwd, "docs");
+
+    const hasDiff = makeDiffPredicate("HEAD~1", { cwd }, ["*.md"]);
+    const result = hasDiff(
+      nodeWithPackage({
+        location: join(cwd, "packages/pkg-4"),
       })
     );
 
