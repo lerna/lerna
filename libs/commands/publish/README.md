@@ -443,11 +443,11 @@ Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#descr
    2. Run `prepare` lifecycle
    3. Run `prepublishOnly` lifecycle
    4. Run `prepack` lifecycle
-   5. Create package tarball in temp directory via [JS API](https://github.com/lerna/lerna/tree/main/utils/pack-directory#readme)
+   5. Create package tarball in temp directory via [JS API](https://github.com/lerna/lerna/blob/main/libs/core/src/lib/pack-directory.ts)
    6. Run `postpack` lifecycle
 7. Run `postpack` lifecycle in root
 8. For each changed package, in topological order (all dependencies before dependents):
-   1. Publish package to configured [registry](#--registry-url) via [JS API](https://github.com/lerna/lerna/tree/main/utils/npm-publish#readme)
+   1. Publish package to configured [registry](#--registry-url) via [JS API](https://github.com/lerna/lerna/blob/main/libs/core/src/lib/npm-publish.ts)
    2. Run `publish` lifecycle
    3. Run `postpublish` lifecycle
 9. Run `publish` lifecycle in root
