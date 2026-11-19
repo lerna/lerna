@@ -31,6 +31,12 @@
       // also swallows nrwl/nx-set-shas. That action does not ship with npm `nx`.
       "matchPackageNames": ["nrwl/nx-set-shas"],
       "groupName": null
+    },
+    {
+      // The website is private and never published, so its runtime dependency updates are
+      // chores. config:recommended would label them fix, which reads as a lerna bug fix.
+      "matchFileNames": ["website/package.json"],
+      "semanticCommitType": "chore"
     }
   ],
   "rebaseWhen": "conflicted"
