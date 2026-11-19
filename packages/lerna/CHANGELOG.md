@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [10.1.3](https://github.com/lerna/lerna/compare/v10.1.2...v10.1.3) (2026-11-19)
+
+### Bug Fixes
+
+- support Nx 24 ([#4615](https://github.com/lerna/lerna/issues/4615)) ([f6ff483](https://github.com/lerna/lerna/commit/f6ff4838b231003da32b051214513f0841e36ae4))
+- update dependency @npmcli/arborist to v10.0.4 ([#4598](https://github.com/lerna/lerna/issues/4598)) ([b78661f](https://github.com/lerna/lerna/commit/b78661f69bccaaf736d59a3fe72db44b8d130503))
+- update dependency @npmcli/package-json to v8.0.1 ([#4617](https://github.com/lerna/lerna/issues/4617)) ([079fde1](https://github.com/lerna/lerna/commit/079fde19d7ddb31fe0e1c9cb637ba7687175c4bd))
+- update dependency conventional-commits-parser to v7.1.4 ([#4618](https://github.com/lerna/lerna/issues/4618)) ([597d731](https://github.com/lerna/lerna/commit/597d73146906df033163ca422a0e1fb04cbe1d49))
+- update dependency execa to v10.2.1 ([#4600](https://github.com/lerna/lerna/issues/4600)) ([88345d6](https://github.com/lerna/lerna/commit/88345d65d7a5320e964c9e945021b1d88c7141e2))
+- update dependency minimatch to v11.0.8 ([#4601](https://github.com/lerna/lerna/issues/4601)) ([c51d230](https://github.com/lerna/lerna/commit/c51d2304c58c46425b91d1f4fdc4487d864d6baf))
+- update dependency p-queue to v9.3.5 ([#4602](https://github.com/lerna/lerna/issues/4602)) ([1affc65](https://github.com/lerna/lerna/commit/1affc65229682ba57e4f4688bdd29f7536c97524))
+- update dependency pacote to v22.0.1 ([#4603](https://github.com/lerna/lerna/issues/4603)) ([db0bc98](https://github.com/lerna/lerna/commit/db0bc98c5d4cb7197f05f3ab8fa8dae3eee72bf6))
+
 ## [10.1.2](https://github.com/lerna/lerna/compare/v10.1.1...v10.1.2) (2026-11-06)
 
 ### Bug Fixes
