@@ -33,14 +33,14 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org",
   "devDependencies": {
-    "@nx/devkit": "23.2.1",
-    "@nx/esbuild": "23.2.1",
-    "@nx/js": "23.2.1",
-    "@nx/oxlint": "23.2.1",
-    "@nx/plugin": "23.2.1",
-    "@nx/vite": "23.2.1",
-    "@nx/vitest": "23.2.1",
-    "@nx/web": "23.2.1",
+    "@nx/devkit": "24.0.6",
+    "@nx/esbuild": "24.0.6",
+    "@nx/js": "24.0.6",
+    "@nx/oxlint": "24.0.6",
+    "@nx/plugin": "24.0.6",
+    "@nx/vite": "24.0.6",
+    "@nx/vitest": "24.0.6",
+    "@nx/web": "24.0.6",
     "@types/columnify": "^1.5.4",
     "@types/envinfo": "^7.8.4",
     "@types/fs-extra": "^11.0.4",
@@ -60,7 +60,7 @@
     "js-yaml": "5.5.0",
     "lerna": "file:packages/lerna",
     "minimatch": "11.0.8",
-    "nx": "23.2.1",
+    "nx": "24.0.6",
     "oxfmt": "0.75.0",
     "oxlint": "1.87.0",
     "pkg-pr-new": "0.0.93",
@@ -79,7 +79,7 @@
   "allowScripts": {
     "esbuild@0.28.1": true,
     "fsevents@2.3.3": true,
-    "nx@23.1.2": true,
+    "nx@24.0.6": true,
     "unrs-resolver@1.12.2": true
   }
 }

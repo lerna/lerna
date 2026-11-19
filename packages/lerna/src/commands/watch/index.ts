@@ -52,7 +52,7 @@ export class WatchCommand extends Command<WatchCommandOptions> {
       command: this.options.command,
       projectNameEnvName: "LERNA_PACKAGE_NAME",
       fileChangesEnvName: "LERNA_FILE_CHANGES",
-      includeDependentProjects: false, // dependent projects are accounted for via lerna filter options
+      includeDependencies: false, // Lerna's filters determine which projects to watch.
       projects: projectNames,
       verbose: this.options.verbose,
     });

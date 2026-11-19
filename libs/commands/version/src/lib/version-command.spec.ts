@@ -344,7 +344,9 @@ describe("VersionCommand", () => {
   // TODO: (major) make --no-granular-pathspec the default
   describe("--no-granular-pathspec", () => {
     const getLeftover = (cwd) =>
-      execa("git", ["ls-files", "--others"], { cwd }).then((result) => result.stdout);
+      execa("git", ["ls-files", "--others", "--exclude=/node_modules/.cache/nx-workspace-data/"], {
+        cwd,
+      }).then((result) => result.stdout);
 
     it("adds changed files globally", async () => {
       const cwd = await initFixture("normal");

@@ -48,3 +48,5 @@ website/.cache-loader
 .nx/self-healing
 .nx/migrate-runs
 .claude/settings.local.json
+vitest.config.*.timestamp*
+.vitest
