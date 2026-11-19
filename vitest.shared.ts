@@ -81,7 +81,7 @@ export function defineLernaVitestConfig(options: LernaVitestOptions): ViteUserCo
         // These majors are nested under packages/lerna because other workspace
         // tools still depend on the previous major. Tests import them from
         // libs/*, which would otherwise resolve the hoisted copy.
-        ...["yargs", "p-map", "p-queue", "string-width", "write-file-atomic"].map((name) => ({
+        ...["yargs", "p-map", "string-width", "write-file-atomic"].map((name) => ({
           find: new RegExp(`^${escapeRegExp(name)}$`),
           replacement: join(workspaceRoot, "packages/lerna/node_modules", name),
         })),
