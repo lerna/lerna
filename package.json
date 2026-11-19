@@ -9,10 +9,10 @@
   ],
   "volta": {
     "node": "26.12.0",
-    "npm": "12.2.1",
+    "npm": "12.2.2",
     "yarn": "1.22.22"
   },
-  "packageManager": "npm@12.2.1",
+  "packageManager": "npm@12.2.2",
   "scripts": {
     "build": "tools/scripts/build.sh",
     "e2e-build-package-publish": "node tools/scripts/e2e-build-package-publish.ts",
@@ -59,7 +59,7 @@
     "esbuild": "0.28.2",
     "js-yaml": "5.5.0",
     "lerna": "file:packages/lerna",
-    "minimatch": "11.0.2",
+    "minimatch": "11.0.8",
     "nx": "24.0.6",
     "oxfmt": "0.75.0",
     "oxlint": "1.87.0",
