@@ -49,7 +49,7 @@ jobs:
       matrix:
         node: ${{ fromJson(needs.set-node-versions.outputs.node-versions) }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -123,7 +123,7 @@ jobs:
       #     git config --global user.signingkey $GPG_KEY_ID
 
       - name: Run parallel distributed builds and tests on each node version
-        uses: jameshenry/parallel-bash-commands@943dfd1eebfab8bbf19782c47a85c9ca7e8d245c # v1
+        uses: jameshenry/parallel-bash-commands@943dfd1eebfab8bbf19782c47a85c9ca7e8d245c # v1.0.1
         with:
           cmd1: npx nx run-many -t build --parallel=3
           cmd2: npx nx run-many -t test --parallel=3 --maxWorkers=2

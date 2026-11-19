@@ -44,7 +44,7 @@ jobs:
     outputs:
       has-changes: ${{ steps.update-formatting.outputs.has-changes }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # To allow us to perform the git diff we need the git history
           fetch-depth: 0
@@ -60,7 +60,7 @@ jobs:
 
       - name: Install Node.js per package.json
         if: ${{ steps.relevant-packages-check.outputs.was-changed == 'true' }}
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           # Use the volta.node property as the source of truth
           node-version-file: "package.json"
@@ -111,7 +111,7 @@ jobs:
 
       - name: Upload the patch of the changes for the push job to apply
         if: ${{ steps.update-formatting.outputs.has-changes == 'true' }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: formatting-changes
           path: ${{ runner.temp }}/formatting-changes.patch
@@ -129,14 +129,14 @@ jobs:
     # oxfmt) so that the PAT cannot be exfiltrated by a package supply chain attack.
     environment: automated-dependency-updates
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           # To ensure we can push from a different user (and therefore cause actions to rerun)
           persist-credentials: false
 
       - name: Download the patch produced by the update job
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: formatting-changes
           path: ${{ runner.temp }}

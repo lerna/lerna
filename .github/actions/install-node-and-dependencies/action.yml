@@ -17,7 +17,7 @@ runs:
   using: "composite"
   steps:
     - name: Install Node based on the given value (or the Volta config in package.json)
-      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
         node-version-file: ${{ inputs.node-version == '' && 'package.json' || '' }}
         node-version: ${{ inputs.node-version }}
@@ -66,7 +66,7 @@ runs:
 
     - name: Install Bun
       if: ${{ inputs.install-additional-package-managers == 'true' }}
-      uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2 (Node.js 24 runtime)
+      uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0 (Node.js 24 runtime)
       with:
         # Latest 1.x so e2e exercises the text-based bun.lock format that has been bun's
         # default since 1.2 (the legacy binary bun.lockb handling is covered by unit tests)
