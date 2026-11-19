@@ -25,7 +25,7 @@ jobs:
     name: ESM compatibility - Node 22.22.2
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install minimum supported Node version and dependencies
         uses: ./.github/actions/install-node-and-dependencies
@@ -42,11 +42,11 @@ jobs:
       NX_CI_EXECUTION_ENV: "linux"
       PUBLISHED_VERSION: 999.9.9-e2e.0
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
-      - uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5
+      - uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5.0.1
 
       - name: Start Nx Cloud CI Run - Linux
         run: >
@@ -60,7 +60,7 @@ jobs:
         uses: ./.github/actions/install-node-and-dependencies
 
       - name: Run parallel distributed tasks
-        uses: jameshenry/parallel-bash-commands@943dfd1eebfab8bbf19782c47a85c9ca7e8d245c # v1
+        uses: jameshenry/parallel-bash-commands@943dfd1eebfab8bbf19782c47a85c9ca7e8d245c # v1.0.1
         with:
           cmd1: npx nx-cloud record -- npx nx format:check
           cmd2: npx nx run-many -t build --parallel=3
@@ -90,7 +90,7 @@ jobs:
       TEMP: C:\temp
       TMP: C:\temp
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Start Nx Cloud CI Run - Windows
         run: npx nx-cloud start-ci-run --distribute-on=manual --stop-agents-after="test,integration"
@@ -135,7 +135,7 @@ jobs:
       TEMP: C:\temp
       TMP: C:\temp
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Configure git metadata
         run: |
@@ -160,12 +160,12 @@ jobs:
       NX_CI_EXECUTION_ENV: "linux"
       NX_CLOUD_DISTRIBUTED_EXECUTION: false
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5
+        uses: nrwl/nx-set-shas@afb73a62d26e41464e9254689e1fd6122ee683c1 # v5.0.1
 
       - name: Configure git metadata
         run: |
