@@ -2,7 +2,10 @@
   "extends": [
     "config:recommended",
     ":semanticCommits",
-    ":semanticCommitScopeDisabled"
+    ":semanticCommitScopeDisabled",
+    // Track actions by exact vX.Y.Z tag next to the pinned SHA, not a moving major tag like v7.
+    // Moving tag updates have no release timestamp, so minimumReleaseAge held them forever.
+    "helpers:pinGitHubActionDigestsToSemver"
   ],
   // Wait well over npm's three day window for any new package as a precaution against malicious publishes.
   // https://docs.npmjs.com/policies/unpublish/#packages-published-less-than-72-hours-ago
