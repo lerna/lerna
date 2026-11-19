@@ -10,6 +10,18 @@ expect.addSnapshotSerializer({
   },
 });
 
+/**
+ * npm 12 announces each run script on stderr ("npm notice run <pkg> <script>"), while npm 10 and 11
+ * print "> <pkg> <script>" banners and blank lines on stdout. The nightly workflow runs the npm that
+ * ships with each supported Node version, so drop both forms and assert on the script output itself.
+ */
+function withoutNpmRunScriptBanners(output: string): string {
+  return output
+    .split(/\r?\n/)
+    .filter((line) => line !== "" && !line.startsWith("npm notice run ") && !line.startsWith("> "))
+    .join("\n");
+}
+
 describe("lerna-exec", () => {
   let fixture: Fixture;
 
@@ -56,18 +68,12 @@ describe("lerna-exec", () => {
   it("should run command on all child packages", async () => {
     const output = await fixture.lerna("exec --concurrency 1 npm run print-name");
 
-    expect(output.combinedOutput).toMatchInlineSnapshot(`
+    expect(withoutNpmRunScriptBanners(output.combinedOutput)).toMatchInlineSnapshot(`
       test-package-X
       test-package-X
       test-package-X
       lerna notice cli v999.9.9-e2e.0
       lerna info Executing command in 3 packages: "npm run print-name"
-      npm notice run package-X@0.0.0 print-name
-      npm notice run echo test-package-X
-      npm notice run package-X@0.0.0 print-name
-      npm notice run echo test-package-X
-      npm notice run package-X@0.0.0 print-name
-      npm notice run echo test-package-X
       lerna success exec Executed command in 3 packages: "npm run print-name"
     `);
   });
