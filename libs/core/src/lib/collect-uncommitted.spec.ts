@@ -1,6 +1,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 // nx-ignore-next-line
 import { gitAdd, initFixtureFactory } from "@lerna/test-helpers";
+import { execFileSync } from "child_process";
 import fs from "fs-extra";
 import path from "path";
 import { colorize } from "@lerna/child-process";
@@ -146,5 +147,17 @@ describe("collectUncommittedSync()", () => {
 
     expect(log.silly).toHaveBeenCalled();
     expect(result).toEqual(colorizedAry);
+  });
+});
+
+describe("non-ASCII file names", () => {
+  it("are listed without quoting or escaping", async () => {
+    const cwd = await initFixture("normal");
+    // git's default, set explicitly so a user-level `core.quotePath=false` can't hide the problem
+    execFileSync("git", ["config", "core.quotePath", "true"], { cwd });
+    await fs.outputFile(path.join(cwd, "使い方.md"), "# docs\n");
+
+    expect(await collectUncommitted({ cwd })).toEqual([`${RED_QQ} 使い方.md`]);
+    expect(collectUncommittedSync({ cwd })).toEqual([`${RED_QQ} 使い方.md`]);
   });
 });
