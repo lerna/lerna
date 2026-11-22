@@ -285,16 +285,31 @@ export class Package {
     return writePackage(this.manifestLocation, this[PKG] as any).then(() => this);
   }
 
-  /**
-   * Sync dist manifest version
-   */
-  async syncDistVersion(doSync: boolean) {
+  async syncDistVersion(doSync: boolean, previousManifest?: RawManifest) {
     if (doSync) {
       const distPkg = path.join(this.contents, "package.json");
 
       if (distPkg !== this.manifestLocation && fs.existsSync(distPkg)) {
         const pkg = await loadJsonFile<RawManifest>(distPkg);
         pkg.version = this[PKG].version;
+        for (const collection of [
+          "dependencies",
+          "devDependencies",
+          "optionalDependencies",
+          "peerDependencies",
+        ] as const) {
+          const distDependencies = pkg[collection];
+          const updatedDependencies = this[PKG][collection];
+          if (!distDependencies || !updatedDependencies) {
+            continue;
+          }
+          for (const [name, previousSpec] of Object.entries(previousManifest?.[collection] ?? {})) {
+            const spec = updatedDependencies[name];
+            if (spec !== undefined && spec !== previousSpec && Object.hasOwn(distDependencies, name)) {
+              distDependencies[name] = spec;
+            }
+          }
+        }
         await writePackage(distPkg, pkg as any);
       }
     }
