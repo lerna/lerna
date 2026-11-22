@@ -3,7 +3,10 @@ import { ProjectFileMap } from "@nx/devkit";
 import { ExecOptions as NodeExecOptions } from "child_process";
 import dedent from "dedent";
 import { daemonClient } from "nx/src/daemon/client/client";
+import { globWithWorkspaceContext } from "nx/src/utils/workspace-context";
 import os from "os";
+import { posix } from "path";
+import { glob } from "tinyglobby";
 import yargs, { type ArgumentsCamelCase } from "yargs";
 import log, { Logger } from "../npmlog";
 import { CommandConfigOptions, Project } from "../project";
@@ -228,10 +231,34 @@ export class Command<T extends CommandConfigOptions = CommandConfigOptions> {
   }
 
   async detectProjects() {
-    const { projectGraph, projectFileMap } = await detectProjects(this.project.packageConfigs);
+    const { packageConfigs, rootPath } = this.project;
+    const { projectGraph, projectFileMap } = await detectProjects(packageConfigs);
 
     this.projectGraph = projectGraph;
     this.projectFileMap = projectFileMap;
+
+    if (Object.values(projectGraph.nodes).some((node) => node.package)) {
+      return;
+    }
+
+    const manifestPatterns = packageConfigs.map((config) => posix.join(config, "package.json"));
+    const manifestsOnDisk = await glob(manifestPatterns, {
+      cwd: rootPath,
+      expandDirectories: false,
+      followSymbolicLinks: false,
+      ignore: ["**/node_modules/**", "**/.git/**", "**/.nx/**"],
+    });
+    if (!manifestsOnDisk.length) {
+      return;
+    }
+
+    const visibleManifests = new Set(await globWithWorkspaceContext(rootPath, ["**/package.json"]));
+    if (manifestsOnDisk.some((manifest) => !visibleManifests.has(manifest))) {
+      this.logger.warn(
+        "package-discovery",
+        "No workspace packages were found. Check .gitignore and .nxignore for rules that exclude workspace package.json files."
+      );
+    }
   }
 
   configureEnvironment() {
