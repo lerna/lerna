@@ -61,7 +61,7 @@
     "lerna": "file:packages/lerna",
     "minimatch": "11.0.8",
     "nx": "24.0.6",
-    "oxfmt": "0.75.0",
+    "oxfmt": "0.79.0",
     "oxlint": "1.93.0",
     "pkg-pr-new": "0.0.93",
     "signal-exit": "4.1.0",
