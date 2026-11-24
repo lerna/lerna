@@ -521,9 +521,9 @@ export class PublishCommand extends Command {
       }
     }
 
-    let updates: ProjectGraphProjectNodeWithPackage[];
-    updates = await getProjectsWithUnpublishedPackages(this.projectsWithPackage!, this.conf!["snapshot"]);
-    updates = this.filterPrivatePkgUpdates(updates);
+    // skip private packages before querying the registry, which would otherwise warn that they are unpublished
+    const projectsToCheck = this.filterPrivatePkgUpdates(this.projectsWithPackage!);
+    const updates = await getProjectsWithUnpublishedPackages(projectsToCheck, this.conf!["snapshot"]);
     if (!updates.length) {
       this.logger.notice("from-package", "No unpublished release found");
     }
