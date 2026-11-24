@@ -8,7 +8,7 @@
     "libs/e2e-utils"
   ],
   "volta": {
-    "node": "26.12.0",
+    "node": "26.13.1",
     "npm": "12.2.2",
     "yarn": "1.22.22"
   },
@@ -46,7 +46,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/libnpmpublish": "^11.0.0",
     "@types/make-fetch-happen": "^10.0.4",
-    "@types/node": "^24.0.0",
+    "@types/node": "^26.0.0",
     "@types/npm-package-arg": "^6.1.4",
     "@types/npm-packlist": "^7.0.3",
     "@types/npm-registry-fetch": "^8.0.9",

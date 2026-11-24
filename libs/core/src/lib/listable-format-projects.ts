@@ -230,7 +230,7 @@ function formatColumns(
       formatted.private = `(${colorize("red", "PRIVATE")})`;
     }
 
-    formatted.location = colorize("grey", path.relative(".", pkg.location));
+    formatted.location = colorize("gray", path.relative(".", pkg.location));
 
     return formatted;
   });
