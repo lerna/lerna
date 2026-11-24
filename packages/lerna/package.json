@@ -60,7 +60,7 @@
     "handlebars": "4.7.10",
     "import-local": "3.2.0",
     "ini": "^7.0.0",
-    "init-package-json": "9.0.0",
+    "init-package-json": "9.0.1",
     "inquirer": "14.3.0",
     "js-yaml": "5.5.0",
     "libnpmaccess": "11.0.0",
