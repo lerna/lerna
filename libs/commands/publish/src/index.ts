@@ -206,7 +206,8 @@ export class PublishCommand extends Command {
       this.logger.info("require-scripts", "enabled");
     }
 
-    // npmSession and user-agent are consumed by npm-registry-fetch (via libnpmpublish)
+    // npmSession and userAgent are consumed by npm-registry-fetch (via libnpmpublish).
+    // The client reads opts.userAgent; the `user-agent` npm config key is not sent.
     this.logger.verbose("session", this.npmSession);
     this.logger.verbose("user-agent", this.userAgent);
 
@@ -215,6 +216,7 @@ export class PublishCommand extends Command {
       _auth: this.options.legacyAuth,
       npmSession: this.npmSession,
       npmVersion: this.userAgent,
+      userAgent: this.userAgent,
       otp: this.options.otp,
       registry: this.options.registry,
       "ignore-prepublish": this.options.ignorePrepublish,
