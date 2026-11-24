@@ -16,7 +16,7 @@ export const types: Record<string, unknown> = {
   also: [null, "dev", "development"],
   audit: Boolean,
   "audit-level": ["low", "moderate", "high", "critical"],
-  "auth-type": ["legacy", "sso", "saml", "oauth"],
+  "auth-type": ["legacy", "web", "sso", "saml", "oauth"],
   "bin-links": Boolean,
   browser: [null, String],
   ca: [null, String, Array],
