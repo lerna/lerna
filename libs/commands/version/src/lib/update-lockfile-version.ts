@@ -15,6 +15,8 @@ interface Lockfile {
   };
 }
 
+const LOCKFILE_DEPENDENCY_COLLECTIONS = ["dependencies", "devDependencies", "optionalDependencies"] as const;
+
 // Updates npm's package-lock.json only. Bun lockfile updates are handled by running `bun install`
 // in the version command after package.json changes are written.
 export async function updateLockfileVersion(pkg: Package): Promise<string | void> {
@@ -31,28 +33,18 @@ export async function updateLockfileVersion(pkg: Package): Promise<string | void
   obj.version = pkg.version;
 
   if (obj.packages && obj.packages[""]) {
-    obj.packages[""].version = pkg.version;
+    const rootPackage = obj.packages[""];
+    rootPackage.version = pkg.version;
 
-    if (obj.packages[""].dependencies) {
-      const updatedPkgDependencies = Object.keys(obj.packages[""].dependencies).reduce(
-        (prev, next) => ({ ...prev, [next]: pkg.dependencies?.[next] }),
-        {}
-      );
-      obj.packages[""].dependencies = updatedPkgDependencies;
-    }
-    if (obj.packages[""].devDependencies) {
-      const updatedPkgDevDependencies = Object.keys(obj.packages[""].devDependencies).reduce(
-        (prev, next) => ({ ...prev, [next]: pkg.devDependencies?.[next] }),
-        {}
-      );
-      obj.packages[""].devDependencies = updatedPkgDevDependencies;
-    }
-    if (obj.packages[""].optionalDependencies) {
-      const updatedPkgOptionalDependencies = Object.keys(obj.packages[""].optionalDependencies).reduce(
-        (prev, next) => ({ ...prev, [next]: pkg.optionalDependencies?.[next] }),
-        {}
-      );
-      obj.packages[""].optionalDependencies = updatedPkgOptionalDependencies;
+    // Only ranges already listed in the lockfile are updated; missing entries are not added.
+    for (const collection of LOCKFILE_DEPENDENCY_COLLECTIONS) {
+      const lockedRanges = rootPackage[collection];
+      if (lockedRanges) {
+        rootPackage[collection] = Object.keys(lockedRanges).reduce(
+          (prev, next) => ({ ...prev, [next]: pkg[collection]?.[next] }),
+          {}
+        );
+      }
     }
   }
 
