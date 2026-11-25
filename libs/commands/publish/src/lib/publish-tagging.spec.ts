@@ -191,6 +191,17 @@ describe("publish tagging", () => {
     expect(npmDistTag.remove).not.toHaveBeenCalled();
   });
 
+  test("publish prerelease with a numeric zero identifier --pre-dist-tag beta", async () => {
+    const cwd = await initFixture("normal");
+
+    collectUpdates.setUpdated(cwd, "package-1");
+
+    await lernaPublish(cwd)("1.0.1-0", "--pre-dist-tag", "beta");
+
+    expect(npmPublish.registry.get("package-1")).toBe("beta");
+    expect(npmDistTag.remove).not.toHaveBeenCalled();
+  });
+
   test("publish non-prerelease --pre-dist-tag beta", async () => {
     const cwd = await initFixture("normal");
 

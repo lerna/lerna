@@ -115,11 +115,12 @@ export function collectProjectUpdates(
     !commandOptions.bump || commandOptions.bump.startsWith("pre")
       ? () => false
       : /* skip packages that have not been previously prereleased */
-        (node: ProjectGraphProjectNodeWithPackage) => !!prereleaseIdFromVersion(getPackage(node).version);
+        (node: ProjectGraphProjectNodeWithPackage) =>
+          prereleaseIdFromVersion(getPackage(node).version) !== undefined;
   const isForced = (node: ProjectGraphProjectNodeWithPackage, name: string) =>
     !!(
       (forced.has("*") || forced.has(name)) &&
-      ((useConventionalGraduate ? prereleaseIdFromVersion(getPackage(node).version) : true) ||
+      ((useConventionalGraduate ? prereleaseIdFromVersion(getPackage(node).version) !== undefined : true) ||
         forceConventionalGraduate)
     );
 

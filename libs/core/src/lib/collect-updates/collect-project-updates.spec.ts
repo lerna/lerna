@@ -262,6 +262,33 @@ describe("collectProjectUpdates", () => {
     expect(updates).toEqual(ALL_NODES);
   });
 
+  it("returns nodes prereleased with a numeric zero identifier with --conventional-graduate", () => {
+    const graph = buildGraph();
+    graph.nodes["package-standalone"].package!.version = "1.0.0-0";
+    const nodes = Object.values(graph.nodes);
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectProjectUpdates(nodes, graph, execOpts, {
+      conventionalCommits: true,
+      conventionalGraduate: true,
+    });
+
+    expect(updates).toEqual([expect.objectContaining({ name: "package-standalone" })]);
+  });
+
+  it("returns nodes prereleased with a numeric zero identifier on a non-prerelease bump", () => {
+    const graph = buildGraph();
+    graph.nodes["package-standalone"].package!.version = "1.0.0-0";
+    const nodes = Object.values(graph.nodes);
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectProjectUpdates(nodes, graph, execOpts, {
+      bump: "patch",
+    });
+
+    expect(updates).toEqual([expect.objectContaining({ name: "package-standalone" })]);
+  });
+
   it("returns all prereleased nodes with --conventional-graduate *", () => {
     const graph = buildGraph();
     setPrereleaseVersions(graph);

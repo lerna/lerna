@@ -217,6 +217,34 @@ Publish
 `);
   });
 
+  test("independent version --conventional-commits keeps prerelease with a numeric zero identifier", async () => {
+    const cwd = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "lerna-test-"));
+
+    fs.mkdirSync(path.join(cwd, "packages", "pkg-zero"), { recursive: true });
+    fs.writeFileSync(
+      path.join(cwd, "lerna.json"),
+      JSON.stringify({ version: "independent", packages: ["packages/*"] })
+    );
+    fs.writeFileSync(path.join(cwd, "package.json"), JSON.stringify({ name: "zero-prerelease" }));
+    fs.writeFileSync(
+      path.join(cwd, "packages", "pkg-zero", "package.json"),
+      JSON.stringify({ name: "pkg-zero", version: "1.0.0-0" })
+    );
+
+    await gitInit(cwd, ".");
+    await gitAdd(cwd, "-A");
+    await gitCommit(cwd, "fix: init");
+
+    await lernaVersion(cwd)("--conventional-commits");
+
+    const message = await getCommitMessage(cwd);
+    expect(message).toMatchInlineSnapshot(`
+Publish
+
+ - pkg-zero@1.0.0-1
+`);
+  });
+
   test("independent version prerelease respects --no-private", async () => {
     const cwd = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), "lerna-test-"));
 
