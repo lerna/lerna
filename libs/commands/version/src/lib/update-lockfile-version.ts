@@ -10,6 +10,7 @@ interface Lockfile {
       version: string;
       dependencies?: Record<string, string>;
       devDependencies?: Record<string, string>;
+      optionalDependencies?: Record<string, string>;
     };
   };
 }
@@ -45,6 +46,13 @@ export async function updateLockfileVersion(pkg: Package): Promise<string | void
         {}
       );
       obj.packages[""].devDependencies = updatedPkgDevDependencies;
+    }
+    if (obj.packages[""].optionalDependencies) {
+      const updatedPkgOptionalDependencies = Object.keys(obj.packages[""].optionalDependencies).reduce(
+        (prev, next) => ({ ...prev, [next]: pkg.optionalDependencies?.[next] }),
+        {}
+      );
+      obj.packages[""].optionalDependencies = updatedPkgOptionalDependencies;
     }
   }
 
