@@ -686,13 +686,13 @@ export class VersionCommand extends Command {
         // set new version
         pkg.version = this.updatesVersions!.get(node.name)!;
 
-        // update dependencies
+        const previousManifest = syncDistVersion ? pkg.toJSON() : undefined;
         this.updateDependencies(node);
 
         return Promise.all([
           updateLockfileVersion(pkg),
           pkg.serialize(),
-          pkg.syncDistVersion(syncDistVersion),
+          pkg.syncDistVersion(syncDistVersion, previousManifest),
         ]).then(([lockfilePath]) => {
           // commit the updated manifest
           changedFiles.add(pkg.manifestLocation);

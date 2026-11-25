@@ -1737,7 +1737,7 @@
         },
         "syncDistVersion": {
           "type": "boolean",
-          "description": "During `lerna version`, when true, updates the version of the contents directory."
+          "description": "During `lerna version`, when true, syncs the package version and bumped local dependency ranges into the contents directory's package.json."
         },
         "push": {
           "type": "boolean",

@@ -158,7 +158,8 @@ const command: CommandModule = {
         type: "boolean",
       },
       "sync-dist-version": {
-        describe: "Update the version of the package.json of the contents directory.",
+        describe:
+          "Sync the package version and bumped local dependency ranges into the contents directory's package.json.",
         type: "boolean",
       },
       // TODO: (major) make --no-granular-pathspec the default

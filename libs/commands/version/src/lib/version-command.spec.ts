@@ -589,6 +589,42 @@ Changes:
     });
   });
 
+  describe("--sync-dist-version", () => {
+    it("syncs bumped local dependency ranges into the dist manifest", async () => {
+      const testDir = await initFixture("normal");
+      const packageDir = path.join(testDir, "packages/package-5");
+      const sourcePath = path.join(packageDir, "package.json");
+      const distPath = path.join(packageDir, "dist/package.json");
+      const source = await fs.readJson(sourcePath);
+      source.publishConfig = { directory: "dist" };
+      source.dependencies.external = "^1.0.0";
+      source.devDependencies = { "package-2": "^1.0.0" };
+      await fs.outputJson(sourcePath, source);
+      await fs.outputJson(distPath, {
+        name: "package-5",
+        version: "1.0.0",
+        main: "index.js",
+        dependencies: { "package-1": "^1.0.0", external: "^2.0.0", "dist-only": "^3.0.0" },
+        optionalDependencies: { "package-3": "^1.0.0" },
+      });
+
+      await lernaVersion(testDir)("patch", "--sync-dist-version", "--no-git-tag-version", "--yes");
+
+      expect(await fs.readJson(sourcePath)).toMatchObject({
+        dependencies: { "package-1": "^1.0.1" },
+        devDependencies: { "package-2": "^1.0.1" },
+        optionalDependencies: { "package-3": "^1.0.1" },
+      });
+      expect(await fs.readJson(distPath)).toEqual({
+        name: "package-5",
+        version: "1.0.1",
+        main: "index.js",
+        dependencies: { "package-1": "^1.0.1", external: "^2.0.0", "dist-only": "^3.0.0" },
+        optionalDependencies: { "package-3": "^1.0.1" },
+      });
+    });
+  });
+
   describe("--git-remote", () => {
     it("pushes tags to specified remote", async () => {
       const testDir = await initFixture("normal");

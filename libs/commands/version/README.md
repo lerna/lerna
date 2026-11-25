@@ -626,7 +626,7 @@ This option is analogous to the `npm version` [option](https://docs.npmjs.com/mi
 
 ### `--sync-dist-version`
 
-Updates the version of the `package.json` of the contents directory.
+Updates the package version and any bumped local dependency ranges already present in the contents directory's `package.json`.
 
 ### `--force-git-tag`
 
