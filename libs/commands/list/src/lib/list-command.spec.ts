@@ -2,9 +2,12 @@ import { collectProjectUpdates as _collectUpdates, output as _output } from "@le
 import {
   initFixtureFactory,
   commandRunner,
+  loggingOutput,
   tempDirSerializer,
   windowsPathSerializer,
 } from "@lerna/test-helpers";
+import { writeFile } from "node:fs/promises";
+import { join } from "node:path";
 
 import command from "../command";
 
@@ -45,6 +48,18 @@ expect.addSnapshotSerializer(windowsPathSerializer);
 expect.addSnapshotSerializer(tempDirSerializer);
 
 describe("lerna ls", () => {
+  it("warns when workspace manifests are ignored and no packages are discovered", async () => {
+    const testDir = await initFixture("basic");
+    await writeFile(join(testDir, ".gitignore"), "**/*.json\n");
+
+    await lernaLs(testDir)();
+
+    expect(output).not.toHaveBeenCalled();
+    expect(loggingOutput("warn")).toContain(
+      "No workspace packages were found. Check .gitignore and .nxignore for rules that exclude workspace package.json files."
+    );
+  });
+
   describe("in a basic repo", () => {
     let testDir: string;
 
