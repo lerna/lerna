@@ -953,6 +953,24 @@ Changes:
       const changedFiles = await showCommit(cwd, "--name-only");
       expect(changedFiles).toContain("packages/package-1/package-lock.json");
     });
+
+    it("updates local optionalDependencies in the leaf lockfile", async () => {
+      const cwd = await initFixture("lockfile-leaf-optional-deps");
+      await lernaVersion(cwd)("--yes", "major");
+
+      const pkgDir = path.join(cwd, "packages/package-2");
+      const manifest = await fs.readJSON(path.join(pkgDir, "package.json"));
+      const lockfile = await fs.readJSON(path.join(pkgDir, "package-lock.json"));
+
+      expect(manifest.optionalDependencies).toEqual({ "package-1": "^2.0.0" });
+      expect(lockfile.version).toBe("2.0.0");
+      expect(lockfile.packages[""].version).toBe("2.0.0");
+      expect(lockfile.packages[""].dependencies).toEqual({ "tiny-tarball": "^1.0.0" });
+      expect(lockfile.packages[""].optionalDependencies).toEqual(manifest.optionalDependencies);
+
+      const changedFiles = await showCommit(cwd, "--name-only");
+      expect(changedFiles).toContain("packages/package-2/package-lock.json");
+    });
   });
 
   describe("with spurious -- arguments", () => {
