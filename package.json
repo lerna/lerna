@@ -63,7 +63,7 @@
     "nx": "24.0.6",
     "oxfmt": "0.79.0",
     "oxlint": "1.93.0",
-    "pkg-pr-new": "0.0.93",
+    "pkg-pr-new": "0.0.94",
     "signal-exit": "4.1.0",
     "@typescript/native": "npm:typescript@7.0.2",
     "typescript": "npm:@typescript/typescript6@6.0.2",
