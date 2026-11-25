@@ -78,7 +78,7 @@
     "semver": "7.8.6",
     "signal-exit": "4.1.0",
     "ssri": "14.0.0",
-    "string-width": "^8.0.0",
+    "string-width": "^9.0.0",
     "tar": "7.5.23",
     "tinyglobby": "0.2.17",
     "validate-npm-package-name": "8.0.0",
