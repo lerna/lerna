@@ -72,7 +72,7 @@
     "npm-packlist": "11.3.1",
     "npm-registry-fetch": "20.0.1",
     "nx": ">=23.1.0 < 25.0.0",
-    "p-map": "7.0.8",
+    "p-map": "7.1.1",
     "p-queue": "9.3.5",
     "pacote": "22.0.1",
     "semver": "7.8.6",
