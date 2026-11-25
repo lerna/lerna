@@ -1132,7 +1132,7 @@ export class PublishCommand extends Command {
     if (!this.options.preDistTag) {
       return;
     }
-    const isPrerelease = prereleaseIdFromVersion(pkg.version);
+    const isPrerelease = prereleaseIdFromVersion(pkg.version) !== undefined;
     if (isPrerelease) {
       return this.options.preDistTag;
     }

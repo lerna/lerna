@@ -424,7 +424,7 @@ export class VersionCommand extends Command {
     const repoVersion = bump ? semver.clean(bump) : "";
     const increment = bump && !semver.valid(bump) ? bump : "";
 
-    const resolvePrereleaseId = (existingPreid: string) => preid || existingPreid || "alpha";
+    const resolvePrereleaseId = (existingPreid: string) => preid || (existingPreid ?? "alpha");
 
     const makeGlobalVersionPredicate = (nextVersion: string) => {
       this.globalVersion = nextVersion;
@@ -518,7 +518,7 @@ export class VersionCommand extends Command {
     const shouldGraduate = (name: string) =>
       graduatePackageNames.includes("*") || graduatePackageNames.includes(name);
     const getPrereleaseId = (node: { name: string; prereleaseId: string }) => {
-      if (!shouldGraduate(node.name) && (shouldPrerelease(node.name) || node.prereleaseId)) {
+      if (!shouldGraduate(node.name) && (shouldPrerelease(node.name) || node.prereleaseId !== undefined)) {
         return resolvePrereleaseId(node.prereleaseId);
       }
       return undefined;

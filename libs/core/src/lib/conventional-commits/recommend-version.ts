@@ -64,7 +64,7 @@ export async function recommendVersion(
   // we still need to bump _something_ because lerna saw a change here
   let releaseType = ("releaseType" in data ? data.releaseType : undefined) || "patch";
 
-  if (prereleaseId) {
+  if (prereleaseId !== undefined) {
     const shouldBump = conventionalBumpPrerelease || shouldBumpPrerelease(releaseType, pkg.version);
     const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
     log.verbose(type, "increment %s by %s", pkg.version, prereleaseType);
