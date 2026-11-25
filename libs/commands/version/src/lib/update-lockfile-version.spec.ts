@@ -61,6 +61,24 @@ describe("update lockfile version", () => {
     expect(updatedLockfile.packages[""]).toHaveProperty(["devDependencies", "package-3"], "3.0.0");
   });
 
+  test("updateLockfileVersion with lockfile v3 - local optional dependency should be updated if already listed", async () => {
+    const cwd = await initFixture("lockfile-leaf-optional-deps");
+    const pkg2 = (await getPackages(cwd))[1];
+
+    pkg2.version = "2.0.0";
+    pkg2.optionalDependencies["package-1"] = "^2.0.0";
+
+    const returnedLockfilePath = await updateLockfileVersion(pkg2);
+
+    expect(returnedLockfilePath).toBe(path.join(pkg2.location, "package-lock.json"));
+    const updatedLockfile = fs.readJSONSync(returnedLockfilePath as string);
+    expect(updatedLockfile).toHaveProperty("version", "2.0.0");
+    // note: vitest's toHaveProperty cannot address an empty-string path segment, so anchor at packages[""]
+    expect(updatedLockfile.packages[""]).toHaveProperty("version", "2.0.0");
+    expect(updatedLockfile.packages[""]).toHaveProperty(["optionalDependencies", "package-1"], "^2.0.0");
+    expect(updatedLockfile.packages[""]).toHaveProperty(["dependencies", "tiny-tarball"], "^1.0.0");
+  });
+
   test("updateLockfileVersion with lockfile v2 - local dependency should not be added if not already listed", async () => {
     const cwd = await initFixture("lockfile-v2-missing-local-deps");
     const pkg2 = (await getPackages(cwd))[1];

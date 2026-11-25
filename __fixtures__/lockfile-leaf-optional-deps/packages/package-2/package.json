@@ -1,0 +1,10 @@
+{
+  "name": "package-2",
+  "version": "1.0.0",
+  "dependencies": {
+    "tiny-tarball": "^1.0.0"
+  },
+  "optionalDependencies": {
+    "package-1": "^1.0.0"
+  }
+}
