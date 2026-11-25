@@ -59,7 +59,7 @@
     "esbuild": "0.28.2",
     "js-yaml": "5.5.0",
     "lerna": "file:packages/lerna",
-    "minimatch": "11.0.8",
+    "minimatch": "11.0.9",
     "nx": "24.0.6",
     "oxfmt": "0.79.0",
     "oxlint": "1.93.0",
