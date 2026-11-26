@@ -395,6 +395,43 @@ describe("conventional-commits", () => {
         const bump = await recommendVersion(pkg0, "independent", {});
         expect(bump).toBe("0.2.0");
       });
+
+      it("treats breaking changes as semver-preminor with prereleaseId", async () => {
+        const cwd = await initFixture("major-zero");
+        const [pkg0] = await getPackages(cwd);
+
+        // make a change in package-0
+        await pkg0.set("changed", 1).serialize();
+        await gitAdd(cwd, pkg0.manifestLocation);
+        await gitCommit(cwd, "feat: changed\n\nBREAKING CHANGE: changed");
+
+        const bump = await recommendVersion(pkg0, "independent", { prereleaseId: "rc" });
+        expect(bump).toBe("0.2.0-rc.0");
+      });
+
+      it("keeps bumping an existing preminor prerelease on breaking changes", async () => {
+        const cwd = await initFixture("major-zero");
+        const [pkg0] = await getPackages(cwd);
+
+        await pkg0.set("version", "0.2.0-rc.0").serialize();
+        await gitAdd(cwd, pkg0.manifestLocation);
+        await gitCommit(cwd, "feat: changed\n\nBREAKING CHANGE: changed");
+
+        const bump = await recommendVersion(pkg0, "independent", { prereleaseId: "rc" });
+        expect(bump).toBe("0.2.0-rc.1");
+      });
+
+      it("applies premajorVersionBump force-patch with prereleaseId", async () => {
+        const cwd = await initFixture("major-zero");
+        const [pkg0] = await getPackages(cwd);
+
+        await pkg0.set("changed", 1).serialize();
+        await gitAdd(cwd, pkg0.manifestLocation);
+        await gitCommit(cwd, "feat: changed");
+
+        const bump = await recommendVersion(pkg0, "independent", { prereleaseId: "rc" }, "force-patch");
+        expect(bump).toBe("0.1.1-rc.0");
+      });
     });
 
     describe("prerelease bumps", () => {
